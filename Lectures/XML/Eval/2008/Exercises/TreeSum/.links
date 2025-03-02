@@ -1,0 +1,9 @@
+#include "../.common_links"
+
+../common.mk.in
+
+numbers.xml sum1.xml
+numbers.xml sum2.xml
+
+numbers.dtd sum1.dtd
+numbers.dtd sum2.dtd

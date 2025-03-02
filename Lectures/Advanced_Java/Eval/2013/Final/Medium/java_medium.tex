@@ -1,0 +1,87 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\input{trace}
+
+\input{title}
+\author{Christian Rinderknecht}
+\date{24 October 2013}
+
+\begin{document}
+
+\maketitle
+
+\noindent Consider the following classes implementing ephemeral
+stacks:
+\begin{verbatim}
+public class Stack<Key extends Comparable<Key>> {
+    protected Cell<Key> top;
+    public Stack () { top = null; }
+}
+
+public class Cell<Key extends Comparable<Key>> {
+  protected Key value;
+  protected Cell<Key> next;
+  public Cell (final Key key, final Cell<Key> cell) {
+    value = key; next = cell; }
+}
+\end{verbatim}
+Extend the class \texttt{Stack<Key>} with two methods defined as follows.
+\begin{enumerate}
+
+  \item The method \texttt{rm\_fst} (\emph{remove first}) whose
+  signature is
+\begin{verbatim}
+public void rm_fst (final Key k);
+\end{verbatim}
+  performs a linear search in \texttt{this}: if the key~\texttt{k} is
+  absent, nothing is done; otherwise, the (first) cell
+  containing~\texttt{k} is taken off \texttt{this}.
+
+\item The method \texttt{rm\_lst} (\emph{remove last}) whose signature
+  is
+\begin{verbatim}
+public void rm_lst (final Key k);
+\end{verbatim}
+removes the last cell containing~\texttt{k}, and, otherwise, do nothing.
+\end{enumerate}
+
+\newpage
+
+\noindent The main class for testing is
+\begin{verbatim}
+public class EphObj {
+  public static void main (String[] args) {
+    Stack<Integer> s = new Stack<Integer>();
+    s.push(5); s.push(1); s.push(3); s.push(1);
+    s.push(0); s.push(3);
+    s.print(); // 3 0 1 3 1 5
+    s.rm_fst(3);
+    s.print(); // 0 1 3 1 5
+    s.rm_fst(1);
+    s.print(); // 0 3 1 5
+    s.rm_fst(5);
+    s.print(); // 0 3 1
+    s.rm_fst(6);
+    s.print(); // 0 3 1
+
+    s.push(1); s.push(5); s.push(3);
+    s.print(); // 3 5 1 0 3 1
+    s.rm_lst(3);
+    s.print(); // 3 5 1 0 1
+    s.rm_lst(1);
+    s.print(); // 3 5 1 0
+    s.rm_lst(3);
+    s.print(); // 5 1 0
+    s.rm_lst(4);
+    s.print(); // 5 1 0
+  }
+}
+\end{verbatim}
+
+\end{document}

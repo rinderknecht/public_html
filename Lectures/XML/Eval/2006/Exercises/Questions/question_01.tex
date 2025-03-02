@@ -1,0 +1,27 @@
+This time it is about shuffling three stacks of cards in the following
+way (the top of the stacks is on the top of the figure):
+\begin{center}
+\begin{tabular}{>{$}c<{$}>{$}c<{$}>{$}c<{$}c>{$}c<{$}}
+a_1 & a_2 & a_3 & \multirow{4}{*}{\(\rightarrow\dots\rightarrow\)}
+  & a_3\\
+b_1 & b_2 & b_3 & & a_1\\
+c_1 & c_2 &     & & a_2\\
+    & d_2 &     & & b_3\\
+    &     &     & & b_1\\
+    &     &     & & b_2\\
+    &     &     & & c_1\\
+    &     &     & & c_2\\
+    &     &     & & d_2
+\end{tabular}
+\end{center}
+If the three stacks are empty, then the result is empty too.
+
+\bigskip
+
+\noindent The empty stack is noted as usual \proc{Empty} and the stack
+\(S\) with item \(e\) on the top is noted \(\proc{Push}(e,S)\).
+
+\bigskip
+
+\paragraph{Question.} Define \(\proc{TSS}(S_1, S_2, S_3)\) as
+rewriting to the shuffling.

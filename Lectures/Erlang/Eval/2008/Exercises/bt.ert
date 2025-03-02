@@ -1,0 +1,5 @@
+{{{empty,1,{{empty,3,empty},5,{empty,8,empty}}},10,empty},7,{empty,17,empty}}.
+{{{empty,a,empty},b,{empty,c,empty}},d,{{empty,f,empty},e,empty}}.
+{empty,a,{empty,b,{empty,c,empty}}}.
+{{{empty,a,empty},b,empty},c,empty}.
+{{empty,a,empty},b,{empty,c,empty}}.

@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>R&eacute;sum&eacute; du cours</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h4>R&eacute;sum&eacute;</h4>
+
+<p>Ce cours a pour objectif de pr&eacute;senter les concepts
+fondamentaux de la programmation fonctionnelle &agrave; travers le
+langage Objective Caml. Il est en effet important pour un
+&eacute;l&egrave;ve ing&eacute;nieur d'&ecirc;tre familier avec les
+diff&eacute;rents paradigmes qui fondent les nombreux langages de
+programmation qu'ils seront amen&eacute;s &agrave; utiliser ou
+&agrave; comprendre. D'autant plus que ces paradigmes ne sont pas si
+nombreux: le cursus pr&eacute;voit d'abord la pr&eacute;sentation de
+langages imp&eacute;ratifs et ensuite aborde les langages &agrave;
+objets (ce sont parfois les m&ecirc;mes langages qui sont &agrave; la
+fois imp&eacute;ratifs et &agrave; objets, tel Java). Il est donc
+utile de d&eacute;couvrir un autre mode de conception et de
+programmation <em>via</em> les langages fonctionnels.</p>
+
+<p>Dans un langage fonctionnel, par exemple Lisp, Haskell ou Objective
+Caml, il n'y a plus de notion d'&eacute;tat, comme dans les langages
+imp&eacute;ratifs o&ugrave; l'&eacute;tat est la repr&eacute;sentation
+en m&eacute;moire des donn&eacute;es manipul&eacute;es par le
+programme. En particulier, le programmeur ne peut modifier directement
+l'&eacute;tat, comme par exemple modifier la valeur d'une variable,
+puisqu'il n'a pas acc&egrave;s &agrave; l'&eacute;tat courant. D'une
+certaine fa&ccedil;on, l'id&eacute;e est que le programmeur doit,
+comme le math&eacute;maticien et le logicien, s'abstraire de cette
+notion de m&eacute;moire mutable, consid&eacute;r&eacute;e comme de
+bas niveau, et se concentrer sur la d&eacute;claration de
+propri&eacute;t&eacute;s et d'&eacute;quations.</p>
+
+<p>Les variables sont donc en r&eacute;alit&eacute; des constantes,
+comme en math&eacute;matique, et les boucles (for, while, repeat etc.)
+deviennent alors sans objet. Pour r&eacute;aliser l'&eacute;quivalent
+des it&eacute;rations imp&eacute;ratives, il faut d&eacute;finir des
+fonctions r&eacute;cursives, les param&egrave;tres li&eacute;s aux
+arguments lors de l'appel jouant le r&ocirc;le de la modification de
+variables (locales) dans les langages imp&eacute;ratifs.</p>
+
+<p>Ce qui vient d'&ecirc;tre dit s'applique en r&eacute;alit&eacute;
+au sous-ensemble purement fonctionnel des langages fonctionnels. En
+effet, il est n&eacute;cessaire qu'un programme produise un effet qui
+ne soit pas li&eacute; directement &agrave; la logique du calcul (ce
+qu'on appelle indument un <em>effet de bord</em> dans les langages
+imp&eacute;ratifs (<em>effet secondaire</em> conviendrait mieux que ce
+barbarisme)) ne serait-ce que pour afficher son r&eacute;sultat (le
+m&eacute;dium sur lequel se fait cet affichage relevant de
+l'&eacute;tat).</p>
+
+<p>L'environnement d'ex&eacute;cution des langages fonctionnels,
+d&eacute;chargeant le programmeur de la gestion explicite de la
+m&eacute;moire, doit n&eacute;cessairement inclure un gl&acirc;neur de
+cellules (<em>garbage collector</em>), mais ce n'est pas une
+caract&eacute;ristique car nombre de langages imp&eacute;ratifs en
+supposent l'usage (Ada, Java, Perl etc.).</p>
+
+<p>Le choix du langage Objective Caml pour illustrer un noyau purement
+fonctionnel est justifi&eacute; par le fait que le langage Caml Light,
+qui est une version simplifi&eacute;e du premier, est
+d&eacute;j&agrave; enseign&eacute; comme premier langage de
+programmation dans les universit&eacute;s et classes
+pr&eacute;paratoires en France. Il poss&egrave;de en outre un
+syst&egrave;me d'<em>inf&eacute;rence de type</em> qui d&eacute;charge
+compl&egrave;tement le programmeur de l'obligation d'annoter,
+m&ecirc;me partiellement, son programme avec des types, et permet donc
+un prototypage rapide. Cette caract&eacute;ristique est tr&egrave;s
+pratique pour l'enseignement, car le d&eacute;butant peut se
+concentrer sur son algorithme, comme en shell Unix, tout en
+b&eacute;n&eacute;ficiant du typage statique fort, qui le
+prot&egrave;ge des erreurs &agrave; l'ex&eacute;cution dues &agrave;
+d'&eacute;ventuelles hypoth&egrave;ses sur les donn&eacute;es qui
+seraient incoh&eacute;rentes par rapport &agrave; leur usage.</p>
+
+Les points que nous abordons sont les suivants:
+<ul>
+
+  <li>Notion de langage de description et de m&eacute;tavariable,
+  c'est-&agrave;-dire variable du langage de description, par
+  opposition &agrave; la notion de variable, qui fait partie du
+  langage d&eacute;crit.</li>
+
+  <li>D&eacute;finition d'un mini-noyau d'Objective Caml, dit
+  <em>mini-ML</em>: notion de programme, phrases, expressions et
+  syntaxe de ces constructions &eacute;l&eacute;mentaires (variables,
+  fonctions, appels de fonctions, op&eacute;rateurs
+  arithm&eacute;tiques, op&eacute;rations arithm&eacute;tiques,
+  constantes, parenth&egrave;se, d&eacute;finition locale).</li>
+
+  <li>Construction d'arbres de programmes mini-ML &agrave; partir de
+  la syntaxe. Cette repr&eacute;sentation arborescente permet
+  d'introduire plus facilement la notion de <em>variable
+  li&eacute;e</em> et son contraire, la <em>variable libre</em>. Un
+  algorithme de calcul des variables li&eacute;es est propos&eacute;
+  de fa&ccedil;on informelle et op&egrave;re sur les arbres de
+  programmes. Les occurrences li&eacute;e sont reli&eacute;es par une
+  fl&egrave;che &agrave; leur lieur.</li>
+
+  <li>On d&eacute;finit les notions de <em>liaisons statiques</em> et
+  d'<em>environnement</em>.</li>
+
+  <li>Logiquement, l'&eacute;tape suivante consiste &agrave; donner un
+  algorithme informel qui &eacute;value les programmes mini-ML clos,
+  d&eacute;finissant ainsi la <em>s&eacute;mantique</em> de
+  mini-ML. Pour cela il faut pr&eacute;senter la notion de
+  <em>valeur</em> et de <em>fermeture</em>.</li>
+
+  <li>Apr&egrave;s avoir travaill&eacute; sur plusieurs exemples, on
+  pr&eacute;sente une d&eacute;finition formelle de
+  l'&eacute;valuation, qui est une fonction partielle r&eacute;cursive
+  qui plonge les expressions dans les valeurs.</li>
+
+  <li>Mini-ML est ensuite &eacute;tendu avec les constantes et les
+  op&eacute;rateurs bool&eacute;ens, les <em>n</em>-uplets, la
+  conditionnelle et la liaison locale r&eacute;cursive. Les <em>motifs
+  irr&eacute;futables</em> sont pr&eacute;sent&eacute;s comme une
+  g&eacute;n&eacute;ralisation des variables li&eacute;es par une
+  liaison locale ou une fonction. Ces motifs irr&eacute;futables sont
+  soit une variable, soit un <em>n</em>-uplet de motifs
+  irr&eacute;futables, une parenth&egrave;se de motif
+  irr&eacute;futable ou le symbole joker (typographiquement c'est un
+  tiret bas). Cette extension permet de lier en parall&egrave;le des
+  valeurs &agrave; des variables, introduisant la notion de
+  non-sp&eacute;cification de l'ordre d'&eacute;valuation.</li>
+
+  <li>Les types primitifs d'Objective Caml sont
+  pr&eacute;sent&eacute;s ensuite, ainsi que les d&eacute;finitions de
+  type. Les <em>types polymorphes</em> sont montr&eacute;s sur des
+  exemples comme la fonction identit&eacute; ou la fonctionnelle qui
+  compose deux fonctions. L'algorithme d'inf&eacute;rence de type
+  n'est pr&eacute;sent&eacute; que tr&egrave;s informellement sur ces
+  exemples et d'autres.</li>
+
+  <li>Jusqu'&agrave; pr&eacute;sent l'accent portait plus sur la
+  construction de valeurs que sur leur destructuration, ou
+  <em>filtrage par motifs</em>. Cette notion est donc maintenant
+  pr&eacute;sent&eacute;e comme un moyen commode de d&eacute;finir par
+  cas des fonctions (comme en math&eacute;matiques). Ensuite on
+  pr&eacute;cise la diff&eacute;rence avec les cascades de
+  conditionnelles o&ugrave; les conditions reposent sur
+  l'&eacute;galit&eacute; et donne informellement la s&eacute;mantique
+  du filtrage par motifs.</li>
+
+  <li>Un pas dans la g&eacute;n&eacute;ralisation est encore franchi
+  avec la pr&eacute;sentation des <em>types variants</em> (ou
+  <em>somme</em>), d'abord dans le cas particulier o&ugrave; il
+  &eacute;quivaut &agrave; une &eacute;num&eacute;ration, puis dans sa
+  g&eacute;n&eacute;ralit&eacute; (c'est-&agrave;-dire portant des
+  valeurs). Dualement, les filtres irr&eacute;futables sont
+  pr&eacute;sent&eacute;s comme un cas particulier de motifs. Le
+  pinacle est atteint avec la d&eacute;finition d'un type variant
+  polymorphe r&eacute;cursif isomorphe &agrave; la liste.</li>
+ 
+  <li>Quelques fonctions sur ce type liste sont donn&eacute;es et la
+  syntaxe pr&eacute;d&eacute;finie ensuite. On montre alors qu'on peut
+  g&eacute;n&eacute;raliser et d&eacute;finir ais&eacute;ment le type
+  des arbres binaires et des arbres binaires de recherche. Ceux-ci
+  peuvent &ecirc;tre alors utilis&eacute;s pour implanter des
+  ensembles totalement ordonn&eacute;s.</li>
+
+  <li>Nous donnons un aper&ccedil;u des exceptions d'Objective Caml en
+  les comparant &agrave; celles du langage Java et C++
+  (historiquement, le mod&egrave;le des exceptions de C++ provient des
+  langages de la famille ML, &agrave; laquelle appartient Objective
+  Caml, et les exceptions de Java s'inspirent fortement de celles de
+  C++).</li>
+
+</ul>
+
+<h4>Bibliographie</h4>
+
+<p> Emmanuel Chailloux, Pascal Manoury, and Bruno Pagano,
+<em>D&eacute;veloppement d'applications avec Objective Caml</em>,
+O'Reilly & Associates Inc., Avril 2000.</p>
+
+<h4>&Eacute;valuation</h4>
+
+<p>Examen partiel &eacute;crit (1/3) ou deux quizz, examen final
+&eacute;crit (2/3).</p>
+
+<h4>Ressources en ligne</h4>
+
+<ul>
+  <li><a href="http://www.pps.jussieu.fr/Livres/ora/DA-OCAML/index.html">D&eacute;veloppement d'applications avec Objective Caml</a> (Emmanuel Chailloux,
+      Pascal Manoury, Bruno Pagano)</li>
+
+  <li><a href="http://caml.inria.fr/">Le langage Objective Caml</a></li>
+</ul>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+
+</html>

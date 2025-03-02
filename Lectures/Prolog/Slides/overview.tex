@@ -1,0 +1,300 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Overview of artificial intelligence}
+
+Experts in AI would say that AI is a domain in itself, which is
+neither reducible to computer science nor biology, for instance.
+
+\bigskip
+
+Some experts would probably say that AI pretends to \emph{solve
+complex problems the way humans do}.
+
+\bigskip
+
+Some other AI experts would disagree and say that the goal of AI is to
+solve so hard problems that, somehow, \emph{programs may seem
+intelligent}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Overview/A computer scientist's
+  point of view}
+
+My presentation of AI is not based on history or philosophy or
+cognitive sciences or biology. I will only try to give some
+\textbf{intuitions} and some \textbf{techniques}, as algorithms and
+heuristics, that are useful in practice.
+
+\bigskip
+
+So what is AI, then? 
+
+\bigskip
+
+From our point of view, it is a collection of techniques for solving
+or getting partial or suboptimal solutions to complex or intractable
+problems.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item[\textbf{I.}] \textbf{Overview}
+
+    \begin{itemize}
+
+      \item A computer scientist's point of view
+
+      \item \textbf{Applications}
+
+      \item Symbolic approaches
+
+      \item Connectionist approaches
+
+    \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Overview/Applications}
+
+One reason why some problems are hard to solve is that they may come
+from the interaction between the physical world and the computer,
+considered as a discrete model of the world. 
+
+\bigskip
+
+For instance, how can the computer cope with shape or \textbf{face
+recognition} in signal processing (or \textbf{speech recognition}) and
+improve its success rate given successful and failed samples? 
+
+\bigskip
+
+In this case, part of the difficulty lies in the passage from
+continuity (physical phenomenon) to discontinuity (logical
+abstraction).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Overview/Applications (cont)}
+
+Some problems are difficult because their computational complexity is
+too high (i.e. their solution requires too much computation to be
+realistic) and/or because the data is incomplete, hence the need for
+good approximations.
+
+\bigskip
+
+For instance, find the \textbf{shortest path} from one town to
+another, given the whole map, or play a \textbf{maze game}, without
+the whole map.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Overview/Applications (cont)}
+
+Some problems are difficult because they involve \textbf{automatic
+logical reasoning}. 
+
+\bigskip
+
+For instance, is it possible to assist a physician in establishing a
+diagnosis or help to pinpoint a car failure?
+
+\bigskip
+
+Or, in security analysis: how can we prove this safety theorem about
+this train without pilot?
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Overview/Applications (cont)}
+
+Another approach is more ideological, which consists in modeling some
+biological process, without any specific problem in mind, and then
+find the fruitful problems. 
+
+\bigskip
+
+For instance, some techniques come from a model inspired by the brain,
+called \textbf{abstract neural networks}, or from genetics, called
+\textbf{genetic algorithms}. 
+
+\bigskip
+
+These techniques are nevertheless applied, with various extents of
+success, to unexpected different kinds of problems.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item[\textbf{I.}] \textbf{Overview}
+
+    \begin{itemize}
+
+      \item A computer scientist's point of view
+
+      \item Applications
+
+      \item \textbf{Symbolic approaches}
+
+      \item Connectionist approaches
+
+    \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Overview/Symbolic approaches}
+
+\textbf{Symbolic approaches} are based on formal logic reasoning. 
+
+The rationale is to model objects of the problem, as well as their
+relationships (in time or space), by \textbf{axioms} and
+\textbf{logical rules}. 
+
+\begin{itemize}
+
+  \item An axiom is a fact, something which is true by definition.
+
+  \item A logical rule is an implication, like \(A \Rightarrow B\),
+  allowing to go from axioms to \textbf{theorems}.
+
+  \item A theorem is a formula that can be deduced by logical rules
+  from the axioms.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Overview/Symbolic approaches
+(cont)}
+
+A software assisting the task of proving theorems is called a
+\textbf{proof assistant} or a \textbf{knowledge-based system} (or
+\textbf{expert system}), depending on the abstraction level. 
+
+\bigskip
+
+Proof assistants are used by computer theorists in the framework of
+very expressive logics, in order to prove for instance security
+property for embedded systems (i.e. autonomous vehicles like rockets,
+space robots, subway or plane without pilot, car ignition systems
+etc.).
+
+\bigskip
+
+Expert systems are more similar to a database of domain-specific
+informations and logic rules (simpler than within proof assistants)
+which allow queries to be formulated. Such systems are often used as
+an interactive tool to help an expert diagnose a failure. The
+\textbf{programming language \Prolog} is most famous for such
+applications.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item[\textbf{I.}] \textbf{Overview}
+
+    \begin{itemize}
+
+      \item A computer scientist's point of view
+
+      \item Applications
+
+      \item Symbolic approaches
+
+      \item \textbf{Connectionist approaches}
+
+    \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Overview/Connectionist approaches}
+
+\textbf{Connectionist approaches} are based on the modeling of the
+brain as an \textbf{abstract neural network} whose properties are
+inspired by the electrical behaviour of biological neurons. 
+
+\bigskip
+
+This approach tries to capture the transition between the continuity
+of physical phenomenon (electric waves) and discrete logical units
+(bits) by imitating brain-like structures. 
+
+\bigskip
+
+An interesting question (not answered here) is how information pass
+from one model to another.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Overview/Connectionist approaches (cont)}
+
+Following the brain metaphor, the abstract neural networks are usually
+programmed through \textbf{learning} (or \textbf{supervised
+training}), i.e. by submitting inputs that must be accepted and inputs
+that must be rejected and, each time, adjusting the network parameters
+(called \textbf{weights}) to fit \emph{all} the given examples (accept
+some and reject others).
+
+\bigskip
+
+Next, the network is expected to extrapolate accordingly to its
+learning phase to unknown examples. One application is \textbf{pattern
+recognition} (like bit-map character classification in noisy
+environments).
+
+\end{frame}

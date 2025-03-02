@@ -1,0 +1,9 @@
+Pourquoi ne découvré-je que peu de doublons par rapport
+aux chiffres de l'article? Mon code est-il correct?
+
+Pourquoi l'exploration est-elle si lente? Comment gagner
+du temps? Effectuer un parcours en profondeur avec
+horizon élargi incrémentalement? Générer bourrinement
+tous les noeuds atteints et ne faire de comparaisons
+qu'à la fin en O(N log N)?
+

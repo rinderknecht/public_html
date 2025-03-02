@@ -1,0 +1,122 @@
+%%-*-latex-*-
+
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{ae,aecompl,xspace}
+
+\newcommand{\Java}{\textsf{Java}\xspace}
+\newcommand{\javac}{\textsf{javac}\xspace}
+
+\input{trace}
+
+\title{Conception et réalisation d'un outil de construction de projets Java}
+\author{Christian Rinderknecht}
+
+\begin{document}
+
+\maketitle
+
+Un petit projet en \Java est contenu dans un répertoire et est
+constitué de fichiers d'extension \verb|.java|. Ces fichiers
+contiennent au moins une classe statique de même nom que le fichier et
+d'éventuelles classes auxiliaires. Les classes d'un fichier peuvent
+faire usage d'autres classes et objets définis dans d'autres fichiers,
+créant ainsi des dépendances utilisation-définition entre
+fichiers. Ces mêmes dépendances constituent des dépendances de
+compilation. En effet, si un fichier \texttt{A.java} dépend de
+\texttt{B.java}, alors il faut compiler \texttt{B.java} avant
+\texttt{A.java}. Le compilateur \javac se charge seul de déterminer
+ces dépendances et, en fonction de celles-ci, compile l'ensemble des
+fichiers.
+
+\medskip
+
+Lors de la première construction des \emph{byte-codes}
+(\texttt{*.class}), en supposant que les sources sont livrés, tous les
+fichiers doivent et sont alors effectivement compilés. Mais si l'on
+développe soi-même une application, la commande \texttt{javac *.java}
+ne recompile alors que les fichiers qui ont besoin de l'être pour
+construire le \emph{byte-code}. Par exemple, si, après avoir compilé
+notre exemple, seul \texttt{A.java} est modifié, il faut le recompiler
+mais il n'y a pas besoin de recompiler \texttt{B.java}. En général,
+lorsque l'on construit le \emph{byte-code} d'un fichier, il faut
+déterminer s'il est à jour ou non. Il est à jour si et seulement si il
+est plus récent que le source et, si le source en question dépend
+d'autres sources, si ces sources sont à jour eux aussi. Un
+\emph{byte-code} absent est considéré comme n'étant pas à jour, dans
+le but de déclencher la compilation de son source.
+
+\medskip
+
+Il est possible que des fichiers \Java soient mutuellement dépendants,
+par exemple \texttt{A.java} et \texttt{B.java}. Dans ce cas aussi, la
+commande \texttt{javac A.java B.java} traite la situation. Les
+\emph{byte-codes} d'un ensemble de sources mutuellement dépendants
+sont tous à jour ou tous pas à jour. Si un des sources est plus récent
+que son \emph{byte-code}, alors tous les sources de l'ensemble doivent
+être recompilés, sinon rien n'est fait.
+
+\medskip
+
+Le but de ce projet est de concevoir et de réaliser un petit outil
+qui, étant donné l'ensemble des dépendances de compilation, effectue
+les compilations nécessaires --- et seulement celles-ci --- dans le
+bon ordre et compile ensemble les fichiers mutuellement
+dépendants. Les instructions de compilations ont donc deux formes:
+
+\begin{itemize}
+
+  \item \verb|javac A.java|
+
+  \item \verb|javac A.java B.java| si et seulement si \texttt{A.java}
+  et \texttt{B.java} dépendent mutuellement l'un de l'autre (dans le
+  cas général le nombre de fichiers mutuellement dépendants n'est pas
+  limité \emph{a priori}).
+
+\end{itemize}
+
+\noindent On propose que les dépendances soient consignées dans un
+fichier textuel constitué de lignes de la forme par exemple
+\verb|A: B C|, signifiant que le fichier \texttt{A.java} dépend de
+\texttt{B.java} et \texttt{C.java} (la dépendance entre
+\texttt{B.java} et \texttt{C.java} n'est pas spécifiée). Un autre
+exemple serait:
+\begin{verbatim}
+X: Y
+Y: Z T
+Z: T
+\end{verbatim}
+pour lequel l'unique suite de compilations pour construire
+\texttt{X.class} est (si aucun \emph{byte-code} n'est à jour):
+\begin{verbatim}
+javac T.java
+javac Z.java
+javac Y.java
+javac X.java
+\end{verbatim}
+\noindent En général, l'ordre est-il unique? Ou encore
+\begin{verbatim}
+X: Y
+Y: Z T
+Z: T
+T: Z
+\end{verbatim}
+pour lequel les compilations pour construire \texttt{X.class} sont:
+\begin{verbatim}
+javac Z.java T.java
+javac Y.java
+javac X.java
+\end{verbatim}
+
+L'outil devra se nommer \texttt{build}, prendre en argument sur la
+ligne de commande le nom du fichier de \emph{byte-code} à construire
+et le nom du fichier de dépendance \emph{via} une option \texttt{-d},
+par exemple: \texttt{java build~-d~depend~X}. Il faudra implanter une
+option \texttt{-v} pour afficher en plus les commandes de compilation
+et \texttt{-n} pour seulement afficher les commandes sans les envoyer
+à l'interprète de commandes sous-jacent.
+
+\end{document}

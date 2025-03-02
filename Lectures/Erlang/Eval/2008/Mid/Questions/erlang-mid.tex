@@ -1,0 +1,54 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{verbatim}
+
+\input{trace}
+\input{erlc}
+
+\input{title}
+\author{Christian Rinderknecht}
+\date{25 April 2008}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\noindent A \emph{queue} is a like stack where items are pushed on one
+end and popped on the other end. Adding an item in a queue is called
+\emph{enqueuing}, whereas removing one is called
+\emph{dequeuing}. Compare the following figures:
+\[
+\begin{array}{rr@{\;}cc|c|c|c|c|c|cc@{\;}l}
+\cline{4-10}
+\text{Queue}: & \textsc{Enqueue} & \rightarrow & & a & b & c & d & e &
+& \rightarrow & \textsc{Dequeue}\\
+\cline{4-10}\\
+\cline{4-9}
+\text{Stack}: & \textsc{Push}, \textsc{Pop} & \leftrightarrow & & a &
+b & c & d & e &&&\\
+\cline{4-9}
+\end{array}
+\]
+\noindent Let \texttt{enqueue(E,Q)} be the queue where \texttt{E} is
+the last item in and \texttt{Q} is the remaining queue. Let
+\texttt{dequeue(Q)} be the pair \texttt{\{E,R\}} where \texttt{E} is
+the first item out of queue \texttt{Q} (if there is none,
+\texttt{dequeue(Q)} is undefined) and \texttt{R} is the remaining
+queue.
+
+\bigskip
+
+\input{question_01}
+\input{question_02}
+
+\end{document}

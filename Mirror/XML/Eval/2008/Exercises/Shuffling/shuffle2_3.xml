@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persons>
+   <name>Alan Turing</name>
+   <note>Defined a simple theoretical model of computers</note>
+   <name>Kurt Gödel</name>
+   <note>Proved the incompleteness of arithmetics</note>
+   <note>Prolific author and creator of TeX</note>
+   <note>Proposed a model of concurrency</note>
+</persons>

@@ -1,0 +1,198 @@
+\paragraph{Answers.}
+\begin{enumerate}
+
+  \item The general shape of an \(n\)-bit binary number, written
+    \(b_{n-1}b_{n-2}\dots b_{0}\), is, by definition
+    \[
+    b_{n-1} \times 2^{n-1} + b_{n-2} \times 2^{n-2} + \dots + b_0
+    \]
+    where each \(b_i\) can be either \(0\) or \(1\).
+
+    Therefore, there is two choices for \(b_{n-1}\), two for
+    \(b_{n-2}\) etc. so the total number of choices for \(\{b_{n-1},
+    b_{n-2}, \dots, b_0\}\) is \(\underbrace{2 \times 2 \times \dots
+      \times 2}_{n \; \text{times}} = 2^n\), which is the number of
+    numbers that can be represented by an \(n\)-bit binary number.
+
+    The highest number it can represent, called max\(_n\), is achieved
+    when \(b_i = 1\), for all the \(i\), that is:
+    \begin{equation}
+      \text{max}_{n} = 2^{n-1} + 2^{n-2} + \dots + 2 + 1 \label{max}
+    \end{equation}
+    If we multiply it by \(2\) each sides, we get 
+    \begin{equation}
+      2 \times \text{max}_{n} = 2^{n} + 2^{n-1} + \dots + 2^{2} + 2
+      \label{double_max}
+    \end{equation}
+    Forming \((\ref{double_max}) - (\ref{max})\) we get
+    \begin{align*}
+      2 \times \text{max}_n - \text{max}_n &= 2^{n} - 1\\
+      \text{max}_n &= 2^{n} - 1
+    \end{align*}
+    The smallest number that can be represented is achieved when the
+    \(b_i = 0\), for all \(i\), i.e. \(\text{min}_{n} = 0\).
+
+    By the way, we can check that \(\text{max}_n - \text{min}_n + 1 =
+    2^n\), as expected.
+
+  \item \label{two_complement} The general shape of an \(n\)-bit,
+    \(2\)-complement binary number written \(
+    b_{n-1}b_{n-2}\dots{b_0}\) is
+    \[
+     -b_{n-1} \times 2^{n-1} + b_{n-2} \times 2^{n-2} + \dots + b_0
+    \]
+    Therefore, the lowest number that can be represented is achieved
+    when \(b_{n-1}=1\) and \(b_{n-2}, b_{n-3}, \dots, b_0\) are \(0\):
+    \(\text{min}_n=-2^{n-1}\).
+
+    The highest number is achieved when \(b_{n-1}=0\) and \(b_{n-2},
+    b_{n-3}, \dots, b_0\) are \(1\): \(\text{max}_n = 2^{n-2} +
+    2^{n-3} + \dots + 1 = 2^{n-1} - 1\).
+
+    The total number of numbers that can be represented is thus
+    \[
+     \text{max}_n - \text{min}_n + 1 = 2^{n-1} - 1 + 2^{n-1} + 1 = 2^{n}
+    \]
+    This is, of course, the same number as with the (unsigned) binary
+    numbers.
+
+  \item When \(0 \leqslant d_i \leqslant 9\), for all \(i\).
+
+  \item Consider the \(n\)-bit binary number general form:
+    \[
+     b_{n-1} 2^{n-1} + b_{n-2} 2^{n-2} + \dots + b_1 2 + b_0
+    \]
+    We can group the bits by groups of three, from right to left:
+    \[
+     \dots + (b_8 2^8 + b_7 2^7 + b_6 2^6) + (b_5 2^5 + b_4 2^4 + b_3 2^3)
+     + (b_2 2^2 + b_1 2 + b_0) 
+    \]
+    We can factorise \(2^3\), \(2^6\) etc. and get
+    \[
+     \dots + (b_8 2^2 + b_7 2 + b_6) \times 2^6 + (b_5 2^2 + b_4 2 + b_3)
+     \times 2^3 + (b_2 2^2 + b_1 2 + b_0)
+    \]
+    That is, since \(8 = 2^3\) and \(x^{pq} = (x^p)^q\), then \(2^{3q}
+    = (2^3)^q = 8^q\) and
+    \[
+     \dots + (b_8 2^2 + b_7 2 + b_6) \times 8^2 + (b_5 2^2 + b_4 2 + b_3)
+     \times 8^1 + (b_2 2^2 + b_1 2 + b_0) \times 8^0
+    \]
+    Therefore, in order to convert an octal number to its equivalent
+    binary representation, we convert separately its digits into
+    binary and simply catenate them.
+
+  \item Because there are no carries produced by the \(1\)-bit
+    multiplications. When multiplying a number \(N\) by \(M\), from
+    right to left, every time a bit of \(M\) is \(1\), then \(N\) is
+    the partial result; else it is \(0\). The final addition can imply
+    carries, of course, but the first stage is very easy (copy \(N\)
+    or write \(0\)).
+
+  \item The general shape of an \(n\)-bit, \(2\)-complement binary
+    number written \( b_{n-1}b_{n-2}\dots{b_0}\) is
+    \[
+     -b_{n-1} \times 2^{n-1} + b_{n-2} \times 2^{n-2} + \dots + b_0
+    \]
+    If the leftmost bit is \(1\) then the number is negative. Why?
+    Assume that in an \(n\)-bit \(2\)-complement number, the leftmost
+    bit is \(1\). Then the highest positive value that can be formed
+    with the remaining \(n-1\) bits is having only \(1\)s. In other
+    words, the \(n\) bits are all \(1\)s. So this number is
+    \[
+     N = -2^{n-1} + 2^{n-2} + 2^{n-3} + \dots + 2 + 1
+    \]
+    We proved earlier that
+    \[
+    2^{n-1} + 2^{n-2} + \dots + 2 + 1 = 2^n - 1
+    \]
+    So
+    \[
+    N = -2^{n-1} + (2^{n-1} - 1) = -1 < 0
+    \]
+    If the leftmost bit is \(0\) then the number is positive. Why?
+    Because it is simply of the form
+    \[
+    0 \times 2^{n-1} + b_{n-2} 2^{n-2} + b_{n-3} 2^{n-3} + \dots + b_1 2 +
+    b_0 \geqslant 0
+    \]
+
+  \item Yes, it can fail. Consider again
+    question~\ref{two_complement}: the numbers that can be coded as an
+    \(n\)-bit, \(2\)-complement binary number range from \(-2^{n-1}\)
+    to \(2^{n-1}-1\). Therefore the negation of \(-2^{n-1}\) is out of
+    range (overflow).
+
+  \item
+From the truth table, we build a Karnaugh map. The unspecified values
+of \(F\) are represented by \(a\), \(b\), \(c\) and \(d\). The ranges
+where a given variable is \(1\) are given around the map.
+\begin{center}
+\kvnoindex
+\karnaughmap{4}{{$F$}:}{{$C$}{$A$}{$D$}{$B$}}{1{$a$}1{$b$}10{$c$}01101{$d$}000}{}
+\end{center}
+In order to find the simplest sum of products, we can choose values
+for \(a\), \(b\), \(c\) and \(d\) that suit best the groupings of
+\(1\)'s in the map. There are several possibilities. An optimum
+covering is achieved if \(a=b=c=d=1\). The corresponding min-terms
+lead to \(F_1\):
+\[
+F_1 = \overline{A}\,B + \overline{B}\,\overline{C} +
+\overline{B}\,\overline{D}
+\]
+\begin{center}
+\karnaughmap{4}{{$F_1$}:}{{$C$}{$A$}{$D$}{$B$}}{1{\textbf{1}}1{\textbf{1}}10{\textbf{1}}01101{\textbf{1}}000}{%
+\put(2.5,2){\oval(.8,3.7)}
+\put(0,1.5){\oval(1.8,0.8)[r]}
+\put(4,1.5){\oval(1.8,0.8)[l]}
+}
+\end{center}
+Other variable assignments with optimum covering are possible:
+\begin{align*}
+F_2 &= \overline{A}\,B + \overline{A}\,\overline{C} +
+\overline{B}\,\overline{D}\\
+F_3 &= \overline{A}\,B + \overline{A}\,\overline{D} +
+\overline{B}\,\overline{C}
+\end{align*}
+\begin{center}
+\karnaughmap{4}{{$F_2$}:}{{$C$}{$A$}{$D$}{$B$}}{1{\textbf{1}}1{\textbf{1}}10{\textbf{0}}01101{\textbf{1}}000}{%
+\put(1,3){\circle{2}}
+\put(0,0){\oval(1.9,1.9)[rt]}
+\put(0,4){\oval(1.9,1.9)[rb]}
+\put(4,0){\oval(1.9,1.9)[lt]}
+\put(4,4){\oval(1.9,1.9)[lb]}
+\put(1.5,2){\oval(.8,3.7)}
+}
+\karnaughmap{4}{{$F_3$}:}{{$C$}{$A$}{$D$}{$B$}}{1{\textbf{1}}1{\textbf{1}}10{\textbf{1}}01101{\textbf{0}}000}{%
+\put(1.5,2){\oval(.8,3.7)}
+\put(0,3){\oval(1.9,1.9)[r]}
+\put(1,0){\oval(1.9,1.9)[t]}
+\put(1,4){\oval(1.9,1.9)[b]}
+\put(4,3){\oval(1.9,1.9)[l]}
+}
+\end{center}
+In order to find the simplest product of sums, we can choose
+\emph{different} values for \(a\), \(b\), \(c\) and \(d\), since the
+only constraint is given by the truth table and any choice would agree
+with it. A different value assignment would yield a different function
+\(F\), but this does not matter, only the part of \(F\) which is
+constrained by the table.
+
+An optimum covering of \(0\)'s is achieved if we take \(F_1\) again:
+\[
+F_1 = (\overline{A} + \overline{B}) (B + \overline{C} + \overline{D})
+\]
+\begin{center}
+\karnaughmap{4}{{$F_1$}:}{{$C$}{$A$}{$D$}{$B$}}{1{\textbf{1}}1{\textbf{1}}10{\textbf{1}}01101{\textbf{1}}000}{%
+\put(0,3){\oval(1.9,1.9)[r]}
+\put(4,3){\oval(1.9,1.9)[l]}
+\put(0,0){\oval(1.9,1.9)[rt]}
+\put(0,4){\oval(1.9,1.9)[rb]}
+\put(4,0){\oval(1.9,1.9)[lt]}
+\put(4,4){\oval(1.9,1.9)[lb]}
+\put(1.5,2){\oval(.8,3.7)}
+}
+\end{center}
+
+\end{enumerate}
+

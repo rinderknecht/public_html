@@ -1,0 +1,261 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{What is the Internet?}
+
+Millions of connected computing devices, called \textbf{end systems}
+(PCs, workstations, servers, PDAs, phones, game consoles etc.),
+running network applications, i.e., software for accessing and using
+the network.
+
+\bigskip
+
+End systems are also called \textbf{hosts}. Hosts are sometimes
+divided into \textbf{clients} and \textbf{servers}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{What is the Internet? (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.28]{01-01.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{What is the Internet? (cont)}
+
+\textbf{Communication links}, e.g., fiber optics, copper wire, radio
+wave, satellite, connect hosts to each other; the transmission rate is
+called \textbf{bandwidth} (measured in bits per seconds, or
+``bit/sec'').
+
+\bigskip
+   
+The \textbf{routers} are located between hosts; they receive
+\textbf{packets} (chunks of data) from originating hosts and forward
+them to their destination hosts.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{What is the Internet? (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.28]{01-01.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{What is the Internet? (cont)}
+
+Hosts access the Internet through \textbf{Internet Service Providers}
+(ISP), which are networks proposing many different kinds of
+connections to the users: dial-up modem, cable modem (DSL), high-speed
+Local Area Network (LAN) access, wireless access.
+
+\bigskip
+
+There are ISPs in universities, companies and for residents.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{What is the Internet? (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.28]{01-01.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{What is the Internet? (cont)}
+
+ISPs are connected to others ISPs in a hierarchy: at the bottom lie
+the content providers ISPs and, at the top, the international ISPs
+(such as UUNet and Sprint) with high-speed routers interconnected with
+high-speed fiber-optics links.
+
+\bigskip
+
+So, what is the Internet? 
+
+\begin{itemize}
+
+  \item As the name tells it (\emph{Inter\/}connected \emph{net\/}works),
+  it is a worldwide system of computer networks: \textbf{a network of
+  networks} with a loose hierarchy.
+
+  \item These networks share the same \textbf{protocols}, i.e., ways
+  of representing information (packets) and rules for accepting,
+  refusing or sending messages.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{What is the Internet? (cont)}
+
+\begin{itemize}
+
+  \item This network of networks is called \textbf{public Internet}. 
+
+  \item Many companies have developed private networks based on the
+  same hosts, links, routers and protocols as the public Internet:
+  they are called \textbf{intranets}. 
+
+  \item These intranets are connected to the (public) Internet
+  through \textbf{firewalls}, which filter and restrict the
+  information flows in and out.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{What is the Internet? (cont)}
+
+\begin{itemize}
+
+  \item Some Internet protocol names are \textsc{http} (for the Web),
+  \textsc{tcp}, \textsc{ip}, \textsc{ftp} (file transfer protocol),
+  \textsc{ppp} (for modem connection), \textsc{smtp} (e-mails) etc.
+
+  \item Internet standards are developed by the \textbf{Internet
+  Engineering Task Force} (IETF).
+
+  \item The IETF standards documents are called \textbf{Requests For
+  Comments} (RFC).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{What is the Internet?/A service view}
+
+\begin{itemize}
+
+  \item The Internet allows applications that inter-operate to run on
+  the hosts. These are called \textbf{distributed applications} and
+  include remote login, e-mail, web surfing, instant messaging, audio
+  and video streaming, Internet telephony, distributed games,
+  peer-to-peer (P2P) file sharing, voting, databases etc.
+
+  \item The network provides services to the distributed
+  applications, i.e., networking\hyp{}oriented features that
+  programmers can use when they write such an application. Typically
+  there are \textbf{connection-oriented services} and
+  \textbf{connectionless services}.
+
+  \item A connection-oriented service is \textbf{reliable}: it
+  guarantees that the data is delivered in order and entirely. A
+  connectionless service is \textbf{unreliable}: it guarantees
+  nothing about delivery.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{What is the Internet?/Protocols}
+
+What is a protocol?
+
+\begin{itemize}
+
+  \item Protocols are part of human relationships. When we meet a
+  friend we start greeting him (`Hi!') and wait for the similar
+  greeting. If it does not come or if some unpleasant words come back,
+  we understand that the communication will not be possible or
+  not good. Otherwise, we go on talking.
+
+  \item The machine counterpart of this introduction is a
+  connection-oriented service: first the sending application informs
+  the remote application that it wants to communicate (i.e., exchange
+  data). The remote application must acknowledge that before data is
+  sent.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{What is the Internet?/Protocols (cont)}
+
+\begin{itemize}
+ 
+  \item The conversation between friends is similar to the data
+  transmission, from one application to another.
+
+  \item So, in human protocols, some specific messages are exchanged
+  (e.g., greetings, goodbyes) and some specific actions are taken when
+  messages are received or other events happen.
+
+  \item Similarly network protocols define format and order of
+    messages exchanged between hosts as well as actions to be taken
+    upon message receipt or transmission.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{What is the Internet?/Protocols (cont)}
+\label{protocols}
+
+\begin{center}
+\includegraphics[scale=0.3]{01-02.eps}
+\end{center}  
+ 
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{A closer look at the network structure}
+
+\begin{itemize}
+
+  \item The \textbf{network edge} is made of the hosts and their
+  applications. 
+
+  \item The \textbf{network core} is made of the routers and the
+  protocols that enable the network of networks.
+
+  \item The \textbf{access network} is the communication links.
+
+\end{itemize}
+
+\end{frame}

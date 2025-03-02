@@ -1,0 +1,4 @@
+<!ELEMENT numbers (hexa+)>
+
+<!ELEMENT hexa EMPTY>
+<!ATTLIST hexa val CDATA #REQUIRED>

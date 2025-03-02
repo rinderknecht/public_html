@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Counting Sections in a Table of Contents</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Counting Sections in a Table of Contents</h2>
+
+<p><strong>Question.</strong> The purpose of this exercise is to write
+  an XSLT transform which takes as input a table of contents and
+  computes the number of sections (only).
+</p>
+
+<p><strong>Example.</strong> <a href="./toc.xml">This</a> is an
+  example of input document and <a href="./count1.txt">this</a> is the
+  corresponding output. You need to fetch
+  the <a href="./book.dtd">DTD</a> corresponding to run this example.
+</p>
+
+<strong>Hints.</strong>
+<ul>
+
+  <li> The idea is to match the root element, then select the first
+  level of sections, just below the chapters. This sequence of section
+  nodes is passed to a template named <tt>count</tt>, whose job is to
+  count all the sections in it. If this sequence of sections is empty,
+  the answer is <tt>0</tt>. Otherwise,
+  <ol>
+
+    <li> we call recursively <tt>count</tt> on the subsections of the
+    first section;</li>
+
+    <li> this number plus one is the number of sections in the first
+    section (including itself) of the sequence;</li>
+
+    <li> finally call recursively <tt>count</tt> on the rest of the
+    sequence (i.e., the remaining sections) and add this number to the
+    previous one: the total is the result.</li>
+
+  </ol></li>
+
+  <li> Note that the two recursive calls can be interchanged. In the
+  former case (first call on the children of the first node, second
+  call on the following siblings), the tree traversal
+  is <em>depth-first</em>.</li>
+
+</ul>
+
+<strong>Answers.</strong>
+<ul>
+
+  <li> The following solution is based on a <a href="./count1.xsl">
+  depth-first traversal</a>, that is, children are visited before
+  siblings.</li>
+
+  <li> The following transform visits
+  the <a href="./count2.xsl">siblings before the children</a>.</li>
+
+  <li> <a href="./count3.xsl">This</a> solution is based on a
+  depth-first traversal with an extra-parameter for the current number
+  of sections already visited (this is an <em>accumulator</e>). Note
+  how the case of the empty sequence yields the current count instead
+  of <tt>0</tt>, as opposed to previous versions.</li>
+
+  <li> <a href="./count4.xsl">This</a> transform is the same as the
+  previous one but the variable <tt>subsec</tt> is eliminated by
+  expansion in the second recursive call. Note the use of
+  a <em>default value</em> for parameter <tt>current</tt>, thus
+  avoiding to initialise it in the first call (in the template
+  matching element <tt>book</tt>).</li>
+
+</ul>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

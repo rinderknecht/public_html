@@ -1,0 +1,36 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{vaucanson-g}
+\usepackage{pst-eps}
+
+%\ShowGrid
+ 
+\begin{document}
+
+\TeXtoEPS
+\VCDraw{%
+\begin{VCPicture}{(0,0)(6,6)}
+% States
+\LargeState\State[\textrm{\small jim}]{(2,0)}{jim}
+\LargeState\State[\textrm{\small ann}]{(0,2)}{ann}
+\LargeState\State[\textrm{\small pat}]{(4,2)}{pat}
+\LargeState\State[\textrm{\small bob}]{(2,4)}{bob}
+\LargeState\State[\textrm{\small liz}]{(6,4)}{liz} 
+\LargeState\State[\textrm{\small pam}]{(0,6)}{pam}
+\LargeState\State[\textrm{\small tom}]{(4,6)}{tom}
+
+% Edges
+\Edge{pam}{bob}
+\Edge{tom}{bob}
+\Edge{tom}{liz}
+\Edge{bob}{ann}
+\Edge{bob}{pat}
+\Edge{pat}{jim}
+
+\end{VCPicture}
+}
+\endTeXtoEPS
+
+\end{document}

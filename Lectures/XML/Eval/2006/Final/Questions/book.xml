@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book>
+  <title>The XML Book</title>
+  <author>John Doe</author>
+  <intro>I</intro>
+  <chapter title="Alpha">
+    <quote author="Smith">Foo</quote>
+    <section title="V">A</section>
+    <section title="W">B</section>
+  </chapter>
+  <chapter title="Beta">
+    Foreword
+    <section title="X">
+      C
+      <section title="Y">D</section>
+      C'
+    </section>
+  </chapter>
+  <chapter title="Gamma">
+    <section title="Z">E</section>
+  </chapter>
+</book>

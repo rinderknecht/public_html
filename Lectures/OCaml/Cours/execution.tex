@@ -1,0 +1,461 @@
+%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Évaluation des programmes mini-ML}
+
+L'évaluation d'une expression (donc d'un programme) est une fonction
+partielle des expressions vers les \emph{valeurs}. 
+
+\bigskip
+
+Le fait que la fonction soit partielle modélise le fait qu'une
+évaluation peut ne pas terminer ou s'interrompre pour cause d'erreur.
+
+\bigskip
+
+Les valeurs $v$ de mini-ML sont presqu'un sous-ensemble strict des
+expressions défini récursivement par les cas suivants:
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{unité ou constante entière}
+  & \unit \ ou \textsf{0} ou \textsf{1} ou \textsf{2} etc.\\
+    $\bullet$
+  & \textcolor{blue}{fermeture}
+  & $\langle\Xfun \,\, x \rightarrow e, \rho\rangle$\\
+ && où $\rho$ est un environnement.\\
+  & 
+  & Pour les opérateurs: $\langle\lpar{\texttt{+}}\rpar, \rho\rangle$ etc.
+\end{tabular}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Fermeture, liaison et environnement (le retour)}
+
+Une \emph{fermeture} est une sorte de paire faite d'une fonction et
+d'un environnement. Cela signifie en particulier que les fonctions
+font partie des valeurs, c.-à-d. qu'elles peuvent être le résultat de
+l'évaluation d'un programme mini-ML (cf. exemple
+page~\pageref{maths}): \emph{c'est la caractéristique d'un langage
+fonctionnel}.
+
+\bigskip
+
+Pour définir l'évaluation nous devons modifier le concept de liaison:
+une liaison associe maintenant une variable à une \emph{valeur} (et
+non plus une expression).
+
+\bigskip
+
+L'évaluation (donc peut-être la valeur) dépendra de l'environnement au
+lieu où se trouve l'expression.
+
+Notons $(x \mapsto v) \oplus \rho$ l'ajout d'une liaison $x \mapsto v$
+dans $\rho$ (en tête).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Évaluation des programmes mini-ML (suite)}
+
+Pour chaque expression $e$ nous définissons une règle d'évaluation
+dans un environnement $\rho$ qui donne la valeur $v$:
+
+\begin{tabular}{rll}
+    $\bullet$
+  & $x$ 
+  & Chercher la \emph{première} valeur associée à $x$\\
+ && dans $\rho$.\\
+    $\bullet$
+  & $\Xfun \,\, x \rightarrow e$
+  & La valeur est $\langle\Xfun \,\, x \rightarrow e, \rho\rangle$.\\
+    $\bullet$
+  & \texttt{+} \ \texttt{-} \ \texttt{/} \ \texttt{*}
+  & La valeur est $\langle\lpar\texttt{+}\rpar, \rho\rangle$ etc.\\
+    $\bullet$
+  & $e_1$ \texttt{+} $e_2$ \ etc.
+  & Évaluer $e_1$ et $e_2$ dans $\rho$ et sommer, etc.\\
+    $\bullet$
+  & \unit \ ou \textsf{0} ou \textsf{1} ou \textsf{2} etc.
+  & La valeur est \unit{} ou \textsf{0} ou \textsf{1} etc.\\
+    $\bullet$
+  & $\lpar{e}\rpar$
+  & Évaluer $e$ dans $\rho$.
+\end{tabular}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Évaluation des programmes mini-ML (suite)}
+\label{semantique_let_in}
+
+\begin{tabular}{rll}
+    $\bullet$
+  & $\Xlet \,\, x = e_1 \,\, \Xin \,\, e_2$
+  & Évaluer $e_1$ en $v_1$ dans $\rho$;\\
+  & 
+  & évaluer $e_2$ en $v$ dans $(x \mapsto v_1) \oplus \rho$.\\
+    $\bullet$
+  & $e_1 \,\, e_2$
+  & Évaluer $e_1$ et $e_2$ en $v_1$ et $v_2$ dans $\rho$\\
+  &
+  & (l'ordre n'est pas spécifié);\\
+  &
+  & $v_1$ doit être de la forme $\langle\Xfun \,\, x \rightarrow
+    e,\rho'\rangle$;\\
+  &
+  & évaluer $e$ dans $(x \mapsto v_2) \oplus \rho'$: la valeur est $v$.
+\end{tabular}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Exemple d'évaluation}
+\label{exemple_eval_informelle}
+
+L'environnement est initialement vide: $\rho = \{\}$. Évaluons
+{\small
+\begin{verbatim}
+let x = 0 in
+  let id = fun x -> x in
+  let y = id (x) in
+  let x = (fun x -> fun y -> x + y) 1 2 
+in x+1;;
+\end{verbatim}
+}
+\begin{itemize}
+
+  \item L'évaluation de {\small \verb|let x = 0 in ...|} impose
+    d'évaluer d'abord \texttt{0} qui vaut $0$. Ensuite on crée la
+    liaison $\ident{x} \mapsto 0$, on l'ajoute à~$\rho$, ce qui donne
+    $\{\ident{x} \mapsto 0\}$, et on évalue la sous-expression élidée
+    dans ce nouvel environnement.
+
+  \item L'évaluation de {\small \verb|let id = fun x -> x in ...|} se
+    fait dans l'environnement $\{\ident{x} \mapsto 0\}$. La valeur $v$
+    est alors la fermeture $\langle\Xfun \,\, \ident{x} \rightarrow
+    \ident{x}, \{\ident{x} \mapsto 0\}\rangle$. On étend
+    l'environnement courant avec $\ident{id} \mapsto v$ et on évalue
+    la sous-expression avec.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Exemple d'évaluation (suite)}
+
+\begin{itemize}
+
+  \item L'évaluation de {\small \verb|let y = id (x) in ...|} se fait
+    dans l'environnement $\{\ident{id} \mapsto \langle\Xfun \,\,
+    \ident{x} \rightarrow \ident{x}, \{\ident{x} \mapsto 0\}\rangle;
+    \ident{x} \mapsto 0\}$.
+  \begin{itemize}
+
+    \item On évalue d'abord \verb|id(x)| dans l'environnement
+      courant. Pour cela on évalue \texttt{id} et \texttt{x}
+      séparément. Ce sont tous deux des variables, donc on cherche
+      dans l'environnement la première liaison de même nom. La valeur
+      de \texttt{id} est donc $\ident{id} \mapsto \langle\Xfun \,\,
+      \ident{x} \rightarrow \ident{x}, \{\ident{x} \mapsto 0\}\rangle$
+      et celle de \texttt{x} est 0. Il faut évaluer \texttt{x} dans
+      l'environnement $(\ident{x} \mapsto 0) \oplus \{\ident{x}
+      \mapsto 0\}$, ce qui donne 0.
+
+    \item On crée la liaison $\ident{y} \mapsto 0$, on l'ajoute à
+    l'environnement courant et on évalue la sous-expression élidée
+    avec le nouvel environnement.
+ 
+  \end{itemize}
+
+  \item L'évaluation de {\small
+    \verb|let x = (fun x -> fun y -> x + y) 1 2 in ...|} se fait dans
+    l'environnement $\{\ident{y} \mapsto 0; \ident{id} \mapsto
+    \langle\Xfun \,\, \ident{x} \rightarrow \ident{x}, \{\ident{x}
+    \mapsto 0\}\rangle; \ident{x} \mapsto 0\}$.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Évaluation formelle des programmes mini-ML}
+
+Si on note $\evalf{e}{\rho}$ la valeur obtenue en évaluant
+l'expression $e$ dans l'environnement $\rho$, alors nous pouvons
+résumer l'évaluation des programmes mini-ML ainsi:
+\begin{align*}
+\evalf{\overline{n}}{\rho} &= \dot{n} \ \ \textnormal{où $\overline{n}$
+  est un entier mini-ML et $\dot{n} \in \mathbb{N}$}\\
+\evalf{e_1 \, \texttt{+} \, e_2}{\rho} &= \evalf{e_1}{\rho} +
+\evalf{e_2}{\rho} \ \ \textnormal{etc.}\\ 
+\evalf{\lpar{e}\rpar}{\rho} &= \evalf{e}{\rho}\\
+\evalf{x}{\rho} &= \rho(x) \ \ \textnormal{(la première liaison de $x$ dans $\rho$)}\\
+\evalf{\Xfun \,\, x \rightarrow e}{\rho} &= \langle\Xfun \,\, x
+\rightarrow e, \rho\rangle\\
+\evalf{\Xlet \,\, x = e_1 \,\, \Xin \,\, e_2}{\rho} &= \evalf{e_2}{((x
+  \mapsto \evalf{e_1}{\rho}) \oplus \rho)}\\
+\evalf{e_1 \,\, e_2}{\rho} &= \evalf{e}{((x \mapsto \evalf{e_2}{\rho})
+  \oplus \rho')}\\
+&\phantom{=\llbracket} \textnormal{où} \ \evalf{e_1}{\rho} = \langle\Xfun \,\, x
+\rightarrow e,\rho'\rangle
+\end{align*}
+L'évaluation consiste à appliquer les équations de la gauche vers la
+droite jusqu'à la terminaison (s'il y a) ou une erreur (à
+l'exécution).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Exemples}
+
+On établit directement que $\evalf{\lpar\Xfun \; x \rightarrow
+e_2\rpar \; e_1}{\rho} = \evalf{\Xlet \,\, x = e_1 \,\, \Xin \,\,
+e_2}{\rho}$,\\ c.-à-d. que la liaison locale n'est pas nécessaire en
+théorie.
+
+\bigskip
+
+Reprenez la description informelle de l'évaluation du programme
+page~\pageref{exemple_eval_informelle} et donnez-en une description
+formelle.
+
+\bigskip
+
+Pour mieux comprendre la nécessité des fermetures, décrivez
+l'évaluation de
+{\small
+\begin{verbatim}
+let x = 1 in
+  let f = fun y -> x + y in
+  let x = 2
+in f(x)
+\end{verbatim}
+}
+et du programme page~\pageref{un_autre_programme}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Exercices}
+
+\begin{itemize}
+
+  \item Quelle différences y a-t-il entre 
+
+  \begin{itemize}
+  
+    \item $f \, x \, y$
+
+    \item $(f \, x) \, y$
+
+    \item $f \, (x \, y)$
+
+    \item $(f \, (x)) \, (y)$
+
+  \end{itemize}
+
+  \item Quelle différences y a-t-il entre 
+  \begin{itemize}
+
+    \item $f$
+
+    \item $\Xfun \,\, x \rightarrow f \, x$
+
+    \item $\Xfun \,\, x \, y \rightarrow f \, x \, y$
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Solution}
+
+La seconde expression retarde l'évaluation jusqu'à ce que le premier
+argument soit fourni.
+
+\bigskip
+
+La dernière retarde l'évaluation jusqu'à ce que les deux arguments
+soient fournis.
+
+\bigskip
+
+Cela peut délaisser ou dupliquer certains calculs:
+
+\bigskip
+
+\excerpt{let f x = let z = print\_int x in fun y -> x + y}
+
+\excerpt{let test g = let h = g(1) in h(2) + h(3)}
+
+\topin{test f}
+
+\topout{1- : int = 7}
+
+\topin{test (fun x y -> f x y)}
+
+\topout{11- : int = 7}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Applications partielles et complètes}
+\label{application_partielle}
+
+Si les fonctions sont des valeurs, elles peuvent être retournées en
+résultat (c.-à-d. être la valeur d'une application). Par exemple:
+{\small
+\begin{verbatim}
+let add = fun x -> fun y -> x + y in
+  let incr = add 1                     (* incr est une fonction *)
+in incr 5;;
+\end{verbatim}
+} On parle d'application \emph{partielle}, par opposition à
+application \emph{complète}, qui ne retourne pas de fonction, comme
+(\verb|add 1 5|). Les opérateurs peuvent aussi être utilisés en
+position préfixe dans une expression en les parenthèsant:
+$\lpar\texttt{+}\rpar \; \num{1} \; \num{2}$. Comme toute application,
+les opérations peuvent être aussi partiellement évaluées: {\small
+\begin{verbatim}
+let incr = (+) 1  (* incr est une fonction *)
+in incr 5;;
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Non-terminaison}
+
+En théorie, nous pouvons d'ores et déjà calculer avec mini-ML
+tout ce qui est calculable avec l'ordinateur sous-jacent. Par exemple,
+nous avons déjà la récurrence, comme le montre le programme suivant
+qui ne termine pas:
+\begin{center}
+\verb|let omega = fun f -> f f in omega omega|
+\end{center}
+Cela se manifeste par
+\begin{gather*}
+\evalf{\texttt{\small let omega = fun f -> f f in omega omega}}{\rho}\\
+\begin{align*}
+&= \evalf{\texttt{\small omega omega}}{((\texttt{\small omega} \mapsto
+\evalf{\texttt{\small fun f -> f f}}{\rho}) \oplus \rho)}\\
+&= \evalf{\texttt{\small f f}}{((\texttt{\small f} \mapsto
+    \langle\texttt{\small fun f -> f f},\rho\rangle) \oplus \rho)}\\
+&= \textnormal{\emph{idem}}
+\end{align*}
+\end{gather*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Fonctions récursives}
+
+Pour mettre en évidence la puissance de mini-ML, voyons comment
+définir des fonctions récursives à l'aide de la fonction
+auto-applicative \texttt{\small omega}.
+
+\bigskip
+
+Définissons d'abord une fonction \texttt{\small fix},
+traditionnellement appelée le \emph{combinateur Y de point fixe de
+Curry}:
+\begin{verbatim}
+let omega = fun f -> f f;;
+let fix = fun g -> omega (fun h -> fun x -> g (h h) x);;
+\end{verbatim}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Point fixe d'une fonction}
+
+On démontre (péniblement) que pour toute fonction $f$ et variable $x$:
+$$\evalf{\lpar\ident{fix} \; f\rpar{} \, x}{\rho} = \evalf{f \;
+  \lpar\ident{fix} \; f\rpar{} \, x}{\rho}$$
+
+En d'autre termes, pour tout \ident{x} on a $\lpar\ident{fix} \; f\rpar{}
+\; x \, \equiv f \; \lpar\ident{fix} \; f\rpar{} \; x$, soit
+$\lpar\ident{fix} \; f\rpar{} \equiv f \; \lpar\ident{fix} \; f\rpar$
+
+\bigskip
+
+D'autre part, par définition, le point fixe $p$ d'une fonction $f$
+vérifie $p = f(p)$. Donc le point fixe d'une fonction \ident{f},
+\emph{s'il existe}, est \lpar\ident{fix} \ident{f}\rpar{}.
+
+\bigskip
+
+Il est possible de définir la sémantique (c.-à-d. l'évaluation) d'une
+famille d'opérateurs de point fixes (et non d'un seul comme
+précédemment) en posant qu'un tel opérateur doit satisfaire
+$$\evalf{\ident{fix} \,\, e}{\rho} = \evalf{e_1}{(f \mapsto
+  \evalf{\ident{fix} \, \lpar\Xfun \, f \rightarrow e_1\rpar}{\rho}
+  \oplus \rho')}$$ où $\evalf{e}{\rho} = \langle\Xfun \, f \rightarrow
+e_1,\rho'\rangle$
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Factorielle et cas général}
+
+% Posons
+{\small
+\begin{semiverbatim}
+let pre_fact =
+  \textcolor{blue}{fun f ->} fun n -> if n=1 then 1 else n * \textcolor{blue}{f}(n-1);;
+let fact = fix pre_fact;;
+\end{semiverbatim}
+}
+Donc \texttt{\small fact} est le point fixe de \texttt{\small
+pre\_fact}, s'il existe, c'est-à-dire
+\begin{align*}
+\evalf{\texttt{\small fact}}{\rho} &= \evalf{\texttt{\small pre\_fact
+    (fact)}}{\rho}\\
+&= \evalf{\texttt{\small fun n -> if n=1 then 1 else n * fact(n-1)}}{\rho}
+\end{align*}
+Donc \texttt{\small fact} est la fonction factorielle (équation de
+récurrence). On peut alors prédéfinir un opérateur de point fixe
+\texttt{\small fix} (qui n'est pas forcément celui de Curry) et
+permettre au programmeur de s'en servir directement, mais nous allons
+plutôt doter mini-ML d'une liaison récursive native:
+$$\evalf{\Xlet \, \Xrec \; f = e_1 \, \Xin \, e_2}{\rho} =
+\evalf{\Xlet \; f = \textsf{fix} \, \lpar\Xfun \, f \rightarrow
+e_1\rpar \, \Xin \, e_2}{\rho}$$
+
+\end{frame}

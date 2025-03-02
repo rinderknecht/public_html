@@ -1,0 +1,200 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{ae,aecompl}
+
+\usepackage{xspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathpartir}
+
+\input{commands}
+\input{ocaml_syntax}
+\input{trace}
+
+\title{Examen de compilation}
+\author{Christian Rinderknecht}
+\date{Lundi 2 février 2004}
+
+\begin{document}
+
+\maketitle
+
+\centerline{\textbf{Durée: deux heures. Documents et calculatrices interdits.}}
+
+
+\section{Syntaxe}
+
+\begin{enumerate}
+
+  \item Soient les non-terminaux \texttt{Expression}, \texttt{Term},
+  \texttt{Sign}, \texttt{Factor} et \texttt{Expressions}. Soit
+  \texttt{Expressions} le symbole de départ. Soient les terminaux
+  \texttt{number} et \texttt{ident}. Soit \texttt{epsilon} le mot vide
+  ($\varepsilon$). Soient les productions
+  {\small
+  \begin{verbatim}
+Expressions ::= Expression
+              | Expression "," Expressions
+Expression  ::= Term
+              | Expression "+" Term
+Term        ::= Sign Factor
+              | Term "*" Sign Factor
+Sign        ::= epsilon
+              | "-"
+Factor      ::= ident
+              | number
+              | "(" ")"
+              | "(" Expression ")"
+              | Factor "(" ")"
+              | Factor "(" Expressions ")"
+  \end{verbatim}
+  }
+  \noindent Questions:
+  \begin{enumerate}
+
+    \item Factorisez la grammaire à gauche et supprimez les récursions à
+    gau\-che.
+
+    \item Pour chaque non-terminal de cette nouvelle grammaire,
+    calculez ses ensembles de premiers lexèmes (${\cal P}$) et de
+    lexèmes suivants (${\cal S}$).
+
+    \item En déduire quels sont les non-terminaux qui peuvent dériver
+    $\varepsilon$.
+
+    \item Construisez la table d'analyse descendante. La grammaire
+    est-elle LL(1)?
+
+    \item Donnez une grammaire équivalente en EBNF (question indépendan\-te).
+
+  \end{enumerate}
+
+  \item Trouvez une grammaire EBNF non récursive qui spécifie la
+  syntaxe des nombres à virgule flottante dont la spécification est la
+  suivante:
+
+  \begin{itemize}
+
+    \item Un nombre à virgule flottante est constitué de trois
+    parties: un signe, une mantisse et un exposant. Elle sont toujours
+    placées dans cet ordre. Le signe et l'exposant sont optionnels.
+
+    \item Un signe est formé d'un seul caractère \texttt{+} ou
+    \texttt{-}.
+
+    \item La mantisse est une suite non vide de chiffres contenant un
+    caractère \texttt{.} (point décimal) qui est placé au début, au
+    sein ou à la fin de la suite de chiffres.
+
+    \item L'exposant est constitué de trois parties: un caractère
+    \texttt{e}, un signe et une suite non vide de chiffres. Ces trois
+    parties sont toujours placées dans cet ordre. Le signe est
+    optionnel.
+
+  \end{itemize}
+
+  \noindent Voici quelques exemples:
+  \verb|-3.14159  1.4e10  127.0e-2  -0.1e-1  .0|
+
+\end{enumerate}
+
+
+\section{Sémantique}
+
+Soit le langage fonctionnel Micro-ML dont la syntaxe concrète est
+spécifiée par la grammaire en BNF
+{\small
+\begin{verbatim}
+Expression ::= integer
+             | "(" Expression ")"
+             | ident
+             | "let" ident "=" Expression "in" Expression
+             | "fun" ident "->" Expression
+             | Expression Expression
+\end{verbatim}
+}
+\noindent La syntaxe abstraite associée est
+{\small
+\begin{tabbing}
+\Xtype \ident{expr} \= \equal \= \cst{Int} \Xof \type{int}\\
+%\> \vbar \> \cst{BinOp} \Xof \type{bin\_op} \texttt{*} \type{expr}
+%\texttt{*} \type{expr}\\
+\> \vbar \> \cst{Var} \Xof \type{string}\\
+\> \vbar \> \cst{Let} \Xof \type{string} \texttt{*} \type{expr}
+\texttt{*} \type{expr}\\
+\> \vbar \> \cst{Fun} \Xof \type{string} \texttt{*} \type{expr}\\
+\> \vbar \> \cst{App} \Xof \type{expr} \texttt{*} \type{expr}
+%\Xand \type{bin\_op} \equal \cst{Add} \vbar \cst{Sub}
+%\vbar \cst{Mult} \vbar \cst{Div}\semi{}
+\end{tabbing}
+}
+\noindent La sémantique opérationnelle $\eval{\rho}{e}{v}$ est la plus
+petite relation définie par les règles d'inférence
+\begin{mathpar}
+\inferrule
+  {\ceval{\cst{Const} \; n}{\dot{n}}}
+  {}\;\TirName{\quad const}
+\and
+\inferrule
+  {x \in \dom{\rho}}
+  {\eval{\rho}{\cst{Var} \; x}{\rho (x)}}\;\TirName{var}
+\and
+\inferrule*[right=let]
+  {\eval{\rho}{e_1}{v_1}\\ 
+   \eval{\rho \oplus x \mapsto v_1}{e_2}{v_2}}
+  {\eval{\rho}
+        {\cst{Let} \, \lpar{x},e_1,e_2\rpar}
+        {v_2}}
+\and
+\inferrule*[right=\quad abs]
+  {\eval{\rho}
+        {\cst{Fun} \, (x, e)}
+        {\clos{x}{e}{\rho}}}
+  {}
+\and
+\inferrule*[right=app]
+  {\eval{\rho}{e_1}{\clos{x_0}{e_0}{\rho_0}}\\
+   \eval{\rho}{e_2}{v_2}\\
+   \eval{\rho_0 \oplus x_0 \mapsto v_2}{e_0}{v_0}
+  }
+  {\eval{\rho}{\cst{App} \, (e_1,e_2)}{v_0}}
+\end{mathpar}
+
+\noindent où le type des valeurs est:
+
+\Xtype \type{value} \equal \cst{Int} \Xof \type{int} \vbar
+\cst{Clos} \Xof \type{string} \texttt{*} \type{expr} \texttt{*}
+\lpar\type{string} $\rightarrow$ \type{value}\rpar\semi{}
+
+\noindent et l'environnement $\rho$ est une fonction partielle des
+variables vers les valeurs.
+
+\begin{enumerate}
+
+  \item Montrez que la grammaire algébrique est ambiguë.
+
+  \item Prouvez que le programme \textsf{1 2} ne peut être
+  évalué. Quelle différence voyez-vous entre cet exemple et
+  \lpar\kwd{fun} \ident{f} $\rightarrow$ \ident{f} \ident{f}\rpar{}
+  \lpar\kwd{fun} \ident{f} $\rightarrow$ \ident{f} \ident{f}\rpar,
+  donné dans le cour?
+
+  \item Donnez la définition standard de la fonction ${\cal L}$ qui
+  donne les variables libres d'une expression de Micro-ML.
+
+  \item \label{q\theenumi} Vérifiez que les constructions \kwd{let}
+    \ident{x} \equal{} \ident{e}$_1$ \kwd{in} \ident{e}$_2$ et
+    \lpar\kwd{fun} \ident{x} $\rightarrow$ \ident{e}$_2$\rpar{}
+    \ident{e}$_1$ sont équivalentes du point de vue de l'évaluation
+    --- c'est-à-dire que l'une produit une valeur $v$ si et seulement
+    si l'autre produit également $v$.
+
+\end{enumerate}
+
+
+\end{document}

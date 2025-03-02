@@ -1,0 +1,357 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Tuples}
+
+\textbf{Tuples} and \textbf{lists} are a very useful data structure
+that aggregates objects in a specific order.
+
+\bigskip
+
+For example
+{\small
+\begin{verbatim}
+.(a, b)       % Pair made of `a' and `b'
+.(a, b, c)    % Triple made of `a', `b' and `c'
+.(a, .(b, c)) 
+\end{verbatim}
+}
+Tuples are common in mathematics, e.g. ``Let \(p\) a point of
+coordinates \((x, y)\) such as \dots'' We saw
+page~\pageref{structures_as_trees} that \Prolog objects can be
+represented as trees:
+\begin{center}
+\includegraphics[bb=72 695 104 719]{ab}
+\hspace{1cm}
+\includegraphics[bb=72 696 130 719]{abc}
+\hspace{1cm}
+\includegraphics[bb=72 675 115 719]{a_bc}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Lists}
+
+Lists are similar to tuples
+{\small
+\begin{verbatim}
+[a, b]        % List made of `a' and `b'
+[a, b, c]     % List made of `a', `b' and `c'
+[a, [b, c]]
+\end{verbatim}
+}
+\bigskip
+
+So, where is the difference? List have a special syntax that allows
+to distinguish and extract the first elements, called \textbf{head},
+while the remaining elements are called the \textbf{tail}:
+{\small
+\begin{verbatim}
+[a, b, c]     % List made of `a', `b' and `c'.
+[a | [b,c]]   % Idem. Head is `a' and tail is [b,c].
+[a,b | [c]]   % Idem but head is [a, b] and tail is [c].
+[a,b,c | []]  % Idem but head is [a, b, c] and tail is [].
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Lists (cont)}
+
+Actually, list can be coded by means of tuples; all what is needed is
+a special atom for representing the empty list. Tradition notes it
+\texttt{[]}. Then
+{\small
+\begin{verbatim}
+[a, b, c]              % List made of `a', `b' and `c'
+.(a, .(b, .(c, [])))   % Same
+\end{verbatim}
+} 
+Remember that lists can be \textbf{heterogeneous}, i.e. elements can
+be of any kind (see \texttt{[a, [b, c]]} above).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Lists/Membership}
+
+Let us write a \Prolog program that checks if a given object belongs
+to a given list. Let \texttt{member} be this binary relation.
+
+\bigskip
+
+For example, we want
+{\small
+\begin{verbatim}
+?- member(b, [a,b,c]).        % True
+?- member(b, [a,[b,c]]).      % False
+?- member([b,c], [a,[b,c]]).  % True
+\end{verbatim}
+}
+This suggests the recursive definition
+{\it
+\begin{quote}
+\texttt{X} is a member of a list \texttt{L} if either
+\begin{itemize}
+
+  \item \texttt{X} is the head of \texttt{L}, or
+
+  \item \texttt{X} is a member of the tail of \texttt{L}.
+
+\end{itemize}
+\end{quote}
+}
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Lists/Membership (cont)}
+
+This informal definition can straightforwardly be translated to
+\Prolog:
+{\small
+\begin{verbatim}
+member(X, [X | Tail]).
+member(X, [Head | Tail]) :- member(X, Tail).
+\end{verbatim}
+}
+or
+
+\PrologIn{member}
+
+Remember that order matters for the procedural meaning!
+ 
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Arithmetic}
+
+Arithmetic operators are special functors. The following are available:
+
+\bigskip
+
+\begin{tabular}{cl}
+  \texttt{+}   & Addition\\
+  \texttt{-}   & Subtraction\\
+  \texttt{*}   & Multiplication\\
+  \texttt{/}   & Division\\
+  \texttt{**}  & Power\\
+  \texttt{//}  & Integer division\\
+  \texttt{mod} & Modulo (remainder of integer division)
+\end{tabular}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Arithmetic (cont)}
+
+If the \Prolog interpreter is naively asked
+{\small
+\begin{verbatim}
+?- X = 1 + 2.
+X = 1+2
+Yes
+\end{verbatim}
+}
+This because \texttt{+} is a functor and functors trigger no
+computation. \Prolog builds the tree
+\begin{center}
+\includegraphics[bb=72 695 103 721]{one_plus_two}
+\end{center}
+In order to force the arithmetic interpretation, we use
+{\small
+\begin{verbatim}
+?- X is 1 + 2.
+X = 3
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Arithmetic (cont)}
+
+We have
+{\small
+\begin{verbatim}
+?- X is 5/2, 
+   Y is 5//2, 
+   Z is 5 mod 2.
+X = 2.5
+Y = 2
+Z = 1
+Yes
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Arithmetic/Comparison}
+
+The comparison operators force the evaluation of their argument, as
+\texttt{is} does:
+{\small
+\begin{verbatim}
+?- 5 * 3 > 2.
+Yes
+\end{verbatim}
+}
+Assume we have a relation \texttt{born} in a program, that relates
+people's name to their birth years. We can find all the persons born
+between 1980 and 1990 by the query
+{\small
+\begin{verbatim}
+?- born(Name, Year),
+   Year >= 1980,
+   Year =< 1990.
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Arithmetic/Comparison (cont)}
+
+The comparison operators are
+
+\bigskip
+
+\begin{tabular}{cl}
+  \texttt{X > Y}   & \texttt{X} is greater than \texttt{Y}\\
+  \texttt{X < Y}   & \texttt{X} is smaller than \texttt{Y}\\
+  \texttt{X >= Y}  & \texttt{X} is greater than or equal to
+                     \texttt{Y}\\ 
+  \texttt{X =< Y}  & \texttt{X} is smaller than or equal to
+                     \texttt{Y}\\
+  \texttt{X =:= Y} & the values of \texttt{X} and \texttt{Y} are
+                     equal\\
+  \texttt{X ={\tt\char`\\}= Y} & the values of \texttt{X} and
+  \texttt{Y} are not 
+                     equal
+\end{tabular}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Arithmetic/Comparison (cont)}
+
+\textbf{Beware!} The goals \texttt{X = Y} (matching) and \texttt{X =:=
+  Y} (arithmetic comparison) are completely different.
+
+Consider
+{\small
+\begin{verbatim}
+?- 1 + 2 =:= 2 + 1.
+Yes
+?- 1 + 2 = 2 + 1.
+No
+?- 1 + A = B + 2.
+A = 2
+B = 1
+Yes
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Arithmetic/Example}
+
+Let us define a relation \texttt{length} which associate a list and
+its length.
+{\small
+\begin{verbatim}
+length([],0).
+length([_ | Tail],N) :- length(Tail,M), N is 1 + M.
+?- length([a,b,[c,d],e],N).
+N = 4
+\end{verbatim}
+}
+Note that ``\texttt{N is 1 + M}'' \emph{must} be the second goal of the
+body. And what if
+{\small
+\begin{verbatim}
+length([],0).
+length([_ | Tail],N) :- length(Tail,M), N = 1 + M.
+?- length([a,b,[c,d],e],N).
+N = ???
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Arithmetic/Example (bis)}
+
+Answer:
+{\small
+\begin{verbatim}
+?- length([a,b,[c,d],e],N).
+N = 1 + (1 + (1 + 0))
+\end{verbatim}
+}
+This, again, because \texttt{+} is just a functor. Therefore, we can
+equivalently write
+{\small
+\begin{verbatim}
+length([],0).
+length([_ | Tail],N) :- N = 1 + M, length(Tail,M).
+?- length([a,b,[c,d],e],N).
+N = 1 + (1 + (1 + 0))
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Arithmetic/Example (bis)}
+
+Or even shorter
+{\small
+\begin{verbatim}
+length([],0).
+length([_ | Tail],1 + M) :- length(Tail,M).
+
+?- length([a,b,[c,d],e],N).
+N = 1 + (1 + (1 + 0))
+Yes
+
+?- length([a,b,[c,d],e],N), Length is N.
+N = 1 + (1 + (1 + 0))
+Length = 3
+Yes
+\end{verbatim}
+}
+
+\end{frame}

@@ -1,0 +1,37 @@
+\paragraph{Réponses.}
+
+\begin{enumerate}
+
+  \item Soit \(\T (n,p)\) le nombre cherché. On a, en suivant la
+    syntaxe de la définition de \texttt{binome}:
+    \[\left\{
+    \begin{array}{l}
+      \T (n,0) = \T (n,n) = 1\\
+      \T (n,p) = 1 + \T (n-1,p) + \T (n-1,p-1) \ \textrm{si} \
+      0 < p < n
+    \end{array}
+    \right.\]
+    Si l'on pose $\T' (n,p) = \T (n,p) + 1$, alors on obtient:
+    \[\left\{
+    \begin{array}{l}
+      \T' (n,0) = \T' (n,n) = 2\\
+      \T' (n,p) = \T' (n-1,p) + \T' (n-1,p-1) \ \textrm{si} \
+      0 < p < n
+    \end{array}
+    \right.\] 
+    Il en résulte par récurrence que \(\T'(n,p)=2 C_{n}^{p}\), et donc
+    \(\T(n,p)=2 C_{n}^{p} - 1\). Ainsi, la fonction \texttt{binome}
+    effectue environ deux fois plus de calculs que le résultat qu'elle
+    fournit!
+
+  \item Oui, il faut trouver une moyen de mémoriser les calculs
+    antérieurs, un vecteur par exemple, ou alors une autre formule de
+    récurrence telle que:
+    \[C_{n}^{p} = \frac{n!}{p! (n-p)!} = \frac{n}{p} C_{n-1}^{p-1}\]
+    Notez que cette dernière peut provoquer un débordement de capacité
+    lorsque \(n C_{n-1}^{p-1}\) est supérieur au plus grand entier
+    représentable en machine. De plus, l'expression \texttt{ n *
+      (binome(n-1,p-1) / p)} est incorrecte car il est possible que
+    \(C_{n-1}^{p-1}\) ne soit pas divisible par \(p\).
+
+\end{enumerate}

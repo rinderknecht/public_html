@@ -1,0 +1,43 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\input{trace}
+
+\input{title}
+\author{Christian Rinderknecht}
+\date{11 October 2006}
+
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{multicol}
+
+\newenvironment{changemargin}[2]{%
+  \begin{list}{}{%
+    \setlength{\topsep}{0pt}%
+    \setlength{\leftmargin}{#1}%
+    \setlength{\rightmargin}{#2}%
+    \setlength{\listparindent}{\parindent}%
+    \setlength{\itemindent}{\parindent}%
+    \setlength{\parsep}{\parskip}%
+  }%
+  \item[]}{\end{list}}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\section{Conversion}
+
+\input{question_01}
+ 
+\section{Subtraction of 2-complement binary numbers}
+
+\input{question_02}
+
+\section{Subtraction of BCD numbers}
+
+\input{question_03}
+
+\end{document}

@@ -1,0 +1,880 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item Application layer
+
+  \begin{itemize}
+
+    \item Principles of application layer protocols
+
+    \item \textbf{The Web and \textsc{http}}
+
+    \item File transfer: \textsc{ftp}
+
+    \item Electronic mail in the Internet
+
+    \item DNS --- The Internet's directory service
+
+    \item Socket programming with TCP and UDP
+
+    \item Content distribution
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application layer/The Web and \textsc{http}}
+
+The \textbf{Hyper-Text Transfer Protocol} (\textbf{\textsc{http}}) is
+the Web application-layer protocol.
+
+\bigskip
+
+\textsc{http} is implemented in two programs: the client and the
+server, running on different and connected hosts, and exchanging
+\textsc{http} messages.
+
+\bigskip
+
+A \textbf{Web page} (or \textbf{document}) consists of
+\textbf{objects}. An object is simply a file (e.g. an \textsc{html}
+file, a \textsc{jpeg} image, a \textsf{Java} applet, an audio file
+etc.) which is addressable by a single \textbf{Universal Resource
+Locator} (\textbf{URL}).
+
+\bigskip
+
+For instance, if a web page contains a \textbf{base \textsc{html}
+file} and five \textsc{jpeg} images, then the Web page contains six
+objects.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application layer/The Web and \textsc{http} (cont)}
+
+An URL is made of 
+\begin{itemize}
+
+  \item a protocol name,
+
+  \item a Web server name,
+
+  \item a file path on the server.
+
+\end{itemize}
+
+For instance \url{http://www.ietf.org/rfc/rfc2396.txt} specifies 
+\begin{itemize}
+
+  \item the use of the \textsc{http}, 
+
+  \item a unique computer named \url{www.ietf.org},
+
+  \item and the location of a text file or page to be accessed on that
+  computer whose pathname is \url{/rfc/rfc2396.txt}.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application layer/The Web and \textsc{http} (cont)}
+
+A Web server houses web objects, each addressable by a URL. Popular
+Web servers include Apache.]  When a user clicks on an
+  \textbf{hyperlink}, its browser sends \textsc{http} request messages
+  for the objects in the referred page to the server, which in turn
+  responds with \textsc{http} response messages that contain the
+  objects.
+
+\bigskip
+
+Because it relies on TCP, \textsc{http} does neither worry about data
+loss nor ordering.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application layer/The Web and \textsc{http} (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.4]{02-06.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application layer/The Web and \textsc{http} (cont)}
+
+It is important to understand that the server sends requested objects
+to the client without storing any state information about the client.
+
+\bigskip
+
+For instance, if the same client asks for the same file two times in a
+short lapse, the server never responds that it has just send it
+\emph{because it does not remember}.
+
+\bigskip
+
+That is why \textsc{http} is said to be a \textbf{stateless
+protocol}.
+
+\bigskip
+
+There are two kinds of TCP connections: \textbf{persistent} and
+\textbf{non-persistent}. 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The Web and \textsc{http}/Non-persistent connections} 
+
+Suppose a client uses a non-persistent connection to query a page made
+of a base \textsc{html} file and ten \textsc{jpeg} images, all objects
+being stored on the same server. The URL for the base \textsc{html}
+file is \url{http://www.school.org/dep/index.html}
+\begin{itemize}
+
+  \item The \textsc{http} client initiates a TCP
+    connection to the server \url{www.school.org} on port number 80,
+    which is the default port number for \textsc{http}.\label{step1} 
+
+  \item The \textsc{http} client send an \textsc{http} request message
+    to the server via the socket associated with the TCP connection
+    that was established in step~\ref{step1}. This message includes
+    the path \url{/dep/index.html}.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The Web and \textsc{http}/Non-persistent connections} 
+
+\begin{itemize}
+
+  \item The \textsc{http} server receives the request via the socket
+    associated with the connection, retrieves the object
+    \url{/dep/index.html} from its storage (RAM or disk), encapsulates
+    the object in an \textsc{http} response message and sends it to
+    the client via the same socket.
+
+  \item The \textsc{http} server tells TCP to close the connection
+    (but the TCP server waits for the client acknowledgement).
+
+  \item The \textsc{http} client receives the response message. The
+    TCP connection terminates. The message indicates that the
+    embedded object is an \textsc{html} file. The client extracts this
+    file, parses the file and find references to the ten \textsc{jpeg}
+    objects.
+
+ \item The first four steps are repeated for the ten \textsc{jpeg}
+   images.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The Web and \textsc{http}/Non-persistent connections (cont)} 
+
+The steps described use \textbf{non-persistent connections} because
+each TCP connection is closed after the server sends the object --- it
+does not persist for other objects.
+
+\bigskip
+
+Thus, in our example, 11 TCP connections are generated.
+
+\bigskip
+
+However, it is possible that the browser actually opens several TCP
+connections in parallel, but these connections still are
+non-persistent.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The Web and \textsc{http}/Non-persistent connections (cont)} 
+
+Let us estimate the amount of time that elapses between the moment the
+client requests a base \textsc{html} file and the time it is received
+entirely.
+
+\bigskip
+
+The \textbf{round-trip time} (\textbf{RTT}) is the time needed for a
+small packet to travel from the client to the server and back to the
+client. It is roughly two RTTs plus the transmission time.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The Web and \textsc{http}/Non-persistent connections (cont)} 
+
+\begin{center}
+  \includegraphics[scale=0.32]{02-07.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The Web and \textsc{http}/Persistent connections}
+
+Non-persistent connections allow only one object to be transmitted
+over a given TCP connection, suffering two RTT delays.
+
+\bigskip
+
+With \textbf{persistent connections} the server let open the
+connection after sending a response. For instance, the eleven previous
+objects could have been sent during a single TCP persistent
+connection.
+
+\bigskip
+
+A persistent connection is usually closed after a configurable time
+interval. There are two kinds of persistent connections:
+\begin{itemize}
+
+  \item \textbf{without pipelining}: the response must be received
+  before another request is made;
+
+  \item \textbf{with pipelining}: multiple requests can be gathered
+  into the same TCP segment, so the server can fulfill them in
+  parallel (leading to less Internet traffic).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/\textsc{http} requests}
+
+As expected, there are two kinds of \textsc{http} messages: requests
+and responses.
+
+\bigskip
+
+For example:
+{\small
+\begin{verbatim}
+GET /dep/index.html HTTP/1.1
+Host: www.school.org
+Connection: close
+User-agent: Mozilla/4.0
+Accept-language:fr
+\end{verbatim}
+}
+A request is written in ordinary \textsc{ascii} text (encoding
+characters with 7 bits).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/\textsc{http} requests (cont)}
+
+This message is made of five lines, but can have less or more lines in
+general.
+
+\bigskip
+
+The first line \verb+GET /dep/index.html HTTP/1.1+ is called the
+\textbf{request line} and the following are the \textbf{header
+  lines}.
+
+\bigskip
+
+The request line has three fields: 
+\begin{itemize}
+
+  \item the method field (\verb+GET+), 
+
+  \item the URL field (\verb+/dep/index.html+),
+
+  \item the version field (\verb+HTTP/1.1+).
+
+\end{itemize}
+The method field can take several values, \verb+GET+, \verb+POST+,
+\verb+HEAD+ etc. The \verb+GET+ method is used to request an object.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/\textsc{http} requests (cont)}
+
+The header line \verb+Host: www.school.org+ specifies the host on
+which the object resides.
+
+\bigskip
+
+By including the line \verb+Connection: close+ the browser tells the
+server it does not want a persistent connection (thus it should be
+closed after the object has been sent).
+
+\bigskip
+
+Line \verb+User-agent: Mozilla/4.0+ specifies the browser type and
+version, a Mozilla user agent.
+
+\bigskip
+
+Finally, \verb+Accept-language:fr+ indicates that the user prefers to
+receive a French version of the object, if available, otherwise a
+default version.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/\textsc{http} requests (cont))}
+
+Let us take a look to the general shape of an
+\textsc{http} request:
+\begin{center}
+\includegraphics[scale=0.35]{02-08.eps}
+\end{center}
+There is another field in the message called \textbf{body}. It is
+empty when sending a \verb+GET+ request method but is filled when
+using \verb+POST+. This method is used to request a page selected
+using some specific information (in the body field), as with a form.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/\textsc{http} requests (cont)}
+
+In fact, not all forms use a \verb+POST+ method: sometimes the user's
+information is put in the URL itself and a \verb+GET+ method is used
+instead. 
+
+For instance, if a form consists in two fields whose given values are
+\texttt{monkeys} and \texttt{bananas}, the following URL is possible:
+\begin{center}
+\url{www.some-site.com/search?monkeys&bananas}
+\end{center}
+
+The \verb+HEAD+ method is similar to a \verb+GET+ one, except the
+server does not return the requested object --- even if it sends back
+a message. This method is often used by application developers for
+debugging purposes.
+
+Protocol \textsc{http} version 1.1 allows a \verb+PUT+ method to
+upload objects to a web server and a \verb+DELETE+ method to delete an
+object in a web server.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/\textsc{http} responses}
+
+This could be a response message to the request we presented:
+{\small
+\begin{verbatim}
+HTTP/1.1 200 OK
+Connection: close
+Date: Thu, 06 Aug 1998 12:00:15 GMT
+Server: Apache/1.3.0 (Unix)
+Last-Modified: Mon, 22 Jun 1998 09:23:24 GMT
+Content-Length: 6821
+Content-Type: text/html
+
+... data ... data ... data ...
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/\textsc{http} responses (cont)}
+
+The first line \verb+HTTP/1.1 200 OK+ is the \textbf{status line}. It
+tells here that the object was found and is returned. The number
+\verb+200+ is the status number (equivalent to the status name). 
+
+\bigskip
+
+The following six lines are the \textbf{header lines}. 
+
+\bigskip
+
+The first one, \verb+Connection: close+ acknowledges the
+non-persistent underlying TCP connection. 
+
+\bigskip
+
+The \verb+Date+ line gives the time when the server retrieved the
+object (not when the object was created).
+
+\bigskip
+
+The \verb+Server+ line states what kind of web server is running on
+what kind of operating system (here, an Apache server on Unix). It is
+analogous to the \verb+User-Agent+ line in the request.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/\textsc{http} responses (cont)}
+
+The \verb+Last-Modified+ line indicates the date when the object was
+created or last modified. The \verb+Last-Modified+ line is very
+important for object caching, both on the client side (browser cache)
+and on the network side (proxy servers).
+
+\bigskip
+
+The \verb+Content-Length+ line gives the number of bytes the object is
+made.
+
+\bigskip
+
+The \verb+Content-Type+ line records the kind of the object, in this
+case a \textsc{html} file (the file extension, like \url{.html} or
+\url{.htm} does not tell officially the content type).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The Web and \textsc{http}/\textsc{http}
+  message format/Responses (cont)}
+
+The general structure of an \textsc{http} response message is
+\begin{center}
+\includegraphics[scale=0.4]{02-09.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/\textsc{http} responses (cont)}
+
+The status code and its associated phrase can be of several kinds:
+\begin{itemize}
+
+  \item \verb+200 OK+ means that the request succeeded;
+
+  \item \verb+301 Moved Permanently+ means that the requested object
+  has been permanently moved; the new URL is given in a
+  \verb+Location+ header line in the response message and the client
+  browser will automatically retrieve the new URL;
+
+  \item \verb+400 Bad Request+ means that the request was not
+  understood by the server;
+
+  \item \verb+404 Not Found+ means that the object was not found on
+  the server;
+
+  \item \verb+505 HTTP Version Not Supported+ is self explanatory.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/\textsc{http} responses (cont)}
+
+It is recommended that you create some small \textsc{http} request
+messages, send them to some web server and examine the response messages. 
+
+\bigskip
+
+If you get access to Unix machine (or Windows running
+\textsf{Cygwin}\footnote{\url{http://www.cygwin.com}}), just type in a
+terminal
+{\small
+\begin{verbatim}
+$ telnet konkuk.ac.kr 80
+Trying 194.254.134.22...
+Connected to konkuk.ac.kr
+Escape character is '^]'.
+HEAD /~rinderkn/index.html HTTP/1.0
+\end{verbatim}
+}
+(press the return key twice) and you will see the response from the
+server.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/\textsc{http} responses (cont)}
+
+{\small
+\begin{verbatim}
+HTTP/1.1 200 OK
+Date: Mon, 02 May 2005 05:25:56 GMT
+Server: Apache/1.3.27 (Unix) mod_jk PHP/4.3.10
+X-Powered-By: PHP/4.3.10
+Connection: close
+Content-Type: text/html
+
+Connection closed by foreign host.
+\end{verbatim}
+}
+Try to request a non-existent object, like \url{foo.html} and check
+the response again.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The Web and \textsc{http}/Authorisation and cookies}
+
+We mentioned before that an \textsc{http} server is stateless. This
+keeps the design of the server simple.
+
+\bigskip
+
+But sometimes it is desirable to identify users, for instance in order
+to restrict the access or to save personal informations or to provide
+specific services to subscribers only.
+
+\bigskip
+
+\textbf{Authorisation}
+
+Many web sites require users to provide a name and a password in order
+to grant the access to the services and objects. Let us follow the
+steps of such a process.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/Authorisation and cookies (cont)}
+
+First the user sends an ordinary request. The server responds with a
+message with an empty body an with a \verb+401 Authorization Required+
+status code. Also it includes a \verb+WWW-Authenticate+ header line
+telling the client how to authenticate (here: username and password).
+
+\bigskip
+
+The browser receives that response message and prompts the user for a
+name and a password. The client then resends the request with the name
+and the password.
+
+\bigskip
+
+After getting the first object, the client has to resend the username
+and password, but the user does not need to re-enter these data: the
+browser keeps them in a cache memory.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The Web and \textsc{http}/Authorisation and cookies (cont)}
+
+\textbf{Cookies}
+
+Many commercial sites make use of \textbf{cookies}. These contain the
+following components:
+\begin{itemize}
+
+  \item a cookie header line in the \textsc{http} response;
+
+  \item a cookie header line in the \textsc{http} request;
+
+  \item a cookie file kept on the user's system and managed by the
+  browser;
+
+  \item a database at the server site.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/Authorisation and cookies (cont)}
+
+Let us describe an example of session using cookies.
+\begin{itemize}
+
+  \item A user connects for the first time to an e-commerce site using
+    cookies. 
+
+  \item The web server creates a unique identification number for
+    him and create an entry in its customer database indexed by this
+    number (or \textbf{cookie}).
+
+  \item The server responds to the client browser including a
+    \verb+Set-cookie+ header line containing the cookie.
+
+  \item The browser reads the \verb+Set-cookie+ line and appends at
+    the end of a special file a line containing the web site name
+    together with the cookie.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/Authorisation and cookies (cont)}
+
+\begin{itemize}
+
+  \item Now, each time the user requests a page on the server, the
+    browser sends the cookie along as a \verb+Cookie+ header
+    line. This way the server knows exactly the visited pages and the
+    order and time of visit.
+
+    This allows the site to provide a ``shopping card'' service:
+    during a single visit, the server keeps track of all the intended
+    purchases, so that the user pays for all of them once, at the end
+    of the session.
+
+  \item The customer pays by giving his name, address and bank card
+    number. The site now associates the cookie (and all the details of
+    the visit) to the personal data about the customer.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/Authorisation and cookies (cont)}
+
+\begin{itemize}
+
+  \item After shopping, if the customer returns to the site, his browser
+    will put again the cookie in the requests. Thus the e-commerce
+    site can propose new products based on the previous visit and he
+    can even by with one click since the site recorded his personal
+    banking information during last session.
+
+\end{itemize}
+Now we understand how can cookies enable a stateful session between
+the client and the server on top of a stateless \textsc{http}
+session.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The Web and \textsc{http}/Authorisation and cookies (cont)}
+
+\textbf{Privacy}
+
+As you also understand, cookies are a controversial feature because
+they can provide a lot of private information to commercial web sites.
+
+\bigskip
+
+These sites can even record the behaviour of a specific user
+\emph{across several web sites}. 
+
+\bigskip
+
+Many pages of commercial site request advertisement banners (GIFs or
+JPEG images) from an advertising company. These requests may contain a
+cookie, and if the user visits several sites which share the same
+advertisement company, these company can track the user behaviour
+across all the sites he visited.
+
+\bigskip
+
+You can visit \url{http://www.cookiecentral.com/} for news about the
+cookie controversy.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The Web and \textsc{http}/Conditional \texttt{GET}}
+
+By caching the previously retrieved objects, the traffic on the
+internet is decreased: in case the client requests several times the
+same object, the copy in the cache memory is delivered instead of
+relaying the request again to the server.
+
+\bigskip
+
+This caching can take place either at the client side (i.e. in the
+browser) or at a special node in the network.
+
+\bigskip
+
+But caching can create a new problem: the cached objects can be
+\emph{stale}, i.e. the original object (at the server side) may have
+changed since the last request.
+
+\bigskip
+
+The mechanism in \textsc{http} which ensures that all retrieved
+objects are up-to-date despite caching is called \textbf{conditional
+  \texttt{GET}}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/Conditional \texttt{GET} (cont)}
+
+An \textsc{http} request message is a conditional \texttt{GET} if and
+only if
+\begin{itemize}
+
+  \item the request message uses the \texttt{GET} method,
+
+  \item the request message includes an \texttt{If-Modified-since}
+  header line.
+
+\end{itemize}
+
+Let us consider an example.
+
+\bigskip
+
+First, a browser requests an \emph{uncached object} from some web
+server:
+{\small
+\begin{verbatim}
+GET /fruit/kiwi.gif HTTP/1.0
+User-agent: Mozilla/4.0
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/Conditional \texttt{GET} (cont)}
+
+Second, the web server sends a response message with the object:
+{\small 
+\begin{verbatim}
+HTTP/1.0 200 OK
+Date: Wed, 12 Aug 1998 15:39:29
+Server: Apache/1.3.0 (Unix)
+Last-Modified: Mon, 22 Jun 1998 09:23:24
+Content-Type: image/gif
+
+... data ... data ... data ...
+\end{verbatim}
+}
+The client displays the object and stores it in its local cache
+\emph{along with the last modification date}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/Conditional \texttt{GET} (cont)}
+
+One week later, the client requests the same object, but this may have
+changed in the server. In order to get an up-to-date version the
+user-agent issues a conditional \texttt{GET}:
+{\small
+\begin{verbatim}
+GET /fruit/kiwi.gif HTTP/1.0
+User-agent: Mozilla/4.0
+If-modified-since: Mon, 22 Jun 1998 09:23:24
+\end{verbatim}
+}
+Note that the value of the \texttt{If-modified-since} header line is
+exactly the same as the one in the previous (and first, here)
+request. This conditional \texttt{GET} instructs the server to send
+back the requested object if and only if the object has been modified
+since the specified date.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The Web and \textsc{http}/Conditional \texttt{GET} (cont)}
+
+Suppose the object has not been modified in the meanwhile.
+
+\bigskip
+
+Then, fourth, the server sends back he following response message:
+{\small
+\begin{verbatim}
+HTTP/1.0 304 Not Modified
+Date: Wed, 19 Aug 1998 15:39:29
+Server: Apache/1.3.0 (Unix)
+\end{verbatim}
+}
+The body is empty: the object has not been sent (again). Note also the
+status line \verb+Not Modified+.
+
+\bigskip
+
+As a final note on \textsc{http}, let us mention that this protocol
+can be used without any browser or human user and also can carry
+objects that are not part of web pages, such as XML files.
+
+\end{frame}

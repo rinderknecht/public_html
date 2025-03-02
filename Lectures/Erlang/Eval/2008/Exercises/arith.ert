@@ -1,0 +1,9 @@
+{plus,{power,{var,"x"},{const,"2"}},
+          {plus,{times,{const,"4"},{var,"x"}},{const,"1"}}}.
+{times,{plus,{power,{var,"x"},{const,"2"}},{const,"1"}},
+           {minus,{times,{const,"4"},{power,{var,"x"},{const,"3"}}},
+                  {const,"7"}}}.
+{times,{plus,{power,{var,"x"},{const,"2"}},{const,"1"}},
+           {minus,{times,{uminus,{const,"4"}},
+                         {power,{var,"y"},{const,"3"}}},
+                  {const,"7"}}}.

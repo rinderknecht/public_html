@@ -1,0 +1,48 @@
+%%-*-latex-*-
+
+\section{Calcul approché de la dérivée d'une fonction}
+
+\'{E}crire une fonction {\tt dérivée} à trois arguments:
+\begin{itemize}
+\item le pas {\tt epsilon} utilisé pour le calcul approché;
+\item la fonction {\tt f} dont on veut calculer la dérivée;
+\item le point {\tt x} auquel on veut calculer la dérivée.
+\end{itemize}
+
+\section{Calcul approché d'une intégrale}
+
+\'{E}crire une fonction {\tt intégrale} à quatre arguments:
+\begin{itemize}
+\item le nombre de sous-intervalles à utiliser pour le calcul;
+\item les bornes de l'intervalle considéré;
+\item la fonction à intégrer.
+\end{itemize}
+
+
+\section{Calcul du zéro d'une fonction par la méthode de Newton}
+
+\'{E}crire une fonction {\tt newton} à trois arguments:
+\begin{itemize}
+\item la précision requise {\tt epsilon}, de type {\tt float};
+\item la fonction {\tt f}, de type $\mbox{\tt float}\rightarrow\mbox{\tt float}$, dont on veut trouver un zéro;
+\item le point de départ {\tt x}, de type {\tt float}, de la recherche.
+\end{itemize}
+La méthode de Newton consiste à réaliser une suite d'approximations définie par:
+\begin{itemize}
+\item $x_0 = \mbox{\tt x}$
+\item $x_{n+1} = x_n - \frac{{\mbox{\tt f}}(x_n)}{{\mbox{\tt f}}'(x_n)}$
+\end{itemize}
+On s'arrête lorsque $\mid x_{n+1} - x_n \mid \,\leq \mbox{\tt epsilon}$.
+
+Applications:
+\begin{itemize}
+\item Écrire une fonction à un argument {\tt x} qui calcule une
+      approximation de $\sqrt{\mbox{\tt x}}$.  Comparer au résultat
+      obtenu en utilisant la fonction {\tt sqrt} de Caml.
+\item Calculer une valeur approchée de $x$ tel que
+      $$\int_0^x \sin t.dt = 1$$
+\end{itemize}
+
+
+
+\item Réécrire la fonction {\tt newton} en utilisant la fonction {\tt loop}.

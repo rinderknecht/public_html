@@ -1,0 +1,32 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-tree,pst-eps}
+\usepackage{amsmath,xspace}
+
+\input{grammar}
+
+\newcommand{\mknode}[1]{\TR{\nt{#1}}}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=20pt,nodesep=2pt]{\TR{\(\cdot\)}}{
+  \pstree{\TR{\(\cdot\)}}{
+    \pstree{\TR{\(\cdot\)}}{
+      \pstree{\TR{\kleene}}{
+        \pstree{\TR{\disj}}{
+          \mknode{a}
+          \mknode{b}
+        }
+      }
+      \mknode{a}      
+    }
+    \mknode{b}
+  }
+  \mknode{b}
+}
+\endTeXtoEPS
+
+\end{document}

@@ -1,0 +1,42 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\input{trace}
+
+\input{title}
+\author{Christian Rinderknecht}
+\date{9 October 2006}
+
+\usepackage{amsmath}
+\usepackage{clrscode}
+\usepackage{array}
+\usepackage{multirow}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\section{Threesome Shuffle}
+
+\input{question_01}
+\input{question_02}
+
+\end{document}
+
+TSS(EMPTY, EMPTY, EMPTY) -> EMPTY
+TSS(A, B, PUSH(c,C))     -> PUSH(c, TSS(B, C, A))
+TSS(A, B, EMPTY)         -> TSS (B, EMPTY, A)
+
+and
+
+TSS'(PUSH(a,A), PUSH(b,B), PUSH(c,C), D) ->
+  TSS'(A, B, C, PUSH(c, PUSH(a, PUSH(b, D))))
+TSS'(EMPTY, EMPTY, EMPTY, D) -> REV(D)
+TSS'(PUSH(a,A), PUSH(b,B), EMPTY, D) -> ERROR
+TSS'(PUSH(a,A), EMPTY, PUSH(c,C), D) -> ERROR
+TSS'(PUSH(a,A), EMPTY, EMPTY, D) -> ERROR
+TSS'(EMPTY, PUSH(b,B), PUSH(c,C), D) -> ERROR
+TSS'(EMPTY, PUSH(b,B), EMPTY, D) -> ERROR
+TSS'(EMPTY, EMPTY, PUSH(c,C), D) -> ERROR

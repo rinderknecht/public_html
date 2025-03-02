@@ -1,0 +1,38 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{xspace}
+\usepackage{times,mathptmx}
+\usepackage{vaucanson-g}
+\usepackage{pst-eps}
+
+%\ShowGrid
+ 
+\input{token}
+\input{grammar}
+
+\begin{document}
+
+\TeXtoEPS
+\VCDraw{%
+\begin{VCPicture}{(0,0)(9,0)}
+% States
+\State[1]{(0,0)}{A}
+\FinalState[2]{(4,0)}{B}
+\State[3]{(9,0)}{C}
+% State annotations
+\nput{-90}{B}{\large \token{id}{yytext}}
+% Initial and final states
+\Initial{A}
+% Edges
+\EdgeL{A}{B}{\small \texttt{[A-Za-z]}}
+\LoopN[0.5]{B}{\small \texttt{[A-Za-z0-9]}}
+\ArcR[0.5]{B}{C}{\Huge \_}
+\LoopE[0.5]{C}{\Huge \_}
+\ArcR[0.5]{C}{B}{\small \texttt{[A-Za-z0-9]}}
+\end{VCPicture}
+}
+\endTeXtoEPS
+
+\end{document}

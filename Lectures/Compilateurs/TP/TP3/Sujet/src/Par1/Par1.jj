@@ -1,0 +1,11 @@
+PARSER_BEGIN(Par1)
+public class Par1 {
+  public static void main(String args[]) throws ParseException {
+    Par1 parser = new Par1(System.in);
+    parser.S();
+  }
+}
+PARSER_END(Par1)
+
+void S() : {} { P() ("\n" | "\r")* <EOF> }
+void P() : {} { "(" [P()] ")" }

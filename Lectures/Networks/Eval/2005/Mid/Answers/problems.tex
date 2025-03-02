@@ -1,0 +1,140 @@
+\section{Problems}
+
+\begin{enumerate}
+
+  \item \emph{True or false?}
+  \begin{enumerate}
+
+    \item \emph{Suppose a user requests a Web page that consists of
+      some text and two images. For this page the client will send one
+      request and receive three response messages.}
+
+     False.
+
+    \item \emph{Two distinct Web pages can be sent over the same
+      persistent connection.}
+
+    True.
+
+    \item \emph{With non-persistent connections between browser and
+      origin ser\-ver, it is possible for a single TCP segment to
+      carry two distinct \textsc{http} request messages.}
+
+    False.
+
+    \item \emph{The \texttt{Date:} header in the \textsc{http} response
+      message indicates when the object in the response was last
+      modified.}
+   
+    False.
+
+  \end{enumerate}
+
+  \item \emph{Consider sending a file of \(M \times L\) bits over a
+    path of \(Q\) links. Each link transmits at \(R\) bits per
+    second. The network is lightly loaded so that there are no queuing
+    delays. When a form of packet switching is used, the \(M \times
+    L\) bits are broken up into \(M\) packets, each packet with \(L\)
+    bits. Propagation delay is negligible.}
+    \begin{enumerate}
+
+      \item \emph{Suppose the network is a packet-switched virtual
+        circuit network. Denote the VC set-up time by \(t_s\)
+        seconds. Suppose the sending layers add a total of \(h\) bits
+        of header to each packet. How long does it take to send the
+        file from source to destination?}
+
+        The time to transmit one packet onto a link is \(\frac{L +
+          h}{R}\). The time to deliver the first of the \(M\) packets
+        to the destination is \(Q{\frac{L+h}{R}}\). Every
+        \(\frac{L+h}{R}\) seconds a new packet from the \(M-1\)
+        remaining packets arrives at destination (this is due to
+        pipelining). We must also add the initial setup time, because
+        we use a VC network. Thus the total delay is
+        \[
+          t_{s} + (Q + M - 1){\frac{L+h}{R}}
+        \]
+
+      \item \label{datagram} \emph{Suppose the network is a
+        packet-switched datagram network and a connectionless service
+        is used. Now suppose each packet has \(2h\) bits of
+        header. How long does it take to send the file?}
+
+        Using a datagram network with a connectionless service implies
+        there is no setup needed. Another difference with the previous
+        situation is the header size. Therefore the total delay is
+        simply
+        \[
+          (Q + M - 1){\frac{L + 2h}{R}}
+        \]
+
+      \item \emph{Repeat case~\ref{datagram} but assume message
+        switching is used (that is, \(2h\) bits are added to the
+        message, and the message is not segmented).}
+
+        The time to transmit the entire message over one link is
+        \(\frac{M L + 2h}{R}\). The time to transmit the entire
+        message over \(Q\) links (i.e. to destination) is thus
+        \[
+          Q{\frac{M L + 2h}{R}}
+        \]
+ 
+      \item \emph{Finally, suppose that the network is a
+        circuit-switched network. Further suppose that the
+        transmission rate of the circuit between source and
+        destination is \(R\) bit/s. Assuming \(t_s\) seconds of set-up
+        and \(h\) bits of header appended to the entire file, how long
+        does it take to send the file?}
+
+        Because there is no store-and-forward delay at the switches,
+        the total delay does not depend on the number of links. Also
+        we must add the setup time. Therefore the end-to-end delay is
+        \[
+          t_{s} + \frac{M L + h}{R}
+        \]
+
+    \end{enumerate}
+
+  \item \emph{Consider sending a large file of \(F\) bits from host A
+    to host B. There are two links (and one switch) between them and
+    the links are uncongested (that is, no queuing delays). Host A
+    segments the file into segments of \(S\) bits each and adds 40
+    bits of header to each segment, forming packets of \(L = 40 + S\)
+    bits. Each link has a transmission rate of \(R\) bit/s. Assuming
+    that \(\frac{F}{S}\) is an integer, find the value of \(S\) that
+    minimises the delay of moving the file from host A to host
+    B. Disregard propagation delay.}
+
+    We can generalise the answer to any header size. So let \(h =
+    40\). Then the size of each packet is \(L = h + S\). The number of
+    packets is \(\frac{F}{S}\), which is an integer by assumption. One
+    packet takes \(\frac{L}{R}\) seconds to cross over one link. So
+    the first packet takes \(2{\frac{L}{R}}\) seconds from source to
+    destination. Then, every \(\frac{L}{R}\) seconds another packet,
+    among the \(F/S-1\) remaining, arrives to destination, because of
+    pipelining. So the total time to receive all the packets is
+    \[
+        2{\frac{L}{R}} + (\frac{F}{S}-1)\frac{L}{R} 
+      = (1 + \frac{F}{S})\frac{L}{R} 
+      = (1 + \frac{F}{S})\frac{h + S}{R}  
+    \]
+    In other words, the delay \({\cal D}\) in function of \(S\) is
+    expressed as
+    \[
+     {\cal D}(S) = \frac{1}{R}\frac{(S + F)(h + S)}{S} = \frac{1}{R}(h
+     + F + S + \frac{hF}{S})
+    \]
+    The minumum of this function is reached at \(S_{m}\) such as
+    \[
+      \frac{d}{dS} {\cal D} (S_m) = 0
+    \]
+    Since
+    \[
+     \frac{d}{dS} {\cal D} (S) = \frac{1}{R}(1 - \frac{hF}{S^2})
+    \]
+    We deduce finally \(S_m = \lfloor\sqrt{hF}\rfloor\), where
+    \(\lfloor{x}\rfloor\) is the biggest integer which is smaller than
+    \(x\)  (in this example, we could choose also the smallest integer
+    which is bigger than \(x\)).
+
+\end{enumerate}

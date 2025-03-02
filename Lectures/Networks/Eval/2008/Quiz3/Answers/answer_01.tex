@@ -1,0 +1,55 @@
+\paragraph{Answer.} One example is as follows.
+
+\noindent Messages from ATM to server:
+
+  {\small
+  \begin{tabular}{l|l}
+  Message name & Purpose\\
+  \hline \hline
+  HELO \(<\)userid\(>\)   & Let server know that there is a card\\
+                          & in the ATM, then transmits user ID\\
+                          & to server\\
+  PASSWD \(<\)passwd\(>\) & User enters PIN, which is sent\\
+                          & to server\\
+  BALANCE                 & User requests balance\\
+  WITHDRAWAL \(<\)amount\(>\) 
+                          & User asks to withdraw money\\
+  BYE                     & User all done
+  \end{tabular}
+  }
+
+  \medskip
+
+\noindent Messages from server to ATM (display):
+
+  \begin{tabular}{l|l}
+  Message name & Purpose\\
+  \hline \hline
+  PASSWD  & Ask user for PIN (password)\\
+  OK      & Last requested operation\\
+          & (PASSWD, WITHDRAWAL) OK\\
+  ERR     & Last requested operation\\
+          & (PASSWD, WITHDRAWAL)\\
+          & resulted in error\\
+  AMOUNT \(<\)amount\(>\) & Sent in response to
+                            BALANCE request\\
+  BYE     & User done, display welcome\\
+          & screen at ATM
+  \end{tabular}   
+
+\noindent A correct withdrawal looks like this:
+{\small
+  \begin{verbatim}
+HELO <userid>        -------------> (Check if valid userid)
+                     <------------- PASSWD
+PASSWD <passwd>      -------------> (Check password)
+                     <------------- OK (password is OK)
+BALANCE              ------------->
+                     <------------- AMOUNT <amount>
+WITHDRAWAL <amount>  -------------> (Check if enough money)
+                     <------------- OK
+ATM dispenses money
+BYE                  ------------->
+                     <------------- BYE
+  \end{verbatim}
+}

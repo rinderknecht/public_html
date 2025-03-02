@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Reversing a Tree Level-by-level</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Reversing a Tree Level-by-level</h2>
+
+<p><strong>Question 1.</strong> The purpose of this exercise is to
+write an XSLT transform which takes as input a table of contents with
+sections only and output the same table of contents (in XML) where the
+sections have been reversed, <em>level by level</em>, which means that
+the result tree is the image of the input tree in a mirror.
+</p>
+
+<p><strong>Example.</strong>
+<a href="./toc_simple.xml">This</a> is an example of input document
+and
+<a href="./flip1_out.xml">this</a> is the corresponding output. You
+need to download this <a href="./book_simple.dtd">DTD</a> to run this
+example.
+</p>
+
+<strong>Hints.</strong>
+<ul>
+
+  <li>The output is XML, so you need to set the
+  attribute <tt>method="xml"</tt>.</li>
+
+  <li>Use a template matching the document root, whose sole purpose is
+  to apply the other templates to the root element (<tt>book</tt>) and
+  add a line break afterwards:<br/>
+  <tt>&lt;xsl:template match="/"><br/>
+  &nbsp;&nbsp;&lt;xsl:apply-templates select="book"/><br/>
+  &nbsp;&nbsp;&lt;xsl:text>&amp;#10;&lt;/xsl:text><br/>
+  &lt;/xsl:template></tt><br/>
+  This allows you to type the sequences constructed by the matching
+  templates (by means of the <tt>as</tt> attribute).
+  </li>
+
+  <li>Make a figure of the document tree of the input and of the
+  output, then compare them. Try to find some transformation you
+  already know which could be extended to cope with the new situation
+  (try the exercise about reversing a sequence). This exercise should
+  remind you of <em>Counting Sections in a Table of Contents</em>
+  and <em>Summing Integers in a Tree</em>.</li>
+
+  <li>When making a section directly, that is <tt>&lt;section
+  title="..."></tt>, the result will likely be instead <tt>&lt;section
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" title="..."></tt>. The
+  reason is that the global namespace <tt>xs</tt> (which stands for
+  XML Schema, needed to specify types as <tt>xs:integer</tt> for
+  example) applies <em>by default</em> to any non-XSLT element, even
+  if that namespace is unused in the construction of said element. To
+  instruct the XSLT processor not to add the useless
+  namespace <tt>xs</tt> in the output, add the attribute
+  <tt>exclude-result-prefixes="xs"</tt> declaration to the
+  element <tt>xsl:transform</tt>.</li>
+   
+</ul>
+
+<p><strong>Answer 1.</strong> <a href="./flip1.xsl">This</a> is one
+solution.</p>
+
+<hr/>
+
+<p><strong>Question 2.</strong> Same question as before, but this time
+  the table of contents contains chapters, which in turn contain
+  sections, and we do not want the chapters to be reversed, only the
+  sections.
+</p>
+
+<strong>Hint.</strong>
+<ul>
+
+  <li>When you want to select the value of attribute <tt>title</tt> of
+  node <tt>$nodes[1]</tt>, you
+  write <tt>select="$nodes[1]/@title"</tt>. But what if this
+  expression is not in a <tt>select</tt> attribute? Then you need to
+  add braces around it. For example, if the attribute's name
+  is <tt>title</tt>, you
+  write <tt>title="{$nodes[1]/@title}"</tt>. Try to use this.</li>
+
+</ul>
+
+<p><strong>Example.</strong>
+<a href="./toc.xml">This</a> is an example of input document (note the
+chapters) and
+<a href="./flip2_out.xml">this</a> is the corresponding output (check
+that their relative order was preserved). You need to download
+this <a href="./book.dtd">DTD</a> to run this example.
+</p>
+
+<p><strong>Answer 2.</strong> <a href="./flip2.xsl">This</a> is one
+solution.</p>
+
+<hr/>
+
+<p><strong>Question 3.</strong> Because the order of the chapters must
+  be left unchanged, it is interesting to use a <em>matching
+  template</em> (defined by <tt>&lt;xsl:template
+  <strong>match</strong>="chapter"></tt>) to process them and call it
+  with <strong><tt>&lt;xsl:apply-templates
+  select="chapter"></tt></strong> (as a reminder, <em>named
+  templates</em> are defined by <tt>&lt;xsl:template name="..."></tt>
+  and called by <tt>&lt;xsl:call-template name="..."></tt>).</p>
+
+<strong>Note.</strong> Perhaps a better way to understand the
+function of matching templates is to imagine that the elements they
+are matched against are processed in parallel. For instance,
+consider <tt>&lt;xsl:apply-templates select="chapter"/></tt>. This
+means:
+<ol>
+
+  <li> select the elements <tt>chapter</tt> which are children of the
+  current element;</li>
+
+  <li> for each element in the resulting sequence, <em>in
+  parallel</em>,
+  <ul>
+
+    <li> apply the first template in the stylesheet which
+      matches <tt>chapter</tt>;</li>
+    
+  </ul>
+  </li>
+
+  <li> when finished, gather all the results in one sequence, <em>in
+  the same order as the original chapters</em>.</li>
+
+</ol>
+<p>In other words, when parallel processing of elements is envisaged,
+use <tt>xsl:apply-templates</tt>, otherwise <em>sequential</em>
+processing is chosen, that is <tt>xsl:call-template</tt>.</p>
+
+<p><strong>Answer 3.</strong> <a href="./flip3.xsl">This</a> is one
+solution. Note how we used <tt>&lt;xsl:copy></tt> and
+<tt>&lt;xsl:attribute .../></tt>, instead of creating explicitly
+elements <tt>&lt;book title="..."&gt;</tt> and <tt>&lt;chapter
+title="..."&gt;</tt>.</p>
+
+<hr/>
+
+<p><strong>Question 4.</strong> Comparing the contents of the template
+  matching chapters with the following element of the named
+  template <tt>flip</tt>, it becomes apparent that both actions are
+  the same: make a shallow copy of an element and flip its
+  children. Here is the excerpt from <tt>flip</tt>:
+</p>
+
+<p>
+<tt>
+&lt;section title="{$sections[1]/@title}"><br/>
+&nbsp;&nbsp;&lt;xsl:call-template name="flip"><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsl:with-param name="sections" select="$sections[1]/section"/><br/>
+&nbsp;&nbsp;&lt;/xsl:call-template><br/>
+&lt;/section><br/>
+</tt>
+</p>
+
+<p>Therefore it would be advantageous if the template matching
+chapters matched also sections. Because we used <tt>&lt;xsl:copy></tt>
+and <tt>&lt;xsl:attribute .../></tt>, it becomes possible to share the
+template matching chapters with sections: <tt>&lt;xsl:template
+match="chapter|section"></tt> (meaning "match either a chapter or a
+section").
+</p>
+
+<p>Implement this modification and check how many lines are thus
+saved, compared to the previous version.</p>
+
+<p><strong>Answer 4.</strong> <a href="./flip4.xsl">This</a> is one
+solution. Note how we have to apply templates to the first section in
+<tt>flip</tt>, instead of calling directly <tt>flip</tt> (this
+recursive call is now done in the template matching chapters and
+sections). Since the template applies to only one section
+(<tt>&lt;xsl:apply-templates select="$sections[1]"/></tt>),
+parallelism is lost, but code sharing is gained nonetheless.</p>
+
+<hr/>
+
+<p><strong>Question 5.</strong> Another difference
+  between <tt>xsl:call-template</tt> and <tt>xsl:apply-templates</tt>
+  is the fact that the former always results in a call while the
+  latter may be a non-operation if the <tt>select</tt> attribute
+  evaluates to the empty sequence. In other
+  words, <tt>&lt;xsl:apply-templates select="..."></tt> does nothing
+  if the value of <tt>"..."</tt> is the empty sequence,
+  whilst <tt>&lt;xsl:call-template name="t"></tt> always calls the
+  template named <tt>t</tt>, even if the parameters are empty
+  sequences.
+</p>
+
+<p>It is possible for a matching template to have parameters. Just put
+some <tt>xsl:param</tt> elements just after <tt>&lt;xsl:template
+match="..."></tt> (this is the definition) and <tt>xsl:with-param</tt>
+just after <tt>xsl:apply-templates</tt> (this is the
+application). This is the same syntax as
+for <tt>xsl:call-template</tt>.
+</p>
+
+<p>Change the template call to <tt>flip</tt> into a template application
+with a parameter and remove the definition of <tt>flip</tt>
+entirely.</p>
+
+<p><strong>Answer 5.</strong> <a href="./flip5.xsl">This
+stylesheet</a> is the shortest to achieve the same effects as the
+previous ones but with a minimal number of lines.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

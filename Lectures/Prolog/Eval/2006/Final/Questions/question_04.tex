@@ -1,0 +1,16 @@
+    \noindent\textbf{Question.} Define a relation \texttt{split(L,P,N)} to
+    be true if \texttt{P} contains the positive or nul items of
+    \texttt{L} (same order as in \texttt{L}) and \texttt{N} contains
+    the negative items (same order). For example:
+{\small
+\begin{verbatim}
+?- split(L,[1,0],[-3,-2]).
+L = [1, 0, -3, -2] ;
+L = [1, -3, 0, -2] ;
+L = [1, -3, -2, 0] ;
+L = [-3, 1, 0, -2] ;
+L = [-3, 1, -2, 0] ;
+L = [-3, -2, 1, 0] ;
+No
+\end{verbatim}
+}

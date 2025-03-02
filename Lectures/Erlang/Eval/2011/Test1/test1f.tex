@@ -1,0 +1,57 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amssymb}
+
+\usepackage{array}
+\usepackage{multirow}
+
+\title{Test 1f of \textsf{Erlang}}
+\author{Christian Rinderknecht}
+\date{7 October 2011}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+
+\begin{enumerate}
+
+  \item Write a function \fun{suf/2} (\emph{suffix}) such that, if
+    \[\fun{suf}(P,Q) \xrightarrow{+} R,\]
+    and list \(P\) is the ending of list~\(Q\) then \(R\)~is
+    \fun{true}, otherwise \fun{false}. For example,
+    \begin{align*}
+      \fun{suf}([1,1,0,0],[0,1,1,0,1,1,1,0,0])
+      &\xrightarrow{+} \fun{true},\\
+      \fun{suf}([\fun{c},\fun{i},\fun{t},\fun{y}],
+      [\fun{a}, \fun{t}, \fun{r}, \fun{o}, \fun{c}, \fun{i}, \fun{t},
+        \fun{y}]
+      & \xrightarrow{+} \fun{true},\\
+      \fun{suf}([[2],5,\fun{a}],[4,\fun{a}])
+      &\xrightarrow{+} \fun{false},\\
+      \fun{suf}([\,],[1,2,3])
+      &\xrightarrow{+} \fun{true}.
+    \end{align*}
+    Note that the empty list is the suffix of \emph{any} list.
+
+  \item Write a function \fun{allp/1} (\emph{all prefixes}) such that,
+    if
+    \[\fun{allp}(P) \xrightarrow{+} Q,\] then \(Q\) is the list of all
+    the prefixes of \(P\), by increasing length. A prefix is a list
+    whose items are found in the beginning of another list. For
+    example,
+    \[\fun{allp}([1,2,3,4]) \xrightarrow{+}
+          [[1],[1,2],[1,2,3],[1,2,3,4]].\]
+
+\end{enumerate}
+
+\end{document}

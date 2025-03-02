@@ -1,0 +1,1 @@
+eq(times(plus(power(x,2),1),minus(times(minus(4),power(x,3)),7)),y)

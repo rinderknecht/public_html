@@ -1,0 +1,18 @@
+\paragraph{Question.} The \emph{negabinary} representation of a number
+is similar to the binary representation, except that the base is not
+\(2\) but \(-2\). Therefore, the general shape of the negabinary
+representation with \(n\) bits \(b_{n-1}, b_{n-2}, \dots, b_0\) is
+\[
+b_{n-1}(-2)^{n-1} + b_{n-2}(-2)^{n-2} + \dots + b_1(-2)^1 + b_0
+\]
+Devise a \textsf{C} function adding two numbers expressed in the
+negabinary system, of same length:
+{\small
+\begin{verbatim}
+char* addNeg2 (const char p[], const char q[], unsigned int len);
+\end{verbatim}
+}
+\paragraph{Hint.} Make the table of all the possible cases. First,
+start with a zero carry in and the rightmost bits 0 or 1. Then, fix
+the bits and carries that need fixing and discover new carries. Then
+add new cases until no new carry is discovered.

@@ -1,0 +1,106 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{enumerate}
+
+  \item Computer Networks and the Internet
+
+    \begin{itemize}
+
+      \item What is the Internet?
+
+      \item The network edge
+
+      \item The network core
+
+      \item Network access and physical media
+
+      \item \textbf{ISPs and Internet backbones}
+
+      \item Delay and loss in packet-switched networks
+ 
+      \item Protocol layers and their service models
+
+    \end{itemize}
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{ISPs and Internet backbones}
+
+You may recall that ISPs are interconnected in a hierarchy. The most
+important level in this structure is the \textbf{backbone} or
+\textbf{tier-1 ISP} (level one is the top of the hierarchy).
+
+\bigskip
+
+Internet backbones are usual ISPs but
+\begin{itemize}
+
+  \item its links speed is from 662 Mbps to 10 Gbps;
+
+  \item it is directly connected to \emph{each} other backbones;
+
+  \item it is connected to a large number of tier-2 ISPs and other
+  customers; 
+
+  \item it has an international coverage.
+
+\end{itemize}
+Hence their routers must be able to forward packets at a very high
+rate.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{ISPs and Internet backbones (cont)}
+
+\begin{center}
+\includegraphics[scale=0.30]{01-17.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{ISPs and Internet backbones (cont)}
+
+A tier-2 ISP has typically a regional or national coverage (depends on
+the size of the country, actually). 
+
+\bigskip
+
+Thus, in order to reach a large portion of the Internet, a tier-2 ISP
+needs to route traffic through one of the backbones to which it si
+connected.
+
+\bigskip
+
+In this case, the tier-2 ISP is said to be a \textbf{customer} of the
+backbone and the backbone is said to be a \textbf{provider} to the
+tier-2 ISP.
+
+\bigskip
+
+Tier-2 ISP can be directly connected to each other. In general, when
+two ISPs are connected directly, they are said \textbf{to peer} each
+other.
+
+\bigskip
+
+Within an ISP, the points at which it peers another ISP are called
+\textbf{Points of Presence} (\textbf{POP}) and are a router or a group
+of routers.
+
+\end{frame}

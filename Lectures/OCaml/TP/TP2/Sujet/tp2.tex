@@ -1,0 +1,241 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amssymb}
+
+\input{trace}
+
+\title{TP 2 de programmation fonctionnelle en Objective Caml}
+\author{Christian Rinderknecht}
+
+\begin{document}
+
+\maketitle 
+
+L'objectif est de présenter la curryfication et la possibilité de
+l'évaluation partielle des fonctions qu'il implique, puis le filtrage
+et les paramètres fonctionnels. Les exemples relèvent du calcul
+symbolique.
+%numérique flottant.
+
+\section{Curryfication}
+
+La curryfication est la correspondance entre une fonction à $n$
+arguments et une fonction à un argument, lequel est un $n$-uplet. Par
+exemple, une fonction qui ajoute deux entiers peut s'écrire
+\begin{quote}
+\verb|let ajoute x y = x + y|
+\end{quote}
+ou
+\begin{quote}
+\verb|let somme (x, y) = x + y|
+\end{quote}
+
+La première forme est dite {\em curryfiée}, et la deuxième {\em non
+curryfiée}.
+
+La première prend deux arguments qui sont chacun de type {\tt
+int}. Elle a le type $\mbox{\tt int}\rightarrow\mbox{\tt
+int}\rightarrow\mbox{\tt int}$. L'opérateur $\rightarrow$ est
+associatif à droite, c'est-à-dire que ce type doit être lu $\mbox{\tt
+int}\rightarrow(\mbox{\tt int}\rightarrow\mbox{\tt int})$.  Nous avons
+donc une fonction qui prend en entier en argument, et renvoie une
+fonction des entiers vers les entiers.  Par exemple,
+\begin{quote}
+\verb|let ajoute2 = ajoute 2|
+\end{quote}
+définit une fonction qui ajoute $2$ à son argument; elle a le type
+$\mbox{\tt int}\rightarrow\mbox{\tt int}$. Il en découle que
+\begin{quote}
+\verb|ajoute2 3|
+\end{quote}
+a le type {\tt int}: cette expression est un entier.
+
+La seconde prend un argument, qui est une paire d'entiers. Elle a donc
+le type $\mbox{\tt int}\times\mbox{\tt int}\rightarrow\mbox{\tt int}$.
+L'opérateur $\times$ a priorité sur l'opérateur $\rightarrow$,
+c'est-à-dire que ce type doit être lu $(\mbox{\tt int}\times\mbox{\tt
+int})\rightarrow\mbox{\tt int}$.  Par exemple,
+$$\verb|somme (2, 3)|$$ a le type {\tt int}. Il est impossible de
+réaliser une application partielle comme dans le premier cas.
+L'expression $\verb|somme 2|$ (qui est équivalente à
+$\verb|somme(2)|$) provoque une erreur de typage car la fonction {\tt
+somme} attend une paire d'entiers et reçoit un entier à la place.
+%\begin{quote}
+\begin{verbatim}
+# somme 2;;
+        ^
+This expression has type int but is here used with type int * int
+\end{verbatim}
+%\end{quote}
+
+La version curryfiée est donc plus flexible, puisqu'elle autorise
+l'application partielle. Pour cette raison, elle sera souvent
+préférée.
+
+\begin{itemize}
+\item \'{E}crire deux fonctions {\tt curry} et {\tt uncurry}. La
+      première prend une fonction {\tt f} sous forme non curryfiée et
+      renvoie sa forme curryfiée; la seconde fait le contraire.
+\end{itemize}
+
+
+\section{Paramètres fonctionnels}
+
+\begin{itemize}
+
+  \item Écrire une fonction \verb+fun_prod+ qui prend deux
+  fonctions $f$ et $g$ en argument et renvoie une fonction des paires
+  dans les paires, qui applique $f$ à la première composante et $g$ à
+  la seconde.
+
+  \item Écrire une fonction \verb+iter+ qui prend un entier $n$,
+  une fonction $f$, un entier $x$ et calcule $f^n(x)$.
+
+  \item Application: écrire une fonction \verb|power| qui, étant
+  donnés deux entiers $m$ et $n$, calcule $m^n$.
+
+  \item Application (bis). Soit $(F_n)_{n \in \mathbb{N}}$ la suite de
+  Fibonnacci définie par $$\forall n \in \mathbb{N}^{+}, F_n = F_{n-1}
+  + F_{n-2}; F_0 = F_1 = 1$$
+
+  \begin{enumerate}
+
+    \item Écrire le programme récursif calqué sur la définition
+    mathématique.
+
+    \item Calculer le nombre d'appels récursifs nécessaires pour
+    calculer $F_n$.
+
+    \item Pour diminuer le temps d'exécution, calculer la fonction
+    $f$ telle que $(F_{n+2},F_{n+1}) = f (F_{n+1},F_{n})$ et en
+    déduire une définition de $f$ dont le coût est linéaire en $n$.
+
+  \end{enumerate}
+
+  \item Écrire une fonction \verb+iter_prod+ dont les paramètres
+  sont $f$, $g$ et $n$, et calcule une fonction des paires dans les
+  paires, qui à $(x, y)$ associe $(f^n(x), g^n(y))$. On utilisera
+  \verb+fun_prod+ et \verb+iter+. On écrira \texttt{iter\_prod} de
+  deux façons différentes (nommer \verb|iter_prod_bis| la variante).
+
+  \item Écrire une fonction \verb+loop+ telle que la valeur de
+  $\mbox{\tt loop} \, f \, p \, z$ soit le premier élément de la suite
+  $(f^k(z))_{k\in N}$ qui satisfasse le prédicat $p$ (un prédicat est
+  une fonction à valeurs dans les booléens.).
+
+  \item Utiliser {\tt loop} pour écrire une fonction {\tt modulo}, à
+  deux arguments entiers positifs $x$ et $y$, qui calcule $x \mbox{\rm
+  \ mod\ } y$.
+
+  \item Réécrire la fonction \verb+iter+ (nommer \verb|iter_bis| la
+  variante) à partir de la fonction \verb+loop+. Pour cela, calculer
+  la suite $(f^k(x), n-k)_{k \geq 0}$ et s'arrêter lorsque la deuxième
+  composante s'annule. On obtient donc la paire $(f^n(x), 0)$, dont on
+  extrait la première composante.
+
+\end{itemize}
+
+\section{Filtrage}
+
+Le filtrage permet de faire un choix en fonction de la {\em forme}
+(i.e. de la {\em structure}) d'une valeur.  Un filtre est une
+expression. Sa syntaxe est
+\begin{center}
+\verb+match+ $e$ \verb+with+
+    $p_1$ \verb+->+ $e_1$
+\verb+|+ $p_2$ \verb+->+ $e_2$ \verb+|+
+    $\ldots$
+\verb+|+ $p_n$ \verb+->+ $e_n$
+\end{center}
+L'évaluation de cette expression débute par le calcul de la valeur $v$
+de l'expression $e$. Ensuite, on compare, dans l'ordre, la forme de
+$v$ aux différents motifs. Si $p_i$ est le premier motif qui {\em
+filtre} $v$, alors le résultat renvoyé sera la valeur de $e_i$. Cette
+construction correspond aux définitions par cas des fonctions
+mathématiques.
+
+\noindent Exemple (Fibonacci, méthode naïve):
+\begin{quote}
+\begin{verbatim}
+let rec fib n =
+  match n with
+    0 -> 1
+  | 1 -> 1
+  | _ -> fib(n-1) + fib(n-2)
+\end{verbatim}
+\end{quote}
+
+\noindent Un motif peut contenir des variables, qui sont alors
+\emph{liées} à la sous-valeur qu'elles filtrent. Exemple:
+\begin{quote}
+\begin{verbatim}
+let implique bool1 bool2 =
+  match (bool1, bool2) with
+    (true, x) -> x
+  | (false, _) -> true
+\end{verbatim}
+\end{quote}
+Cette fonction prend deux booléens en argument et indique si le
+premier implique le second. Le {\tt match} porte sur la paire {\tt
+(bool1, bool2)}, ce qui permet de prendre en compte les deux valeurs à
+la fois si on le désire.  La première ligne du {\tt match} s'applique
+lorsque {\tt bool1} vaut {\tt true}; on attribue alors le nom {\tt x}
+au deuxième composant de la paire (\texttt{x} est liée à la valeur de
+\texttt{bool2}) et on renvoie {\tt x}, \emph{qui est liée par le
+motif} (à la valeur de \texttt{bool2}). La deuxième ligne s'applique
+lorsque {\tt bool1} vaut {\tt false}.
+
+Une variable ne peut apparaître qu'une seule fois par motif. De plus,
+un motif ne peut pas faire référence à des variables définies
+précédemment. Dans les deux cas, cela demanderait d'effectuer des
+comparaisons implicites, ce que le compilateur refuse. Par exemple,
+\begin{quote}
+\begin{verbatim}
+let equal p =
+  match p with
+    (x, x) -> true
+  | _ -> false
+\end{verbatim}
+\end{quote}
+est incorrect parce que {\tt x} apparaît deux fois;
+\begin{quote}
+\begin{verbatim}
+let equal x y =
+  match y with
+    x -> true
+  | _ -> false
+\end{verbatim}
+\end{quote}
+est correcte, mais {\em renvoie toujours true}. En effet, {\tt match y
+with x -> ...} ne signifie pas «~si $y$ est égal à $x$ alors...~» mais
+«~si $y$ est de la forme $x$ alors...~», ce qui est toujours vrai
+puisqu'une variable de motif (ici le second \texttt{x}) est toujours
+de la forme de n'importe qu'elle valeur (ici la valeur résultant de
+l'évaluation de la variable \texttt{y}). C'est là la différence entre
+{\em comparaison} et {\em filtrage}.
+
+\begin{itemize}
+
+  \item Écrire la fonction \verb+factorielle+ avec un filtrage par
+  motifs.
+
+  \item Écrire la fonction transposée (\texttt{transpose}) d'une
+  matrice carrée de dimension 2 représentée par une paire de paires de
+  flottants.
+
+  \item Écrire une fonction \texttt{prod} qui calcule le produit de
+  deux telles matrices.
+
+  \item Écrire une fonction \texttt{is\_const} qui teste si une telle
+  matrice est constante, c.-à-d. possède quatre composantes égales.
+
+  \item Écrire une fonction \texttt{trig\_sup} qui teste si une telle
+  matrice est triangulaire supérieure.
+\end{itemize}
+
+\end{document}

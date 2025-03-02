@@ -1,0 +1,25 @@
+#-*-makefile-*-
+
+ECHO    := @ECHO@
+PRINTF  := @PRINTF@
+RM      := @RM@
+
+A2PS    := @A2PS@
+HTML2PS := @HTML2PS@
+PS2PDF  := @PS2PDF@
+GCC     := @GCC@
+GS      := @GS@
+
+PDF     := ${HTML:%=%.pdf} Makefile.pdf ${C:%=%.pdf} 
+
+include precom.mk
+
+sinclude gcc.mk
+sinclude gnuc2ps.mk html2ps.mk Makefile2ps.mk a2ps.mk # a2ps.mk last
+sinclude ps2pdf.mk gs.mk
+
+${TARGETS}: %: %.c
+	@${call gcc,$@,$^}
+
+distclean::
+	@\rm -f common.mk

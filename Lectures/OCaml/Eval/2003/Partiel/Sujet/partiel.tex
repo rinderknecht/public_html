@@ -1,0 +1,133 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{xspace}
+\usepackage{amsmath}
+\usepackage{epsf}
+
+\input{trace}
+
+\def\ne{n{\oe}ud\xspace}
+\def\nes{n{\oe}uds\xspace}
+
+\title{Partiel de programmation fonctionnelle en Objective Caml}
+\author{Christian Rinderknecht}
+\date{1\ier{} avril 2003}
+
+\begin{document}
+
+\maketitle
+
+Nota: les questions sont indépendantes.
+
+\begin{enumerate}
+
+  \item Écrire une fonction qui, étant donné $n\geq 1$, calcule $u_n$,
+        où la suite $(u_n)_{n\geq 1}$ est définie par
+        \begin{align*}
+        u_1 & = 1 \\
+        u_{n+1} & = \left\{ 
+                      \begin{array}{ll} 
+                        u_n/2 + 1 & \text{\ si $u_n$ est pair} \\ 
+                        u_n + 17 & \text{\ sinon} 
+                      \end{array} 
+                    \right.
+        \end{align*}
+        On prendra garde à ne pas faire un même calcul plusieurs fois.
+
+\item Donner le type des expressions suivantes:
+
+      \begin{itemize}
+        \item \verb/fun x -> x +. 3.0/
+        \item \verb/fun (x,y) -> x or y/
+        \item \verb/fun x -> let f y = y + x in f x/
+        \item \verb/List.map (fun x -> not x)/
+        \item \verb/fun f g -> (fun x -> f (g x))/
+      \end{itemize}
+
+\item On désire manipuler symboliquement des expressions formées à
+      partir des éléments suivants:
+
+      \begin{itemize}
+        \item la constante $\pi$;
+        \item des variables $x$, $y$, etc.;
+        \item un opérateur binaire $+$;
+        \item un ensemble fixe de fonctions: sin, cos, et tan.
+      \end{itemize}
+
+      Questions:
+
+      \begin{itemize}
+        \item Définir un type {\tt expression} pour représenter ces
+              expressions (les noms de variable peuvent être
+              représentés par des chaînes de caractères);
+
+        \item Donner la valeur Caml correspondant à l'expression $\cos
+              x + \tan y$.
+
+        \item Écrire une fonction {\tt eval} qui calcule la valeur
+              flottante d'une expression dans un environnement
+              donné. On rappelle qu'un environnement est une liste de
+              paires (nom de variable, valeur) qui à chaque variable
+              associe une valeur. La fonction prédéfinie {\tt
+              List.assoc} sera utile pour accéder aisément aux contenu
+              de l'environnement. (On précise que les fonctions {\tt
+              sin}, {\tt cos} et {\tt tan} sont prédéfinies en Caml
+              mais la constante $\pi$ ne l'est pas: on utilisera la
+              fonction arc-cosinus {\tt acos}.)
+
+      \end{itemize}
+
+  \item On désire manipuler des polynômes à une variable et à
+        coefficients entiers. On représentera un polynôme par une
+        liste de couples (coefficient, degré), triée par ordre
+        décroissant de degré; chaque couple représente un monôme. Par
+        exemple, $X^3-X+1$ sera représenté par la liste
+        \texttt{[(1,3); (-1,1); (1,0)]}. Écrire une fonction qui
+        effectue la somme de deux polynômes. On prendra garde à
+        respecter l'ordre des monômes et à ne pas créer plusieurs
+        monômes de même degré dans le résultat.
+
+
+  \item Un arbre binaire est un arbre où chaque \ne a au plus deux
+        fils, un fils gauche et un fils droit. De plus, chaque \ne est
+        annoté par une étiquette, qui est une valeur \emph{a priori}
+        quelconque. Voici un exemple d'arbre annoté par des étiquettes
+        de type entier: 
+     
+        $$\epsfbox{arbre_bin.eps}$$
+
+        Le type des arbres binaires est défini par:
+\begin{verbatim}
+  type 'a arbre =
+    Rien
+  | Noeud of 'a * ('a arbre) * ('a arbre)
+\end{verbatim}
+
+       Ce type est \emph{paramétré} par la variable de type \verb+'a+,
+       ce qui permet de définir le type des arbres indépendamment du
+       type des étiquettes. On pourra ensuite utiliser le type {\tt
+       int arbre} lorsque l'on veut annoter chaque \ne par un entier,
+       etc.
+
+       \begin{itemize}
+
+         \item Écrire une fonction qui calcule la hauteur d'un arbre.
+
+         \item Écrire une fonction qui calcule la taille d'un arbre
+               (c'est-à-dire le nombre de \nes).
+
+         \item Écrire une fonction {\tt recherche}, qui prend en
+               argument une étiquette {\tt x} et un arbre {\tt a}, et
+               indique si cette étiquette apparaît sur l'un des \nes
+               de {\tt a}.
+       \end{itemize}
+
+\end{enumerate}
+
+
+\end{document}

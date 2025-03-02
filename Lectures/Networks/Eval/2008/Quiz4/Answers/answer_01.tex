@@ -1,0 +1,68 @@
+%%-*-latex-*-
+
+\paragraph{Answers.}
+
+\begin{enumerate}
+
+  \item A circuit-switched network can guarantee a certain amount of
+    end-to-end bandwidth for the duration of the call. Most
+    packet-switched networks today (including the internet) cannot
+    make any end-to-end guarantees for bandwidth. In a
+    circuit-switched network using TDM, an application can use the
+    full bandwidth at periodical moments.
+
+  \item In a packet-switched network, the packets from different
+    sources flowing into a link do not follow any fixed pattern, or
+    route. This is why packet switching is said to employ statistical
+    multiplexing. In case of TDM circuit switching, each host gets the
+    same slot in a revolving TDM frame: this is completely
+    predictable.
+
+  \item In a virtual circuit network, each packet switch keeps in
+    memory some information (like a table translating interface
+    numbers to virtual circuit numbers) about the virtual circuits
+    passing through them.
+
+  \item The cons of VC's include
+   \begin{itemize}
+
+     \item the need to have a signaling protocol to set up and
+       teardown the VCs;
+  
+     \item the need to maintain connection state in the packet
+       switches.
+
+   \end{itemize}
+   The main advantage of VC networks is that they allow to guarantee
+   an end-to-end delay.
+
+  \item One advantage of message segmentation is that it allows for
+    pipelined transmission over a series of links. Another advantage
+    is that, without it, small messages would be stuck behind much
+    bigger ones in routers.
+
+  \item HFC bandwidth is shared among the users. On the downstream
+    channel all the packets emanate from a single source, called the
+    head end, so there are no collisions on this channel.
+
+  \item The delay components are nodal processing delays, transmission
+    delays, propagation delays and queuing delays. Over a fixed route,
+    all these delays are fixed, except the queuing delay, which is
+    unpredictable.
+
+  \item 
+  \begin{enumerate}
+ 
+    \item A circuit-switched network would be well suited to this
+      application, because it involves long sessions with predictable
+      bandwidth requirements. So bandwidth can be reserved for each
+      session. The delay of setting up a circuit is low compared to
+      the time the application is running.
+
+    \item Given such generous link capacities, the network need no
+    congestion control. In the worst case, all the applications are
+    emitting on the same link, but the link offers enough bandwidth.
+
+  \end{enumerate}
+
+\end{enumerate}

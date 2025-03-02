@@ -1,0 +1,64 @@
+%%-*-latex-*-
+
+% Graphics
+%
+\usepackage{graphicx}
+
+% Language and fonts
+%
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.8]{beramono}
+
+% Maths
+%
+\usepackage{amssymb,amsmath}
+
+% Miscellanea
+%
+\usepackage{url,xspace}
+\usepackage{booktabs}
+
+% Input files
+%
+\input{beamer_cfg}
+\input{trace}
+\input{xmllint}
+\input{saxon}
+
+% New commands
+%
+\renewcommand{\refname}{}
+
+\newcommand\MIME{\textsf{MIME}\xspace}
+\newcommand\XML{\textsf{XML}\xspace}
+\newcommand\HTML{\textsf{HTML}\xspace}
+\newcommand\XHTML{\textsf{XHTML}\xspace}
+\newcommand\DTD{\textsf{DTD}\xspace}
+\newcommand\XPath{\textsf{XPath}\xspace}
+\newcommand\XSLT{\textsf{XSLT}\xspace}
+\newcommand\Clang{\textsf{C}\xspace}
+\newcommand\Cpp{\textsf{CPP}\xspace}
+\newcommand\Perl{\textsf{Perl}\xspace}
+\newcommand\Java{\textsf{Java}\xspace}
+\newcommand\Saxon{\textsf{Saxon}\xspace}
+\newcommand\Unicode{\textsf{unicode}\xspace}
+\newcommand\ASCII{\textsf{ASCII}\xspace}
+
+% ------------------------------------------------------------------------
+% Document
+%
+\title{XML and XSLT}
+\author{Christian Rinderknecht}
+\date{31 October 2008}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\xinclude{xml_intro}{XML}
+\xinclude{xhtml}{XHTML}
+\xinclude{dtd}{DTD}
+\xinclude{xslt}{XSLT}
+
+\end{document}

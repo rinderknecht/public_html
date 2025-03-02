@@ -1,0 +1,11 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/Lectures/Compilers/Slides/grammar.tex
+$HOME/Lectures/Compilers/Slides/token.tex
+
+$HOME/LaTeX/TeX/trace.tex
+
+../Questions/question_01.tex
+../Questions/question_02.tex
+../Questions/question_03.tex
+../Questions/mid-term.tex mid-term-QA.tex

@@ -1,0 +1,30 @@
+#-*-makefile-*-
+
+.SECONDARY:
+
+TOUCH   := @TOUCH@
+ECHO    := @ECHO@
+PRINTF  := @PRINTF@
+RM      := @RM@
+
+A2PS    := @A2PS@
+HTML2PS := @HTML2PS@
+PS2PDF  := @PS2PDF@
+XMLLINT := @XMLLINT@
+JAVA    := @JAVA@
+GS      := @GS@
+
+PDF     := ${HTML:%=%.pdf} ${XSL=%.pdf} Makefile.pdf \
+           ${XML:%=%.pdf} ${DTD:%=%.pdf}
+
+include precom.mk
+
+sinclude xmllint.mk saxon.mk
+sinclude xml2ps.mk html2ps.mk Makefile2ps.mk a2ps.mk # a2ps.mk last
+sinclude ps2pdf.mk gs.mk
+
+distclean::
+	@${RM} -f common.mk
+
+clean::
+	@${RM} -f .*.valid

@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Subtracting two 2-complement binary numbers</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Subracting two 2-complement binary numbers</h2>
+
+<p><strong>Question.</strong> The purpose of this exercise is to
+  write a C program which reads on the command-line two strings
+  representing two integers in 2-complement binary form and subtract
+  the second from the first, then outputs the result. The two numbers
+  must have equal number of bits and overflows and underflows must be
+  reported.
+</p>
+
+<p><strong>Answer.</strong> The code is almost exactly the same as
+  when adding, because the same combinations of carry and two
+  trits occur. The only statements which have to be changed are<br/><br/>
+  <tt>unsigned int carry = 0;</tt><br/><br/>
+  which becomes<br/><br/>
+  <tt>unsigned int carry = 1;</tt><br/><br/>
+  and<br/><br/>
+  <tt>res[i] = p[i] + (q[i] - '0') + carry;</tt><br/><br/>
+  which becomes<br/><br/>
+  <tt>res[0] = p[0] + ('1' - q[0]) + carry;</tt>
+</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

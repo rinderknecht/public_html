@@ -1,0 +1,285 @@
+%%-*-latex-*-
+
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{xspace}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\newcommand{\boxitem}{\item[\(\Box\)]}
+\newcommand{\java}{\textsf{Java}\xspace}
+
+\input{trace}
+
+\title{Examen 2 de Programmation en Java}
+\author{Christian Rinderknecht}
+\date{Mardi 29 Juin 2004}
+
+\begin{document}
+
+\maketitle
+
+\noindent
+\textbf{Durée: deux heures. Les documents et les calculatrices ne sont
+ pas autorisés.}
+
+\smallskip
+
+\section{Questionnaire à choix multiples}
+
+\noindent \emph{Attention: il peut y avoir plusieurs bonnes réponses
+  par question, par conséquent une mauvaise réponse entraine une
+  fraction de point négative. Néanmoins, ces points négatifs ne sont
+  pas comptabilisés hors de cette partie.}
+
+\begin{enumerate}
+
+  \item Quelle est la valeur de {\small \verb+values[2][1]+} dans le
+  tableau suivant?  
+  {\small
+  \begin{verbatim}
+double[][] values =
+  {{1.2,9.0,3.2},{9.2,0.5,1.5,-1.2},{7.3,7.9,4.8}}
+  \end{verbatim}}
+  \vspace*{-15pt}
+  \begin{itemize}
+    \boxitem {\small \verb+7.3+}
+    \boxitem {\small \verb+7.9+}
+    \boxitem {\small \verb+9.2+}
+    \boxitem Il n'y a pas d'élément correspondant à ces indices.
+  \end{itemize}
+
+  \item Quelle est la valeur retournée par {\small \verb+things.length+}?
+   {\small
+   \begin{verbatim}
+double[][] things = {{1.2,9.0},{9.2,0.5,0.0},{7.3,7.9,1.2,3.9}}
+  \end{verbatim}}
+  \vspace*{-15pt}
+  \begin{itemize}
+    \boxitem {\small \verb+2+}
+    \boxitem {\small \verb+3+}
+    \boxitem {\small \verb+4+}
+    \boxitem {\small \verb+9+}
+  \end{itemize}
+
+  \item Étant donné la déclaration de variable suivante:
+  {\small \verb+long[][] stuff;+}
+  Quelles instructions ci-dessous construisent un tableau de 5~lignes et
+  7~colonnes et l'affecte à {\small \verb+stuff+}?
+  \begin{itemize}
+    \boxitem {\small \verb+stuff = new stuff[5][7]+}
+    \boxitem {\small \verb+stuff = new long[5][7]+}
+    \boxitem {\small \verb+stuff = long[5][7]+}
+    \boxitem {\small \verb+stuff = long[7][5]+}
+  \end{itemize}
+
+\newpage
+
+  \item Étant donnée la déclaration
+  {\small
+  \begin{verbatim}
+int[][] items = {{0,1,3,4},{4,4,99,0,7},{3,2}};
+  \end{verbatim}}
+  \vspace*{-15pt}
+  Quelles boucles affichent tous les éléments de {\small \verb+items+}?
+  \begin{itemize}
+    \boxitem 
+      {\small 
+       \begin{verbatim}
+int row=0; int col = 0;
+for (row=0; row < items.length; row++) {
+  System.out.println();
+  for (col=0; col < items.length; col++)
+    System.out.print (items[row][col] + " ");
+}
+      \end{verbatim}}
+      \vspace*{-10pt}
+    \boxitem
+      {\small \begin{verbatim}
+int row=0; int col = 0;
+for (row=0; row < items.length; row++) {
+  System.out.println();
+  for (col=0;col < items[col].length; col++)
+    System.out.print (items[row][col] + " ");
+}
+      \end{verbatim}}
+      \vspace*{-10pt}
+    \boxitem
+      {\small \begin{verbatim}
+int row=0; int col = 0;
+for (row=0; row < items.length; row++) {
+  System.out.println();
+  for (col=0; col < items[row].length; col++)
+    System.out.print (items[row][col] + " ");
+}
+      \end{verbatim}}
+      \vspace*{-10pt}
+    \boxitem
+      {\small \begin{verbatim}
+int row=0; int col = 0;
+for (row=0; row < items.length; row++) {
+  for (row=0; row < items[row].length; row++)
+    System.out.print (items[row][col] + " ");
+  System.out.println();
+}
+      \end{verbatim}}
+  \end{itemize}
+
+  \item Soit la déclaration\\
+  {\small \verb+int[][] items = {{0,1,3,4},{4,3,99,0,7},{3,2}}+}\\
+  Quelles instructions remplacent entièrement les valeurs de la
+  première ligne de {\small \texttt{items}}?
+  \begin{itemize}
+
+      \boxitem 
+      {\small \begin{verbatim}
+items[0][0] = 8;
+items[0][1] = 12;
+items[0][2] = 6;
+      \end{verbatim}}
+      \vspace*{-10pt}
+    
+      \boxitem {\small \verb+items[0] = new {8,12,6};+}
+ 
+      \boxitem
+      {\small \begin{verbatim}
+int[] temp = {8,12,6};
+items[0] = temp;
+      \end{verbatim}}
+      \vspace*{-10pt}
+
+      \boxitem {\small \verb+items[0] = {8,12,6};+}
+  \end{itemize}
+    
+  \item Qu'affiche l'extrait de programme suivant?
+  {\small \begin{verbatim}
+int[] tab = {1,4,3,6,8,2,5};
+int what = tab[0];
+for (int index=0; index < tab.length; index++) {
+  if (tab[index] < what) what = tab[index];
+}
+System.out.println (what);
+  \end{verbatim}}
+  \vspace*{-10pt}
+  {\small \begin{itemize}
+    \boxitem \verb+1+
+    \boxitem \verb+5+
+    \boxitem \verb+1 4 3 6 8 2 5+
+    \boxitem \verb+8+
+  \end{itemize}}
+
+\end{enumerate}
+
+
+\section{Nombres de Armstrong}
+
+Un nombre de Armstrong est un nombre entier positif égal à la somme
+des cubes des chiffres qui le composent en base dix. Par exemple:
+\[153 = 1^3 + 5^3 + 3^3\] Écrivez un programme Java nommé
+\textsf{Armstrong} qui affiche tous les nombres de Armstrong
+inférieurs à 1000.
+
+
+\section{Recherche par dichotomie}
+
+Supposons que nous disposions d'un tableau \(t\) d'entiers triés par
+ordre croissant ainsi que d'un entier \(n\). Nous voulons déterminer
+efficacement si \(n\) est dans \(t\). Une façon inefficace consiste à
+parcourir tout le tableau et comparer \(n\) à chaque élément. Dans le
+pire des cas il faut donc parcourir tout le tableau, ce qui rend le
+temps de recherche proportionnel à la taille de \(t\). Une façon
+efficace consiste à comparer \(n\) avec l'élément au milieu du
+tableau. Si \(n\) est égal à cet élément, alors on conclut; s'il est
+strictement plus grand alors on relance la recherche dans la partie
+supérieure, sinon on relance dans la partie inférieure. Si on doit
+chercher dans un sous-tableau vide, alors on conclut que \(n\) est
+absent du tableau. C'est la \emph{recherche par dichotomie}. Dans le
+pire des cas on montre que le temps de recherche est proportionnel au
+logarithme de la taille du tableau (ce qui est inférieur à la
+recherche linéaire naïve décrite précédemment).
+
+Complétez la méthode {\small \verb+lookup+} dans le programme suivant
+pour quelle effectue la recherche par dichotomie. Un sous-tableau de
+{\small \verb+t+} est modélisé par la donnée de {\small \verb+t+}
+lui-même ainsi que de deux indices dans {\small \verb+t+}
+correspondant à la borne inférieure et supérieure du
+sous-tableau. Ainsi le premier paramètre de {\small \verb+lookup+},
+{\small \verb+n+}, est l'entier recherché; le second, {\small
+\verb+t+}, est le tableau initial dans lequel on le recherche; le
+troisième, {\small \verb+low+}, est l'indice dans {\small \verb+t+} de
+la borne inférieure du sous-tableau; le quatrième, {\small
+\verb+high+}, est la borne supérieure du sous-tableau. Par exemple
+{\small \verb+lookup (5,t,1,4)+} signifie qu'on recherche {\small
+\verb+5+} dans le sous-tableau compris entre les indices {\small
+\verb+1+} et {\small \verb+4+} du tableau {\small \verb+t+}. Le type
+de retour est de type {\small \verb+boolean+}: {\small \verb+true+} si
+{\small \verb+n+} est dans le sous-tableau de {\small \verb+t+},
+{\small \verb+false+} sinon.
+
+Un tableau (ou sous-tableau) vide est caractérisé par une borne
+inférieure qui est strictement supérieure à sa borne supérieure. Pour
+qu'un tableau soit un sous-tableau d'un autre il faut vérifier
+quelques contraintes sur ses bornes inférieures et
+supérieures. L'indice milieu du tableau sera {\small
+\verb|(low + high)/2|}.
+
+\medskip
+
+\noindent \textbf{La méthode \texttt{lookup} devra être programmée sans
+boucles.} Elle peut être écrite en cinq ou sept lignes seulement!
+
+\newpage
+
+{\small
+\begin{verbatim}
+public class Dicho {
+    public static boolean lookup (int n, int[] t, int low, int high) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    public static void print (int[] t) { 
+        int i = 0;
+        for (i = 0; i < t.length; i++)
+          System.out.print (t[i] + " ");
+        System.out.println ();
+    }
+
+    public static void main (String[] args) {
+        if (args.length == 1) { 
+          int n = Integer.parseInt (args[0]);
+          int[] t = {3,7,8,13,15,100};
+          print (t);
+          if (lookup (n,t,0,t.length-1))
+            System.out.println ("Présent.");
+          else System.out.println ("Absent.");
+        }
+        else System.out.println ("usage: java Dicho <num>");
+    }
+}
+\end{verbatim}
+}
+
+\end{document}

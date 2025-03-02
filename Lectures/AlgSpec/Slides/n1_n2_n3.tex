@@ -1,0 +1,16 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-tree,pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[treesep=10pt,levelsep=8mm]{\Tcircle{\(n_1\)}}{
+  \Tcircle{\(n_3\)}
+  \Tcircle{\(n_2\)}
+}
+\endTeXtoEPS
+
+\end{document}

@@ -1,0 +1,3 @@
+clean::
+	@\rm -f *.o *.s *.out ternary
+	@symlinks.sh --set --quiet

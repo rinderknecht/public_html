@@ -1,0 +1,3 @@
+#Course: Slides 
+Syllabus: Syllabus
+Exercises: Eval/2008/Exercises Eval/2008/Exercises/Length Eval/2008/Exercises/SeqSum Eval/2008/Exercises/Last Eval/2008/Exercises/Penult Eval/2008/Exercises/Reversing Eval/2008/Exercises/CSV Eval/2008/Exercises/Shuffling Eval/2008/Exercises/Maximum Eval/2008/Exercises/Squeeze Eval/2008/Exercises/Merging Eval/2008/Exercises/TreeCount Eval/2008/Exercises/TreeSum Eval/2008/Exercises/TreeRev Eval/2008/Exercises/Height Eval/2008/Exercises/TreeNum Eval/2008/Exercises/MathML Eval/2008/Exercises/TreeMerge

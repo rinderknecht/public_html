@@ -1,0 +1,16 @@
+      <li>Functional Binary Search Trees (BST)
+        <ol>
+          <li><a href="Eval/2010/Exercises/Java/BST/BST.java">Abstract class for BSTs</a></li>
+          <li><a href="Eval/2010/Exercises/Java/BST/Ext.java">External node (empty tree)</a></li>
+          <li><a href="Eval/2010/Exercises/Java/BST/Int.java">Internal node (non-empty tree)</a></li>
+          <li><a href="Eval/2010/Exercises/Java/BST/BFunObj.java">Main class</a></li>
+          <li><a href="Eval/2010/Exercises/Java/BST/EmptyBST.java">Exception</a></li>
+        </ol>
+      </li>
+
+      <li><strong>About the mid-term exam:</strong> defining a
+      constructor for the classes <tt>Int</tt> and <tt>Ext</tt> taking
+      a parameter of type <tt>Stack&lt;Item&gt;</tt> was NOT a good
+      design, sorry. It is much easier to define a method
+      <tt>to_BST</tt> in the class <tt>Stack&lt;Item&gt;</tt>.
+      </li>

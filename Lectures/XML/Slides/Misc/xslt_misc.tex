@@ -1,0 +1,423 @@
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Any node}
+ 
+\raggedslides[0pt]
+
+When there is no node test and predicate between two ``\verb|/|'', this
+part of the location path evaluates to any node. Consider
+\XSLThref{03list21.xsl}{the transform}
+\smallXSLTin{03list21.xsl}
+which matches all the \texttt{dish} nodes in the menu and selects all
+their text nodes. 
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Using wildcards}
+
+\raggedslides[0pt]
+
+Wildcards can be used to select nodes when some element names do not
+matter.  \XSLThref{03list14.xsl}{Consider} \smallXSLTin{03list14.xsl}
+The result is the list of all the dishes of any course, in document
+order.
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Location paths}
+
+\raggedslides[0pt]
+
+
+There are actually axis but they are not written because they are
+implicit. The previous location path is actually a shorthand for
+\begin{alltt}
+/\textbf{child::}menu/\textbf{child::}*[3]/\textbf{child::}dish[2]/@*[2]
+\end{alltt}
+The axis are here \verb|child|, which means that we select, at each
+step marked by \verb|/|, among the children of the nodes in the
+current node set.
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Location paths (cont'd.)}
+
+\raggedslides[0pt]
+
+Actually, the previous location path is a shorthand for
+\begin{alltt}
+/child::menu/child::*[3]/child::dish[2]/\textbf{attribute::}*[2]
+\end{alltt}
+There is another axis which can be useful. 
+\XSLThref{03list17_mod.xsl}{Consider}
+\footXSLTin{03list17_mod.xsl}
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Location paths (cont'd.)}
+
+\raggedslides[0pt]
+
+The result of applying \XSLThref{03list17_mod.xsl}{the last transform}
+to \XMLhref{menu.xml}{the \XML file}
+page~\hyperlink{hyper:menu}{\pageref{menu}} is
+\saxonCut{tmp.xml}{menu}{03list17_mod}
+{\small\verbatiminput{tmp.xml}}
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Location paths (cont'd.)}
+
+\raggedslides[0pt]
+
+As you can see in the previous example, it is possible to use location
+paths as value of the \texttt{match} attribute of a template. In order
+for the template to match a node, this node must be in the set denoted
+by the location path. For example, the dishes as main course are not
+matched by \verb|/menu/entrees/dish|.
+
+Note also that 
+\begin{verbatim}
+<xsl:value-of select="text()" />
+\end{verbatim}
+would have lead to the same result.
+
+Also, the shorthand \verb|"../@title"| instead of
+\verb|"parent::*/@title"| was possible.
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / More \XPath axes}
+
+\raggedslides[0pt]
+
+Until now we have seen how to select nodes above the context node (the
+\texttt{parent} axis) or just below it (the \texttt{child} and
+\texttt{attribute} axes).
+
+It is actually possible to use more kinds of axes to select nodes
+which are located anywhere in the document tree.
+
+Perhaps the simplest of these ``multi-level axes'' is the
+\texttt{ancestor} axis. A node \(x\) is an ancestor of a node \(y\) is
+either \(x\) is the parent of \(y\) or it is the ancestor of the
+parent of \(y\). In particular, if \(y\) is the root, it has no
+ancestors at all.
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / The \texttt{ancestor} axis}
+ 
+\raggedslides[0pt]
+
+Consider
+\XSLThref{03list19_mod.xsl}{the following transform}:
+\smallXSLTin{03list19_mod.xsl}
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / The \texttt{ancestor} axis (cont'd.)}
+ 
+\raggedslides[0pt]
+
+Applying \XSLThref{03list19_mod.xsl}{it}
+to \XMLhref{menu.xml}{the menu} gives
+\saxonCut{tmp.xml}{menu}{03list19_mod}
+{\small\verbatiminput{tmp.xml}}
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / All the axes}
+ 
+\raggedslides[0pt]
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Axis & Description\\
+\midrule
+\texttt{self}       & The context node itself\\
+\texttt{child}      & All the child nodes of the context node\\
+\texttt{parent}     & The parent node of the context node\\
+\texttt{ancestor}   & All ancestor nodes of the context node\\
+\texttt{ancestor-or-self} 
+                    & The context node followed by the ancestor nodes\\
+\texttt{descendant} & All descendant nodes of the context node\\
+\texttt{descendant-or-self} 
+                    & The context node followed by the descendant nodes\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / All the axes (cont'd.)}
+ 
+\raggedslides[0pt]
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Axis & Description\\
+\midrule
+\texttt{following-sibling} 
+                    & The context node and all its following siblings\\ 
+\texttt{following}  & All the following nodes\\
+\texttt{preceding-sibling}
+                    & All preceding siblings and the context node\\
+\texttt{preceding}  & All the preceding nodes\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Disjunctive patterns}
+ 
+\raggedslides[0pt]
+
+It is possible to match several tag names at once. Consider 
+the transform
+\smallXSLTin{04list11.xsl}
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Disjunctive patterns (cont'd.)}
+ 
+\raggedslides[0pt]
+
+applied to \XMLhref{people.xml}{the document}
+\smallXMLin{people.xml}
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Disjunctive patterns (cont'd.)}
+\label{cars1}
+\hypertarget{hyper:cars1}{}
+
+\raggedslides[0pt]
+
+Consider the following document about some \XMLhref{cars1.xml}{cars}:
+\smallXMLin{cars1.xml}
+(It is badly designed but fits our didactic purpose here.)
+
+We want a transform that extracts the attributes for each car and
+print them.
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Disjunctive patterns (cont'd.)}
+ 
+\raggedslides[0pt]
+
+If we try \XSLThref{attr1.xsl}{the transform}
+\smallXSLTin{attr1.xsl}
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Disjunctive patterns (cont'd.)}
+ 
+\raggedslides[0pt]
+
+the result is not what we expected:
+\saxonCut{tmp.xml}{cars1}{attr1}
+{\small\verbatiminput{tmp.xml}}
+
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Disjunctive patterns (cont'd.)}
+ 
+\raggedslides[0pt]
+
+The problem is that only the first attribute is selected. It is not
+possible to match an attribute without first matching the
+corresponding element name (tag). This is achieved by matching first
+the element and then applying recursively the templates to the
+attributes of this element. Consider 
+\XSLThref{attr2.xsl}{the transform}
+\footXSLTin{attr2.xsl}
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Disjunctive patterns (cont'd.)}
+ 
+\raggedslides[0pt]
+
+Applying \XSLThref{attr2.xsl}{it} to the
+\XMLhref{cars1.xml}{car list}, we get what we wanted:
+\saxonCut{tmp.xml}{cars1}{attr2}
+{\small\verbatiminput{tmp.xml}}
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Disjunctive patterns (cont'd.)}
+\label{cars2}
+\hypertarget{hyper:cars2}{}
+
+\raggedslides[0pt]
+
+Consider now \XMLhref{cars2.xml}{another version} of the car list,
+without attributes:
+\smallXMLin{cars2.xml}
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Disjunctive patterns (cont'd.)}
+ 
+\raggedslides[0pt]
+
+We want the same output as with the first car list
+(page~\hyperlink{hyper:cars1}{\pageref{cars1}}). This achieved by the 
+\XSLThref{elem.xsl}{transform}:
+\footXSLTin{elem.xsl}
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Disjunctive patterns (cont'd.)}
+ 
+\raggedslides[0pt]
+
+But what if we want one transform that can produce the same output on
+both kinds of car lists? The solution lies in using disjunctive
+patterns. Consider \XSLThref{attr_or_elem.xsl}{the transform}:
+\footXSLTin{attr_or_elem.xsl}
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Inserting elements}
+
+\raggedslides[0pt]
+
+Until now, the output of the \XSLT was plain text. Let us produce some
+other format instead, like \HTML. The technique is pretty simple:
+inside a template, any pair of opening and closing tags will be copied
+to the output.  \smallXSLTin{05list05.xsl}
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Inserting elements (cont'd.)}
+
+\raggedslides[0pt]
+
+Applying \XSLThref{05list05.xsl}{this transform} to the
+\XMLhref{cars1.xml}{first car list}
+(page~\hyperlink{hyper:cars1}{\pageref{cars1}}) yields
+\saxonCut{tmp.html}{cars1}{05list05}
+{\small\verbatiminput{tmp.html}}
+One can open this \XML file in a web browser because it is also a
+valid \HTML document. This allows to display nicely the list of cars.
+
+\end{slide}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{slide}
+\titre{XSLT / Inserting elements (cont'd.)}
+
+\raggedslides[0pt]
+
+It is possible to use a built-in \XSLT element for achieving the same
+result:
+{\small
+\begin{verbatim}
+<xsl:element name="td">Matiz</xsl:element>
+\end{verbatim}
+}
+\noindent instead of
+{\small
+\begin{verbatim}
+<td>Matiz</td>
+\end{verbatim}
+}
+
+\end{slide}
+

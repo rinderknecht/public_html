@@ -1,0 +1,377 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+
+\usepackage{amssymb,amsmath,stmaryrd}
+\usepackage{xspace}
+
+% Inputing in verbatim mode
+%
+\usepackage{verbatim}
+
+\input{trace}
+\input{erlc}
+
+\newcommand\stt[1]{\texttt{\small #1}}
+\newcommand\cost[1]{\llbracket{\stt{#1}}\rrbracket}
+\newcommand\comp[2]{{\cal C}_{#2}^{\texttt{#1}}}
+\newcommand\val[1]{{\cal V}(#1)}
+\newcommand\Erlang{\textsf{Erlang}\xspace}
+
+\title{Time Complexity of Erlang Programs}
+\author{Christian Rinderknecht}
+
+\begin{document}
+
+\allowdisplaybreaks
+
+\maketitle
+
+Let us note \(e\) any \Erlang \emph{expression}, i.e., a function call
+or a constant, that can be rewritten by \Erlang clauses. This process
+is called \emph{computation} and (1) may never end (\emph{loop}), (2)
+ends with a type error (as \stt{1 + []}), (3) ends with a match error
+(an expression containing a function call which matches no head), (4)
+ends with a value (an expression which is a constant).
+
+This procedure can leads us to define the \emph{cost} (or
+\emph{complexity}) of computing an \Erlang expression as the number of
+rewrite steps until reaching a value. Accordingly, a loop has an
+infinite cost and a value has a cost of zero. We denote the cost of
+expression \(e\) by \(\cost{\(e\)}\), and the value of an expression
+\(e\), assuming it exists, by \(\val{e}\). Hence, if \(e\) is a value,
+i.e., \(e = \val{e}\), then \(\cost{\(e\)} = \cost{\(\val{e}\)} = 0\).
+
+\section{Joining two lists}
+
+Consider the following \Erlang module:
+{\small\verbatiminput{join.erl}}
+\erlcomp{.}{join}
+\noindent The cost of a function call like
+\(\cost{join(\(e_1\),\(e_2\))}\) is, by definition, the sum of the
+costs of rewriting \(e_1\) and \(e_2\), plus the cost of rewriting the
+call with the corresponding values \(\val{e_1}\) and \(\val{e_2}\) as
+arguments:
+\[
+\cost{join(\(e_1\),\(e_2\))} \triangleq \cost{\(e_1\)} +
+\cost{\(e_2\)} + \cost{join(\(\val{e_1}\),\(\val{e_2}\))}
+\]
+We apply this definition to each clause in the definition:
+\begin{align*}
+\cost{join([],L)} &= 1\\
+\cost{join([H|T],L)} &= 1 + \cost{join(T,L)}
+\end{align*}
+The ``\(1\)'' in the previous equations are due to the fact that at
+least one rewrite step is necessary. Here, all \Erlang variables,
+\texttt{L}, \texttt{H} and \texttt{T}, denote values, since their
+binding takes place after the call. So, \(\val{\texttt{L}} =
+\texttt{L}\) etc. Note that, since there are no rewrite rules for
+\texttt{[H|T]}, the cost of it is \(0\) and \(\val{\texttt{[H|T]}} =
+\texttt{[H|T]}\).
+
+\medskip
+
+\noindent Let us now define the cost in terms of the size of the
+input, i.e., the arguments. The function call
+\stt{join(\(e_1\),\(e_2\))} has two lists as arguments. The usual
+way to measure the size of a list is to consider the number of
+elements it contains, i.e., its length. Here, the size of the input is
+characterized by a pair \((n,m)\) where \(n = \stt{len(\(e_1\))}\) and
+\(m = \stt{len(\(e_2\))}\). Let us define the cost of \stt{join/2}
+in terms of the input's size as
+\[
+\comp{join/2}{n,m} \triangleq \cost{join(\(e_1\),\(e_2\))} \quad
+\text{where} \;\, \stt{len(\(e_1\))} = n \,\; \text{and} \;\,
+\stt{len(\(e_2\))} = m
+\]
+Using this definition, the previous equations are equivalent to
+\begin{align*}
+\comp{join/2}{0,m} &= 1\\
+\comp{join/2}{n+1,m} &= 1 + \comp{join/2}{n,m}
+& \text{where} \;\, n,m \geqslant 0
+\end{align*}
+Notice that the length of the second list, \(m\), does not impact the
+cost. We need now to express \(\comp{join/2}{n+1,m}\) in terms of
+\(n\). The trick consists in making the difference of two successive
+terms in the series and then summing up these differences:
+\begin{align*}
+\comp{join/2}{n+1,m} - \comp{join/2}{n,m} &= 1 & \text{where} \;\, n
+\geqslant 0\\
+\sum_{n=0}^{p}{(\comp{join/2}{n+1,m} - \comp{join/2}{n,m})} &=
+\sum_{n=0}^{p}{1} & \text{where} \;\, p \geqslant 0\\
+\comp{join/2}{p+1,m} - \comp{join/2}{0,m} &= p + 1\\
+\intertext{Replacing \(p+1\) by \(n\) we finally get}
+\comp{join/2}{n,m} - \comp{join/2}{0,m} &= n & \text{where}\;\, n > 0\\
+\comp{join/2}{n,m}  &= n + 1
+\end{align*}
+Since that replacing \(n\) by \(0\) in the latter formula gives
+\[
+\comp{join/2}{0,m} = 0 + 1 = 1
+\]
+it is thus possible to have only one furmula for the cost:
+\[
+\comp{join/2}{n,m} = n + 1 \quad \text{where} \;\, n,m \geqslant 0
+\]
+Let us take an example:
+\begin{align*}
+\stt{join([1,2,3], [4,5])} 
+&\xrightarrow{2} \stt{[1|join([2,3],[4,5])]}\\
+&\xrightarrow{2} \stt{[1|[2|join([3],[4,5])]]}\\
+&\xrightarrow{2} \stt{[1|[2|[3|join([],[4,5])]]]}\\
+&\xrightarrow{1} \stt{[1|[2|[3|[4,5]]]]}\\
+&= \stt{[1,2,3,4,5]}
+\end{align*}
+The formula predicted \(\comp{join/2}{\text{\tt\scriptsize
+    len([1,2,3])}, \text{\tt\scriptsize len([4,5])}} =
+\comp{join/2}{3,2} = 3 + 1 = 4\) and we indeed had \(4\) rewrite steps
+until the result.
+
+\medskip
+
+\noindent Futhermore, it is important to have a clear understanding of
+the behaviour of the cost when the input becomes sufficiently
+big. This insight is provided by considering an equivalent
+function\footnote{Two functions \(f(x)\) and \(g(x)\) are equivalent
+  at \(+\infty\) if \(\lim_{x \rightarrow +\infty}{f(x)/g(x)} = 1\).}
+when the variable is arbitrarily big:
+\[
+\comp{join/2}{n,m} \sim n \quad \text{where} \;\, n \rightarrow
++\infty
+\]
+These kinds of asymptotical expressions are also very useful when
+comparing the cost of two \Erlang functions, perhaps two versions of
+the same function.
+
+\medskip
+
+\noindent The idea behind our concept of cost is that the time spent
+in computing an expression is proportional to the cost. So, here, it
+means that the time necessary to compute the joining of two lists is
+proportional to the length of the first list, when the list grows
+very long. In particular, doubling the size of the first list will
+approximatively double the time to get the result, whereas doubling
+the length of the second list will have no impact.
+
+\section{Reversing a list}
+
+\subsection{A naive version}
+\label{naive}
+
+Consider the following \Erlang module:
+{\small\verbatiminput{rev.erl}}
+\erlcomp{.}{rev}
+\noindent The cost of a function call like \(\cost{rev(\(e\))}\)
+is, by definition, the sum of the costs of rewriting \(e\) and the
+cost of rewriting the call with the corresponding value \(\val{e}\) as
+argument.
+\[
+\cost{rev(\(e\))} \triangleq \cost{\(e\)} +
+\cost{rev(\(\val{e}\))}
+\]
+Considering each clause separately, we can therefore write the
+equations defining the costs
+\begin{align*}
+\cost{rev([])} &= 1\\
+\cost{rev([H|T])} 
+  &= 1 + \cost{join(rev(T),[H])}\\
+  &= 1 + (\cost{rev(T)} +
+\cost{join(\(\val{\stt{rev(T)}}\),[H])})
+\end{align*}
+\noindent Let us now define the cost in terms of the size of the
+input, i.e., the argument. The function call \stt{rev(\(e\))} has
+one list as argument. The usual way to measure the size of a list is
+to consider the number of elements it contains, i.e., its
+length. Here, the size of the input is characterized by an integer
+\(n\) where \(n = \stt{len(\(e\))}\). Let us define the cost of
+\stt{rev/1} in terms of \(n\):
+\[
+\comp{rev/1}{n} \triangleq \cost{rev(\(e\))} 
+\quad \text{where}\;\, \stt{len(\(e\))} = n
+\]
+Using this definition, the previous equations are equivalent to
+\begin{align*}
+\comp{rev/1}{0} &= 1\\
+\comp{rev/1}{n+1} &= 1 + \comp{rev/1}{n} + \comp{join/2}{n,1}
+& \text{since}\;\, \stt{len(rev(T))} = \stt{len(T)}\\
+&= 1 + \comp{rev/1}{n} + (n+1) & \text{where}\;\, n \geqslant 0\\
+&= 2 + n + \comp{rev/1}{n}\\
+\intertext{Replacing \(n\) by \(n-1\), we get}
+\comp{rev/1}{n} &= 1 + n + \comp{rev/1}{n-1} &
+\text{where}\;\, n > 0
+\end{align*}
+We would like rather to express \(\comp{rev/1}{n}\) in terms of
+\(n\) only. The trick consists in making the difference of two
+successive terms in the series and then summing up these differences:
+\begin{align*}
+\comp{rev/1}{n} - \comp{rev/1}{n-1} &= 1 + n & \text{where}
+\;\, n > 0\\
+   \sum_{n=1}^{p}{(\comp{rev/1}{n} - \comp{rev/1}{n-1})}
+&= \sum_{n=1}^{p}{(1 + n)} & \text{where} \;\, p > 0\\
+       \comp{rev/1}{p} - \comp{rev/1}{0}
+&= \sum_{n=2}^{p+1}{n}\\
+   \comp{rev/1}{p} - 1
+&= \sum_{n=2}^{p+1}{n}\\
+   \comp{rev/1}{p}
+&= \sum_{n=1}^{p+1}{n}\\
+\intertext{Let us double each side of the equality:}
+   2 \times \comp{rev/1}{p}
+&= 2 \times \sum_{n=1}^{p+1}{n} = \sum_{n=1}^{p+1}{n} +
+\sum_{n=1}^{p+1}{n}\\
+\intertext{Let us change \(n\) into \(p-n+2\) in the second sum:}
+   2 \times \comp{rev/1}{p}
+&= \sum_{n=1}^{p+1}{n} + \sum_{n=1}^{p+1}{(p-n+2)}\\
+&= \sum_{n=1}^{p+1}{(n+(p-n+2))}\\
+&= \sum_{n=1}^{p+1}{(p+2)} = (p+1)(p+2)
+\intertext{By changing \(p\) into \(n\) we finally get}
+   \comp{rev/1}{n}
+&= (n+1)(n+2)/2 & \text{where} \;\, n > 0
+\end{align*}
+Since that replacing \(n\) by \(0\) in the latter formula gives
+\[
+\comp{rev/1}{0} = (0+1)(0+2)/2 = 1
+\]
+we can therefore gather the two cases into one as
+\[
+\comp{rev/1}{n} = (n+1)(n+2)/2 \quad \text{where} \;\, n \geqslant
+0
+\]
+Let us take an example:
+\begin{align*}
+\stt{rev([1,2,3])} 
+&\xrightarrow{4} \stt{join(rev([2,3]),[1])}\\
+&\xrightarrow{4} \stt{join(join(rev([3]),[2]),[1])}\\
+&\xrightarrow{4} \stt{join(join(join(rev([]),[3]),[2]),[1])}\\
+&\xrightarrow{3} \stt{join(join(join([],[3]),[2]),[1])}\\
+&\xrightarrow{1} \stt{join(join([3],[2]),[1])}\\
+&\xrightarrow{2} \stt{join([3|join([],[2])],[1])}\\
+&\xrightarrow{1} \stt{join([3|[2]],[1])}\\
+&=               \stt{join([3,2],[1])}\\
+&\xrightarrow{2} \stt{[3|join([2],[1])]}\\
+&\xrightarrow{2} \stt{[3|[2|join([],[1])]]}\\
+&\xrightarrow{1} \stt{[3|[2|[1]]]}\\
+&=               \stt{[3,2,1]}
+\end{align*}
+The formula for the cost stated
+\(\comp{rev\_join/2}{\text{\tt\scriptsize len([1,2,3])}} =
+\comp{rev\_join/2}{3} = (3+1)(3+2)/2 = 10\), and we indeed made \(10\)
+rewrites until reaching the value \stt{[3,2,1]}.
+
+\medskip
+
+\noindent Asymptotically, we have the equivalence
+\[
+\comp{rev/1}{n} \sim \frac{1}{2}{n^2} \quad \text{where} \;\, n
+\rightarrow +\infty
+\]
+\noindent The idea behind our concept of cost is that the time spent
+in computing an expression is proportional to the cost. So, here, it
+means that the time needed to reverse a list by \stt{rev/1} is
+proportional to half of the square of the list length, when the list
+is big enough. In particular, multiplying by \(10\) the size of a big
+input list will multiply at least by \(50\) the computing time.
+
+\subsection{A better version}
+
+Consider the following list reversing using an \emph{accumulator}:
+{\small\verbatiminput{rev_bis.erl}}
+\erlcomp{.}{rev_bis}
+\noindent The cost of a function call like
+\(\cost{rev\_bis(\(e\))}\) is, by definition, the sum of the costs
+of rewriting \(e\) and the cost of rewriting the call with the
+corresponding value \(\val{e}\) as argument. The same idea applies to
+\stt{rev\_join(\(e_1\),\(e_2\))}.
+\begin{align*}
+\cost{rev\_bis(\(e\))} &\triangleq \cost{\(e\)} +
+\cost{rev\_bis(\(\val{e}\))}\\
+\cost{rev\_join(\(e_1\),\(e_2\))} &\triangleq \cost{\(e_1\)} +
+\cost{\(e_2\)} + \cost{rev\_join(\(\val{e_1}\),\(\val{e_2}\))}
+\end{align*}
+Considering each clause separately, we can therefore write the
+equations defining the costs
+\begin{align*}
+\cost{rev\_bis(L)}  &= 1 + \cost{rev\_join(L,[])}\\
+\cost{rev\_join([],A)}    &= 1\\
+\cost{rev\_join([H|T],A)} &= 1 + \cost{rev\_join(T,[H|A])}
+\end{align*}
+\noindent Let us now define the cost in terms of the size of the
+input, i.e., the argument. The function call \stt{rev\_bis(\(e\))} has
+one list as argument. The usual way to measure the size of a list is
+to consider the number of elements it contains, i.e., its
+length. Here, the size of the input is characterized by an integer
+\(n\) where \(n = \stt{len(\(e\))}\). The same line of thought applies
+to \stt{rev\_join/2}. Let us define the cost of \stt{rev\_bis/1} and
+\stt{rev\_join/2} in terms of the input size:
+\begin{align*}
+\comp{rev\_bis/1}{n} &\triangleq \cost{rev\_bis(\(e\))} 
+& \text{where}\;\, \stt{len(\(e\))} = n\\
+\comp{rev\_join/2}{n,m} &\triangleq \cost{rev\_join(\(e_1\),\(e_2\))}
+& \text{where}\;\, \stt{len(\(e_1\))} = n \;\, \text{and} \;\,
+\stt{len(\(e_2\))} = m
+\end{align*}
+Using these definitions, the previous equations are equivalent to
+\begin{align*}
+\comp{rev\_bis/1}{n} &= 1 + \comp{rev\_join/2}{n,0}\\
+\comp{rev\_join/2}{0,m}    &= 1\\
+\comp{rev\_join/2}{n+1,m}  &= 1 + \comp{rev\_join/2}{n,m+1}
+& \text{where} \;\, n, m \geqslant 0
+\end{align*}
+We would like rather to express \(\comp{rev\_bis/1}{n}\),
+respectively \(\comp{rev\_join/2}{n,m}\), in terms of \(n\) only,
+respectively \(n\) and \(m\). The trick consists in making the
+difference of two successive terms in the series
+\(\{\comp{rev\_join/2}{n,m}\}_n\) and then summing up these
+differences:
+\begin{align*}
+\comp{rev\_join/2}{n,m} - \comp{rev\_join/2}{n-1,m+1} &= 1\\
+\comp{rev\_join/2}{n-1,m+1} - \comp{rev\_join/2}{n-2,m+2} &= 1\\
+&\vdots\\
+\comp{rev\_join/2}{1,m+n-1} - \comp{rev\_join/2}{0,m+n} &= 1
+\intertext{\rule{200pt}{0.4pt}}
+\comp{rev\_join/2}{n,m} - \comp{rev\_join/2}{0,m+n} &= n\\
+\comp{rev\_join/2}{n,m} - 1 &= n\\
+\comp{rev\_join/2}{n,m} &= n + 1 & \text{where} \;\, n > 0
+\intertext{Since that replacing \(n\) by \(0\) in the last formula
+  leads to}
+\comp{rev\_join/2}{0,m} &= 0 + 1 = 1
+\intertext{we can gather all the cases into one formula:}
+\comp{rev\_join/2}{n,m} &= n + 1 & \text{where} \;\, n, m \geqslant 0
+\intertext{Therefore}
+\comp{rev\_bis/1}{n} &= n + 2 & \text{where} \;\, n \geqslant 0
+\end{align*}
+Let us take an example:
+\begin{align*}
+\stt{rev\_bis([1,2,3])} 
+&\xrightarrow{5} \stt{rev\_join([1,2,3],[])}\\
+&\xrightarrow{7} \stt{rev\_join([2,3],[1])}\\
+&\xrightarrow{7} \stt{rev\_join([3],[2,1])}\\
+&\xrightarrow{7} \stt{rev\_join([],[3,2,1])}\\
+&\xrightarrow{6} \stt{[3,2,1]}
+\end{align*}
+The formula for the cost stated
+\(\comp{rev\_bis/1}{\text{\tt\scriptsize len([3,2,1])}} =
+\comp{rev\_bis/1}{3} = 3 + 2 = 5\) and we indeed made \(5\)
+rewrites before reaching the result \stt{[3,2,1]}.
+
+\medskip
+
+\noindent Asymptotically, we have the law
+\[
+\comp{rev\_bis/1}{n} \sim n \quad \text{where} \;\, n
+\rightarrow +\infty
+\]
+\noindent The idea behind our concept of cost is that the time spent
+in computing an expression is proportional to the cost. So, here, it
+means that the time needed to reverse a list by \stt{rev\_bis/1} is
+proportional to the length of the list, when the list is long
+enough. We can also now compare the cost of \stt{rev\_bis/1} with
+\stt{rev/1}:
+\begin{align*}
+\comp{rev/1}{n} &= \frac{n+1}{2} \; \comp{rev\_bis/1}{n}\\
+\comp{rev/1}{n} &\sim \frac{n}{2} \; \comp{rev\_bis/1}{n} 
+& \text{where} \;\, n \rightarrow +\infty
+\end{align*}
+Clearly, \stt{rev\_bis/1} is better than \stt{rev/1}.
+
+\end{document}

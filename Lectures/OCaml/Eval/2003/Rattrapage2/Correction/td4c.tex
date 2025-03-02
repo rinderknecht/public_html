@@ -1,0 +1,333 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+
+\usepackage{epsf}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\input{trace}
+
+\title{Corrigé du rattrapage (bis) de programmation fonctionnelle en Objective Caml}
+\author{Christian Rinderknecht}
+\date{Vendredi 11 avril 2003}
+
+\def\ne{n{\oe}ud\xspace}
+\def\nes{n{\oe}uds\xspace}
+
+\begin{document}
+
+\maketitle
+
+
+\section{Arbres binaires}
+
+\emph{Un arbre binaire est un arbre où chaque \ne a au plus deux fils,
+un fils gauche et un fils droit. De plus, chaque \ne est annoté par
+une étiquette, qui est une valeur a priori quelconque. Voici un
+exemple d'arbre annoté par des étiquettes de type entier:}
+
+$$
+\epsfxsize=190pt
+\epsfbox{arbre_bin.eps}
+$$
+
+\emph{Le type des arbres binaires est défini par:}
+\begin{verbatim}
+  type 'a arbre =
+    Rien
+  | Noeud of 'a * ('a arbre) * ('a arbre)
+\end{verbatim}
+
+\emph{Ce type est \emph{paramétré} par la variable de type
+\texttt{'a}, ce qui permet de définir le type des arbres
+indépendamment du type des étiquettes. On pourra ensuite utiliser le
+type {\tt int arbre} lorsque l'on veut annoter chaque \ne par un
+entier, etc.}
+
+\begin{itemize}
+
+         \item \emph{Écrire une fonction qui calcule la hauteur d'un
+               arbre.}
+
+               \smallskip
+
+               \begin{verbatim}
+let rec hauteur = function
+  Rien -> 0
+| Noeud (_, gauche, droit) ->
+    1 + max (hauteur gauche) (hauteur droit)
+               \end{verbatim}
+
+               La fonction \texttt{max} est polymorphe et prédéfinie,
+               mais dans le cas précis (elle s'applique à des entiers
+               naturels) elle pourrait être simplement définie par
+
+\begin{verbatim}
+let max a b = if a < b then b else a
+\end{verbatim}
+
+               \smallskip
+
+         \item \emph{Écrire une fonction qui calcule la taille d'un
+               arbre (c'est-à-dire le nom\-bre de \nes).}
+
+               \smallskip
+
+               \begin{verbatim}
+let rec taille = function
+  Rien -> 0
+| Noeud (_, gauche, droit) ->
+    1 + taille (gauche) + taille (droit)
+               \end{verbatim}
+
+               \smallskip
+
+         \item \emph{Écrire une fonction {\tt recherche}, qui prend en
+               argument une étiquette {\tt x} et un arbre {\tt a}, et
+               indique si cette étiquette apparaît sur l'un des \nes
+               de {\tt a}.}
+
+               \smallskip
+
+               \begin{verbatim}
+let rec recherche x = function
+  Rien -> false
+| Noeud (elm, gauche, droit) ->
+    elm = x || recherche x gauche || recherche x droit
+               \end{verbatim}
+
+  \item \emph{Écrire une fonction qui énumère les étiquettes d'un
+        arbre et les place dans une liste. On écrira trois versions de
+        cette fonction: en ordre préfixe, infixe, et suffixe. Dans
+        l'ordre préfixe, on commence par placer l'étiquette dans la
+        liste, puis le sous-arbre gauche et enfin le sous-arbre
+        droit. Dans l'ordre infixe, on place l'étiquette entre les
+        sous-arbres, et dans l'ordre postfixe, après les
+        sous-arbres. Par exemple, le parcours de l'arbre ci-dessus en
+        ordre infixe donne la liste \texttt{[3; 6; 7; 2; 12; 1]}.}
+
+        \smallskip
+
+\begin{verbatim}
+let rec préfixe = function
+  Rien -> []
+| Noeud(x, g, d) -> x :: ((préfixe g) @ (préfixe d))
+
+let rec infixe = function
+  Rien -> []
+| Noeud(x, g, d) -> (infixe g) @ (x :: (infixe d))
+
+let rec suffixe = function
+  Rien -> []
+| Noeud(x, g, d) -> (suffixe g) @ (suffixe d) @ [x]
+\end{verbatim}
+        
+        \medskip
+
+        Note: il est possible d'écrire les fonctions de parcours ({\tt
+        préfixe}, {\tt infixe} et {\tt suffixe}) de façon plus
+        efficace. Les versions ci-dessus présentent l'avantage d'être
+        très lisibles.
+
+  \item \emph{Écrire une fonction {\tt compare\_arbres} qui compare
+        deux arbres. En plus des arbres à comparer, elle prendra en
+        argument une fonction de comparaison {\tt r} sur les
+        étiquettes. La fonction devra renvoyer {\tt true} si, et
+        seulement si, les deux arbres ont la même structure et si les
+        étiquettes sont deux à deux dans la relation {\tt r}.}
+
+        \smallskip
+
+        \begin{verbatim}
+let rec compare_arbres r a b = 
+  match (a, b) with
+    (Rien, Rien) -> true
+  | (Noeud (xa,ga,da), Noeud(xb,gb,db)) ->
+         r xa xb 
+      && compare_arbres r ga gb && compare_arbres r da db
+  | _ -> false
+\end{verbatim}
+
+        \medskip
+
+  \item \emph{Application: écrire une fonction qui compare deux arbres
+        en ne prenant en compte que leur structure (i.e.  sans
+        s'occuper des étiquettes).}
+
+        \smallskip
+
+\begin{verbatim}
+let compare_structures a b =
+  compare_arbres (fun xa xb -> true) a b
+\end{verbatim}
+
+        \smallskip
+
+  \item \emph{Écrire une fonction {\tt sous\_arbre} qui prend deux
+        arbres en argument, et indique si le premier est un sous-arbre
+        (éventuellement égal) de l'autre.}
+
+        \smallskip
+
+\begin{verbatim}
+let rec sous_arbre a b = 
+  match (a, b) with
+    (Rien, _) -> true
+  | (_, Noeud(_, gb, db)) ->
+      a = b || sous_arbre a gb || sous_arbre a db
+  | (_, Rien) -> false
+\end{verbatim}
+
+\end{itemize}
+
+
+\section{Arbres binaires de recherche}
+
+\emph{Un arbre de recherche est un arbre binaire tel que:}
+
+\begin{itemize}
+  
+  \item \emph{toutes les étiquettes du sous-arbre de gauche (resp. de
+        droite) sont inférieures (resp. supérieures) à l'étiquette de
+        la racine,}
+
+  \item \emph{récursivement, les deux sous-arbres sont eux-mêmes des
+        arbres de recher\-che.}
+
+\end{itemize}
+
+$$
+\epsfxsize=320pt
+\epsfbox{arech.eps}
+$$
+
+\emph{Le premier arbre ci-dessus est un arbre de recherche. Le second
+n'en est pas un car~7 est plus grand que~3 mais il se trouve dans le
+sous-arbre de gauche de la racine.}
+
+\emph{Dans une liste, les opérations classiques (par exemple,
+déterminer si un élément appartient ou non à la liste) demandent un
+temps $O(n)$, c'est-à-dire proportionnel à la taille de la liste,
+parce qu'on risque d'avoir à parcourir toute la liste pour effectuer
+la recherche. Dans un arbre binaire de recherche, les éléments sont
+triés, ce qui permet des opérations plus rapides. En effet, le temps
+maximal nécessaire à une recherche sera la hauteur de l'arbre, soit
+$O(\log n)$ si l'arbre est équilibré.}
+
+\begin{itemize}
+
+  \item \emph{Écrire une fonction qui renvoie le plus petit élément
+        d'un arbre binaire de recherche. On lancera l'exception {\tt
+        Not\_found} si l'arbre est vide.}
+
+        \smallskip
+
+\begin{verbatim}
+let rec minimum = function
+  Rien -> raise Not_found
+| Noeud (x, Rien, _) -> x
+| Noeud (_, gauche, _) -> minimum gauche
+\end{verbatim}
+
+        \smallskip
+
+  \item \emph{Écrire une fonction qui indique si une étiquette donnée
+        apparaît dans un arbre de recherche donné. On tirera parti du
+        fait que l'arbre est classé pour que la recherche soit plus
+        rapide que dans un arbre binaire quelconque.}
+
+        \smallskip
+
+\begin{verbatim}
+let rec cherche x = function
+  Rien -> false
+| Noeud (y, gauche, droit) ->
+    x = y || cherche x (if x < y then gauche else droit)
+\end{verbatim}
+
+        \smallskip
+
+  \item \emph{Écrire une fonction qui ajoute une étiquette dans un
+        arbre de recherche de façon à ce que celui-ci reste un arbre
+        de recherche. Cela se fait en rajoutant une feuille à
+        l'arbre.}
+
+        \smallskip
+
+\begin{verbatim}
+let rec ajout x = function
+  Rien -> Noeud (x, Rien, Rien)
+| Noeud (y, gauche, droit) ->
+    if x <= y 
+    then Noeud (y, ajout x gauche, droit)
+    else Noeud (y, gauche, ajout x droit)
+\end{verbatim}
+
+        \smallskip
+
+  \item \emph{On dispose déjà de plusieurs fonctions capables de
+        transformer le contenu d'un arbre binaire en liste, en le
+        parcourant dans l'ordre préfixe, infixe ou postfixe. Laquelle
+        de ces fonctions faut-il utiliser pour que la liste résultante
+        soit triée par ordre croissant?}
+
+        \emph{On en déduit alors un algorithme de tri de liste. On
+        part d'un arbre de recherche vide dans lequel on insère
+        successivement toutes les valeurs de la liste à trier. Il ne
+        reste plus qu'à afficher par ordre croissant les étiquettes de
+        cet arbre grâce à la fonction précédente. L'ordre dans lequel
+        on réalise les insertions est-il significatif?}
+
+        \smallskip
+
+\begin{verbatim}
+let tri_liste l =
+  infixe (List.fold_right ajout l Rien)
+\end{verbatim}
+
+        \noindent
+        L'ordre d'insertion n'est pas significatif pour la correction
+        de l'algorithme.
+
+        \smallskip
+
+  \item \emph{Écrire une fonction qui recherche une étiquette donnée
+        dans un arbre, et la retire. Si l'étiquette n'existe pas, on
+        lancera l'exception {\tt Not\_found}. Si elle existe, on
+        renverra donc un nouvel arbre de recherche qui ne contient
+        plus cette étiquette. Indication: on commencera par écrire une
+        fonction qui prend en argument un arbre et retourne la paire
+        constituée de l'élément minimal (s'il n'existe pas alors {\tt
+        Not\_found}) et de l'arbre initial sans cet élément.}
+
+        \smallskip
+
+\begin{verbatim}
+let rec retire_minimum = function
+  Rien -> raise Not_found
+| Noeud (x, Rien, droit) -> (x, droit)
+| Noeud (x, gauche, droit) ->
+    let (m, reste_g) = retire_minimum gauche
+    in (m, Noeud (x, reste_g, droit))
+
+let rec supprime x = function
+  Rien -> raise Not_found
+| Noeud (y, gauche, droit) ->
+    if x = y 
+    then match droit with
+            Rien -> gauche
+          | _ ->
+              let (min_d, reste_d) = retire_minimum droit 
+              in Noeud (min_d, gauche, reste_d)
+    else supprime x (if x < y then gauche else droit)
+\end{verbatim}
+
+\end{itemize}
+
+
+\end{document}

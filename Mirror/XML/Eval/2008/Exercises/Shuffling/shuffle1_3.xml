@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persons>
+   <name>Alan Turing</name>
+   <note>Defined a simple theoretical model of computers</note>
+   <name>Kurt Gödel</name>
+   <note>Proved the incompleteness of arithmetics</note>
+   <name>Donald Knuth</name>
+   <note>Prolific author and creator of TeX</note>
+   <name>Robin Milner</name>
+   <note>Proposed a model of concurrency</note>
+</persons>

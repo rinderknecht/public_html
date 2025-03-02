@@ -1,0 +1,37 @@
+\paragraph{Answers.}
+
+\begin{enumerate}
+
+  \item The time to transmit one packet onto a link is \(\frac{L +
+    h}{R}\). The time to deliver the first of the \(M\) packets to the
+    destination is \(Q{\frac{L+h}{R}}\). Every \(\frac{L+h}{R}\)
+    seconds a new packet from the \(M-1\) remaining packets arrives at
+    destination (this is due to pipelining). We must also add the
+    initial setup time, because we use a VC network. Thus the total
+    delay is
+    \[
+      t_{s} + (Q + M - 1){\frac{L+h}{R}}
+    \]
+
+  \item Using a datagram network with a connectionless service implies
+    there is no setup needed. Another difference with the previous
+    situation is the header size. Therefore the total delay is simply
+    \[
+     (Q + M - 1){\frac{L + 2h}{R}}
+    \]
+
+  \item The time to transmit the entire message over one link is
+    \(\frac{ML + 2h}{R}\). The time to transmit the entire message over
+    \(Q\) links (i.e. to destination) is thus
+    \[
+      Q{\frac{ML + 2h}{R}}
+    \]
+ 
+  \item Because there is no store-and-forward delay at the switches,
+    the total delay does not depend on the number of links. Also we
+    must add the setup time. Therefore the end-to-end delay is
+    \[
+      t_{s} + \frac{ML + h}{R}
+    \]
+
+\end{enumerate}

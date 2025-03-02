@@ -1,0 +1,370 @@
+\documentclass[11pt,a4paper]{article}
+
+% Language and fonts
+%
+\usepackage[british]{babel}    % British English
+\usepackage[T1]{fontenc}       % Required for hyphenation and \DJ
+\usepackage[utf8]{inputenc}    % UTF-8 encoding
+\usepackage{hyphenat}          % \hyp{} is a breakable dash
+\usepackage{url}               % To typeset URLs
+\usepackage{graphicx}
+%\usepackage{latexsym}
+
+%\usepackage[ps2pdf,breaklinks]{hyperref}
+%\hypersetup{colorlinks=true,urlcolor=blue,citecolor=blue,linkcolor=blue}
+
+% Bibliographic style
+%
+\usepackage[comma]{natbib}
+\bibliographystyle{plainnat}
+\usepackage{etoolbox}
+\apptocmd{\thebibliography}{\raggedright}{}{} % No Underfull \hbox
+
+
+\title{Finding optimal solutions to the Fifteen Puzzle}
+\author{Fran\c{c}ois Pottier \and Christian Rinderknecht\\
+\url{rinderkn@caesar.elte.hu}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+\subsection{The Fifteen Puzzle}
+
+The Fifteen Puzzle consists in a square board, divided into sixteen
+squares (or \emph{positions}), upon which are placed fifteen sliding
+square tiles numbered from~\(1\) to~\(15\), leaving one position
+empty, or \emph{hole}. From a given configuration, the goal is to
+slide the tiles one by one and reach another given configuration. One
+valid \emph{move} consists in sliding one tile adjacent to the hole,
+which is equivalent to exchanging their respective positions. (For a
+few months, this game was extremely popular in the USA and Europe
+during the year \oldstylenums{1880}.)
+
+Abstractly, the space of the configurations of the Fifteen Puzzle is a
+graph where each vertex represents a configuration and its successors
+are the configurations resulting from one valid move. Therefore, each
+vertex has two, three or four successors. The purpose of the game then
+consists in finding a path through the graph joining a given vertex
+and an end\hyp{}game vertex. In the present project, the start
+configuration will be variable and the final configuration will be
+that found at the left in Figure~\ref{fig:taquin}.
+\begin{figure}
+\begin{center}
+\includegraphics[bb=160 553 452 669]{figure}
+\end{center}
+\caption{Final configuration and a random one
+\label{fig:taquin}}
+\end{figure}
+It is possible that the initial and final configurations are not
+connected, in particular, the variant where the final configuration is
+altered so that the tiles \(14\)~and~\(15\) are swapped. This fact was
+already proved in \oldstylenums{1879} and a simpler proof was given by
+\cite{archer-99}.
+
+\subsection{Depth-first search with iterative deepening}
+
+The algorithmic difficulty resides in the huge size of the graph. The
+number of possible configurations, that is to say, the number of
+vertices of the graph, is~\(16!\), about $2 \cdot 10^{13}$. It is
+mathematically proven that the graph is divided into two
+\emph{connected components}, whose number of vertices is thus of the
+magnitude $10^{13}$ each. Clearly, such a graph cannot be stored in
+the memory of an up-to-date computer, therefore an algorithm for
+finding the shortest paths
+\citep{dijkstra-59,cormen,sedgewick-graphs-java} is useless (its
+memory usage is linear with respect to the number of vertices in the
+graph). Classical algorithms for depth\hyp{}first or
+breadth\hyp{}first traversals are also useless: indeed, in order to
+guarantee termination, these algorithms colour the visited vertices,
+yielding a memory consumption proportional to the number of vertices
+in the worst case.
+
+Consequently, we must trade some efficiency for a reduced memory
+usage. How can we proceed?
+
+An original answer to that question was given by several authors,
+amongst them \cite{korf-85}. On the one hand, because
+breadth\hyp{}first traversals, like Dijkstra algorithm and A*
+(best\hyp{}fit), rely on queues whose size may be linear in the number
+of vertices, they are useless. On the other hand, depth\hyp{}first
+traversals use a stack whose size is only that of the path being
+currently explored. Nevertheless, let us keep in mind that it is
+impossible to associate a colour to each vertex, for lack of memory,
+therefore we must resort to variants which do not colour the
+vertices. But, of course, the lack of colouring will impede the
+detection of cycles... In order to ensure the termination of the
+program, we must stop the exploration at a given depth~\(k\). Since we
+do not know in advance the length of the optimal path we seek, we have
+to perform several depth\hyp{}first traversals, with increasing
+depths~\(k\). This strategy is called \emph{depth\hyp{}first search
+  with iterative deepening}. If the threshold~\(k\) is incremented
+by~\(1\) at each iteration, we are certain that the first path
+reaching the goal (that is, the final configuration) is optimal. This
+approach may seem too slow, because we traverse several times the
+vertices close to the initial vertex, but the bulk of the work is done
+far away from the initial vertex, so this repetition is not overly
+slow, as shown by \cite{korf-85}.
+
+\subsection{Using a lower bound on the distance}
+
+An independent and equally interesting idea lies at the heart of the
+A*~algorithm \citep{hart-68,hart-72}, which is an improvement upon
+Dijkstra's algorithm, although they are both linear in space. The
+point is to use an external notion of distance, for example, the
+geometric distance between vertices, in order to deduce a lower bound
+on the topological distance on the graph. That approximation of the
+distance is used to explore in priority paths which seem to approach
+the goal. This strategy, known as \emph{best\hyp{}fit search}, allows
+the exploration of a path to stop as soon as it is known that it
+cannot be extended into an optimal path, a process know as
+\emph{pruning the search tree}.
+
+For instance, let us imagine a road map of Hungary, represented as a
+graph whose vertices are towns and cities, and the edges are
+roads. The edges are annotated with the distance of the corresponding
+road, in kilometres. The straight line distance provides then a lower
+bound on the road distance. Moreover, it is easy to compute if we know
+the geographic coordinates of each town, so it can be used to guide
+the search towards shorter paths. Let us assume, for instance, that we
+seek an optimal path from Budapest to Debrecen. The road distance
+between Budapest and Debrecen is lower than the sum of the road
+distance between Budapest and Gy\H{o}r, on the one hand, and the
+straight\hyp{}line distance between Gy\H{o}r and Debrecen, on the
+other hand. Thanks to this knowledge, the A* algorithm would not
+consider the paths from Budapest to Gy\H{o}r and would explore more
+promising paths, from which the optimal path will be found. This
+reckoning seems obvious to a human, but a simpler algorithm, like
+Dijkstra's algorithm, would examine all paths in larger and larger
+concentric circles around Budapest, including roads to Gy\H{o}r and
+Vienna, before discovering the optimal path to Debrecen.
+
+Can this idea be applied to the Fifteen Puzzle? In other words, do we
+have a simple way to determine a lower bound on the distance between
+two configurations? The answer is yes. Since each move is a slide of a
+tile next to the hole, the number of moves to bring a given tile from
+its current position to its final position is at least the distance
+between these two positions. This minimal distance is the
+\emph{Manhattan distance} and is easy to compute. Moreover, since each
+move affects exactly one tile, this reasoning holds independently for
+all tiles and the number of moves to reach the final configuration is
+at least the sum, for each tile, of the minimal distances between the
+current configuration and the final one. This is the first idea to
+reduce the space search: use an external minimal distance.
+
+\subsection{Combination}
+
+The two ideas presented above can be combined to define
+depth\hyp{}first searches with iterative deepening, relying on a lower
+bound of the distance. The simplest of these algorithms is IDA*
+\citep{korf-85}, where the threshold \(k\)~can be incremented beyond
+the value~\(1\) between two iterations: the value of~\(k\) is the
+estimation of the length of an optimal path passing through the
+closest discovered vertex yet to be visited (because it is beyond the
+threshold) during the previous iteration. A rather readable
+pseudo\hyp{}code for IDA* is given by \cite{reinefeld-marsland-93}, in
+figure~\(1\).
+
+\subsection{Refinements}
+
+Several improvements are possible, based on the ideas described above.
+
+\subsubsection{Incremental computation of the estimated distance}
+\label{sec:raf:inc}
+
+The lower bound on the distance between a given configuration and the
+final configuration can easily be kept up-to-date when the former is
+modified by a given move. This incremental calculation saves times.
+
+\subsubsection{Improvement of the distance approximation}
+\label{sec:raf:conflict}
+
+In the case of the Fifteen Puzzle, the Manhattan distance can be
+improved upon by taking into account the \emph{linear conflicts}. The
+idea is that if two tiles are on the right row or column, but their
+respective positions are reversed, then one of them will have to leave
+temporarily that row or column. The Manhattan distance does not use
+this fact, and we can therefore add~\(2\) without risking to
+overestimate the real distance. In certain positions, there are
+several such conflicts, and the compounded improvements yield an
+approximation much better than the Manhattan distance
+\citep{hansson-92}. On the one hand, the exploration of a vertex takes
+more time because the calculation of the distance becomes more
+complex; on the other hand, the number of vertices to examine greatly
+decreases, and this results in a overall speed\hyp{}up.
+
+\subsubsection{Pruning series of redundant moves}
+\label{sec:raf:prune}
+
+An important improvement consists in immediately pruning series of
+redundant moves, which are defined as follows. In the Fifteen Puzzle,
+each move is reversible: it can be followed by a symmetric move, so
+their composition leaves the board invariant. Clearly, any path
+containing two of these moves cannot be optimal, and can be ignored,
+or \emph{pruned}. If the moves are tagged by the letters U (up), D
+(down), L (left) and R (right), then any path containing the words UD,
+DU, LR or RL can be pruned. This test can be implemented by presenting
+the tag of each move to a finite automaton, which may trigger a
+pruning when certain states are reached. This simple optimisation
+yields a considerable speed\hyp{}up. Indeed, the branching factor,
+that is, the number of successors for each vertex, is effectively
+reduced from~\(4\) (at worst) to~\(3\) (at worst), which means that
+the time complexity decreases from \(O(4^k)\) to \(O(3^k)\).
+
+In order to recognise the four preceding words, an automaton with five
+states is enough and it can be constructed by hand. But these words
+are not the only one being redundant. For example, we can check that,
+starting from any configuration, the series RDLURD and DRULDR are
+either both impossible or lead to the same configuration. In other
+words, these series of moves identify cycles of length~\(12\) in the
+graph of configurations. Consequently, if there exists an optimal path
+containing the sequence RDLURD, then there exists also one which does
+not contain it and, instead, includes the sequence DRULDR. Of course,
+the inverse choice is also acceptable. Following this reasoning, we
+can forbid four words of length~\(12\), beyond the four words of
+length~\(2\) already identified, and we can recognise these words with
+an automaton containing \(29\)~states. Pushing further this method, we
+can identify longer and longer series of redundant moves. Naturally,
+it is not feasible to discover these sequences and construct by hand
+the corresponding automaton, but it is possible to apply machine
+learning \citep{taylor-korf-93}.
+
+\section{Subject and guidelines}
+
+The goal is to find an optimal path between an arbitrary configuration
+and the final configuration at the left in Figure~\ref{fig:taquin},
+and doing so within a reasonable time frame using \textsf{Java} as the
+programming language, without relying on specialised libraries (only
+the standard library is acceptable).
+
+The time complexity is expected to be \emph{exponential} with respect
+to the length of the optimal path. Depending on the initial
+configuration, a solution can be \(10\)~times or even \(10.000\) times
+slower than others. Consequently, it is important that any
+optimisation has an impact other than ``simply'' gaining \(50\%\).
+
+The program will read the initial configuration from the standard
+input. A configuration is written textually as a list of sixteen
+integers ranging from \(0\)~to~\(15\), separated by blanks and ended
+by a return (end\hyp{}of\hyp{}line control character). The \(i\)th
+integer in the list denotes the number of the tile located at the
+\(i\)th square on the board, the tile number~\(0\) being the hole. The squares are numbered from \(0\)~to~\(15\), rightwards and top\hyp{}down, so the final configuration at the left in Figure~\ref{fig:taquin} is written
+\begin{verbatim}
+0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+\end{verbatim}
+and the configuration written as
+\begin{verbatim}
+10 6 4 12 1 14 3 7 5 15 11 13 8 0 2 9 
+\end{verbatim}
+is the one at the right in Figure~\ref{fig:taquin}.
+
+The output of the program is sent to the standard output and consists
+in one line of summary, optionally followed by a path. The summary is
+either \texttt{FAILURE} if there are no paths between the initial and
+final configurations, or \texttt{OK~\(n\)} if such paths exist and the
+shortest has length~\(n\). In the latter case, one of such paths is
+printed as a series of configurations (one per line).
+
+A test suite is supplied, where each file whose name is matched by the
+regular expression \verb/*.[0-9]+/ contains an initial configuration,
+and the file whose name is derived from it by adding the suffix
+\texttt{.ref} contains the summary line which must be produced by your
+program. (The optimal paths are not unique, therefore none is given to
+avoid confusion.) These tests are of very different level of
+difficulty. As far as the tests proposed by \cite{korf-85}, in
+table~\(1\), are concerned, an approximation of the difficulty is
+given by the column ``Total Nodes''. The number of vertices explored
+by your program will not necessarily equal the number of vertices
+explored by Korf's algorithm, because the optimisations are likely to
+differ, but that table clearly shows that the difference in difficulty
+between two tests can be of several orders of magnitude.
+
+Here is a proposed plan of action. The order of the different phases
+is only indicative and you can proceed differently.
+\begin{enumerate}
+
+\item Determine what operations must be supported by the data
+  structure which implements the graph of configurations. It should be
+  a graph
+  \begin{itemize}
+
+    \item where a vertex (the final configuration) is distinguished;
+
+    \item where the edges are tagged by the letters U, D, L or R;
+
+    \item where, given a vertex, we can get the list of the outgoing
+      edges;
+
+    \item where, given a vertex, we can query a lower bound on its
+      distance to the final configuration.
+
+  \end{itemize}
+  This specification should be implemented in \textsf{Java} by an
+  interface named \texttt{GraphConf}.
+
+\item Write a class implementing the interface
+  \texttt{GraphConf}. Beyond the operations above, you should add the
+  transformation of a configuration given as a line of text into a
+  vertex in the graph of configurations. Given the overall expected
+  complexity of the program, it is not useful to worry too much about
+  the efficiency of these operations, at least at first, and it is
+  best to focus instead on simplicity. (Later on, you could improve
+  them by using precomputed tables to speed up the calculation of the
+  estimated distance.)
+
+\item Write an implementation of the IDA* algorithm. The algorithm
+  initiates a search from a given vertex and produces an optimal path
+  reaching the final vertex, or fails. For guidance, you may consult
+  the definition of the A*~algorithm by \cite{hart-68}, who explain
+  the principle of the estimation of the distance, as well as the
+  original presentation of the IDA* algorithm by \cite{korf-85}. A
+  readable pseudo\hyp{}code for IDA* is given by
+  \cite{reinefeld-marsland-93}. This algorithm is very simple and its
+  implementation should only spread over a hundred lines. Do not
+  hesitate to insert printing instructions to display in real time the
+  number of iterations performed, the number of vertices explored at
+  each iteration etc. (Use the error output, not the standard output,
+  for this.)
+
+\item Combine everything into a program satisfying the
+  requirements. Check that it passes successfully the easiest test
+  cases, for example, \texttt{easy.*}, \texttt{korf.009} and
+  \texttt{korf.012}.
+
+\end{enumerate}
+This is the minimal effort. To go beyond, you could pursue with the
+following additional steps.
+\begin{enumerate}
+
+\item You may generate your own initial configuration randomly. In
+  that case, the paper by \cite{archer-99} is useful in order to avoid
+  producing unreachable configurations. (The IDA* algorithm can only
+  solve a problem if there is a solution. In the absence of a
+  solution, it cannot check that all the space of configuration has
+  been explored.) Some reflection is needed to understand how to
+  determine whether a configuration is reachable or not.
+
+\item Generalise your implementation of the IDA* algorithm so the tag
+  of each move is submitted to an automaton and the exploration is
+  abandoned immediately if the automaton recognises a series of
+  moves. Write by hand an automaton recognising the sequences UD, DU,
+  LR and RL. Combine everything and measure the speed\hyp{}up.
+
+\item Update incrementally (at each move) the approximation of the
+  distance associated to the current vertex (\S\ref{sec:raf:inc}).
+
+\item Refine the estimation of distance so it takes into account the
+  linear conflicts (\S\ref{sec:raf:conflict}). The exact definition of
+  the new estimation is given by \cite{hansson-92}. Some care is
+  needed to implement it efficiently, and the authors do not provide
+  all the details.
+
+\end{enumerate}
+
+\bibliography{taquin}
+\nocite*{}
+
+\end{document}

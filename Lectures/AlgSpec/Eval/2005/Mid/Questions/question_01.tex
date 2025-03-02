@@ -1,0 +1,61 @@
+\paragraph{Question 1.} We want an algebraic specification of sets
+made of elements of the same type \type{element}. Let us call it 
+\(\proc{Set}(\type{element})\). Here is the signature:
+   \begin{itemize}
+
+     \item \textbf{Defined types}
+
+     \begin{itemize}
+
+       \item The type of the sets is noted \type{t}.
+
+       \item The type of the set elements is noted \type{element}.
+  
+     \end{itemize}
+
+     \item \textbf{Constructors}
+     \begin{itemize}
+
+       \item \proc{Empty} : \type{t}\\
+       The term \proc{Empty} represents the set (noted
+       \(\varnothing\) in mathematics) which contains no element.
+
+       \item \(\proc{Add} : \type{element} \times \type{t} \rightarrow
+         \type{t}\)\\ The term \(\proc{Add} (e, s)\) denotes
+         the set \(s\) augmented by adding element \(e\). If \(e\)
+         was already in \(s\), then the result is \(s\). The order
+         in which elements are added is not meaningful, so all
+         function on sets should not depend on any element order.
+
+     \end{itemize}
+
+     \item \textbf{Functions}
+     \begin{itemize}
+
+       \item \(\proc{Union} : \type{t} \times \type{t} \rightarrow
+         \type{t}\)\\
+       The term \(\proc{Union} (s_1, s_2)\) denotes the set
+       made of the elements of \(s_1\) and \(s_2\) (noted \(s_1
+       \cup s_2\) in mathematics). It is commutative and
+       associative.
+
+       \item \(\proc{Inter} : \type{t} \times \type{t} \rightarrow
+         \type{t}\)\\
+       The term \(\proc{Inter} (s_1, s_2)\) denotes the set
+       made of elements of \(s_1\) which also belong to \(s_2\)
+       (noted \(s_1 \cap s_2\) in mathematics). The function
+       name stands for ``intersection''. It is commutative and
+       associative. It is distributive over the set union.
+
+       \item \(\proc{Mem} : \type{element} \times \type{t} \rightarrow
+         \type{boolean}\)\\
+       The term \(\proc{Mem} (e, s)\) is \kw{true} if and
+       only if \(e\) belongs to s, otherwise it is
+       \kw{false}. The function name is a shorthand for ``membership''.
+
+     \end{itemize}
+
+   \end{itemize}
+   Complete this signature with equations defining the constructors
+   and functions.
+

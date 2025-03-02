@@ -1,0 +1,328 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Représentation arborescente des programmes mini-ML}
+\label{arbres_de_prog}
+
+Comme dans n'importe quel langage de programmation, avant d'aborder
+l'exécution des programmes mini-ML, nous devons préciser la notion de
+\emph{portée des variables}, c.-à-d. à quoi se refère une variable
+donnée. Pour cela, une représentation graphique des programmes (les
+expressions suffisent) sous forme d'arbres est très commode.
+\begin{center}
+\begin{tabular}{l|c}
+    Expression & Arbre\\
+ \hline
+    $x$
+  & $x$\\
+    $\Xfun \,\, x \rightarrow e$
+  & \pstree[nodesep=2pt,levelsep=15pt,treesep=10pt]{\TR{\Xfun}}{
+      \TR{$x$}
+      \TR{$e$}
+    } \\
+    $e_1 \,\, e_2$ 
+  & \pstree[nodesep=2pt,levelsep=15pt,treesep=10pt]{\TR{\$}}{
+      \TR{$e_1$}
+      \TR{$e_2$}
+    }
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Représentation arborescente des programmes mini-ML (suite et fin)}
+
+\begin{center}
+\begin{tabular}{l|c}
+    Expression & Arbre\\
+    \hline
+    $e_1$ \texttt{+} $e_2$ etc.
+  & \pstree[nodesep=2pt,levelsep=20pt,treesep=10pt]{\TR{\texttt{+}}}{
+      \TR{$e_1$}
+      \TR{$e_2$}
+    }\\
+    \textsf{0} ou \textsf{1} ou \textsf{2} etc.
+  & \textsf{0} ou \textsf{1} ou \textsf{2} etc.\\
+    $\lpar{e}\rpar$
+  & $e$\\
+    $\Xlet \,\, x = e_1 \,\, \Xin \,\, e_2$
+  & \pstree[nodesep=2pt,levelsep=20pt,treesep=10pt]{\TR{\Xlet}}{
+      \TR{$x$}
+      \TR{$e_1$}
+      \TR{$e_2$}
+    }
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Construction des arbres de programme}
+
+Intuitivement, la méthode générale consiste d'abord à parenthèser
+complètement l'expression qui fait le programme.
+
+\bigskip
+
+\noindent Chaque parenthèse correspond à une sous-expression et chaque
+sous-expression correspond à un sous-arbre.
+
+\bigskip
+
+On construit l'arbre des feuilles vers la racine en parcourant les
+sous-expressions parenthèsées les plus imbriquées vers les plus
+externes.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Exemples d'arbres de programmes}
+
+L'expression \verb|(1+2)*(5/1)| se représente
+    {\small
+    \begin{center}
+      \pstree[nodesep=2pt,levelsep=18pt]{\TR{\texttt{*}}}{
+        \pstree{\TR{\texttt{+}}}{
+          \TR{\num{1}}
+          \TR{\num{2}}
+        }
+        \pstree{\TR{\texttt{/}}}{
+          \TR{\num{5}}
+          \TR{\num{1}}
+          }
+      }
+    \end{center}
+    }
+et \verb|let x = 1 in (1+2)*(5/1)| devient (attention: \verb+x+ et $x$
+sont différents) 
+    {\small
+    \begin{center}
+      \pstree[nodesep=2pt,levelsep=18pt]{\TR{\Xlet}}{
+        \TR{\ident{x}}
+        \TR{\num{1}}
+        \pstree{\TR{\texttt{*}}}{
+          \pstree{\TR{\texttt{+}}}{
+            \TR{\num{1}}
+            \TR{\num{2}}
+          }
+          \pstree{\TR{\texttt{/}}}{
+            \TR{\num{5}}
+            \TR{\num{1}}
+            }
+        }
+      }
+    \end{center}
+    }
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Exemples d'arbres de programmes (suite)}
+\label{exemples_arbres_suite}
+
+L'expression \verb|let x = 1 in ((let x = 2 in x) + x)| est
+{\small
+\begin{center}
+\pstree[nodesep=2pt,levelsep=18pt]{\TR{\Xlet}}{
+  \TR{\ident{x}}
+  \TR{\num{1}}
+  \pstree{\TR{\texttt{+}}}{
+    \pstree{\TR{\Xlet}}{
+      \TR{\ident{x}}
+      \TR{\num{2}}
+      \TR{\ident{x}}
+    }
+    \TR{\ident{x}}
+  }
+}
+\end{center}
+}
+Qu'en est-il de \verb|fun y -> x + (fun x -> x) y|? Et de
+{\small
+\begin{verbatim}
+let x = 1 in
+  let f = fun y -> x + y in
+  let x = 2
+in f(x)
+\end{verbatim}
+}
+Quid du programme page~\pageref{un_autre_programme}?
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Liaison statique et environnement}
+\label{exemple_liaisons}
+
+Une phrase associe une expression $e$ à une variable $x$: on parle de
+\emph{liaison}, notée $x \mapsto e$. Un sous-programme définit donc un
+ensemble de liaisons appelé \emph{environnement}. 
+
+\bigskip
+
+Une liaison est \emph{statique} si l'on peut déterminer à la
+compilation (c.-à-d. en examinant le code source) à quelle expression
+une variable donnée fait référence. Par exemple dans {\small
+\begin{verbatim}
+let x = 0 in
+  let id = fun x -> x in
+  let y = id (x) in
+  let x = (fun x -> fun y -> x + y) 1 2 
+in x+1;;
+\end{verbatim}
+}
+à quelle expression fait référence \verb+x+ dans \verb|x+1|?
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Liaison statique et environnement (suite et fin)}
+
+Les liaisons sont ordonnées dans l'environnement \emph{par ordre de
+définition}. Ainsi
+\begin{enumerate}
+
+  \item l'environnement est initialement vide: \{\}
+
+  \item après {\small \verb|let x = 0 in |} il vaut $\{\ident{x} \mapsto
+  0\}$
+
+  \item après {\small \verb|let id = fun x -> x in |} il vaut
+  $\{\ident{id} \mapsto \Xfun \,\, \ident{x} \rightarrow \ident{x}; \ident{x}
+  \mapsto 0\}$
+
+  \item après {\small \verb|let y = id (x) in |} il vaut $\{\ident{y}
+  \mapsto \ident{id} \, \lpar\ident{x}\rpar; \ident{id} \mapsto \Xfun \,\,
+  \ident{x} \rightarrow \ident{x}; \ident{x} \mapsto 0\}$
+
+  \item après {\small \verb|let x = ...|} il vaut $\{\textcolor{blue}{\ident{x}
+  \mapsto \ldots}; \ident{y} \mapsto \ident{id} \, \lpar\ident{x}\rpar; \ident{id}
+  \mapsto \Xfun \,\, \ident{x} \rightarrow \ident{x}; \textcolor{blue}{\ident{x} \mapsto
+  0}\}$
+
+\end{enumerate}
+
+\textcolor{blue}{La liaison $\ident{x} \mapsto 0$ est donc cachée, ou hors de
+portée, dans \texttt{x+1}.}
+
+\bigskip
+
+On notera $\rho(x)$ la première liaison de $x$ dans l'environnement
+$\rho$ (si elle existe).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Variables libres et représentation graphique des liaisons dans une expression}
+
+La définition locale \Xlet{} $x$ = $e_1$ \Xin{} $e_2$ lie $e_1$ à $x$,
+noté $x \mapsto e_1$, dans $e_2$. Il se peut que dans $e_2$ une autre
+définition locale lie la même variable...
+
+\bigskip
+
+Pour y voir plus clair on applique le procédé suivant sur l'arbre de
+programme. À partir de chaque occurrence de variable, remontons vers
+la racine. Si nous trouvons un premier \Xlet{} liant cette variable,
+créons un arc entre son occurrence et ce \Xlet. Si, à la racine, aucun
+\Xlet{} n'a été trouvé, la variable est dite \emph{libre} dans
+l'expression. On notera ${\cal L} (e)$ l'ensemble des variables libres
+de $e$.  {\small
+\begin{center}
+\pstree[nodesep=2pt,levelsep=18pt]{\TR[name=outer-let]{\Xlet}}{
+  \TR{\ident{x}}
+  \TR{\num{1}}
+  \pstree{\TR{\texttt{+}}}{
+    \pstree{\TR[name=inner-let]{\Xlet}}{
+      \TR{\ident{x}}
+      \TR{\num{2}}
+      \TR[name=inner-var]{\ident{x}}
+    }
+    \TR[name=outer-var]{\ident{x}}
+  }
+}
+\ncarc[linecolor=blue,nodesepA=1pt,nodesepB=1pt,arcangle=-40]{->}{inner-var}{inner-let}
+\ncarc[linecolor=blue,nodesepA=1pt,nodesepB=1pt,arcangle=-40]{->}{outer-var}{outer-let}
+\end{center}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Variables libres d'une abstraction}
+
+Une situation similaire se pose avec les fonctions \Xfun{} $x
+\rightarrow e$: dans leur corps $e$ le paramètre $x$ cache une
+éventuelle variable $x$ liée plus haut dans l'arbre. Il nous faut
+alors considérer que \Xfun{} est un lieur comme \Xlet.
+
+\bigskip
+
+Reprenons \verb|fun y -> x + (fun x -> x) y|:
+{\small
+\begin{center}
+\pstree[nodesep=2pt,levelsep=18pt]{\TR[name=outer-fun]{\Xfun}}{
+  \TR{\ident{y}}
+  \pstree{\TR{\texttt{+}}}{
+    \textcolor{red}{
+      \TR{\ident{x}}
+    }
+    \pstree{\TR{\$}}{
+      \pstree{\TR[name=inner-fun]{\Xfun}}{
+        \TR{\ident{x}}
+        \TR[name=inner-var]{\ident{x}}
+      }
+      \TR[name=outer-var]{\ident{y}}
+    }
+  }
+}
+\end{center}
+}
+\nccurve[linecolor=blue,nodesepA=1pt,nodesepB=1pt,angleA=45]{->}{inner-var}{inner-fun}
+\ncarc[linecolor=blue,nodesepA=1pt,nodesepB=1pt,arcangle=-40]{->}{outer-var}{outer-fun}
+Quid des programmes pages~\pageref{un_autre_programme}
+et~\pageref{exemples_arbres_suite}?
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Expressions closes et évaluation}
+
+Une expression \emph{close} est une expression sans variables
+libres. Seul un programme clos peut être évalué (exécuté). En effet,
+quel serait la valeur du programme réduit à la simple expression
+\verb|x|?
+
+C'est pourquoi la première analyse statique des compilateurs consiste
+à déterminer les variables libres des expressions. Si le programme
+n'est pas clos, il est rejeté. Dans le cas de \verb|x|, le compilateur
+OCaml imprimerait 
+\begin{center}
+\texttt{Unbound value x}
+\end{center}
+(c.-à-d. «~Valeur \texttt{x} non liée~») et s'arrêterait. L'intérêt
+est que cette expression non close est rejetée à la compilation et ne
+provoque donc pas une erreur à l'exécution.
+
+\end{frame}

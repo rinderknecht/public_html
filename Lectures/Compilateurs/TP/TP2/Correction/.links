@@ -1,0 +1,3 @@
+$HOME/Makefiles/OCaml/Makefile
+../../TP1/Sujet/ast.ml
+../../TP1/Sujet/parser.mly

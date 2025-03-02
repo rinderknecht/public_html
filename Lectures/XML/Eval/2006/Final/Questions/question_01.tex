@@ -1,0 +1,11 @@
+The purpose is, given an \textsf{XML} document representing a book
+made of chapters and sections (whose titles are specified as
+attributes), to write an \textsf{XSL} transform that extracts the
+table of contents, followed by the original document where all
+attributes are changed into elements. For example, from the document
+\XMLin{book.xml}
+
+\newpage
+
+\noindent we want the output
+\saxonCut{tmp.xml}{book}{print}

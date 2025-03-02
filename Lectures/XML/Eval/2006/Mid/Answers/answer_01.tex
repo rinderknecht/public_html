@@ -1,0 +1,33 @@
+\paragraph{Answer.}
+\begin{align*}
+\proc{Dequeue}(\proc{Queue}(S,\proc{Push}(e,T)))
+&\stackrel{1}{\rightarrow} (e,\proc{Queue}(S,T))\\
+\proc{Dequeue}(\proc{Queue}(S,\proc{Empty}))
+&\stackrel{2}{\rightarrow}
+\proc{Dequeue}(\proc{Queue}(\proc{Empty}, \proc{Rev}(S)))\\
+\proc{Enqueue}(e,\proc{Queue}(S,T)) 
+&\stackrel{3}{\rightarrow}
+  \proc{Queue}(\proc{Push}(e,S),T)
+\end{align*}
+\noindent But there is a problem with \proc{Dequeue} if the queue is
+empty. Indeed, in this case we have
+\begin{multline*}
+\proc{Dequeue}(\proc{Queue}(\proc{Empty}, \proc{Empty}))\\
+\stackrel{2}{\rightarrow} \proc{Dequeue}(\proc{Queue}(\proc{Empty},
+\proc{Rev}(\proc{Empty})))\\
+\rightarrow \proc{Dequeue}(\proc{Queue}(\proc{Empty}, \proc{Empty}))
+\end{multline*}
+\noindent which is a never-ending loop! The fix consists in forbidding
+the use of rule \(2\) when the queue is empty. One easy way is simply
+to say
+\begin{gather*}
+\proc{Dequeue}(\proc{Queue}(S,\proc{Empty})) \stackrel{2}{\rightarrow}
+\proc{Dequeue}(\proc{Queue}(\proc{Empty}, \proc{Rev}(S)))\\
+\qquad \text{if} \, S \neq \proc{Empty}
+\end{gather*}
+\noindent Another way is to add an error-case rule like
+\[
+\proc{Dequeue}(\proc{Queue}(\proc{Empty},\proc{Empty})) 
+\stackrel{4}{\rightarrow} \proc{Error}
+\]
+\noindent \textbf{and} prefer it over rule \(3\).

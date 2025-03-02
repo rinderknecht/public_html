@@ -1,0 +1,79 @@
+PARSER_BEGIN(Calc3)
+public class Calc3 {
+    public static void main(String args[]) throws ParseException{
+      Calc3 parser = new Calc3(System.in);
+      while (true) {
+        System.out.print("Enter Expression: ");
+        System.out.flush();
+        try {
+          parser.phrase();
+          System.out.println ("Syntax is correct.");
+        } catch (ParseException x) {
+            System.out.println("Exiting.");
+            throw x;
+          }
+      }
+    }
+}
+PARSER_END(Calc3)
+
+SKIP  : { " " | "\t" | "\r" }
+TOKEN : { <PLUS: "+"> | <MINUS: "-"> | <TIMES: "*"> | <SLASH: "/">
+        | <ARROW: "->"> | <LPAR: "("> | <RPAR: ")"> | <EQUAL: "=">
+        | <DCOLON: ";;">
+        }
+TOKEN : { <LET: "let"> | <REC: "rec"> | <IN: "in"> | <FUN: "fun">
+        | <IFZ: "ifz"> | <IF: "if"> | <THEN: "then"> | <ELSE: "else">
+        | <AND: "and"> | <OR: "or"> | <NOT: "not">
+        }
+TOKEN : { <INT: (<DIGIT>)+> | <#DIGIT: ["0"-"9"]>
+        | <FALSE: "false"> | <TRUE: "true">
+        | <IDENT: ["a"-"z"] (["_","a"-"z","A"-"Z","0"-"9"])*>
+        }
+
+void phrase() : {} { expr() <DCOLON> "\n" }
+
+void expr() : {} {
+  expr1()
+| <LET> let()
+| <IF> bexpr() <THEN> expr() <ELSE> expr()
+| <IFZ> expr() <THEN> expr() <ELSE> expr()
+| <FUN> <IDENT> <ARROW> expr()
+}
+
+void let() : {} {
+  <IDENT> <EQUAL> expr() <IN> expr()
+| <REC> <IDENT> <EQUAL> expr() <IN> expr()
+}
+
+void expr1() : {} {
+ expr2() ((<PLUS> | <MINUS>) expr2())*
+}
+
+void expr2() : {} {
+  expr3() ((<TIMES> | <SLASH>) expr3())*
+}
+
+void expr3() : {} {
+  (expr4())+
+}
+
+void expr4() : {} {
+  <INT>
+| <IDENT>
+| <LPAR> expr() <RPAR>
+}
+
+void bexpr() : {} {
+  bexpr1() [<OR> bexpr1()]
+}
+
+void bexpr1() : {} {
+  bexpr2() [<AND> bexpr2()]
+}
+
+void bexpr2() : {} {
+  <TRUE>
+| <FALSE>
+| <NOT> <LPAR> bexpr() <RPAR>
+}

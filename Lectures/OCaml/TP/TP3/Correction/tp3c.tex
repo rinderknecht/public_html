@@ -1,0 +1,227 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amstext}
+
+\input{trace}
+
+\title{Corrigé du TP 3 de programmation fonctionnelle en Objective Caml}
+\author{Christian Rinderknecht}
+
+\begin{document}
+
+\maketitle
+
+\section{Listes}
+
+\begin{verbatim}
+let rec appartient x l = match l with
+  [] -> false
+| y :: reste ->
+    if x = y 
+    then true
+    else appartient x reste
+
+let rec existe p l = match l with
+  [] -> false
+| y :: reste ->
+    if p y 
+    then true
+    else existe p reste
+\end{verbatim}
+
+La fonction {\tt existe} est une généralisation de {\tt appartient};
+il suffit de remplacer la comparaison de {\tt x} à {\tt y} par le
+prédicat {\tt p}. On en déduit comment réécrire {\tt appartient} en
+utilisant {\tt existe}:
+\begin{verbatim}
+let appartient2 x l = existe (fun y -> x = y) l;;
+\end{verbatim}
+
+\begin{verbatim}
+let rec associé x l = match l with
+  [] -> failwith "Erreur: pas d'associé"
+| (y1, y2) :: reste ->
+    if x = y1 then y2
+    else associé x reste
+
+let rec map f l = match l with
+  [] -> []
+| x :: l' -> (f x) :: (map f l')
+
+let rec split l = match l with
+  [] -> ([], [])
+| (x1, x2) :: l' ->
+    let (l1, l2) = split l'
+    in (x1 :: l1, x2 :: l2)
+
+let rec partage p l = match l with
+  [] -> ([], [])
+| x :: l' ->
+    let (oui, non) = partage p l' 
+    in if (p x) then (x :: oui, non)
+       else (oui, x :: non)
+\end{verbatim}
+
+Ci-dessus, l'appel récursif à {\tt partage} fait le partage de la
+queue de liste {\tt l}. La variable locale {\tt oui} (resp. {\tt non})
+contient les éléments de {\tt l} qui vérifient (resp. ne vérifient
+pas) {\tt p}. Il ne reste plus qu'à accrocher {\tt x} à la bonne
+liste.
+
+\begin{verbatim}
+let rec append l1 l2 =
+  match l1 with
+    [] -> l2
+  | x :: l -> x :: (append l l2)
+
+let rec fold_left f accu l = match l with
+  [] -> accu
+| a::l' -> fold_left f (f accu a) l'
+
+let rec fold_right f l accu =
+  match l with
+    [] -> accu
+  | a::l -> f a (fold_right f l accu)
+
+let append l1 l2 = fold_right (fun x l -> x :: l) l1 l2
+\end{verbatim}
+
+Si {\tt l1} vaut \verb+[ a1; ...; an ]+, alors d'après la définition
+de \verb+fold_right+, nous avons
+$$\verb+append l1 l2 = a1 :: ... :: an :: l2+$$ ce qui est bien le
+résultat recherché.
+
+\section{Tri fusion (\emph{Merge sort})}
+
+On donne directement la version paramétrée par une fonction d'ordre.
+
+\begin{verbatim}
+let singletons l = map (fun x -> [x]) l
+
+let rec merge ordre l1 l2 =
+  match (l1, l2) with
+    ([], _) -> l2
+  | (_, []) -> l1
+  | (x1 :: rest1, x2 :: rest2) ->
+      if ordre x1 x2 
+      then x1 :: (merge ordre rest1 l2)
+      else x2 :: (merge ordre l1 rest2)
+\end{verbatim}
+
+On réalise un filtrage sur la paire \verb+(l1, l2)+ (au lieu de faire
+un filtrage sur {\tt l1} suivi d'un autre sur {\tt l2}) pour plus de
+concision. Notons que les deux premières branches du {\tt match} se
+recouvrent dans le cas \verb+([], [])+, ce qui n'est nullement gênant;
+la première s'appliquera alors. Remarquons que dans le cas où {\tt x1}
+est inférieur à {\tt x2}, il serait incorrect de renvoyer
+\texttt{x1 :: x2 :: (merge ordre rest1 rest2)}.  En effet, {\tt rest1}
+peut très bien contenir d'autres éléments compris entre {\tt x1} et
+{\tt x2}.
+
+\begin{verbatim}
+let rec merge2à2 ordre l = match l with
+  l1 :: l2 :: rest -> 
+   (merge ordre l1 l2) :: (merge2à2 ordre rest)
+| ll -> ll
+\end{verbatim}
+
+La première ligne du filtrage s'applique lorsque la liste passée à
+\verb+merge2à2+ contient au moins deux éléments. La seconde ligne
+s'applique dans tous les autres cas (parce que {\tt ll} est un nom de
+variable), c'est-à-dire lorsque la liste contient au plus $1$ élément.
+
+\begin{verbatim}
+let auplus1 l = match l with
+  (_ :: _ :: _) -> false
+| _ -> true
+\end{verbatim}
+
+Cette fonction indique si la liste qu'on lui passe contient au plus
+$1$ élément. Le principe est le même que pour \verb+merge2à2+, mais
+comme on n'a pas besoin d'utiliser les éléments, on utilise \verb+_+
+au lieu de variables.
+
+\begin{verbatim}
+let rec répète fusion prédicat l =
+  if prédicat (l)
+  then l
+  else répète fusion prédicat (fusion l)
+  
+let mergesort ordre l =
+  let résultat = répète (merge2à2 ordre) auplus1 (singletons l) 
+in match résultat with
+     [] -> []
+   | l :: _ -> l
+\end{verbatim}
+
+% !!!
+% let mergesort ordre = compose (flat_map id) (compose (répète
+% (merge2à2 ordre) auplus1) singletons)
+
+Ici, l'application partielle \verb+(merge2à2 ordre)+ donne une
+fonction de type $\forall\alpha.\alpha\text{\tt\ list
+list}\rightarrow\alpha\text{\tt\ list list}$, qui constitue une étape
+de fusion.  On utilise ensuite la fonction {\tt répète} pour effectuer
+cette étape autant de fois que nécessaire. Plus précisément, {\tt
+répète} attend trois arguments:
+
+\begin{itemize}
+\item l'action à répéter, ici \verb+(merge2à2 ordre)+;
+\item la condition d'arrêt, ici le prédicat {\tt auplus1}, ce qui
+      signifie que l'on s'arrêtera lorsque la liste de listes ne
+      contiendra plus qu'un argument;
+\item le point de départ, à savoir \verb+(singletons l)+, la liste des
+      listes à un élément.
+\end{itemize}
+
+Lorsque {\tt répète} s'arrête, le résultat qu'elle renvoie vérifie
+nécessairement le prédicat {\tt auplus1}; il s'agit d'une liste de $0$
+ou $1$ listes triées. On utilise un dernier {\tt match} pour traiter
+ces deux cas.  Dans la deuxième ligne, on sait que la liste a
+exactement $1$ élément; le motif \verb+_+ filtrera en fait toujours
+une liste vide.
+
+Nous pouvons maintenant compter le nombre d'opérations effectuées par
+chacune des fonctions ci-dessus. Lorsque la fonction {\tt merge} se
+rappelle récursivement, elle a effectué une comparaison, et les listes
+passées à l'appel récursif contiennent (au total) un élément de
+moins. Par ailleurs, {\tt merge} s'arrête lorsque l'une des deux
+listes est vide. Par conséquent, \verb+merge ordre l1 l2+ réalise au
+plus $n_1+n_2$ comparaisons, où $n_i$ est la taille de {\tt li}.
+
+Ceci étant établi, on vérifie que
+\verb+merge2à2 ordre [ l1; l2; ... ]+ effectue au plus $n_1 + n_2 +
+\ldots$ comparaisons. C'est-à-dire au plus $n$ comparaisons, si $n$
+est la taille de la liste que nous sommes chargés de trier.
+
+Pour savoir combien \verb+mergesort ordre l+ effectue de comparaisons,
+il faut déterminer combien de fois \verb+merge2à2+ est appelée. Or, à
+chaque appel, elle divise par deux\footnote{En fait, si {\tt ll} est
+de taille $n$, alors {\tt merge2à2 ordre ll} est de taille $n/2+1$ au
+plus. Ceci ne change pas le principe de la preuve.}  le nombre
+d'éléments de la liste de listes. Si celle-ci est au départ de taille
+$n$, le nombre d'étapes effectuées est donc au plus $\log_2 n$.
+
+Des deux paragraphes précédents, on déduit que le temps nécessaire à
+\texttt{merge\-sort} pour trier une liste de taille $n$ est au pire de
+l'ordre de $n \cdot\log_2 n$, ce que l'on écrit $O(n \cdot\log_2 n)$.
+
+\section{Tri rapide (\emph{Quicksort})}
+
+\begin{verbatim}
+let rec quicksort = function
+  [] -> []
+| pivot :: reste ->
+    let (petits, grands) = partage (fun x -> x < pivot) reste in
+    (quicksort petits) @ (pivot :: (quicksort grands))
+\end{verbatim}
+
+L'opérateur \verb+@+ est la concaténation de listes prédéfinie en
+Objective Caml (comme la fonction {\tt append} que nous avons écrite).
+
+\end{document}

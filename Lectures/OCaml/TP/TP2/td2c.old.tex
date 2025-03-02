@@ -1,0 +1,220 @@
+\documentclass[a4paper]{article}
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+%\usepackage{fullpage}
+%\advance\hoffset by -3mm  % A4 is narrower.
+%\advance\voffset by  8mm  % A4 is taller.
+
+\title{Corrigé des Travaux de programmation fonctionnelle en Objective Caml}
+\author{Christian Rinderknecht}
+\date{Vendredi 7 mars 2003}
+
+\begin{document}
+\maketitle
+
+\section{Curryfication}
+
+\begin{quote}
+\begin{verbatim}
+let curry f =
+  fun x y -> f (x, y)
+let uncurry f =
+  fun (x, y) -> f x y
+\end{verbatim}
+\nd{quote}
+
+\section{Calcul approché de la dérivée d'une fonction}
+
+On utilise comme formule approchée
+$\frac{f(x+\epsilon)-f(x-\epsilon)}{2\epsilon}$, mais d'autres
+possibilités existent.
+
+\begin{quote}
+\begin{verbatim}
+let dérivée epsilon f x =
+  (f(x+.epsilon) -. f(x-.epsilon)) /. (2.0 *. epsilon)
+\end{verbatim}
+\end{quote}
+
+\section{Calcul approché d'une intégrale}
+
+\begin{quote}
+\begin{verbatim}
+let intégrale n (a, b) f =
+  let nf = float_of_int n in
+  let pas = (b -. a) /. nf in
+  
+  let rec somme k x =
+    if k = 0 then 0.0
+    else f(x) +. (somme (k-1) (x+.pas))
+in (somme n (a +. pas/.2.0)) *. pas
+\end{verbatim}
+\end{quote}
+Quelques commentaires:
+\begin{itemize}
+\item {\tt n} est un entier; on est forcé de le convertir en un
+      flottant {\tt nf} pour pouvoir diviser un flottant par $n$.
+\item On calcule le pas dès le début, par une définition de variable
+      locale, car il apparaît ensuite plusieurs fois.
+\item On utilise une fonction auxiliaire {\tt somme}, que l'on définit
+      également de façon locale. L'application {\tt somme k x} calcule
+      la somme des valeurs de {\tt f} en {\tt k} points, en commençant
+      à {\tt x} et en avançant {\tt pas} à {\tt pas}.
+\item On a choisi de mesurer au milieu de chaque sous-intervalle (en
+      commençant à {\tt (a +. pas/.2.0)}); d'autres choix sont
+      possibles.
+\end{itemize}
+
+\section{Calcul du zéro d'une fonction par la méthode de Newton}
+
+\begin{quote}
+\begin{verbatim}
+let rec newton epsilon f x =
+  let delta = f(x) /. (dérivée 1e-10 f x) in
+  if abs_float delta < epsilon then x
+  else newton epsilon f (x -. delta)
+\end{verbatim}
+\end{quote}
+(On a choisi ici une valeur arbitraire pour la précision du calcul de
+la dérivée.)
+
+Pour calculer une approximation de $\sqrt{a}$, on cherche un zéro de
+la fonction $x\mapsto x^2-a$.  On commence la recherche en $1$, par
+exemple (en fait, toute valeur initiale strictement positive nous
+amène à $\sqrt{a}$ et toute valeur initiale strictement négative nous
+amène à $-\sqrt{a}$). On chosit ici une précision arbitraire.
+\begin{quote}
+\begin{verbatim}
+let approx_sqrt a =
+  newton 1e-6 (fun x -> x *. x -. a) 1.0
+\end{verbatim}
+\end{quote}
+Exemple:
+\begin{quote}
+\begin{verbatim}
+# approx_sqrt 2.0;;
+- : float = 1.41421356238
+# sqrt 2.0;;
+- : float = 1.41421356237
+\end{verbatim}
+\end{quote}
+
+On cherche ensuite un zéro de la fonction $x\mapsto 1 - \int_0^x \sin
+t.dt$.
+\begin{quote}
+\begin{verbatim}
+# newton 1e-6 (fun x -> 1.0 -. intégrale 1000 (0.0, x) sin) 1.0;;
+- : float = 1.57079622646
+# asin 1.;;
+- : float = 1.57079632679
+\end{verbatim}
+\end{quote}
+On compare notre résultat à $\pi/2 = \mbox{\rm arcsin\ } 1$.
+
+\section{Filtrage}
+
+Factorielle:
+\begin{quote}
+\begin{verbatim}
+let rec fact n = match n with
+  0 -> 1
+| _ -> n * fact(n-1)
+\end{verbatim}
+\end{quote}
+
+Opérations sur les matrices:
+\begin{quote}
+\begin{verbatim}
+let transposée = function
+  ((x, y),
+   (z, t)) -> ((x, z),
+               (y, t))
+
+let produit ((x, y),
+             (z, t)) ((x', y'),
+                      (z', t')) =
+  ((x *. x' +. y *. z', x *. y' +. y *. t'),
+   (z *. x' +. t *. z', z *. y' +. t *. t'))
+
+let est_constante ((x, y), (z, t)) =
+  (x = y) & (y = z) & (z = t)
+\end{verbatim}
+\end{quote}
+
+On ne peut pas utiliser un simple filtrage pour déterminer si les
+quatre éléments sont égaux (cf. énoncé).
+
+\begin{quote}
+\begin{verbatim}
+let trig_sup m =
+  match m with
+    (_,
+     (0, _)) -> true
+  | _ -> false
+\end{verbatim}
+\end{quote}
+
+\section{Param\`etres fonctionnels}
+
+\begin{quote}
+\begin{verbatim}
+let produit_fonctions f g =
+  fun (x, y) -> (f x, g y)
+
+let rec itère n f x =
+  match n with
+    0 -> x
+  | _ -> f (itère (n-1) f x)
+\end{verbatim}
+\end{quote}
+
+On aurait pu écrire, à la dernière ligne: \verb|itère (n-1) f (f x)|
+avec le même résultat.
+
+\begin{quote}
+\begin{verbatim}
+let puissance m n =
+  itère n (fun x -> m * x) 1
+
+let itère_produit f g n =
+  itère n (produit_fonctions f g)
+let produit_itère f g n =
+  produit_fonctions (itère n f) (itère n g)
+
+let rec répète f p z =
+  if (p z) then z
+  else répète f p (f z)
+
+let rec modulo x y =
+  répète (fun v -> v - y) (fun v -> v < y) x
+
+let itère2 n f x =
+  fst (répète (produit_fonctions f pred) (fun (_, k) -> k = 0) (x, n))
+\end{verbatim}
+\end{quote}
+
+Dans la fonction {\tt itère2}, on utilise {\tt répète} pour calculer
+la suite $(f^k(x), n-k)_{k\geq 0}$ et on s'arrête lorsque le deuxième
+composant s'annule. On obtient donc la paire $(f^n(x), 0)$, dont on
+extrait le premier composant grâce à {\tt fst}.
+
+\begin{quote}
+\begin{verbatim}
+let newton2 epsilon f x =
+  répète (fun x ->
+            let delta = f(x) /. (dérivée 1e-10 f x) in
+            x -. delta)
+         (fun x ->
+            let delta = f(x) /. (dérivée 1e-10 f x) in
+            abs_float delta < epsilon)
+         x
+\end{verbatim}
+\end{quote}
+
+Cette fonction est en fait moins rapide que {\tt newton}, puisque {\tt
+delta} est calculé deux fois à chaque itération (une fois pour
+calculer la prochaine valeur de {\tt x}, une fois pour déterminer si
+on s'arrête).
+
+\end{document}

@@ -1,0 +1,9 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/LaTeX/TeX/trace.tex
+$HOME/LaTeX/TeX/prolog.tex
+
+../Questions/btree.tex
+../Questions/question_01.tex
+../Questions/question_02.tex
+../Questions/prolog-final.tex prolog-final-QA.tex

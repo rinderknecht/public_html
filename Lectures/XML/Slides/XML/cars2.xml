@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cars>
+  <car>
+    <model>Matiz</model><manufacturer>Daewoo</manufacturer>
+  </car>
+  <car>
+    <model>Sonata</model><manufacturer>Hyundai</manufacturer>
+  </car>
+</cars>

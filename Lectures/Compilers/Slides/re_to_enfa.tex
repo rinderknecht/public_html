@@ -1,0 +1,193 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From regular expressions to \eNFA{s}}
+
+We let behind the regular expressions when we introduced informally
+the transition diagrams for the token recognition.
+
+\bigskip
+
+Let us show now that regular expressions, used in lexers to specify
+tokens, can be converted to \eNFA{s}, so to DFA. This proves that
+\emph{regular languages are recognisable languages}.
+
+\bigskip
+
+Actually, it is possible to prove that any \eNFA can be converted to a
+regular expression denoting the same language, but we will not do so.
+
+\bigskip
+
+Therefore, keep in mind that \textbf{regular languages are
+  recognisable languages}. In other words, using a regular expression
+or a finite automaton is only a matter of convenience.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From regular expressions to \eNFA{s} (cont)}
+
+The construction we present here to build an \eNFA from a regular
+expression is called \textbf{Thompson's construction}.
+
+\bigskip
+
+Let us first associate an \eNFA to the basic regular expressions.
+\begin{itemize}
+
+  \item For the expression \(\epsilon\), construct the
+   following NFA, where \(i\) and \(f\) are \textbf{new} states
+  \begin{center}
+    \includegraphics[bb=48 710 135 730]{thompson_epsilon}
+  \end{center}
+
+  \item For \(a \in \Sigma\), construct the following NFA, where \(i\)
+    and \(f\) are \textbf{new} states
+  \begin{center}
+    \includegraphics[bb=48 710 135 730]{thompson_symbol}
+  \end{center}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From regular expressions to \eNFA{s} (cont)}
+
+Now let us associate NFAs to complex regular expressions.
+
+\bigskip
+
+Assume \(N(s)\) and \(N(t)\) are the NFAs for regular expressions
+\(s\) and \(t\).
+\begin{itemize}
+
+  \item For the regular expression \(st\), construct the following NFA
+    \(N(st)\), where \textbf{no new state} is created:
+
+\end{itemize}
+
+\begin{center}
+\includegraphics[bb=65 660 295 714]{thompson_conc}
+\end{center}
+The final state of \(N(s)\) becomes a normal state, as well as the
+initial state of \(N(t)\).
+
+\bigskip
+
+This way only remains a unique initial state \(i\) and a unique final
+state \(f\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From regular expressions to \eNFA{s} (cont)}
+
+\begin{itemize}
+
+  \item For the regular expression \(s\) \disj \(t\), construct the
+  following NFA \(N(s \, \text{\disj} \, t)\)
+
+\end{itemize}
+\begin{center} 
+\includegraphics[bb=65 590 272 715,scale=0.9]{thompson_disj}
+\end{center}
+where \(i\) and \(f\) are \textbf{new} states. Initial and final
+states of \(N(s)\) and \(N(t)\) become normal.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From regular expressions to \eNFA{s} (cont)}
+
+\begin{itemize}
+
+  \item For the regular expression \(s\)\kleene, construct the following
+    NFA \(N(s\text{\kleene})\), where \(i\) and \(f\) are \textbf{new}
+    states:
+
+\end{itemize}
+\begin{center}
+\includegraphics[bb=50 620 255 718]{thompson_kleene}
+\end{center}
+Note that we added two \(\epsilon\) transitions and that the initial
+and final states of \(N(s)\) become normal states.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From regular expressions to \eNFA{s} (cont)}
+
+But how do we apply these simple rules when we have a complex regular
+expression, having many level of nested parentheses etc?
+
+\bigskip
+
+Actually, the \textbf{abstract syntax tree} of the regular expression
+direct, i.e., orders, the application of the rules.
+
+\bigskip
+
+\begin{columns}
+
+  \column{0.5\textwidth} If the syntax tree has the shape
+  \begin{center}
+    \includegraphics{re_ast_conc}
+  \end{center}
+  then we construct first \(N(s)\), \(N(t)\) and finally \(N (st)\).
+
+  \column{0.5\textwidth} If the syntax tree has the shape
+  \begin{center}
+    \includegraphics{re_ast_disj}
+  \end{center}
+  then we construct first \(N(s)\), \(N(t)\) and finally \(N (s \,
+  \text{\disj} \, t)\).
+
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From regular expressions to \eNFA{s} (cont)}
+
+If the syntax tree has the shape
+\begin{center}
+\includegraphics{re_ast_kleene}
+\end{center}
+then we construct first \(N(s)\) and finally \(N(s\text{\kleene})\).
+
+\bigskip
+
+This pattern-matchings are applied first at the \textbf{root} of the
+abstract syntax tree of the regular expression.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From regular expressions to \eNFA{s}/Exercise}
+
+Consider the regular expression
+\lparen\nt{a} \disj\nt{b}\rparen\kleene\nt{a}\nt{b}\nt{b} and its
+abstract syntax tree
+\begin{center}
+\includegraphics{re_ast}
+\end{center}
+Apply the previous rules to build the corresponding \eNFA.
+\end{frame}

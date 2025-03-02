@@ -1,0 +1,403 @@
+%-*-latex-*-
+ 
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{How \Prolog answers queries}
+
+To answer a query, the \Prolog interpreter tries to satisfy all the
+goals.
+
+\bigskip
+
+Satisfying a goal means proving that a goal logically follows from the
+facts and rules in the program.
+
+\bigskip
+
+If the query contains variables, the interpreter must find particular
+objects in place of the the variables that entail the goal.
+
+\bigskip
+
+If it cannot prove the goal, the interpreter answers \texttt{No}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{How \Prolog answers queries (cont)}
+
+For example, consider the famous syllogism about the philosopher
+Socrates. Given
+\begin{quote}
+All men are fallible [a rule],
+Socrates is a man [a fact].
+\end{quote}
+a logical consequence is that
+\begin{quote}
+Socrates is fallible.
+\end{quote}
+In \Prolog, this is written
+{\small
+\begin{verbatim}
+fallible(X) :- man(X).
+man(socrates).
+\end{verbatim}
+}
+Then we have
+{\small
+\begin{verbatim}
+?- fallible(socrates).
+Yes
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{How \Prolog answers queries (cont)}
+
+This query was answered by the interpreter by first looking up some
+fact that would match the goal \texttt{fallible(socrates)}. 
+
+\bigskip
+
+Since there is none, the interpreter looked for rules such that the
+goal is an instance of the head, i.e. such that the goal can be formed
+by replacing variables in the head by some object.
+
+\bigskip
+
+If we set \texttt{X = socrates}, then the rule
+{\small
+\begin{verbatim}
+fallible(X) :- man(X).
+\end{verbatim}
+}
+is instantiated into
+{\small
+\begin{verbatim}
+fallible(socrates) :- man(socrates).
+\end{verbatim}
+}
+whose head matches exactly the query. 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{How \Prolog answers queries (cont)}
+
+Now the interpreter tries to prove the body, i.e. the sub-goal
+{\small
+\begin{verbatim}
+?- man(socrates).
+\end{verbatim}
+}
+just as it tried to prove the initial query.
+
+\bigskip
+
+It searches first for a fact which would be the sub-goal
+\texttt{man(socrates)}, and, indeed, there is such a fact in the
+program.
+
+\bigskip
+
+Therefore the sub-goal is true, so is the goal and the query is
+positively answered.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{How \Prolog answers queries (cont)}
+
+Consider a query about the family tree page~\pageref{family_tree} like
+{\small
+\begin{verbatim}
+?- ancestor(tom,pat).
+\end{verbatim}
+}
+Let us recall the definition
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- parent(X,Y).                % Rule [anc1]
+ancestor(X,Y) :- parent(X,Z), ancestor(Z,Y). % Rule [anc2]
+\end{verbatim}
+} 
+where what follows a \texttt{\%} until the end of the line is a commentary.
+
+\bigskip
+
+First, the interpreter tries to instantiate the first rule,
+\texttt{[anc1]}, in such a way that the instance's head matches the
+goal. This can be achieved by letting \texttt{X=tom} and
+\texttt{Y=pat}. The instantiated rule is {\small
+\begin{verbatim}
+ancestor(tom,pat) :- parent(tom,pat). % Instance of [anc1]
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{How \Prolog answers queries (cont)}
+
+Next, the interpreter tries to prove the body of the rule's instance,
+i.e.
+{\small
+\begin{verbatim}
+?- parent(tom,pat).
+\end{verbatim}
+}
+It searches among the facts defining the \texttt{parent} relation but
+finds not match. Since there is no rule for \texttt{parent}, the
+interpreter fails and \texttt{parent(tom,pat)} is false.
+
+\bigskip
+
+Hence, \texttt{ancestor(tom,pat)} cannot be proven using rule
+\texttt{[anc1]}. 
+
+\bigskip
+
+Before giving up, the interpreter tries again with the last remaining
+rule, \texttt{[anc2]}. The variable bindings are the same as before,
+and the rule instance is 
+{\small
+\begin{verbatim}
+ancestor(tom,pat) :- parent(tom,Z),
+                     ancestor(Z,pat). % Instance of [anc2]
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{How \Prolog answers queries (cont)}
+
+First, the interpreter tries to prove the sub-goal
+{\small
+\begin{verbatim}
+?- parent(tom,Z).
+\end{verbatim}
+}
+It searches again the database defining \texttt{parent} and finds two
+matches: \texttt{Z=bob} and \texttt{Z=liz}.
+
+\bigskip
+
+For each binding of \texttt{Z}, the interpreter substitutes \texttt{Z}
+by the associated object into the second sub-goal and tries to prove
+it. First, it gets to prove
+{\small
+\begin{verbatim}
+?- ancestor(bob,pat).
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{How \Prolog answers queries (cont)}
+
+The process for proving this goal is the same as before. Rule
+\texttt{[anc1]} is considered first. The variable binding
+\texttt{X=bob} and \texttt{Y=pat} leads to the following instance of
+\texttt{[anc1]}:
+{\small
+\begin{verbatim}
+ancestor(bob,pat) :- parent(bob,pat). % Instance of [anc1]
+\end{verbatim}
+}
+whose head matches the current sub-goal. Now, the interpreter tries to
+prove
+{\small
+\begin{verbatim}
+?- parent(bob,pat).
+\end{verbatim}
+} 
+It searches the facts about the \texttt{parent} relation and finds a
+match. Therefore the sub-goal \texttt{ancestor(bob,pat)} is true, and,
+since
+{\small
+\begin{verbatim}
+ancestor(tom,pat) :- parent(tom,bob), ancestor(bob,pat).
+\end{verbatim}
+}
+it proves the initial goal \texttt{ancestor(tom,pat)}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{How \Prolog answers queries (cont)}
+
+The execution is over, even if we left suspended the binding
+\texttt{Z=liz}, and in spite that \Prolog interpreters always offer
+the possibility to find \emph{all the solutions}.
+
+\bigskip
+
+The reason is that the initial goal contained no variable, so the
+interpreter will try to prove it only once, if there is at least one
+proof.
+
+\bigskip
+
+The technique that consists, when finding that a goal is false, to go
+back in history and try to prove an alternative goal is called
+\textbf{backtracking}.
+
+\bigskip
+
+Backtracking is also used in case of success but the user wants more
+solutions, if any.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{How \Prolog answers queries (cont)}
+
+Let us imagine now what would have happened if the interpreter had
+chosen to try the binding \texttt{Z=liz}, before \texttt{Z=bob}.
+
+\bigskip
+
+So it tries to prove
+{\small
+\begin{verbatim}
+?- ancestor(liz,pat).
+\end{verbatim}
+}
+It uses the same strategy, and instantiate rule \texttt{[anc1]} with
+the bindings \texttt{X=liz} and \texttt{Y=pat}:
+{\small
+\begin{verbatim}
+ancestor(liz,pat) :- parent(liz,pat).     % Instance of [anc1]
+\end{verbatim}
+}
+Since there is no fact \texttt{parent(liz,pat)}, it fails and
+backtracks.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{How \Prolog answers queries (cont)}
+
+It tries now with rule \texttt{[anc2]}, with the same variable
+bindings: 
+{\small
+\begin{verbatim}
+ancestor(liz,pat) :- parent(liz,Z), ancestor(Z,pat).
+\end{verbatim}
+}
+It searches all the facts of the shape \texttt{parent(liz,Z)} and
+finds none. Therefore it is useless to try to prove the second
+sub-goal \texttt{parent(Z,pat)}, because the conjunction of false and
+any other boolean value is always false. In other words, for all \(x\),
+\[\texttt{false} \, \wedge \, x = x\]
+
+\bigskip
+
+Therefore, the interpreter backtracks further, because the binding
+\texttt{Z=liz} only leads to falsity, and then tries to prove the
+query with \texttt{Z=bob}, as we did in the first presentation.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{How \Prolog answers queries/Proof trees}
+
+\label{proof_trees}
+
+There is a graphical representation of proofs that helps a lot to
+understand how the \Prolog interpreter works. It is called a
+\textbf{proof tree}.
+
+\bigskip
+
+The idea consists in making a tree whose root is the goal to prove and
+the sub-trees correspond to the proofs of the sub-goals. 
+
+\bigskip
+
+In other words, the inner nodes are made from rule instances and the
+leaves consist of facts.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{How \Prolog answers queries/Proof trees (cont)}
+
+For example, the successful proof of 
+{\small
+\begin{verbatim}
+?- ancestor(tom,pat).
+\end{verbatim}
+} 
+can be graphically represented as the following proof tree.
+\begin{mathpar}
+\inferrule*[right=anc\(_2\)]
+{\texttt{parent(tom,bob)}\\
+ \inferrule*[right=anc\(_1\)]
+ {\texttt{parent(bob,pat)}}
+ {\texttt{ancestor(bob,pat)}}
+}
+{\texttt{ancestor(tom,pat)}}
+\end{mathpar}
+Note that all the leaves, \texttt{parent(tom,bob)} and
+\texttt{parent(bob,pat)}, are facts; the name of the instantiated rule
+appears on the right of each inner node (horizontal line).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{How \Prolog answers queries/Proof trees (cont)}
+
+The \Prolog interpreter starts from the root and tries to grow
+branches that all end in leaves which are facts. If not, it backtracks
+to try another rule instance, and if none matches the knot, it fails.
+
+\bigskip
+
+For instance, we saw that it tried first
+\begin{mathpar}
+\inferrule*[right=anc\(_1\)]
+{\texttt{parent(tom,pat)}}
+{\texttt{ancestor(tom,pat)}}
+\end{mathpar}
+but the leaf was not a fact, so it tried next
+\begin{mathpar}
+\inferrule*[right=anc\(_2\)]
+{\texttt{parent(tom,bob)}\\
+ \texttt{ancestor(bob,pat)}
+}
+{\texttt{ancestor(tom,pat)}}
+\end{mathpar}
+
+\end{frame}

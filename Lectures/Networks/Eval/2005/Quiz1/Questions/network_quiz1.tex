@@ -1,0 +1,95 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\input{trace}
+
+\usepackage{graphicx}
+
+\title{Quiz \#1 of introduction to networking} 
+\author{Christian Rinderknecht} 
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+
+\section{Review questions}
+
+\begin{enumerate}
+
+  \item What is the difference between a host and an end system? List
+  different types of end systems. Is a mail server an end system?
+
+  \item What is a client program? What is a server program? 
+
+  \item What are the two kinds of services that the Internet provides
+  to the applications? Describe some typical features of each.
+
+  \item Are the objectives of flow control and congestion control the
+  same?
+
+  \item Give a very short description of how the connection-oriented
+  service of the Internet provides reliable transport. What is the
+  name of this service, by the way?
+
+  \item Suppose there is exactly one packet switch between a sending
+  host and a receiving host. The transmission rates between the
+  sending host and the switch and between the switch and the receiving
+  host are \(R_1\) and \(R_2\), respectively. Assuming that the switch
+  uses store-and-forward packet switching, what is the total
+  end-to-end delay to send a packet of length \(L\)? (Ignore queuing,
+  propagation delay and processing delay.)
+
+\end{enumerate}
+
+\section{Problems}
+
+\begin{enumerate}
+
+  \item Design and describe an application-level protocol to be used
+  between an automatic teller machine (ATM) and a bank's centralised
+  computer. Your protocol should allow a user's card and password to
+  be verified, the account balance (which is maintained at the bank's
+  centralised computer) to be queried, and an account withdrawal to be
+  made (money is given to the customer).
+
+  Specify your protocol by listing the messages exchanged and the
+  action taken by the ATM or the bank's centralised computer on
+  transmission or receipt of each message.
+
+  Sketch the operation of your protocol for the case of a simple
+  withdrawal with no errors, using a diagram similar to
+  Figure~\ref{protocols}. Explicitly state the assumptions made
+  by your protocol about the underlying end-to-end transport service.
+
+  \begin{figure}
+  \begin{center}
+  \includegraphics*[scale=0.35]{01-02.eps}
+  \caption{Sketch of protocols}\label{protocols}
+  \end{center}
+  \end{figure}
+ 
+  \item Consider an application that transmits data at a steady rate:
+  it generates an \(N\)-bit unit of data every \(k\) time units, where
+  \(k\) is small and fixed. Also, when such an application starts, it
+  will continue running for a long period of time. Answer the
+  following questions, briefly justifying your answer.
+
+  \begin{enumerate}
+ 
+    \item Would a packet-switched network or a circuit-switched
+    network be more appropriate for this application? Why?
+
+    \item Suppose that a packet-switched network is used and the only
+    traffic in this network comes from such applications as described
+    above. Furthermore, assume that the sum of the application data
+    rates is less than the capacities of each and every link. Is some
+    form of congestion control needed? Why?
+
+  \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

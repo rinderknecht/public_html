@@ -1,0 +1,300 @@
+%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Le filtre à motifs}
+
+Étendons encore les expressions de mini-ML par les \emph{filtres} et
+les \emph{motifs}:
+\begin{itemize}
+ 
+  \item \Xmatch{} $e$ \Xwith{} $p_1 \rightarrow e_1 \mid \ldots \mid
+    p_n \rightarrow e_n$
+ 
+  \item où les $p_i$ sont des motifs.
+
+\end{itemize}
+
+\bigskip
+
+Les motifs sont définis récursivement par les cas suivants:
+
+\bigskip
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{variable}
+  & $f, g, h$ (fonctions) et $x, y, z$ (autres). \\
+    $\bullet$
+  & \textcolor{blue}{unité ou constante}
+  & \unit \ ou \textsf{0} ou \Xtrue{} etc.\\
+    $\bullet$
+  & \textcolor{blue}{$n$-uplet}
+  & $p_1, \ldots, p_n$\\
+    $\bullet$
+  & \textcolor{blue}{parenthèse}
+  & $\lpar{p}\rpar$\\
+    $\bullet$
+  & \textcolor{blue}{joker}
+  & {\Large \_}
+\end{tabular}
+
+\bigskip
+
+\remarque \quad Les motifs irréfutables sont des motifs particuliers.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Le filtre à motifs (suite)} 
+
+Typiquement, on se sert des filtres pour faire des définitions par cas
+de fonctions (mais pas uniquement), comme en mathématiques. Par exemple:
+{\small
+\begin{verbatim}
+let rec fib n =
+  match n with
+    0 -> 1
+  | 1 -> 1
+  | _ -> fib(n-1) + fib(n-2)
+\end{verbatim}
+}Comme en mathématiques, les cas sont ordonnés par l'écriture et la
+définition précédente se lit donc: «~Si la valeur de \texttt{n}
+  \emph{a la forme} de \texttt{0} alors \texttt{fib(n)} est la valeur
+  de \texttt{1}, si la valeur de \texttt{n} \emph{a la forme} de
+  \texttt{1} alors \texttt{fib(n)} est la valeur de \texttt{1}, sinon
+  \texttt{fib(n)} vaut la valeur de \texttt{fib(n-1) + fib(n-2)}~».
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Le filtre à motifs (suite)} 
+
+Que signifie la relation «~$v$ a la forme de $p$~» (ou «~$p$ filtre
+$v$~»)?
+\begin{itemize}
+
+  \item Une constante a la forme de la constante identique dans un
+  motif.
+
+  \item L'unité \unit{} a la forme de \unit{} dans un motif.
+
+  \item Un $n$-uplet a la forme d'un $n$-uplet dans un motif.
+
+  \item \textbf{Toute valeur a la forme d'une variable de motif ou du
+  joker «{\Large \_}».}
+
+\end{itemize}
+
+\bigskip
+
+\remarques 
+
+\begin{itemize}
+
+  \item Les motifs ne filtrent aucune fermeture, c.-à-d. que $e$ dans
+    \Xmatch{} $e$ \Xwith{} ne doit pas s'évaluer en une fermeture.
+
+  \item Dans le cas des constantes et \unit, la relation se confond
+  avec l'égalité.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Sémantique du filtrage}
+
+Le \emph{filtrage} est l'évaluation d'un filtre. Informellement,
+l'évaluation de
+ 
+\centerline{\Xmatch{} $e$ \Xwith{} $p_1 \rightarrow e_1 \mid \ldots
+  \mid p_n \rightarrow e_n$} commence par celle de $e$ en $v$.
+
+\bigskip
+
+Ensuite $v$ est confrontée aux différents motifs $p_i$ dans l'ordre
+d'écriture. Si $p_i$ est le premier motif à filtrer $v$, alors la
+valeur du filtre est la valeur de $e_i$.
+
+\bigskip
+
+Par exemple, voici la définition curryfiée de la disjonction logique:
+{\small
+\begin{verbatim}
+let or = fun (x,y) ->
+  match (x,y) with
+   (false, false) -> false
+  | _ -> true
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Les types sommes et le filtrage des leurs valeurs}
+
+\textcolor{blue}{Les définitions de types sommes}
+
+\bigskip
+
+Les types sommes s'apparentent aux énumérations et aux \textsf{union}
+du langage C. Par exemple, les valeurs booléennes peuvent être
+définies ainsi: {\small
+\begin{verbatim}
+type booléen = Vrai | Faux
+let v = Vrai and f = Faux
+\end{verbatim}
+}
+\textbf{Les constructeurs ont pour première lettre une majuscule.}
+
+\bigskip
+
+Le \textcolor{blue}{filtrage} permet d'examiner les valeurs d'un type
+somme:
+{\small
+\begin{verbatim}
+let int_of_booléen = fun b ->
+  match b with
+     Vrai -> 1 
+   | Faux -> 0
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Les types sommes et le filtrage de leurs valeurs (suite)}
+
+Les constructeurs peuvent aussi transporter de l'information, dont
+l'interprétation complète alors celle du constructeur lui-même. Par
+exemple, un jeu de cartes peut être défini par
+{\small
+\begin{verbatim}
+type carte = Carte of ordinaire | Joker
+and ordinaire = couleur * figure
+and couleur = Coeur | Carreau | Pique | Trefle
+and figure = As | Roi | Reine | Valet | Simple of int
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Le jeu de cartes}
+
+Définissons des cartes et des fonction construisant des cartes:
+
+\bigskip
+
+\topin{let valet\_de\_pique = Carte (Pique,Valet)}
+
+\topout{val valet\_de\_pique : carte = Carte (Pique,Valet)}
+
+\topin{let carte f c = Carte (c,f)}
+
+\topout{val carte : figure $\rightarrow$ couleur $\rightarrow$ carte =
+  $\topclos$}
+
+\topin{let roi = carte Roi}
+
+\topout{val roi : couleur $\rightarrow$ carte = $\topclos$}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Filtrage des cartes}
+
+{\small
+\begin{verbatim}
+let valeur c = match c with
+  Carte (As)       -> 14
+| Carte (Roi)      -> 13
+| Carte (Reine)    -> 12
+| Carte (Valet)    -> 11
+| Carte (Simple k) -> k
+| Joker            -> 0
+\end{verbatim}
+}
+
+\bigskip
+
+Un motif peut capturer plusieurs cas:
+{\small
+\begin{verbatim}
+let est_petite c = match c with
+  Carte (Simple _) -> true
+| _ -> false
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Filtres incomplets}
+
+\textcolor{blue}{Rappel} Lorsqu'une valeur $v$ est filtrée par $p_1
+\rightarrow e_1 \mid \ldots \mid p_n \rightarrow e_n$, l'expression
+$e_i$ associée au premier motif $p_i$ qui filtre $v$ est évaluée dans
+l'environnement courant étendu par les liaisons éventuelles créées par
+le filtrage de $v$ par $p_i$.
+
+\bigskip
+
+Le filtre est \emph{incomplet} s'il existe au moins une valeur qui n'est
+filtrée par aucun motif. Dans ce cas, un message d'avertissement est
+indiqué à la compilation:
+
+\topin{let simple c = match c with Carte (\_,Simple k) -> k}
+
+\error{Characters 15-51}
+
+\error{Warning: this pattern-matching is not exhaustive.}
+
+\error{Here is an example of a value that is not matched:
+  Joker}
+
+\topout{val simple : carte $\rightarrow$ int = $\topclos$}
+
+\textcolor{blue}{Il est préférable d'éviter les définitions incomplètes.}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les motifs non linéaires}
+
+\textcolor{blue}{Une variable ne peut être liée deux fois dans le même
+  motif.}
+
+\bigskip
+
+\topin{fun (x,y) -> match (x,y) with  (Carte z, z) -> true}
+
+\error{Characters 41-42}
+
+\error{This variable is bound several times in this matching.}
+
+\bigskip
+
+Un tel motif est dit \emph{non linéaire}.
+
+\end{frame}

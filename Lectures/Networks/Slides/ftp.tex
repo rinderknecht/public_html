@@ -1,0 +1,211 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item Application layer
+
+  \begin{itemize}
+
+    \item Principles of application layer protocols
+
+    \item The Web and \textsc{http}
+
+    \item \textbf{File transfer: \textsc{ftp}}
+
+    \item Electronic mail in the Internet
+
+    \item DNS --- The Internet's directory service
+
+    \item Socket programming with TCP and UDP
+
+    \item Content distribution
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{File Transfer Protocol (\textsc{ftp})}
+
+The \textbf{File Transfer Protocol} (\textbf{\textsc{ftp}}) follows a
+client/server model, as \textsc{http}.
+\begin{center}
+\includegraphics[scale=0.4]{02-10.eps}
+\end{center}
+The user wants to access a remote account in order to retrieve or send
+some files. Therefore he must possess an identification and a password
+on the remote machine. \textsc{ftp} runs on top of TCP.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{File Transfer Protocol (\textsc{ftp}) (cont)}
+
+First, he enters the name of the remote host to the \textsc{ftp}
+client through the \textsc{ftp} user agent (under Unix, it is simply a
+shell command-line but in Windows it is a graphical interface).
+
+Once the server has authorised the user, he can copy files in
+his local filesystem to the remote host or vice versa.
+
+Both \textsc{http} and \textsc{ftp} are file transfer protocols but
+there is an important technical difference: \textsc{ftp} uses two
+different TCP connections to transfer a file: a \textbf{control
+  connection} and a \textbf{data connection}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{File Transfer Protocol (\textsc{ftp}) (cont)}
+
+The control connection is used for exchanging control information
+between the two hosts, like identification, password, commands to
+change remote directory, commands to \texttt{get} and \texttt{put}
+files etc.
+
+The data connection is used to actually exchange the files.
+
+Because \textsc{ftp} uses a separate control connection, it is said to
+send its control information \textbf{out-of-band}. Dually,
+\textsc{http} sends its control information \textbf{in-band}.
+\begin{center}
+\includegraphics[scale=0.4]{02-11.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{File Transfer Protocol (\textsc{ftp}) (cont)}
+
+First, the user starts an \textsc{ftp} session with the remote host by
+initiating a control TCP connection on server port~21.
+
+The \textsc{ftp} client sends user identification and password to the
+server over this control connection.
+
+After authentication, the client then sends commands to change remote
+current directory. 
+
+When the server receives a command for file transfer to the client
+over the control connection, it opens a TCP data connection on client
+port~20. 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{File Transfer Protocol (\textsc{ftp}) (cont)}
+
+After sending exactly one file over the data connection, the server
+closes it.
+
+So, during an \textsc{ftp} session, only the control connection
+remains open, one data connection is open for one file at a time, then
+closed, i.e. data connections are non-persistent.
+
+Throughout a session, the \textsc{ftp} server must maintain a
+\textbf{state} about the user:
+\begin{itemize}
+
+  \item the control connection must be associated with a specific
+  user account;
+
+  \item the server must keep track of a given user's current
+  directory on its file-system.
+
+\end{itemize}
+By contrast, \textsc{http} is a stateless protocol --- it does not
+keep any user state.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{File Transfer Protocol (\textsc{ftp}) (cont)}
+
+\textbf{Common commands and replies}
+
+The commands from client to server, and replies, are sent over the
+control connection in \textsc{ascii} (i.e. non-accentuated characters
+and digits encoded with seven bits). Hence, \textsc{ftp} commands, as
+\textsc{http} ones, are readable by people (plain text).
+
+One command lies on one line and it consists of four characters and
+some optional arguments. The more common are
+\begin{itemize}
+
+  \item \verb+USER username+ is used to send the user identification
+  to the server;
+
+  \item \verb+PASS password+ is used to send the user's password to the
+  server;
+
+  \item \verb+LIST+ is used to ask the server the list of all files
+  in the current directory; this list is sent back on a new and
+  non-persistent data connection;
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{File Transfer Protocol (\textsc{ftp}) (cont)}
+
+\begin{itemize}
+
+  \item \verb+RETR filename+ is used to retrieve (i.e. \texttt{get})
+  a file from the current remote directory;
+
+  \item \verb+STOR filename+ is used to store (i.e. \texttt{put}) a
+  file into the current directory of the remote host.
+
+\end{itemize}
+There is typically a one-to-one correspondence between the commands
+the user enters (by means of the user agent) and the commands the
+\textsc{ftp} client sends, as exactly one client's \texttt{RETR} for
+one user's \texttt{get}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{File Transfer Protocol (\textsc{ftp}) (cont)}
+
+The replies consist in a three-digit number followed by an optional
+message --- this is similar to the status code and phrase in the
+status line of the \textsc{http} response messages.
+
+Some typical replies are
+\begin{itemize}
+
+  \item \verb+331 Username OK, password required+
+
+  \item \verb+125 Data connection already open; transfer starting+
+
+  \item \verb+425 Can't open data connection+
+
+  \item \verb+452 Error writing file+
+
+\end{itemize}
+
+\end{frame}

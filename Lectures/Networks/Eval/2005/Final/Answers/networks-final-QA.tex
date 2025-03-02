@@ -1,0 +1,171 @@
+%%-*-latex-*-
+
+\documentclass[12pt,a4paper]{article}
+
+\input{trace}
+
+\title{Answers to the final examination on Introduction to the Internet}
+\author{Christian Rinderknecht}
+\date{\today}
+
+\usepackage{nath}
+
+\begin{document}
+
+\maketitle
+
+\section{Problems}
+
+\begin{enumerate}
+
+  \item \emph{Consider the queuing delay in a router buffer. Suppose
+    all the packets are \(L\) bits long, the transmission rate is
+    \(R\) bit/sec and that \(N\) packets arrive simultaneously at the
+    buffer every \(\frac{LN}{R}\) seconds.}
+
+    \emph{Find the \textbf{average} queuing delay of a packet.}
+
+    \emph{(\emph{Hint}: The queuing delay for the first packet is 0;
+      for the second packet it is \(\frac{L}{R}\); for the third
+      packet it is \(2{\frac{L}{R}}\) etc. The last packet (number
+      \(N\)) has already been transmitted when the second batch
+      (i.e. group) of packets arrives.)}
+
+    It takes \(\frac{NL}{R}\) seconds to transmit the \(N\)
+    packets. Thus, the buffer is empty when a batch of \(N\) packets
+    arrive.
+
+    The first of the \(N\) packets has no queuing delay. The second
+    packet has a queuing delay of \(\frac{L}{R}\) seconds. The
+    \(n\)-nth packet has a delay of \((n-1){\frac{L}{R}}\).
+
+   Therefore the average delay is
+   \setlength\mathindent{-1pc}
+   \[
+     {\frac{1}{N}}\sum_{n=1}^{N}(n-1){\frac{L}{R}} = \frac{L}{R}
+     \frac{1}{N} \sum_{n=0}^{N-1}n = \frac{L}{R} \frac{1}{N}
+     \frac{(N-1)N}{2} = \frac{1}{2} (N-1) \frac{L}{R} 
+   \]
+
+  \item \emph{Consider the queuing delay in a router buffer. Let \(I\)
+    denote the traffic intensity, that is: \(I =
+    \frac{La}{R}\). Suppose that the queuing delay takes the form
+    \(\frac{IL}{R(1-I)}\) for \(I < 1\).}
+    \begin{enumerate}
+
+      \item \emph{Provide a formula for the total delay, that is, the
+        queuing delay plus the transmission delay.}
+
+      The total delay is
+      \[
+        \frac{IL}{R(1-I)} + \frac{L}{R} = \frac{L}{R} \frac{1}{1-I}
+      \]
+
+      \item \emph{Express the total delay as a function of
+        \(\frac{L}{R}\).}
+
+      Let us call \(d (\frac{L}{R})\) the total delay in function of
+      \(\frac{L}{R}\). We have
+      \[
+       \frac{L}{R} \frac{1}{1-I} = \frac{L}{R} \frac{1}{1 -
+         \frac{La}{R}} = \frac{x}{1 - ax} = d (x)
+      \]
+      where \(x = \frac{L}{R}\).
+
+    \end{enumerate}
+
+  \item \emph{We consider sending voice from host A to host B over a
+    packet-switched network (for example, Internet phone). Host A
+    converts analog voice to a digital \textbf{64~Kbps} bit stream on
+    the fly. Host A then groups the bits into a \textbf{48-byte}
+    packets. There is one link between host A and B; its transmission
+    rate is \textbf{1~Mbps} and its propagation delay is
+    \textbf{2~msec}.}
+
+    \emph{As soon as host A gathers a packet, it sends it to host
+      B. As soon as host B receives an \emph{entire} packet, it
+      converts the packet's bits into an analog signal.}
+
+    \emph{How much time elapses from the time a bit is created (from
+      the original analog signal at host A) until the bit is decoded
+      (as part of the analog signal at host B)?}
+
+    Before any bit can be transmitted, all the bits in the same packet
+    must be gathered first. This requires
+    \[
+      \frac{48 \times 8}{64 \times 10^3} \; \text{sec} = 6 \;
+      \text{msec}
+    \]
+    The time required to transmit the packet is
+    \[
+      \frac{48 \times 8}{1 \times 10^{6}} \; \text{sec} = 0.384 \;
+      \text{msec}
+    \]
+    The propagation delay is 2~msec.
+
+    Therefore the delay between coding and decoding is
+    \begin{center}
+      6~msec + 0.384~msec + 2~msec = 8.384~msec
+    \end{center}
+
+\end{enumerate}
+
+
+\section{Review questions}
+
+\begin{enumerate}
+
+  \item \emph{For a communication session between two hosts, which
+    host is the client and which is the server?}
+
+  The host that starts the session is, by definition, the client.
+
+  \item \emph{List at least two user agents you personally use.}
+
+  At least a web browser, like Firefox, and a mail agent, like
+  Evolution.
+
+  \item \emph{Why do \textsc{http}, \textsc{ftp}, \textsc{smtp},
+    \textsc{pop3} and \textsc{imap} run on top of \textsc{tcp} rather
+    than \textsc{udp}?}
+
+  The applications which use these protocols require that the data they
+  send is received in order and in its entirety. \textsc{tcp} provides
+  this service whereas \textsc{udp} does not.
+
+  \item \emph{Consider an e-commerce site that wants to keep a
+    purchase record for each of its customers.}
+  \begin{enumerate}
+
+    \item \emph{Describe (briefly) how this can be done with
+      \textsc{http} authentication.}
+
+    \item \emph{Describe (briefly) how this can be done with cookies.}
+
+  \end{enumerate}
+
+  In both cases the site needs a database to record the customer
+  information and the user first registers with a name and a password.
+
+  With \textsc{http} authentication, during the next visits, the user
+  provides again its name and password, allowing the site to
+  authenticate him and update his record in the database.
+
+  With cookies, the user does not provide a name and password during
+  the next visits. Instead, the user is identified by his browser
+  sending to the site server the cookie that it was given the first
+  time.
+
+  \item \emph{Is it possible that an organisation's web server and
+    mail server have exactly the same alias for a hostname? What would
+    be the type for the RR that contains the hostname of the mail
+    server?}
+
+  Yes, an organisation's mail server and web server can have the same
+  alias as hostname. The MX record is used to map the mail server name
+  to its IP address.
+
+\end{enumerate}
+
+
+\end{document}

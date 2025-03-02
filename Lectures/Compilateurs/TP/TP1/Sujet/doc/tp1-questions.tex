@@ -1,0 +1,68 @@
+%%-*-latex-*-
+
+\begin{enumerate}
+
+  \item \label{q\theenumi} Implantez la calculette présentée dans le
+  cours sans tenir compte des cas d'erreurs, puis traitez ceux-ci à
+  l'aide des exceptions O'Caml.
+
+  \item \label{q\theenumi} Ajoutez maintenant la liaison locale et les
+  variables. Identifiez les erreurs possibles et ajoutez leur
+  gestion. Testez des cas d'évaluation correcte et des cas provoquant
+  ces erreurs. (\emph{Gardez une trace de vos cas de test.}) Par
+  exemple:
+
+  \begin{center}
+  \texttt{1+2*(ifz 0 then let x = 0 in x+3 else 4)}
+  \end{center}
+
+  \item \label{q\theenumi} On souhaite se doter d'une conditionnelle
+  \emph{sans ajout des booléens}, dans le style du langage C:
+
+  \begin{itemize}
+
+    \item[$\bullet$] \textbf{Syntaxe concrète}
+  {\small 
+   \begin{verbatim}
+Expression ::=  ...
+  | "ifz" Expression "then" Expression "else" Expression
+   \end{verbatim}
+  }
+
+  \vspace*{-6pt}
+
+  \item[$\bullet$] \textbf{Exemple} \qquad \texttt{1+2*(ifz 0 then 3
+  else 4)}
+
+  \item[$\bullet$] \textbf{Syntaxe abstraite}
+
+  \Xtype{} \type{expr} \equal{} \texttt{...} \vbar{} \cst{Ifz}
+  \Xof{} \type{expr} $\times$ \type{expr} $\times$ \type{expr}\semi
+
+  \end{itemize}
+
+  Donnez une sémantique opérationnelle pour cette conditionnelle et
+  complétez votre évaluateur par son implantation.
+
+  \item \label{q\theenumi} Enrichissez la calculette par les booléens,
+  les opérateurs logiques de conjonction et disjonction, ainsi que
+  d'une conditionnelle dont la condition est booléenne. Un lexique et
+  une grammaire sont respectivement proposés dans les fichiers
+  \textsf{lexer.mll} et \textsf{parser.mly}. Proposez une sémantique
+  opérationnelle et une implantation en O'Caml.
+
+  \item \label{q\theenumi} Le codage fonctionnel pour les
+  environnements est très inefficace car, dans le pire des cas, pour
+  obtenir la valeur d'une variable il faut évaluer autant d'appels de
+  fonction qu'il y a de variables dans l'environnement, et un appel de
+  fonction est très coûteux, en général. Il est plus judicieux, dans
+  un premier temps, de remplacer les appels de fonction par des accès
+  dans une liste. Ainsi un environnement est une liste qui associe les
+  variables aux valeurs. La recherche d'une valeur se fait alors à
+  l'aide de la fonction \textsf{List.assoc}~:~$\forall \alpha,
+  \beta.\alpha \rightarrow (\alpha \times \beta) \, \textsf{list}
+  \rightarrow \beta$. Conservez un exemplaire de \texttt{eval.ml} et
+  réécrivez-le en implantant ce schéma et testez à
+  nouveau. (\emph{Gardez une trace de vos cas de test.})
+
+\end{enumerate}

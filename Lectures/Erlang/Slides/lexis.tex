@@ -1,0 +1,327 @@
+%% -*- latex -*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Terms/Atoms}
+
+Let us define more precisely what kind of data \Erlang operates
+on. These data are called \textbf{terms}.
+
+\bigskip
+
+Some terms are only identified by their name, called an
+\textbf{atom}. An atom starts with a lower-case letter which can be
+followed by a series of characters out of lower-case letters,
+upper-case letters, digits and the underscore character (`\_').
+
+\bigskip
+
+Some atoms can be \textbf{quoted} by an opening single-quote and a
+closing one.  In this case, it may contain blank characters. For
+example
+\begin{verbatim}
+anna    apha_beta_proc  x_25    'This is a quoted atom'
+x25     call_Java       x_25AB   x_  x____y
+\end{verbatim}
+\emph{Function names are atoms.}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Terms/Quoted atoms}
+
+\textbf{Quoted atoms} look like some strings in some languages, like
+\Bash, but they are very different they cannot be modified. Therefore,
+they are like constant character strings.
+
+\bigskip
+
+In some programming languages, a character string can be modified in
+place, but quoted atoms do not allow this.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Terms/Numbers}
+
+\textbf{Numbers.} in \Erlang include integer numbers and floating-point
+numbers. The syntax of integer is as expected, for example
+\begin{verbatim}
+1    1234    0    -97
+\end{verbatim}
+The lower and larger integers are limited by the actual \Prolog system
+in use.
+
+\bigskip
+
+Floating-point numbers follow the usual syntax too, like
+\begin{verbatim}
+100    -7    3.14    -0.06    100.5    1.5e-3
+\end{verbatim}
+Atoms and numbers define the group of \textbf{constants}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Terms/Numbers (cont)}
+
+In \Erlang, there are no characters. Instead, they can be handled
+throughout their \ASCII code.
+
+\bigskip
+
+There is a special operator \texttt{\$} which returns the \ASCII code
+for a given character. For example \verb|$A| evaluates to \texttt{65}.
+
+\bigskip
+
+It is possible to input integers in a base which is not 10 by using a
+special notation \texttt{\#}. For example \verb|16#ffff| represents
+\texttt{65535} (in base 10). 
+
+\bigskip
+
+This operator works only if the base ranges from 2 to 16.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Terms/Variables}
+
+A \textbf{variable} is a name for a term, but, contrary to atoms,
+variables do not define any object. For example
+\begin{verbatim}
+X = 25
+\end{verbatim}
+does not define the constant term \texttt{25} but do give it the name
+\texttt{X}. The term \texttt{25} is defined just by being written,
+just like atoms.
+
+\bigskip
+
+One variable denotes a term in a set. For example, in
+\begin{verbatim}
+fact(0) -> 1;
+fact(N) -> N * fact(N-1).
+\end{verbatim}
+the variable \texttt{N} denotes any number which is not the zero
+integer.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Terms/Variables (cont)}
+
+They must start with an upper-case letter and may be followed
+by any number of letters, digit and underscores, in any order. For
+example, the following are valid variables: 
+\begin{verbatim}
+X  Obj_List  Object2  Result  ObjList  X_  Obj__
+\end{verbatim}
+If a variable appears only once in the head of a clause and not in the
+body, it is an \textbf{unknown variable} and can be replaced by an
+underscore. First, consider
+\ErlangIn{bool}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Terms/Variables (cont)}
+
+\begin{columns}
+
+  \column{0.5\textwidth} It is equivalent to
+  \ErlangIn{bool2}
+
+  \column{0.5\textwidth} and
+  \ErlangIn{bool1}
+
+\end{columns}
+
+\bigskip
+
+\textbf{Important:} When several underscores occur in the same head,
+each one denotes a different term, in general.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Terms/ Variables/Lexical scoping}
+
+Given an occurrence of a variable, the part of the program where
+this variable is usable, or bound, is called the \textbf{scope}.
+
+\bigskip
+
+\Erlang uses \textbf{lexical scoping}, which means
+\begin{itemize}
+  
+  \item the same variable always represents the same term inside a
+    clause;
+
+  \item the same variable in two different clauses represent different
+    terms, in general.
+
+\end{itemize}
+More about the scope at page~\pageref{scope}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Terms/Tuples}
+
+Some terms can be linearly compounded into one term, called a
+\textbf{tuple}.
+
+\bigskip
+
+The number of components of a tuple is called arity.
+The syntax of tuples is different from mathematics in that it requires
+curly braces instead of parentheses: 
+\begin{verbatim}
+{a, 12, 'hello'}
+{1, 2, {3, 4}, {a, {b, {c}}}}
+{}
+\end{verbatim}
+Note that tuples can
+\begin{itemize}
+
+  \item contain terms of different kinds,
+
+  \item be embedded,
+
+  \item be empty.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Terms/Lists}
+
+A \textbf{list} is a term made of a series of other terms. The terms
+are separated by commas and enclosed between an opening square bracket
+and a closing one. For example
+\begin{verbatim}
+[1, abc, [12], 'foo bar']
+[]
+[a, b, c]
+\end{verbatim}
+are lists. Note that terms of different kinds can be mixed. Lists of
+integers which denote \ASCII characters can be represented with a
+shorthand, e.g. \verb|"abc"| is equivalent to \verb|[$a,$b,$c]|, that
+is: \verb|[97,98,99]|.
+
+\bigskip
+
+Note that in \cpp{} also, there is no string type.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Terms/Lists (cont)}
+\label{head_tail}
+
+It is often useful to refer to the first element of a list. That is
+why \Erlang provides a special notation for lists that allows to
+distinguish the first elements, called the \textbf{head}, and to
+collapse the remaining elements into a list called the \textbf{tail},
+using the notation \texttt{[} \emph{Head} \texttt{|} \emph{Tail}
+  \texttt{]}.
+
+\bigskip
+
+For example
+\begin{verbatim}
+[1, abc, {4,5}, "hello"]
+[1, abc, {4,5}, [$h,$e,$l,$l,$o]]
+[1, abc, {4,5} | ["hello"]]
+[1, abc | [{4,5}, "hello"]]
+[1 | [abc, {4,5}, "hello"]]
+\end{verbatim}
+are different ways to denote the same list. 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Terms/Lists (cont)}
+
+Note that
+\begin{verbatim}
+[1, abc, {4,5} | "hello"]
+\end{verbatim}
+is \textbf{not} equivalent to the previous lists. It is in fact
+equivalent to
+\begin{verbatim}
+[1, abc, {4,5}, $h, $e, $l, $l, $o]
+\end{verbatim}
+Note also that
+\begin{verbatim}
+[1, abc | {4,5}, "hello world"]
+\end{verbatim}
+is \textbf{invalid} because the tail must be \emph{one} single term.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Terms/Lists (cont)}
+
+\begin{center}
+\includegraphics{lexicon_tree}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Ground terms, values and expressions}
+
+It is sometimes useful to distinguish between two kinds of terms:
+\textbf{ground terms} and \textbf{non-ground terms}.
+
+\bigskip
+
+Ground terms are terms that do not contain any variable. 
+
+\bigskip
+
+An \textbf{expression} is a syntactic construct involving function
+calls and terms. For example \texttt{\small 5 * fact(5-1)} is an
+expression but not a term, whereas \texttt{\small X} and
+\texttt{\small 7} are both and expression and a term. The evaluation
+of an expression does not terminate or lead to a \textbf{value} or an
+error.
+
+\bigskip
+
+A value is thus a ground term that cannot be further computed. For
+example, \texttt{25} is a value but \texttt{2 + 5} is not (it is an
+expression).
+
+\end{frame}

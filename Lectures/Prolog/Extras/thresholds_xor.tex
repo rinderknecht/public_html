@@ -1,0 +1,69 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{vaucanson-g}
+\usepackage{pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+% Settings
+%
+%\ShowGrid
+\SetEdgeLabelColor{blue}
+\SetEdgeLabelScale{1.2}
+
+% Automaton
+%
+\VCDraw{%
+\begin{VCPicture}{(0,0)(5,4)}
+
+%% Input layer
+%
+\VSState{(0,3)}{x}
+\nput{180}{x}{\huge \(x\)}
+
+\VSState{(0,1)}{y}
+\nput{180}{y}{\huge \(y\)}
+
+%% Hidden layer
+%
+\StateVar[\theta=-1.5]{(3,4)}{H1}
+\StateVar[\theta=-0.5]{(3,0)}{H2}
+
+%% Output layer
+%
+\StateVar[\theta=0.5]{(6,2)}{Out}
+\Final{Out}
+
+%% From input to hidden layer
+%
+\EdgeL[0.6]{y}{H1}{-1}
+\EdgeR{y}{H2}{-1}
+\EdgeBorder
+\EdgeL{x}{H1}{-1}
+\EdgeR[0.6]{x}{H2}{-1}
+\EdgeBorderOff
+
+%% From hidden layer to output
+%
+\EdgeL{H1}{Out}{1}
+\EdgeR{H2}{Out}{-1}
+
+% Output signal
+%
+% Note: It is not possible to use the ``interface'' of Vaucanson-g to
+% put something pointed by the ending edge of a final state. But, the
+% implementation shows that there is an invisible vertex, whose name
+% is the catenation of the finale state label (here `Out') and the
+% direction of the out-going egde  (here `e', standing for
+% `east'). Then we can short-circuit Vaucanson-g and call the PSTricks
+% macro `nput'.
+%
+\nput{0}{Oute}{\huge \(x \oplus y\)}
+\end{VCPicture}
+}
+\endTeXtoEPS
+
+\end{document}

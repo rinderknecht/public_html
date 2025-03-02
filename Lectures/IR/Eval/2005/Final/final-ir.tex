@@ -1,0 +1,50 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage[british]{babel}
+\usepackage{graphicx}
+\usepackage{multicol}
+
+\input{trace}
+
+\title{Final examination of Information Retrieval}
+\author{Christian Rinderknecht}
+\date{15 December 2005}
+
+\begin{document}
+
+\maketitle
+
+\begin{enumerate}
+
+  \item Consider the following trie, which, given an input string,
+    will either be stuck or accept one of the English words ``the'',
+    ``then'', ``they'', ``this'' or ``thus'' at the \emph{beginning}
+    of the string.
+  \begin{multicols}{2}
+  \begin{center}
+  \includegraphics[bb=48 644 218 730,scale=0.9]{trie_then}
+  \end{center}
+  \par \vfill\columnbreak
+  Modify the trie such that it recognises the words \emph{anywhere}
+  in the string.
+  \end{multicols}
+
+  \item Consider the following NFA \({\cal N}_1\)
+  \begin{center}
+  \includegraphics[bb=49 687 185 755]{nfa_final}
+  \end{center}
+    
+    and prove that the word \(aaba\) is accepted or prove the
+    contrary.
+
+  \item Extend the subset construction to cope with NFA with
+    \emph{several} initial states and apply this extended version to
+   \begin{center}
+   \includegraphics[bb=49 687 250 758]{nfa_final_bis}
+   \end{center}
+
+\end{enumerate}
+
+\end{document}

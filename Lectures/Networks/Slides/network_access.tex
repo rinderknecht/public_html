@@ -1,0 +1,263 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{enumerate}
+
+  \item Computer Networks and the Internet
+
+    \begin{itemize}
+
+      \item What is the Internet?
+
+      \item The network edge
+
+      \item The network core
+
+      \item \textbf{Network access and physical media}
+
+      \item ISPs and Internet backbones
+
+      \item Delay and loss in packet-switched networks
+ 
+      \item Protocol layers and their service models
+
+    \end{itemize}
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Network access and physical media}
+
+The network access is the physical media that connect an end system to
+its \textbf{edge router}, which is the first router on the way to
+another end system.
+
+\bigskip
+
+The access links in the facing picture are in thick blue.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Network access and physical media (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.3]{01-14.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Network access and physical media}
+
+Network access can be loosely classified into three categories:
+\begin{itemize}
+
+  \item \textbf{Residential access}, connecting home end systems into
+  the network;
+
+  \item \textbf{Company access}, connecting end systems in a business
+  or educational institution in the network;
+
+  \item \textbf{Mobile access}, connecting mobile end systems into
+  the network.
+
+\end{itemize}
+Note that these categories are not tight, for instance a company may
+use access technology we ascribe to residential access.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Network access/Residential access}
+
+Residential access refers to connecting a home end system, say a
+computer, to an edge router.
+
+\bigskip
+
+In Europe, a common way is the \textbf{dial-up modem} over a wired
+telephone line. The modem converts the digital output of the computer
+into the analog format of the phone line, which is a
+\textbf{twisted-pair copper wire} (same as a phone cable). On the
+other side of the phone line, at the ISP, there is another modem which
+converts back the analog signal into digital signal which is directed
+to the edge router.
+
+\bigskip
+
+The data rate can be up to 56 Kbps, with hardware compression and if
+the telephone line is of good quality.
+
+\bigskip
+
+Disadvantages are a slow data rate for nowadays applications and the
+fact that the phone line is entirely devoted to the modem.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Network access/Residential access (cont)}
+
+Other access technologies are \textbf{digital subscriber line}
+(\textbf{DSL}) and \textbf{hybrid fiber coaxial cable} (\textbf{HFC}).
+
+\bigskip
+
+DSL is a new modem technology running over existing twisted-pair
+telephone line. But by shortening the distance from home to the ISP,
+the data rate is much higher. The rate is not symmetric: the rate from
+the ISP to home (called \textbf{downstream}) is higher than from home
+to the ISP (called \textbf{upstream}). Indeed, the standard assumes
+that the user wants more probably to get information than produce
+data.
+
+\bigskip
+
+In theory, DSL can provide rates of more than 1 Mbps from ISP to home
+and more than 1 Mbps from home to ISP, but in practice the real rates
+are much lower.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Network access/Residential access (cont)}
+
+DSL uses frequency division multiplexing (FDM), see
+page~\pageref{fdm_tdm}. In particular, DSL divides the communication
+link into three non-overlapping frequency bands:
+\begin{itemize}
+
+  \item a high-speed downstream channel, in the 50kHz-1MHz band;
+
+  \item a low-speed upstream channel, in the 4kHz-50kHz band;
+
+  \item an ordinary two-way telephone channel, in the 0-4kHz band.
+
+\end{itemize}
+This allows to keep the same link available for conference calls while
+being connected to the network.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Network access/Residential access/HFC}
+
+HFC are extensions of the existing cable network for television
+broadcasting. 
+\begin{center}
+\includegraphics[scale=0.35]{01-15.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Network access/Residential access/HFC (cont)}
+
+As with DSL, HFC requires special modems, called \textbf{cable
+modems}. This is an external device that is connected to the home
+computer through a \textbf{10-BaseT Ethernet} port (discussed later). 
+
+\bigskip
+
+Cable modems divide the HFC network into downstream and upstream
+channels. As with DSL, the former is faster than the latter.
+
+\bigskip
+
+There is an important difference with DSL: HFC is a \textbf{shared
+broadcast medium}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Network access/Residential access/HFC (cont)}
+
+Every packet sent by the head end is sent (on the downstream channel)
+to \emph{all} the connected homes (this is broadcasting, a useful
+feature for television). 
+
+\bigskip
+
+So if users download at the same time, the actual rate is slowed
+down. But if they are surfing the web, the pages will be likely to
+arrive at full speed, since it is improbable they all click at the
+same time.
+
+\bigskip
+
+Since the upstream channel is also shared, two packets sent from
+different homes at the same time will collide (but there is no
+broadcasting on the upstream channel).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Network access/Company access}
+
+On corporate and university campuses, a \textbf{local area network}
+(\textbf{LAN}) is used to connect an end system to the edge
+router. This means that the end system has to be connected first to
+the LAN.
+
+\bigskip
+
+The most access technology to do so is the \textbf{Ethernet}. It uses
+either twisted-pair copper wire or coaxial cable with each other and
+with an edge router. The rates vary depending on the version: 10 Mbps,
+100 Mbps, 1 Gbps or 10 Gbps.
+
+\bigskip
+
+Like HFC, Ethernet uses a shared medium, so end users share the
+transmission rate of the LAN.
+
+\bigskip
+
+There is now \textbf{switched Ethernet}, which uses multiple
+twisted-pair Ethernet segments connected at a special switch.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Network access/Mobile access}
+
+The most popular wireless access to the Internet is through a
+\textbf{wireless LAN} (or \textbf{Wi-Fi}). Mobile users are connected
+to a radio \textbf{base station}, also called \textbf{wireless access
+point}, which is itself connected to the Internet. The IEEE 802.11b
+provides a bandwidth of 11 Mbps.
+
+\begin{center}
+\includegraphics[scale=0.3]{01-16.eps}
+\end{center}
+
+\end{frame}

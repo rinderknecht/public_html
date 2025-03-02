@@ -1,0 +1,171 @@
+%% -*-latex-*-
+
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{ae,aecompl}
+\usepackage{xspace}
+
+\usepackage{mathpartir}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\usepackage[noweb]{ocamlweb}
+%\pagestyle{ocamlweb}
+
+\input{commands}
+\input{ocaml_syntax}
+\input{ocw-redef}
+\input{trace}
+
+\newcommand{\ibullet}{\item[$\bullet$]}
+\newcommand{\inferlabel}[1]{\inferrule*[right=\textsc{#1}]}
+
+\title{Correction du TP 2 d'Interprétation et compilation}
+\author{Christian Rinderknecht}
+\date{7 et 8 octobre 2003}
+
+\begin{document}
+
+\maketitle
+
+\section{Questions}
+
+\input{tp2-questions}
+
+\section{Réponses}
+
+  \subsection{Spécification de l'ordre d'évaluation}
+
+  Nous répondons ici à la question~\ref{q1}.
+
+  Une façon de spécifier que le dénominateur est évalué avant le
+  numérateur est:
+  \begin{mathpar}
+  \inferrule*[right=\textsc{div}]
+  {\eval{\rho}{e_2}{v_2}\\
+   x \not\in {\cal L}(e_1)\\
+   \eval{\rho \oplus x \mapsto v_2}{e_1}{v_1}}
+  {\eval{\rho}{\cst{BinOp} \, (\cst{Div},e_1,e_2)}{v_1 / v_2}}
+  \end{mathpar}
+
+  L'implantation directe de cette sémantique est maladroite, car il
+  faut produire une variable absente des variables libres de $e_1$, et
+  il faut alourdir l'environnement. En pratique, il suffit de changer
+  dans l'évaluateur le \kwd{let ... and ...} en \kwd{let ... in let
+  ...}, comme le montre 
+\begin{tabbing}
+\kwd{let} \= \kwd{rec} \ident{eval} \ident{env} \ident{e} \equal \kwd{match}
+\ident{e} \kwd{with} \texttt{...} \\
+\vbar \> \cst{BinOp}
+\lpar\cst{Div},\ident{e}\(\sb{1}\),\ident{e}\(\sb{2}\)\rpar{}
+\(\rightarrow\) \= \kwd{let} v\(\sb{2}\) \equal \ident{eval env}
+\ident{e}\(\sb{2}\) \kwd{in} \kwd{let} v\(\sb{1}\) \equal \ident{eval env}
+\ident{e}\(\sb{1}\) \kwd{in} v\(\sb{1}\)\textsf{/}v\(\sb{2}\) \\
+\texttt{| ...}
+\end{tabbing}
+
+\input{gen-doc}
+
+  \subsection{Évaluation des applications}
+
+  \noindent Nous commençons par répondre ici à la question~\ref{q4}.
+
+  \medskip
+
+  \noindent Par définition $e = \cst{App} \, (\cst{Const} \,
+  \num{1}, \cst{Const} \, \num{2})$, donc la seule règle
+  d'inférence (définissant la relation d'évaluation) dont la
+  conclusion à la forme de $e$ est 
+  \begin{mathpar}
+    \inferrule*[right=\textsc{app}]
+      {\eval{\rho}{e_1}{\clos{x}{e_0}{\rho_0}}\\
+       \eval{\rho}{e_2}{v_2}\\
+       \eval{\rho_0 \oplus x \mapsto v_2}{e_0}{v}
+      }
+      {\eval{\rho}{\cst{App} \, (e_1,e_2)}{v}}
+  \end{mathpar}
+
+  \noindent Il faudrait donc que $\cst{Const} \, \num{1}$ s'évalue
+  en une fermeture (première prémisse). Or la seule règle qui
+  permette l'évaluation de $\cst{Const} \, \num{1}$ est
+  \begin{mathpar}
+    \inferrule
+      {\eval{\rho}{\cst{Const} \,\, n}{\cst{Int} \, (n)}}
+      {}\;\TirName{\quad \textsc{const}}
+  \end{mathpar}
+
+  \noindent Donc la règle \textsc{app} ne peut finalement s'appliquer,
+  c'est-à-dire qu'il n'exis\-te aucun $\rho$ et $v$ tels que
+  $\eval{\rho}{e}{v}$ \emph{car il n'existe pas d'arbre
+  de preuve avec cette conclusion}.
+
+  D'autre part, nous avons vu dans le cours que l'évaluation du
+  programme
+
+  \centerline{\lpar\kwd{fun} \ident{f} $\rightarrow$ \ident{f} \ident{f}\rpar{}
+  \lpar\kwd{fun} \ident{f} $\rightarrow$ \ident{f} \ident{f}\rpar}
+
+  \noindent ne terminait pas \emph{car l'arbre de preuve n'était pas
+  fini}.
+ 
+  En conclusion, le programme \num{1} \num{2} est essentiellement un
+  terme mal formé, alors que \lpar\kwd{fun} \ident{f} $\rightarrow$
+  \ident{f} \ident{f}\rpar{} \lpar\kwd{fun} \ident{f} $\rightarrow$ \ident{f}
+  \ident{f}\rpar{} est bien formé mais son évaluation ne termine pas.
+
+
+  \subsection{La liaison locale}
+
+  \noindent Cette section répond à la question~\ref{q5}.
+
+  \noindent Considérons les instances de règles dont les conclusions
+  correspondent respectivement aux expressions \kwd{let} \ident{x}
+  \equal{} \ident{e}$_1$ \kwd{in} \ident{e}$_2$ et \lpar\kwd{fun} \ident{x}
+  $\rightarrow$ \ident{e}$_2$\rpar{} \ident{e}$_1$. Pour la première, il n'y
+  a qu'à prendre littéralement la règle \textsc{let-in}:
+  \begin{mathpar}
+    \inferrule*[right=\textsc{let-in}]
+      {\eval{\rho}{e_1}{v_1}\\
+       \eval{\rho \oplus x \mapsto v_1}{e_2}{v_2}}
+      {\eval{\rho}{\cst{LetIn} \, (x,e_1,e_2)}{v_2}}
+  \end{mathpar}
+
+  \noindent et à y substituer $v$ à $v_2$ (en prévision de la suite):
+  \begin{mathpar}
+    \inferrule*[right=\textsc{let-in}]
+      {\eval{\rho}{e_1}{v_1}\\
+       \eval{\rho \oplus x \mapsto v_1}{e_2}{v}}
+      {\eval{\rho}{\cst{LetIn} \, (x,e_1,e_2)}{v}}
+  \end{mathpar}
+
+  \noindent Pour la seconde expression, il faut prendre la règle 
+  \begin{mathpar}
+    \inferrule*[right=\textsc{app}]
+      {\eval{\rho}{e_1}{\clos{x}{e_0}{\rho_0}}\\
+       \eval{\rho}{e_2}{v_2}\\
+       \eval{\rho_0 \oplus x \mapsto v_2}{e_0}{v}
+      }
+     {\eval{\rho}{\cst{App} \, (e_1,e_2)}{v}}
+  \end{mathpar}
+
+  \noindent et y substituer $\cst{Fun} (x,e_2)$ à $e_1$, $e_1$ à
+  $e_2$ et $v_1$ à $v_2$:
+  \begin{mathpar}
+    \inferrule*[right=\textsc{app}]
+      {\eval{\rho}{\cst{Fun} (x,e_2)}{\clos{x}{e_2}{\rho}}\\
+       \eval{\rho}{e_1}{v_1}\\
+       \eval{\rho \oplus x \mapsto v_1}{e_2}{v}
+      }
+      {\eval{\rho}{\cst{App} \, (\cst{Fun} (x,e_2),e_1)}{v}}
+  \end{mathpar}
+
+  \noindent Puisque $\eval{\rho}{\cst{Fun}
+  (x,e_2)}{\clos{x}{e_2}{\rho}}$ est un axiome, on voit que les deux
+  (instances de) règles sont équivalentes. En particulier, la liaison
+  locale peut toujours se traduire en termes d'abstrac\-tions et
+  d'applications; ce n'est pas une construction fondamentale.
+
+\end{document}

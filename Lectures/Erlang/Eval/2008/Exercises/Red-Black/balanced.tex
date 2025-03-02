@@ -1,0 +1,22 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-tree,pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=1cm,nodesep=0pt]{\Tcircle{Y}}{
+  \pstree[nodesepB=2pt]{\Tcircle[doubleline=true]{X}}{
+    \TR{A}
+    \TR{B}
+  }
+  \pstree[nodesepB=2pt]{\Tcircle[doubleline=true]{Z}}{
+    \TR{C}
+    \TR{D}
+  }
+}
+\endTeXtoEPS
+
+\end{document}

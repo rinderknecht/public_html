@@ -1,0 +1,22 @@
+#-*-makefile-*-
+
+ECHO    := @ECHO@
+PRINTF  := @PRINTF@
+RM      := @RM@
+
+A2PS    := @A2PS@
+PS2PDF  := @PS2PDF@
+ERLC    := @ERLC@
+GS      := @GS@
+
+include precom.mk
+
+sinclude erlc.mk
+sinclude erlang2ps.mk Makefile2ps.mk a2ps.mk # a2ps.mk last
+sinclude ps2pdf.mk gs.mk
+
+${TARGETS}: %.beam: %.erl
+	@${call erlc,$@,$^}
+
+distclean::
+	@\rm -f common.mk

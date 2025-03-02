@@ -1,0 +1,12 @@
+$HOME/Makefiles/Tools/precom.mk
+$HOME/Makefiles/Tools/configure.ac
+
+$HOME/Makefiles/Tools/javac.mk
+
+$HOME/Makefiles/Tools/a2ps.mk
+$HOME/Makefiles/Tools/Makefile2ps.mk
+$HOME/Makefiles/Tools/java2ps.mk
+$HOME/Makefiles/Tools/ps2pdf.mk
+$HOME/Makefiles/Tools/distclean.mk
+$HOME/Makefiles/Tools/gs.mk
+$HOME/Makefiles/Tools/erlc.mk

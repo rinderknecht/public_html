@@ -1,0 +1,284 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Boolean algebra}
+
+A \textbf{boolean algebra} models logical statements based on two
+values and relationships ``and'' (\textbf{conjunction}), ``or''
+(\textbf{disjunction}) and ``not'' (\textbf{nega\-tion}). The values are
+usually called ``true'' and ``false'', or ``1'' and ``0'' in circuit
+design.
+
+If \(A\) is a boolean variable, i.e. a name whose interpretation can
+only either be ``true'' or ``false'', then
+\[
+A = 1
+\]
+reads ``\(A\) is true'', and
+\[
+A = 0
+\]
+reads ``\(A\) is false.''
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Boolean algebra/Operators}
+\label{def_and_or}
+
+The three operators of a boolean algebra are as follows.
+
+\bigskip
+
+\begin{columns}
+  \column{0.5\textwidth}
+    The binary operator \textbf{and}, symbolised by a dot: \(A \cdot
+    B\) reads ``\(A\) and \(B\).'' If the meaning is clear, the dot
+    can be omitted, as in \(AB\). This operator is defined by the
+    equations
+    \begin{align*}
+      0 \cdot 0 &= 0\\
+      0 \cdot 1 &= 0\\
+      1 \cdot 0 &= 0\\
+      1 \cdot 1 &= 1
+    \end{align*}
+  \column{0.5\textwidth}
+    The binary operator \textbf{or}, symbolised by `\(+\)': \(A+B\)
+    reads ``\(A\) or \(B\).'' This operator is defined by the
+    equations
+    \begin{align*}
+      0 + 0 &= 0\\
+      0 + 1 &= 1\\
+      1 + 0 &= 1\\
+      1 + 1 &= 1
+    \end{align*}
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Boolean algebra/Operators (cont)}
+\label{def_not}
+
+The last operator is the unary operator \textbf{negation}, symbolised
+by a bar over its argument. It is also called \textbf{complement}, or
+\textbf{one-complement} but, be careful: in the context of
+\(2\)-complement binary numbers (page \pageref{two_complement}), for
+example, negation is \textbf{not} the complement.
+
+This operator is simply defined as
+\begin{align*}
+\overline{1} &= 0\\
+\overline{0} &= 1
+\end{align*}
+
+\textbf{Warning}: Page~\pageref{one_complement}, \(\overline{B}\)
+means the 1-complement of an \textbf{integer}, not one bit. In other
+words, \(B\) was \emph{not} a boolean variable.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Boolean algebra/Identities}
+
+For any boolean variable \(A\), the following identities hold:
+
+\medskip
+
+\begin{columns}
+  \column{0.5\textwidth}
+    \begin{align}
+      1 + A &= 1 \label{or:1A}\\
+      0 + A &= A \label{or:0A}\\
+      A + A &= A \label{or:AA}\\
+      A + \overline{A} &= 1 \label{or:AnA}
+    \end{align}
+
+  \column{0.5\textwidth}
+    \begin{align}
+      0 \cdot A &= 0 \label{and:0A}\\
+      1 \cdot A &= A \label{and:1A}\\
+      A \cdot A &= A \label{and:AA}\\
+      A \cdot \overline{A} &= 0 \label{and:AnA}\\
+      \overline{\overline{A}} &= A \label{not:A}
+    \end{align}
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Boolean algebra/Identities}
+
+These identities can be proved by replacing \(A\) by \(0\) and \(1\),
+and use the definitions of ``and'', ``or'' and ``not''
+pages \pageref{def_and_or} and \pageref{def_not}. In the same way, we
+can prove:
+\begin{align}
+\intertext{\textbf{Commutative laws}}
+A + B &= B + A \label{or:comm}\\
+A \cdot B &= B \cdot A \label{and:comm}\\
+\intertext{\textbf{Distributive laws}}
+A + (B \cdot C) &= (A + B)(A + C) \label{or_and:dist}\\
+A(B + C) &= (A \cdot B) + (A \cdot C) \label{and_or:dist}
+\end{align}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Boolean algebra/Identities (cont)}
+
+It is common to give precedence to negation over conjunction, which in
+turn has precedence over disjunction. This allows to omit some
+parentheses and, for instance, rewrite the distributive laws as
+\begin{align*}
+A + B C &= (A + B)(A + C)\\
+A(B + C) &= A B + A C
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Boolean algebra/Identities (cont)}
+
+Then, we have more identities:
+\begin{align}
+\intertext{\textbf{Absorption laws}}
+A + A B &= A \label{or_and:absorp}\\
+A (A + B) &= A \label{and_or:absorp}\\
+\intertext{\textbf{Logic adjacency}}
+A B + A \overline{B} &= A \label{or_and:adj}\\
+(A + B)(A + \overline{B}) &= A \label{and_or:adj}
+\end{align}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Boolean algebra/Identities (cont)}
+
+\begin{align}
+\intertext{\textbf{De Morgan}}
+\overline{A + B} &= \overline{A} \cdot \overline{B} \label{demorgan:or}\\
+\overline{A B} &= \overline{A} + \overline{B} \label{demorgan:and}
+\end{align}
+For example
+\begin{gather*}
+\overline{A + BC} = \overline{A} (\overline{BC}) = \overline{A}
+(\overline{B} + \overline{C})\\
+\overline{(A + B)(C + D)} = \overline{A + B} + \overline{C + D} =
+\overline{A} \, \overline{B} + \overline{C} \, \overline{D}
+\end{gather*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Boolean algebra/Truth tables}
+
+One way to define a boolean function is to write its \textbf{truth
+  table}, i.e. a table whose columns are the arguments of the function
+and its result, and the rows provide all the cases of \(0\) and \(1\)
+for the arguments. For example, function \(L(A,B,S)\) is defined by
+\[
+\renewcommand\arraystretch{0.85}
+\setlength\extrarowheight{4pt}
+\begin{array}{ccc|c}
+A & B & S & L\\
+\hline
+0 & 0 & 0 & 0\\
+0 & 0 & 1 & 0\\
+0 & 1 & 0 & 0\\
+0 & 1 & 1 & 1\\
+1 & 0 & 0 & 0\\
+1 & 0 & 1 & 1\\
+1 & 1 & 0 & 0\\
+1 & 1 & 1 & 1
+\end{array}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Boolean algebra/Min-terms}
+
+Consider a boolean function \(F(A,B)\), defined by the truth table
+\[
+\renewcommand\arraystretch{0.85}
+\setlength\extrarowheight{4pt}
+\begin{array}{cc|cccc|c}
+A & B & AB & A\,\overline{B} & \overline{A}\,B &
+\overline{A}\,\overline{B} & F(A,B)\\
+\hline
+0 & 0 &  0 & 0 & 0 & 1 & 1\\
+0 & 1 &  0 & 0 & 1 & 0 & 0\\
+1 & 0 &  0 & 1 & 0 & 0 & 0\\
+1 & 1 &  1 & 0 & 0 & 0 & 1
+\end{array}
+\]
+We inserted in the truth table the values of the boolean expressions
+\(AB\), \(A\,\overline{B}\), \(\overline{A}\,B\) and
+\(\overline{A}\,\overline{B}\), which are called
+\textbf{min-terms}. The interesting point is that each min-term is
+true only for \textbf{one} combination of values of \(A\) and \(B\).
+
+This leads to a way of finding a definition of \(F\) based on boolean
+expressions instead of a truth table.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Boolean algebra/Min-terms (cont)}
+
+Indeed, for each combination of values of \(A\) and \(B\) such that
+\(F(A,B)\) is \(1\), consider the corresponding min-term and make a
+disjunction of them. We get here
+\[
+F(A,B) = \overline{A}\,\overline{B} + A B
+\]
+Why does it work? For each combination \((A,B)\) for which
+\(F(A,B)=1\), one of the min-terms is \(1\),
+i.e., \(\overline{A}\,\overline{B}=1\) or \(A B = 1\), so the
+disjunction is also \(1\). For each combination \((A,B)\) for which
+\(F(A,B)=0\), both min-terms will be \(0\), so is their disjunction.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Boolean algebra/Min-terms (cont)}
+
+Therefore, given a truth table of a boolean function, form the
+expression made of the disjunction of the min-terms for which the
+result is \(1\).
+
+This form is called, in general, \textbf{normal disjunctive form}, or
+\textbf{sum of product} (\textbf{SOP}).
+
+Counter-example: \(\overline{A + B}\) is \textbf{not} a SOP: the
+negations must apply to variables or \(0\) or \(1\).
+
+Any boolean expression can be transformed, by means of the identities
+we gave, into a SOP.
+
+\end{frame}

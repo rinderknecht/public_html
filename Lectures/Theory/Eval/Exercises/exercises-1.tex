@@ -1,0 +1,344 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+% Tracing the document for the HTML
+%
+\input{trace}
+
+% Title
+%
+\title{Exercises on Concepts of Programming Languages}
+\author{Christian Rinderknecht}
+\date{9 February 2006}
+
+% Maths
+%
+\usepackage{amsmath,amssymb}
+
+% Inference rules
+%
+\usepackage{mathpartir}
+
+% Code
+%
+\usepackage{clrscode}
+
+% Miscellanea
+%
+\usepackage{xspace}
+
+% New commands
+%
+\newcommand{\true}{\textsf{true}\xspace}
+\newcommand{\false}{\textsf{false}\xspace}
+\newcommand\rname[1]{\langle{#1}\rangle}
+\newcommand{\NaN}{\textsf{NaN}\xspace}
+
+% ------------------------------------------------------------------------
+% Document
+
+\begin{document}
+
+\maketitle
+
+\section{Calculator}
+
+Assume the following system of inference rules:
+\begin{mathpar}
+\inferrule
+{e_1 \rightarrow e'_1}
+{e_1 \times e_2 \rightarrow e'_1 \times e_2}
+\;\rname{\TirName{Mult}_1}
+\and
+\inferrule
+{e_2 \rightarrow e'_2}
+{e_1 \times e_2 \rightarrow e_1 \times e'_2}
+\;\rname{\TirName{Mult}_2}
+\and
+\inferrule
+{e_1 \rightarrow e'_1}
+{e_1 + e_2 \rightarrow e'_1 + e_2}
+\;\rname{\TirName{Add}_1}
+\and
+\inferrule
+{e_2 \rightarrow e'_2}
+{e_1 + e_2 \rightarrow e_1 + e'_2}
+\;\rname{\TirName{Add}_2}
+\and
+\inferrule
+{e_1 \rightarrow e'_1}
+{e_1 - e_2 \rightarrow e'_1 - e_2}
+\;\rname{\TirName{Sub}_1}
+\and
+\inferrule
+{e_2 \rightarrow e'_2}
+{e_1 - e_2 \rightarrow e_1 - e'_2}
+\;\rname{\TirName{Sub}_2}
+\and
+\inferrule
+{e_1 \rightarrow e'_1}
+{e_1 / e_2 \rightarrow e'_1 / e_2}
+\;\rname{\TirName{Div}_1}
+\and
+\inferrule
+{e_2 \rightarrow e'_2}
+{e_1 / e_2 \rightarrow e_1 / e'_2}
+\;\rname{\TirName{Div}_2}
+\end{mathpar}
+We also assume that we have an infinity of rules for multiplying,
+adding, subtracting and dividing (integer division) numbers.
+\begin{enumerate}
+
+  \item Is this system deterministic?
+
+  \item Reduce the following expressions in all the possible ways and
+    give at each rewrite step the corresponding substitution:
+  \begin{enumerate}
+
+    \item \((1 + 2) \times (3 + (4 \times 5))\)
+
+    \item \(((1 + 2) / 0) \times (3 + 4)\)
+
+    \item \((1 + (2 \times 3)) / ((4 + 5) - 9)\)
+
+  \end{enumerate}
+
+\end{enumerate}
+Assume now the following variant and answer the previous questions again.
+\begin{mathpar}
+\inferrule
+{e_1 \rightarrow e'_1}
+{e_1 \times e_2 \rightarrow e'_1 \times e_2}
+\;\rname{\TirName{Mult}_1}
+\and
+\inferrule
+{e \rightarrow e'}
+{v \times e \rightarrow v \times e'}
+\;\rname{\TirName{Mult}_2}
+\and
+\inferrule
+{e \rightarrow e'}
+{e + v \rightarrow e' + v}
+\;\rname{\TirName{Add}_1}
+\and
+\inferrule
+{e_2 \rightarrow e'_2}
+{e_1 + e_2 \rightarrow e_1 + e'_2}
+\;\rname{\TirName{Add}_2}
+\and
+\inferrule
+{e_1 \rightarrow e'_1}
+{e_1 - e_2 \rightarrow e'_1 - e_2}
+\;\rname{\TirName{Sub}_1}
+\and
+\inferrule
+{e \rightarrow e'}
+{v - e \rightarrow v - e'}
+\;\rname{\TirName{Sub}_2}
+\\
+\inferrule
+{e \rightarrow e'}
+{e / v \rightarrow e' / v}
+\;\rname{\TirName{Div}_1}
+\and
+\inferrule
+{e_2 \rightarrow e'_2}
+{e_1 / e_2 \rightarrow e_1 / e'_2}
+\;\rname{\TirName{Div}_2}
+\end{mathpar}
+Assume now that we have a different rule \(\rname{\TirName{Div}_1}\)
+and new rules for handling the division by zero:
+\begin{mathpar}
+\inferrule
+{v \neq 0\\ e \rightarrow e'}
+{e / v \rightarrow e' / v}
+\;\rname{\TirName{Div}_1}
+\and
+\inferrule
+{}
+{e / 0 \rightarrow \NaN}
+\quad\rname{\TirName{DivZero}}
+\and
+\inferrule
+{}
+{\NaN \times e \rightarrow \NaN}
+\quad\rname{\TirName{Mult-Err}_1}
+\and
+\inferrule
+{}
+{e \times \NaN \rightarrow \NaN}
+\quad\rname{\TirName{Mult-Err}_2}
+\and
+\inferrule
+{}
+{\NaN + e \rightarrow \NaN}
+\quad\rname{\TirName{Add-Err}_1}
+\and
+\inferrule
+{}
+{e + \NaN \rightarrow \NaN}
+\quad\rname{\TirName{Add-Err}_2}
+\and
+\inferrule
+{}
+{\NaN - e \rightarrow \NaN}
+\quad\rname{\TirName{Sub-Err}_1}
+\and
+\inferrule
+{}
+{e - \NaN \rightarrow \NaN}
+\quad\rname{\TirName{Sub-Err}_2}
+\and
+\inferrule
+{}
+{\NaN / e \rightarrow \NaN}
+\quad\rname{\TirName{Div-Err}_1}
+\and
+\inferrule
+{}
+{e / \NaN \rightarrow \NaN}
+\quad\rname{\TirName{Div-Err}_2}
+\end{mathpar}
+\noindent Answer the same questions again.
+
+Is it better to have the following rule?
+\begin{mathpar}
+\inferrule
+{e_1 \rightarrow e'_1}
+{e_1 / e_2 \rightarrow e'_1 / e_2}
+\;\rname{\TirName{Div}_1}
+\end{mathpar}
+
+
+\section{Boolean expressions}
+
+Consider the system of inference rules
+\begin{mathpar}
+\inferrule
+{}
+{\true \wedge e \rightarrow e}
+\quad\rname{\wedge_{\TirName{True}}}
+\and
+\inferrule
+{}
+{\false \wedge e \rightarrow \false}
+\quad\rname{\wedge_{\TirName{False}}}\\
+\inferrule
+{e_1 \rightarrow e'_1}
+{e_1 \wedge\, e_2 \rightarrow e'_1 \wedge\, e_2}
+\;\rname{\wedge}
+\and
+\inferrule
+{}
+{\neg\false \rightarrow \true}
+\quad\rname{\TirName{Not-False}}
+\and
+\inferrule
+{}
+{\neg\true \rightarrow \false}
+\quad\rname{\TirName{Not-True}}
+\and
+\inferrule
+{e \rightarrow e'}
+{\neg e \rightarrow \neg e'}
+\;\rname{\TirName{Not}}
+\and
+\inferrule
+{}
+{e_1 \vee\, e_2 \rightarrow \neg(\neg e_1 \wedge\, \neg e_2)}
+\quad\rname{\TirName{Or}}
+\end{mathpar}
+
+\begin{enumerate}
+
+  \item Is this system deterministic?
+
+  \item Reduce the following expressions in several ways if possible,
+    and give at each rewrite step the corresponding substitution:
+  \begin{enumerate}
+ 
+    \item \((\true \wedge (\false \vee \true)) \wedge \neg(\true \vee
+      (\true \wedge \true))\)
+
+    \item \(\neg((\true \wedge \true) \vee \neg(\false \vee \neg\true))\)
+
+  \end{enumerate}
+
+\end{enumerate}
+
+
+\section{Arithmetic}
+
+Let us model the integers. The number \(0\) is noted \proc{Zero}. If
+an integer is noted \(n\), then \(\proc{Succ} (n)\) denotes the next
+integer and \(\proc{Pred} (n)\) the previous. For example
+\[
+\begin{array}{c|c}
+\text{New notation} & \text{Mathematical notation}\\
+\hline
+\proc{Zero} & 0\\
+\proc{Succ} (\proc{Zero}) & 1\\
+\proc{Succ} (\proc{Succ} (\proc{Zero})) & 2\\
+\ldots & \ldots\\
+\proc{Pred} (\proc{Zero}) & -1\\
+\proc{Pred} (\proc{Pred} (\proc{Zero})) & -2\\
+\ldots & \ldots
+\end{array}
+\]
+Let us define now a function \proc{IsZero} which returns the boolean
+\true if the argument is \proc{Zero} and \false if the argument is not
+\proc{Zero}:
+\begin{align*}
+\proc{IsZero} (\proc{Zero}) & \rightarrow \true\\
+\proc{IsZero} (\proc{Succ} (n)) & \rightarrow \false\\
+\proc{IsZero} (\proc{Pred} (n)) & \rightarrow \false
+\end{align*}
+But this definition is broken, because it implies, for instance
+\[
+\proc{IsZero} (\proc{Pred} (\proc{Succ} (\proc{Zero}))) \rightarrow
+\false
+\]
+What solution do you propose to fix it? Answer:
+\begin{align*}
+\proc{Succ} (\proc{Pred} (n)) & \rightarrow n\\
+\proc{Pred} (\proc{Succ} (n)) & \rightarrow n
+\end{align*}
+
+
+\section{Stacks}
+
+\begin{mathpar}
+\inferrule
+{}
+{\proc{IsEmpty} (\proc{Push} (x, s)) \rightarrow \false}
+\quad\rname{\TirName{IsNotEmpty}}
+\and
+\inferrule
+{}
+{\proc{IsEmpty} (\proc{Empty}) \rightarrow \true}
+\quad\rname{\TirName{IsEmpty}}
+\\
+\inferrule
+{}
+{\proc{Length} (\proc{Empty}) \rightarrow 0}
+\quad\rname{\TirName{ZeroLength}}
+\and
+\inferrule
+{}
+{\proc{Length} (\proc{Push} (x, s)) \rightarrow 1 + \proc{Length} (s)}
+\quad\rname{\TirName{Length}}
+\\
+\inferrule
+{}
+{\proc{Rev} (\proc{Empty}) \rightarrow \proc{Empty}}
+\quad\rname{\TirName{Rev-E}}
+\and
+\inferrule
+{\proc{Rev} (\proc{Push} (x, s)) \rightarrow \proc{Append}
+  (\proc{Rev} (s),\proc{Push} (x,\proc{Empty}))}
+{}
+\quad\rname{\TirName{Rev-P}}
+\end{mathpar}
+
+\end{document}

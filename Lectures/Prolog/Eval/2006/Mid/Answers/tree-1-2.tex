@@ -1,0 +1,39 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pst-tree,pst-eps}
+
+\newcommand\mknode[1]{\TR{\texttt{#1}}}
+
+\begin{document}
+ 
+\TeXtoEPS 
+\pstree[levelsep=10mm,nodesep=2pt]
+  {\mknode{f}}{
+  \pstree{\mknode{g}}{
+    \mknode{X}
+    \mknode{X}
+  }
+  \pstree{\mknode{h}}{
+    \mknode{Y}
+    \mknode{Y}
+  }
+}
+\phantom{HH}
+\TR{\large\(\stackrel{?}{=}\)}
+\phantom{HH}
+\pstree[levelsep=10mm,nodesep=2pt]
+  {\mknode{f}}{
+  \pstree{\mknode{g}}{
+    \pstree{\mknode{h}}{
+      \mknode{W}
+      \mknode{a}
+    }
+    \mknode{Z}
+  }
+  \mknode{Z}
+}
+\endTeXtoEPS
+
+\end{document}

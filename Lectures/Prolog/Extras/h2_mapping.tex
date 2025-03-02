@@ -1,0 +1,36 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{vaucanson-g}
+\usepackage{pst-eps}
+\usepackage{xcolor}
+
+\begin{document}
+\TeXtoEPS
+\ShowFrame
+
+\VCDraw{%
+\begin{VCPicture}{(0,0)(3,3)}
+
+\State[\textcolor{red}{1}]{(0,0)}{p1}
+\nput{180}{p1}{\Large \((0,0)\)}
+
+\State[\textcolor{red}{0}]{(3,0)}{p2}
+\nput{0}{p2}{\Large \((1,0)\)}
+
+\State[\textcolor{red}{0}]{(3,3)}{p3}
+\nput{0}{p3}{\Large \((1,1)\)}
+
+\State[\textcolor{red}{0}]{(0,3)}{p4}
+\nput{180}{p4}{\Large \((0,1)\)}
+
+\pnode(1.5,0){q1}
+\pnode(0,1.5){q2}
+\ncline{q1}{q2}
+
+\end{VCPicture}
+}
+\endTeXtoEPS
+
+\end{document}

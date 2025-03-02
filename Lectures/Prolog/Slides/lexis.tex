@@ -1,0 +1,254 @@
+%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Data objects/Atoms}
+
+Some objects are only identified by their name, called an
+\textbf{atom}. Thus, it is correct to say that, in such a case, an
+object \emph{is} an atom. For example, we saw the atom \texttt{bob}.
+
+\bigskip
+
+An atom starts with a lower-case letter which can be followed by a
+string of characters out of lower-case letters, upper-case letters,
+digits and the underscore character (`\_').
+
+\bigskip
+
+For example, the following are valid atoms:
+{\small
+\begin{verbatim}
+anna         alpha_beta_proc
+x25          call_Java
+x_25         x_
+x_25AB       x____y
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Data objects/Numbers}
+
+\textbf{Numbers} in \Prolog include integer numbers and floating-point
+numbers. The syntax of integer is as expected, for example
+{\small
+\begin{verbatim}
+1    1234    0    -97
+\end{verbatim}
+}
+The lower and larger integers are limited by the actual \Prolog system
+in use.
+
+\bigskip
+
+Floating-point numbers follow the usual syntax too, like
+{\small
+\begin{verbatim}
+3.14    -0.06    100.5
+\end{verbatim}
+}
+The general syntax is not given here because \Prolog is primarily
+intended for symbolic computations, not numerical computations.
+
+\bigskip
+
+Atoms and numbers define the group of \textbf{constants}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Data objects/Variables}
+
+A \textbf{variable} is a name for an object, but, contrary to atoms,
+variables do not define any object. So a variable can denote several
+objects. They must start with an upper-case letter or an underscore
+and may be followed by any number of letters, digit and underscores,
+in any order. For example, the following are valid variables:
+{\small
+\begin{verbatim}
+X    Obj_List    _23    Object2    Result    ObjList    _x23
+\end{verbatim}
+}
+If a variable appears only once in the body of a clause and not in the
+head, it is an \textbf{unknown variable} and can be replaced by an
+underscore. For example
+{\small
+\begin{verbatim}
+has_a_child(X) :- parent(X,Y).
+\end{verbatim}
+}
+can be replaced by the equivalent
+{\small
+\begin{verbatim}
+has_a_child(X) :- parent(X,_).
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Data objects/Variables (cont)}
+
+Several underscores can occur in a body. In this case, each of them
+should be considered an absolutely unique, despite unknown, variable.
+
+\bigskip
+
+For example, consider
+{\small
+\begin{verbatim}
+someone_has_a_child :- parent(_,_).
+\end{verbatim}
+}
+Each underscore could be replaced by a unique variable, like
+{\small
+\begin{verbatim}
+someone_has_a_child :- parent(X,Y).
+\end{verbatim}
+}
+But certainly \textbf{not}
+{\small
+\begin{verbatim}
+someone_has_a_child :- parent(X,X).
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Data objects/Variables and lexical scopes}
+
+If an unknown variable appears in a query, then its value, found by
+the interpreter, is not displayed in the result.
+
+\bigskip
+
+For example, if one wants to know who are the people who have
+children, the \Prolog query is
+{\small
+\begin{verbatim}
+?- parent(X,_).
+\end{verbatim}
+}
+and only all the possible values of \texttt{X} that satisfy the query
+will be displayed.
+
+\bigskip
+
+Given an occurrence of a variable, the part of the program where
+this variable is usable is called the \textbf{scope}. 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Data objects/Variables and lexical scopes (cont)}
+
+\Prolog uses \textbf{lexical scoping}, which means
+\begin{itemize}
+  
+  \item the same variable always represents the same object inside a clause;
+
+  \item the same variable in two different clauses represent different
+    objects, in general.
+
+\end{itemize}
+For example, in clause
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- parent(X,Y)
+\end{verbatim}
+}
+the tow occurrences of variable \texttt{X} represent the same object.
+But, if we also have
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- parent(X,Z), ancestor(Z,Y).
+\end{verbatim}
+}
+the occurrences of \texttt{X} denote, in general, objects different
+from the \texttt{X} in the previous clause.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Data objects/Functors and structures}
+
+Structured objects, or \textbf{structures}, are objects that are
+composed of several objects. These sub-objects are boxed together by
+means of a \textbf{functor}. For example
+{\small
+\begin{verbatim}
+date(9,july,2006)
+\end{verbatim}
+}
+is a structure composed, in order, of the integer constant \texttt{1},
+the atom \texttt{july}, the number \texttt{2006} and tied together by
+the functor \texttt{date}. The sub-objects are called
+\textbf{arguments} and the number of arguments is the \textbf{arity}.
+
+\bigskip
+
+The syntax of functor is the same as the atoms. Functors are used to
+define facts (i.e. instances of a relation). For example,
+{\small
+\begin{verbatim}
+female(pam).
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Data objects/Functors and structures (cont)}
+\label{structures_as_trees}
+
+Just as it is possible to make a graphical representation of a
+successful run of the \Prolog interpreter (see
+page~\pageref{proof_trees}), it is possible to draw a tree which
+represents a \Prolog structure.
+
+\bigskip
+
+The idea here is to map a functor to a node whose label is the
+functor, and its arguments to sub-trees, recursively in the same
+order. The consequence is that the component objects that are not
+structures are mapped to the leaves. For example
+\begin{center}
+\includegraphics[bb=71 683 161 721]{struct_tree}
+\hspace{2cm}
+\includegraphics[bb=71 657 132 721]{expr_tree}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Data objects/Summary}
+
+It is also handy to represent all the kinds of \Prolog data objects we
+reviewed until now in a tree. The idea consists in mapping a set of
+lexical elements to a node whose label is this set name, and the
+subsets are mapped to subtrees.
+\begin{center}
+\includegraphics[bb=71 597 237 721]{lexicon_tree}
+\end{center}
+
+\end{frame}

@@ -1,0 +1,966 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Analyses lexicales et syntaxiques}
+
+\begin{itemize}
+
+  \item L'analyse lexicale transforme une suite de
+  caractères en une suite de lexèmes (mots).
+
+  \item L'analyse syntaxique transforme une suite de
+  lexèmes en une représentation arborescente (arbre de syntaxe
+  abstraite).
+
+\end{itemize}
+Ces deux phases logiques sont implantées comme des fonctions OCaml:
+le pilote appelant la fonction d'analyse syntaxique qui appelle la
+fonction d'analyse lexicale qui lit le flux de caractères entrant et
+en retire les caractères reconnus comme constituant un lexème (il y a
+donc un effet de bord dû à l'intéraction avec le système de fichiers).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Enjeux des analyses lexicales et syntaxiques}
+
+\begin{itemize}
+
+  \item Les analyses lexicales et syntaxiques ont un domaine
+  d'application bien plus large que celui de la compilation. On les
+  retrouve comme première passe dans de nombreuses applications
+  (analyses de commandes, de requêtes, de documents HTML etc.).
+
+  \item Ces deux analyses emploient de façon essentielle les
+  \emph{automates}, que l'on retrouve donc dans de nombreux domaines
+  de l'informatique et de la télématique.
+
+  \item Les \emph{expressions régulières} sont un langage de
+  description d'automates; elles sont utilisées dans de nombreux
+  outils Unix (\texttt{emacs}, \texttt{grep} etc.) et sont fournies en
+  bibliothèque avec la plupart des interprètes et compilateurs de
+  langages de programmation (p.ex. \textsf{Perl}).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Objectifs}
+
+L'étude détaillée des automates et des grammaires formelles pourrait
+constituer un cours à part, nous nous contentons donc ici du minimum,
+avec comme but
+
+\begin{itemize}
+
+  \item d'expliquer le fonctionnement des analyseurs de
+  façon à pouvoir écrire soi-même des analyseurs lexicaux
+  (\emph{lexers} ou \emph{scanners}) ou syntaxiques (\emph{parsers});
+
+  \item de se familiariser aussi avec les expressions
+  régulières et les automates, à cause de leur omniprésence.
+
+\end{itemize}
+Le but n'est donc ni d'écrire le c{\oe}ur d'un analyseur, ni
+d'inventorier toutes les techniques d'analyse.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Langages formels}
+
+\begin{itemize}
+
+  \item Un \emph{alphabet} est un ensemble fini non vide de
+  \emph{caractères}. On note souvent les alphabets $\Sigma$ et les
+  caractères $a$, $b$ ou $c$.
+
+  \item Un \emph{mot} sur $\Sigma$ est une suite,
+  éventuellement vide, de caractères de $\Sigma$. Le mot vide est noté
+  $\varepsilon$. Un mot non vide est noté par ses caractères séparés
+  par un point (centré), par exemple $a \cdot b \cdot c$ avec $a, b, c
+  \in \Sigma$. Le point dénote un opérateur dit de
+  \emph{concaténation}, que l'on peut généraliser simplement aux mots
+  eux-mêmes: $x \cdot y$, où $x$ et $y$ sont des mots sur $\Sigma$.
+
+  \item Le mot vide $\varepsilon$ est un élément neutre
+  pour la concaténation des mots: $x \cdot \varepsilon = \varepsilon
+  \cdot x = x$ pour tout mot $x$.
+ 
+  \item La concaténation est une opération associative: $x
+    \cdot (y \cdot z) = (x \cdot y) \cdot z$
+
+  \item On écrira simplement $xy$ au lieu de $x \cdot y$
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Langages formels (suite)}
+
+\begin{itemize}
+
+  \item Un \emph{langage} $L$ sur $\Sigma$ est un ensemble
+  de mots sur $\Sigma$. La concaténation peut s'étendre aux langages:
+  $L_1 \cdot L_2 = \{xy \mid x \in L_1, y \in L_2\}$. Nous pouvons
+  ainsi définir inductivement l'ensemble $\Sigma^{n}$ des mots de
+  longueur $n$ sur l'alphabet $\Sigma$:
+  \[
+  \left\{
+    \begin{array}{l}
+      \Sigma^{0} = \{\varepsilon\}\\
+      \Sigma^{n+1} = \Sigma \cdot \Sigma^{n}
+    \end{array}
+  \right.
+  \]
+
+  \item L'ensemble de tous les mots sur $\Sigma$ est alors
+  $\Sigma^{*} = \bigcup_{n \geqslant 0}{\Sigma^{n}}$.
+
+  \item L'ensemble de tous les mots \emph{non vides} sur
+  $\Sigma$ est $\Sigma^{+} = \bigcup_{n \geqslant 1}{\Sigma^{n}}$.
+
+  \item On vérifie aisément que $\Sigma^{*} = \{\epsilon\}
+  \cup \Sigma \cdot \Sigma^{*} = \{\epsilon\} \cup \Sigma^{*} \cdot
+  \Sigma$
+
+  \item Soient $x$, $y$ et $w$ trois mots de $\Sigma^{*}$
+  tels que $w = xy$. Alors $x$ est un \emph{préfixe} de $w$ et $y$ est
+  un \emph{suffixe} de $w$. Si $x, y \in \Sigma^{+}$, alors $x$ est un
+  \emph{préfixe propre} de $w$, et $y$ est un \emph{suffixe propre} de
+  $w$.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Langages réguliers}
+
+L'ensemble $\Reg{\Sigma}$ des \emph{langages réguliers} (ou
+\emph{rationnels}) sur $\Sigma^{*}$ est défini inductivement comme
+étant la plus petite famille de parties de $\Sigma^{*}$ (par
+définition, $\Sigma^{*}$ est le plus grand langage sur $\Sigma$)
+vérifiant les propriétés
+\begin{itemize}
+
+  \item $\varnothing \in \Reg{\Sigma}$
+
+  \item $\{\varepsilon\} \in \Reg{\Sigma}$
+
+  \item $\forall a \in \Sigma.\{a\} \in \Reg{\Sigma}$
+
+  \item $\forall R_1, R_2 \in \Reg{\Sigma}.R_1 \cup R_2 \in
+  \Reg{\Sigma}$
+
+  \item $\forall R_1, R_2 \in \Reg{\Sigma}.R_1 \cdot R_2 \in
+  \Reg{\Sigma}$
+
+  \item $\forall R \in \Reg{\Sigma}.R^{*} \in \Reg{\Sigma}$
+
+\end{itemize}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Expressions régulières}
+
+Une \emph{expression régulière} est une notation compacte et
+simplifiée pour représenter un langage régulier. Par exemple:
+
+\bigskip
+
+\begin{center}
+\begin{tabular}{l|l|l}
+    \textbf{Expression régulière}
+  & \textbf{Langage régulier}
+  & \textbf{Mots du langage}\\
+     \hline
+    $a \mid b$ ou $a + b$
+  & $\{a, b\}$
+  & $a$, $b$\\
+    $ab^{*}a$
+  & $\{a\}\{b\}^{*}\{a\}$
+  & $aa$, $aba$, $abba$ etc.\\
+    $(ab)^{*}$
+  & $\{ab\}^{*}$
+  & $\varepsilon$, $ab$, $abab$ etc.\\
+    $abba$
+  & $\{abba\}$
+  & $abba$
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Expressions régulières (suite)}
+
+L'ensemble ${\cal E} (\Sigma)$ des expressions régulières sur un
+alphabet $\Sigma$ est le plus petit ensemble vérifiant
+
+\begin{itemize}
+
+  \item $\varnothing \in {\cal E} (\Sigma)$
+
+  \item $\{\varepsilon\} \in {\cal E} (\Sigma)$
+
+  \item $\forall a \in \Sigma.\{a\} \in {\cal E} (\Sigma)$
+
+  \item $\forall e_1, e_2 \in {\cal E} (\Sigma).e_1 + e_2
+  \in {\cal E} (\Sigma)$
+
+  \item $\forall e_1, e_2 \in {\cal E} (\Sigma).e_1 \cdot e_2
+  \in {\cal E} (\Sigma)$
+
+  \item $\forall e \in {\cal E} (\Sigma).e^{*} \in {\cal E}
+  (\Sigma)$
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Des expressions régulières aux langages réguliers}
+
+Le passage des expressions régulières aux langages réguliers se fait
+simplement par la fonction $\mathrm{L} : {\cal E} (\Sigma) \rightarrow
+{\cal R}$ définie inductivement par
+\begin{align*}
+\mathrm{L} (\epsilon) & = \varnothing\\
+\mathrm{L} (a) & = \{a\}\\
+\mathrm{L} (e_1 + e_2) & = \mathrm{L} (e_1) \cup \mathrm{L} (e_2)\\
+\mathrm{L} (e_1 \cdot e_2) & = \mathrm{L} (e_1) \cdot \mathrm{L} (e_2)\\
+\mathrm{L} (e^{*}) & = \mathrm{L} (e)^{*}
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Extensions syntaxiques}
+
+Par commodité, les outils qui emploient les expressions régulières
+étendent la syntaxe donnée précédemment, sans augmenter la puissance
+d'expression. Par exemple:
+\begin{itemize}
+
+  \item \textsf{[abc]} pour \textsf{(a \(\lvert\) b \(\lvert\) c)}
+ 
+  \item \textsf{[a-f]} pour \textsf{(a \(\lvert\) b \(\lvert\) c
+    \(\lvert\) d \(\lvert\) e \(\lvert\) f)}
+
+  \item \textsf{[\symbol{94}abc]} pour le complémentaire de
+  \textsf{(a \(\lvert\) b \(\lvert\) c)} dans l'ensemble des
+  caractères
+
+  \item \textsf{a?} pour \textsf{a \(\lvert\) $\epsilon$}
+
+  \item \textsf{\Large \_} ou \textsf{\textbf{.}} pour n'importe
+  quel caractère.
+ 
+\end{itemize}
+
+\remarque
+
+\begin{itemize}
+
+  \item Le symbole \texttt{+} n'est pas employé dans son
+  sens de disjonction mais de répétition non vide.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Exemples d'expressions régulières étendues}
+
+\begin{itemize}
+
+  \item \textbf{Entiers décimaux}
+
+  \centerline{\textsf{[0-9]\texttt{+}}}
+
+  \item \textbf{Entiers hexadécimaux}
+
+  \centerline{\textsf{0x([0-9a-fA-F])\texttt{+}}}
+
+  \item \textbf{Nombres à la Pascal}
+
+  \centerline{\textsf{[0-9]\texttt{+} (\textbf{.}[0-9]*)?
+  ([Ee][\texttt{-+}][0-9]\texttt{+})?}}
+
+  \item \textbf{Sources OCaml}
+
+  \centerline{\texttt{bash\$ ls *.ml\{,[ily]\}}}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Application à la production d'analyseurs lexicaux}
+
+On spécifie chaque sorte de lexème par une expression régulière, comme
+par exemple
+\begin{itemize}
+
+  \item les mots-clés \Xlet, \Xin etc.
+
+  \item les variables \textsf{[a-z]\texttt{+} [a-zA-Z0-9\_]*}
+
+  \item les entiers \textsf{[0-9]\texttt{+}}
+
+  \item les symboles: \textsf{(} \textsf{)} \textsf{+} \textsf{*}
+  \textsf{=} etc. 
+
+\end{itemize}
+mais aussi le texte à oublier:
+\begin{itemize}
+
+  \item les espaces \textsf{('{\tt\char`\ }' \(\lvert\)
+    '\(\backslash\){n}' \(\lvert\) '\(\backslash\)t')}
+
+  \item et les commentaires.
+
+\end{itemize}
+
+\textbf{Aucun lexème n'est alors associé à ces expressions régulières.}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Application à la production d'analyseurs lexicaux (suite)}
+
+Un logiciel prend une telle spécification et produit un programme qui
+implante l'analyseur lexical correspondant dans le langage source de
+l'application. L'analyseur est alors compilé normalement et son code
+objet (cible) est lié au reste de l'application. Il prend un flux de
+caractères et tente d'y reconnaître un lexème. S'il réussit, il
+renvoie celui-ci et se déplace d'autant dans le flux, sinon il signale
+une erreur ou un flux vide.
+
+\bigskip
+
+En langage C, les générateurs d'analyseurs lexicaux connus sont
+\textsf{flex} et \textsf{lex} (dans la distribution Red Hat Linux ce
+dernier est en fait un lien symbolique vers le premier). En Java, il y
+a \textsf{jlex} et \textsf{javacc}, par exemple.
+
+Pour un catalogue, cf. \url{http://catalog.compilertools.net/} et,
+autour du forum \textsf{comp.compilers},
+cf. \url{http://compilers.iecc.com/}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{ocamllex}
+
+Le générateur d'analyseurs lexicaux du système OCaml est
+\textsf{ocamllex}.
+
+Les expressions régulières définissant les lexèmes ont une forme
+habituelle, mais les caractères sont entourés par des apostrophes
+(conventions de OCaml), p.ex. \textsf{['a'-'z']\texttt{+} ['a'-'z'
+'A'-'Z' '0'-'9' '\_']*} au lieu de \textsf{[a-z]\texttt{+}
+[a-zA-Z0-9\_]*}
+
+Le type OCaml représentant les lexèmes n'est généralement pas défini
+dans la spécification (qui possède une extension \texttt{.mll}). Par
+exemple, ce type peut être 
+{\small
+ \begin{tabbing}
+ \Xtype \type{token} \= \equal \= \Tint \Xof \type{int} \vbar{}
+ \Tident \Xof \type{string} \vbar{} \Ttrue \vbar{} \Tfalse\\
+ \> \vbar \> \Tplus \vbar{} \Tminus \vbar{} \Ttimes \vbar{} \Tslash
+ \vbar{} \Tequal \vbar{} \Tarrow\\
+ \> \vbar \> \Tlpar \vbar{} \Trpar \Tlet \vbar{} \Tin \vbar{} \Trec\\
+ \> \vbar \> \Tfun \vbar{}
+ \Tif \vbar{} \Tthen \vbar{} \Telse \vbar{} \Tand \vbar{} \Tor \vbar{}
+ \Tnot \vbar{} \textcolor{blue}{\Teof}
+ \end{tabbing}
+}
+
+L'expérience recommande d'associer la fin de fichier à un lexème (ici
+\Teof), en particulier en conjonction avec un analyseur syntaxique.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Spécification d'analyseurs lexicaux avec ocamllex}
+
+Une spécification d'analyseur lexical pour \textsf{ocamllex} a la
+forme:
+{\small
+\begin{tabbing}
+\{ \emph{Code OCaml optionnel en prologue} \}\\
+\Xlet \emph{r} \equal \emph{regexp}\\
+\ldots\\
+\Xrule \= \emph{entrée}\(\sb{1}\) \equal \Xparse\\
+\> \ \ \emph{regexp}\(\sb{1,1}\) \{ \emph{Code OCaml, dit
+  \emph{action}} \}\\
+\> \vbar{} \ \ldots\\
+\> \vbar{} \ \emph{regexp}\(\sb{1,n}\) \{ \emph{Code OCaml, dit
+  \emph{action}} \}\\
+\Xand \= \emph{entrée}\(\sb{2}\) \equal \Xparse\\
+\> \ldots\\
+\Xand \ldots\\
+\{ \emph{Code OCaml optionnel en épilogue} \}
+\end{tabbing}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Un exemple de spécification pour ocamllex}
+
+\label{exemple_ocamllex}
+
+{\small
+\begin{tabbing}
+\{ \= \Xopen \cst{Parser}\\
+   \> \Xexception \cst{Illegal\_char} \Xof \type{string} \}\\
+\Xlet \ident{ident} \equal \textsf{['a'-'z'] ['\_' 'A'-'Z' 'a'-'z' '0'-'9']*}\\
+\Xrule \= \ident{token} \equal \Xparse\\
+  \> \ \ \textsf{['{\tt\char`\ }' '\(\backslash\)n' '\(\backslash\)t'
+   '\(\backslash\)r']} \= \{ \ident{token} \ident{lexbuf} \}\\
+  \> \vbar{} \str{let} \> \{ \Tlet \}\\
+  \> \vbar{} \str{rec} \> \{ \Trec \}\\
+  \> \vbar{} \str{=}   \> \{ \Tequal \}\\
+  \> \ldots \\
+  \> \vbar{} \ident{ident} \> \{ \Tident
+   \lpar\cst{Lexing}.\ident{lexeme} \ident{lexbuf}\rpar \}\\
+  \> \vbar{} \textsf{['0'-'9']\texttt{+}} \> \{ \Tint
+   \lpar\ident{int\_of\_string} \lpar\cst{Lexing}.\ident{lexeme}
+   \ident{lexbuf}\rpar\rpar{} \}\\
+  \> \vbar{} \ident{eof} \> \{ \Teof \}\\
+  \> \vbar{} {\LARGE \_} \> \{ \ident{raise} \lpar\cst{Illegal\_char}
+   \lpar\cst{Lexing}.\ident{lexeme} \ident{lexbuf}\rpar\rpar{} \}
+\end{tabbing}
+}
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Un exemple de spécification pour ocamllex (suite)}
+
+\begin{itemize}
+
+  \item Le prologue ouvre le module \textsf{Parser} car celui-ci
+  contient la définition du type \textsf{token} dont les constructeurs
+  sont appliqués dans les actions (\cst{LET}, \cst{REC}
+  etc.). C'est le style d'organisation quand on utilise conjointement
+  un analyseur syntaxique produit par \textsf{ocamlyacc} (c'est la
+  même configuration en langage C si on utilise \textsf{lex} avec
+  \textsf{yacc}). Si on spécifie un analyseur lexical autonome (ne
+  serait-ce que pour faire du test unitaire), on aurait alors
+  probablement un module \textsf{Token} contenant la définition des
+  lexèmes.
+
+  \item On déclare les exceptions lexicales dans le prologue, ici
+  simplement \textsf{Illegal\_char}, qui doivent être filtrées au
+  niveau du pilote de l'application.
+
+  \item Une expression régulière nommée \textsf{ident} est définie,
+  ainsi qu'une unique entrée \textsf{token}. Dans les actions,
+  \emph{les entrées sont des fonctions} dont le premier argument est
+  toujours le flux de caractères entrant, toujours nommé
+  \textsf{lexbuf}.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Un exemple de spécification pour ocamllex (suite et fin)}
+
+\begin{itemize}
+
+  \item Le module standard \textsf{Lexing} contient un certain nombre
+  de fonctions qui servent à manipuler le flux de caractères. Par
+  exemple \textsf{Lexing.lexeme} prend le flux et retourne le lexème
+  qui a été reconnu par l'expression régulière \emph{associée à l'action}.
+
+  \item Notez l'appel récursif à \textsf{token} lorsque l'on veut
+  ignorer certains caractères. Cela fonctionne car dans l'action, les
+  caractères reconnus par l'expression régulière associée ont été ôté
+  du flux.
+
+  \item Il existe une pseudo-expression régulière \ident{eof} qui
+  sert à filtrer la fin de fichier. Il est recommandé de s'en servir
+  pour produire un pseudo-lexème \Teof, car les comportements
+  implicites des applications vis-à-vis des fins de fichier peuvent
+  varier d'un système d'exploitation à l'autre.
+
+  \item Il existe une pseudo-expression régulière \textsf{\large \_}
+  qui filtre n'importe quel caractère. \emph{L'ordre des expressions
+  est significatif}, donc cette expression devrait être la dernière.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Mise en {\oe}uvre de ocamllex}
+
+\begin{itemize}
+
+  \item Si la spécification \textsf{ocamllex} a pour nom
+  \textsf{lexer.mll}, alors la compilation se fait en deux temps:
+
+\begin{enumerate}
+
+  \item \texttt{ocamllex lexer.mll}, qui produit soit une erreur soit
+  \textsf{lexer.ml}, puis
+
+  \item \texttt{ocamlc -c lexer.ml}, qui produit soit une erreur soit
+  \textsf{lexer.cmo} et \textsf{lexer.cmi} (ce dernier, en l'absence de
+  \textsf{lexer.mli}).
+
+\end{enumerate}
+
+En théorie, les actions associées aux expressions régulières ne sont
+pas tenues de renvoyer un lexème, car le programmeur est libre et
+peut, par exemple, écrire un préprocesseur, c.-à-d. une réécriture
+de fichiers, plutôt qu'un analyseur lexical.
+
+  \item Pour créer un flux entrant de caractères à partir de l'entrée
+  standard il faut \Xlet \ident{char\_flow} \equal{}
+  \ident{Lexing.from\_channel} \lpar\ident{stdin}\rpar{} \Xin{} \ldots
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sous le capot}
+
+Le fichier OCaml résultant de la spécification a la forme
+{\small
+\begin{tabbing}
+\emph{Prologue} \ldots\\
+\Xlet \= \Xrec \emph{entrée}\(\sb{1}\) \equal \Xfun \ident{lexbuf}
+\(\rightarrow\)\\
+\> \ldots{} \= \Xmatch \ldots{} \Xwith\\
+\>\> \ \ \ \ldots{} \(\rightarrow\) \emph{action}\\
+\>\> \vbar{} \ldots{}\\
+\>\> \vbar{} \ldots{} \(\rightarrow\) \emph{action}\\
+\Xand \emph{entrée}\(\sb{2}\) \equal \Xfun \ident{lexbuf} \(\rightarrow\)\\
+\> \ldots\\
+\Xand \ldots\\
+\emph{Épilogue}
+\end{tabbing}
+}
+où \texttt{lexbuf} est de type \textsf{Lexing.lexbuf}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Analyse des commentaires sur une ligne}
+
+\vspace*{-1pt}
+
+Les commentaires sont reconnus durant l'analyse lexicale mais rien
+n'en est fait. Certains analyseurs analysent le contenu des
+commentaires et signalent donc des erreurs \emph{à l'intérieur} de
+ceux-ci (ce qui peut être gênant si on y place des méta-données).
+
+Le type le plus simple de commentaires est celui de~\cpp{} qui porte
+sur une ligne.
+{\small
+\begin{tabbing}
+\Xrule \= \ident{token} \equal \Xparse\\
+\> \ \ \ \ldots\\
+\> \vbar{} \textsf{"//"\ \ \ [\symbol{94} '\(\backslash\)n']*
+  \ \ '\(\backslash\)n'?} \{ \ident{token} \ident{lexbuf} \}
+\end{tabbing}
+} 
+L'expression régulière reconnaît l'ouverture du commentaire, puis
+laisse passer tout caractère différent d'une fin de ligne et termine
+par une fin de ligne optionnelle (on suppose que le système
+d'exploitation est Unix et qu'une fin de ligne peut terminer le
+fichier).
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Analyse des commentaires en blocs non imbriqués}
+
+L'entrée \textsf{token} reconnaît l'ouverture du
+commentaire, et \emph{son action} appelle l'entrée supplémentaire
+\textsf{in\_comment} qui saute tous les caractères jusqu'à la
+fermeture du bloc et signale une erreur si celle-ci manque
+(commentaire ouvert). Quand le bloc est fermé, puisqu'un commentaire
+ne produit pas de lexème, il faut faire un appel récursif à
+\textsf{token} pour en renvoyer un.  
+{\small
+\begin{tabbing}
+\{ \ldots{} \Xexception \cst{Open\_comment} \}\\
+\Xrule \= \ident{token} \equal \Xparse\\
+\> \ \ \ \ldots\\
+\> \vbar{} \str{/*} \{ \ident{in\_comment} \ident{lexbuf} \}\\
+\Xand \= \ident{in\_comment} \equal \Xparse\\
+\> \ \ \ \str{*/} \= \{ \ident{token} \ident{lexbuf} \}\\
+\> \vbar{} \ident{eof} \> \{ \ident{raise} \cst{Open\_comment} \}\\
+\> \vbar{} {\LARGE \_} \> \{ \ident{in\_comment} \ident{lexbuf} \}
+\end{tabbing}
+}
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Analyse des commentaires en blocs imbriqués}
+
+Les commentaires du langage C peuvent être imbriqués pour isoler
+temporairement une partie du code qui est déjà commentée. 
+
+\bigskip
+
+S'ils n'étaient pas imbriqués, on aurait pu écrire une seule
+expression régulière (nous ne l'avons pas fait pour des raisons de
+lisibilité et pour signaler facilement une absence de fermeture). Dans
+le cas imbriqué il n'existe pas une telle expression \emph{pour des
+raisons théoriques}. On dit que les langages réguliers ne peuvent être
+bien parenthèsés.
+
+\bigskip
+
+L'idée est que les expressions régulières ne peuvent «~garder la
+mémoire~» du degré d'imbrication courant. Pour y parvenir on se sert
+donc de l'expressivité du code \emph{des actions}. \textbf{Ainsi c'est
+abusivement que l'on réduit l'analyse lexicale aux seuls langages
+réguliers, spécifiés par des expressions régulières.}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Analyse des commentaires en blocs imbriqués (suite)}
+
+La technique consiste à modifier l'entrée \textsf{in\_comment} de
+sorte que les actions soient \emph{des fonctions dont l'argument est
+la profondeur d'imbrication courante.}
+{\small
+\begin{tabbing}
+\Xrule \= \ident{token} \equal \Xparse\\
+\> \ \ \ \ldots\\
+\> \vbar{} \str{/*} \{ \ident{in\_comment} \ident{lexbuf} \textcolor{blue}{\num{1}} \}\\
+\Xand \= \ident{in\_comment} \equal \Xparse\\
+\> \ \ \ \str{*/} \= \{ \textcolor{blue}{\Xfun \ident{depth} \(\rightarrow\)} \=
+\textcolor{blue}{\Xif \ident{depth} \equal \num{1} \Xthen} \ident{token} \ident{lexbuf}\\
+\> \> \> \textcolor{blue}{\Xelse \ident{in\_comment} \ident{lexbuf}
+\lpar\ident{depth}\texttt{-}\num{1}\rpar{}} \}\\
+\> \textcolor{blue}{\vbar{} \str{/*}} \> \textcolor{blue}{\{ \Xfun \ident{depth}
+  \(\rightarrow\) \ident{in\_comment} \ident{lexbuf}
+  \lpar\ident{depth}\texttt{+}\num{1}\rpar{} \}}\\ 
+\> \vbar{} \ident{eof} \> \{ \ident{raise} \cst{Open\_comment} \}\\
+\> \vbar{} {\LARGE \_} \> \{ \ident{in\_comment} \ident{lexbuf} \}
+\end{tabbing}
+} 
+\emph{Notez que} {\small \ident{in\_comment} \ident{lexbuf}} \emph{est
+équivalent à} {\small \Xfun \ident{depth} \(\rightarrow\)
+\ident{in\_comment} \ident{lexbuf} \ident{depth}} \emph{et que} {\small \Xfun
+\ident{depth} \(\rightarrow\) \ident{raise} \cst{Open\_comment}}
+\emph{serait moins efficace}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Automates finis et expressions régulières}
+
+Les générateurs d'analyseurs lexicaux doivent combiner les expressions
+régulières de la spécification et les traduire vers du code
+source. Pour cela, elles sont d'abord traduites dans un formalisme de
+même expressivité, mais plus intuitif: les \emph{automates
+finis}. Finalement, l'automate résultant des traitements du générateur
+est compilé en code source.
+
+Commençons par présenter un cas particulier d'automate fini, dit
+\emph{déterministe} (AFD). Un AFD ${\cal A}$ est un quintuplet
+$(\Sigma, {\cal Q}, \delta, q_0, F)$ où
+
+\begin{itemize}
+
+  \item $\Sigma$ est un alphabet;
+ 
+  \item ${\cal Q}$ est un ensemble fini d'états;
+
+  \item $\delta : {\cal Q} \times \Sigma \rightarrow {\cal Q}$ est la
+  fonction (partielle) de transition;
+
+  \item $q_0$ est l'état initial;
+
+  \item $F$ est un ensemble d'états finaux.
+
+\end{itemize}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Automates finis déterministes}
+
+
+\begin{itemize}
+
+  \item Dans ce contexte, on parle aussi d'\emph{étiquette} pour les
+  éléments de $\Sigma$.
+
+  \item Une transition est un triplet sur ${\cal Q} \times \Sigma
+  \times {\cal Q}$
+
+  \item On peut étendre $\delta$ sur ${\cal Q} \times \Sigma^{*}
+  \rightarrow {\cal Q}$ par 
+   $\left\{
+     \begin{aligned}
+        \delta (q,\epsilon) &= q\\
+        \delta (q, aw) &= \delta (\delta (q,a),w)
+     \end{aligned}
+   \right.$
+
+  \item Le langage $\mathrm{L}({\cal A})$ \emph{reconnu} par
+  l'automate ${\cal A}$ est l'ensemble $\{w \mid \delta(q_0,w) \in
+  F\}$ des mots permettant d'atteindre un état final à partir de
+  l'état initial.
+
+  \item On pourrait considérer qu'il y a plusieurs états initiaux
+  possibles au lieu d'un seul, mais cela n'apporterait rien quant à
+  l'analyse lexicale (qui est une application particulière de la
+  théorie des automates finis).
+
+  \item Un automate est \emph{complet} si pour tout état $q$ et toute
+  étiquette $a$, $\delta(q,a)$ est défini.
+
+\end{itemize}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Exemples d'automates}
+
+Les automates permettent de reconnaître les lexèmes.
+
+\begin{itemize}
+
+  \item les mots-clés:
+\begin{center}
+\includegraphics[bb=48 710 198 730]{mots_cles}
+\end{center}
+
+\bigskip
+
+\item les entiers:
+\begin{center}
+\includegraphics[bb=47 709 216 738]{entiers}
+\end{center}
+
+\bigskip
+
+\item l'un ou l'autre: 
+\begin{center}
+\includegraphics[bb=47 687 216 730]{mots_cles_ou_entiers}
+\end{center}
+
+\end{itemize}
+Si un état final (double cerclage) est atteint à partir de l'état
+initial (flèche entrante), un lexème est identifié (ici \Tlet ou
+\Tint). 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Analyse lexicale avec des automates}
+
+\label{algo_lex_auto}
+
+L'analyseur lexical considère deux informations:
+
+\begin{itemize}
+  
+  \item l'état courant dans l'automate spécifié,
+
+  \item le caractère en tête du flux entrant.
+
+\end{itemize}
+
+Puis
+
+\begin{itemize}
+
+  \item s'il existe une transition pour le caractère dans l'automate,
+  alors 
+
+    \begin{itemize}
+
+      \item il est retiré du flux (et jeté);
+ 
+      \item l'état courant devient celui indiqué par la transition;
+ 
+      \item on recommence à considérer les nouveaux état et
+      caractère.
+
+    \end{itemize}
+
+  \item s'il n'y a pas de transition (état bloquant), alors
+
+    \begin{itemize}
+
+      \item si l'état courant est final alors le lexème associé est
+      émis.
+  
+      \item sinon il y a erreur (caractère illégal).
+   
+    \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Ambiguïtés lexicales}
+
+Les problèmes qui peuvent se poser sont:
+
+\begin{itemize}
+
+  \item la chaîne \str{let} pourrait être reconnue comme une
+  variable et non tel mot-clé;
+
+  \item la chaîne \str{letrec} pourrait être reconnue comme la liste
+  de lexèmes \lbra\Tlet; \Tident \str{rec}\rbra{} ou \lbra\Tlet;
+  \Trec\rbra{} ou \lbra\Tident \str{letrec}\rbra{} etc.
+
+\end{itemize}
+
+La solution générale consiste à établir des règles de priorité:
+
+\begin{itemize}
+
+  \item lorsque plusieurs lexèmes sont des préfixes possibles,
+  retenir le plus long;
+ 
+  \item sinon suivre l'ordre de définition des sortes de lexèmes
+  (p.ex. dans la spécification page~\pageref{exemple_ocamllex}
+  l'expression régulière \str{let} est écrite \emph{avant}
+  \ident{ident}).
+
+\end{itemize}
+Ainsi la phrase \texttt{let letrec = 3 in 1 + funny} est reconnue
+comme la liste \lbra\Tlet; \Tident \str{letrec}; \Tequal; \Tint
+\num{3}; \Tin; \Tint \num{1}; \Tplus; \Tident \str{funny}\rbra.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Réalisation de la règle du lexème le plus long}
+
+\begin{center}
+\begin{minipage}{0.4\linewidth}
+  \includegraphics[bb=45 658 198 738]{lexeme_long}
+\end{minipage}
+\hspace*{15mm}
+\begin{minipage}{0.45\linewidth}
+$\begin{aligned}
+  e_1 &= \texttt{['a'-'k' 'n'-'z']}\\
+  e_2 &= \texttt{['a'-'d' 'f'-'z']}\\
+  e_3 &= \texttt{['a'-'s' 'u'-'z']}\\
+  e_4 &= \texttt{['a'-'z]}
+\end{aligned}$
+\end{minipage}
+\end{center}
+Pour réaliser la règle du lexème le plus long, il faut ajouter une
+structure: une file de caractères (initialement vide) et reprendre
+l'algorithme page~\pageref{algo_lex_auto}. Lorsque l'état courant est
+final et qu'une transition est possible, au lieu de jeter le caractère
+correspondant, il faut le conserver dans la file jusqu'à un état
+bloquant. Si cet état est final on renvoie le lexème associé,
+\textbf{sinon on retourne le lexème du dernier état final rencontré,
+  les caractères de la file sont remis dans le flux entrant et on
+  revient à l'état initial}.
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Automates finis non-déterministes asynchrones}
+
+Pour construire de façon intuitive des automates à partir
+d'expressions régulières et leur appliquer des transformations, nous
+avons besoin d'une classe d'automates un peu différente: les automates
+finis \emph{non-déterministes asynchrones} (AFNA). Un AFNA diffère sur
+deux points des AFD:
+
+\begin{itemize}
+
+  \item On étend les étiquettes par le mot vide $\varepsilon$ (on
+  parle de transitions spontanées), c.-à-d. qu'on remplace $\Sigma$
+  par $\Sigma \cup \{\varepsilon\}$: c'est l'asynchronisme.
+
+  \item Il peut y avoir plusieurs transitions de même étiquette à
+  partir d'un même état. Techniquement, $\delta$ est alors une
+  \emph{relation} (ternaire) sur ${\cal Q} \times (\Sigma \cup
+  \{\varepsilon\}) \times {\cal Q}$ et non plus une fonction
+  partielle: c'est le non-déterminisme.
+
+\end{itemize}
+
+\end{frame}

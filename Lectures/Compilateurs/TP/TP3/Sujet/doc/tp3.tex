@@ -1,0 +1,41 @@
+%% -*-latex-*-
+
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{ae,aecompl}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\input{commands}
+\input{ocaml_syntax}
+\input{trace}
+
+\title{TP 3 d'Interprétation et compilation}
+\author{Christian Rinderknecht}
+\date{21 et 22 octobre 2003}
+
+\begin{document}
+
+\maketitle
+
+\begin{enumerate}
+
+  \item Prouvez que les constructions $\Xlet \, x = e_1 \,
+  \Xin \, e_2$ et $(\Xfun \, x \rightarrow e_2) \, e_1$ sont
+  équivalentes du point de vue de l'évaluation --- c'est-à-dire que
+  l'une produit une valeur $v$ si et seulement si l'autre produit
+  également $v$.
+
+  \item Prouvez que les constructions précédentes sont aussi
+  équivalentes du point de vue du typage monomorphe, c'est-à-dire que
+  si l'une admet un type $\tau_2$ sous l'environnement $\Gamma$, alors
+  l'autre aussi.
+
+\end{enumerate}
+
+\end{document}
+

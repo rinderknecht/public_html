@@ -1,0 +1,983 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Petite histoire de Caml}
+
+\begin{itemize}
+
+  \item [\textcolor{blue}{1975}] Robin Milner propose ML comme
+    méta-langage (langage de script) pour l'assistant de preuve
+    LCF. Il devient rapidement un langage de programmation
+    indépendant.
+
+  \item [\textcolor{blue}{1981}] Premières implantations de ML.
+
+  \item [\textcolor{blue}{1985}] Création de Caml à l'INRIA et de
+    Standard ML of New Jersey (Bell Labs).
+
+  \item [\textcolor{blue}{1990}] Réalisation de Caml Light par
+    X. Leroy et D. Doligez (INRIA).
+
+  \item [\textcolor{blue}{1995}] Compilation vers du code natif et
+    ajout d'un langage de modules.
+
+  \item [\textcolor{blue}{1996}] Objets et classes (OCaml).
+
+  \item [\textcolor{blue}{2001}] Arguments étiquetés et optionels;
+    variantes polymorphes (J. Garrigue).
+
+  \item [\textcolor{blue}{2002}] Méthodes polymorphes, bibliothèques
+    partagées.
+
+\end{itemize}
+
+\end{frame}
+
+
+%--------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Premiers pas}
+
+\centerline{\textbf{Mode compilé}}
+
+\textcolor{blue}{Éditer le ficher source \textsf{hello.ml}}
+
+\phrase{print\_string \str{Hello world!\symbol{92}n}}
+
+\textcolor{blue}{On supposera dans ce cours un \emph{shell} Unix dont l'invite
+est \shellprompt{}.}
+
+\textcolor{blue}{Compiler et exécuter}
+
+\shellin{ocamlc -o hello hello.ml}\\
+\shellin{./hello}\\
+\topout{Hello world!}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+
+\centerline{\textbf{Exemple de session interactive}}
+
+\shellin{ocaml}\\
+\topout{Objective Caml version 3.06}\\
+\topin{print\_string "Hello world!\symbol{92}n"}\\
+\topout{-~:~unit = ()}\\
+\topin{let euro x = floor~(100.0~*.~x /.~6.55957)~*.~0.01}\\
+\topout{val euro~:~float $\rightarrow$ float = $\topclos$}\\
+\topin{let baguette = 4.20}\\
+\topout{val baguette~:~float = 4.2}\\
+\topin{euro baguette}\\
+\topout{-~:~float = 0.64}\\
+\topin{\#quit}\\
+\shellprompt{}\ \_
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Usage du mode interprété}
+
+\textcolor{blue}{Comme une calculette}
+
+\textcolor{blue}{Mise au point de programmes}
+
+Évaluation des phrases du programme en cours de construction
+(utilisation conjointe d'un éditeur).
+
+\textcolor{blue}{Comme langage de script}
+
+\begin{tabular}{ll}
+    \shellin{ocaml < hello.ml}
+  & équivalent à la version interactive\\
+    \shellin{ocaml hello.ml} 
+  & idem, mais suppression des messages 
+\end{tabular}
+
+\textbf{Conseil} \emph{Le mode interactif aide à la mise au point, mais
+l'évaluation incrémentale des phrases peut être déroutante.}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Usage du mode interprété (suite et fin)}
+
+On peut également écrire un script directement exécutable en indiquant
+le chemin absolu de \textsf{ocaml} précédé de \texttt{\#!} sur la
+première ligne.
+
+\textcolor{blue}{Contenu de \textsf{hello}}
+
+\begin{semiverbatim}
+#!/usr/bin/ocamlrun /usr/bin/ocaml
+print_string "Hello world!"; print_newline ();;
+\end{semiverbatim}
+
+\textcolor{blue}{Sous le \emph{shell} Unix}
+
+\shellin{chmod +x hello}\\
+\shellin{./hello}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Mode Ocaml pour \textsf{emacs}}
+
+\textcolor{blue}{Installation}
+
+Insérer à la fin du fichier \verb+~+\textsf{/.emacs}:
+
+\begin{verbatim}
+; OCaml mode
+(setq auto-mode-alist
+      (cons '("\\.ml[iylp]?$" . caml-mode) auto-mode-alist))
+(autoload 'caml-mode "caml" "Major mode for editing Caml code." t)
+(autoload 'run-caml "inf-caml" "Run an inferior Caml process." t)
+(if window-system (require 'caml-hilit))
+\end{verbatim}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Mode Ocaml pour \textsf{emacs} (suite)}
+
+\textcolor{blue}{Mode compilé}
+
+Le mode OCaml est choisi automatiquement lors de l'ouverture d'un
+fichier ayant pour suffixe \textsf{.mli} ou \textsf{.ml}.
+
+Pour chaque compilation, sélectionnez \texttt{compile} dans le menu
+\textsl{Caml} (modifier s'il le faut la commande proposée).
+
+\textcolor{blue}{Mode interactif}
+
+Ouvrir un fichier \textsf{hello.ml}, y écrire des phrases, puis
+exécuter la commande \texttt{eval-phrase} dans le menu \textsl{Caml}
+(éventuellement appeler \texttt{start-subshell});
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Phrases et programmes}
+
+Une \emph{phrase} est définie par les cas suivants (où $e$ dénote une
+expression, $f$ une variable et $\ipat{p}$ un motif irréfutable), où
+\Xlet et \Xrec sont des mots-clés:
+
+\begin{tabular}{rll}
+    $\bullet$ 
+  & \textcolor{blue}{définition globale}
+  & \phrase{$\Xlet \,\, \ipat{p} = e$}\\
+    $\bullet$
+  & \textcolor{blue}{définition globale récursive}
+  & \phrase{$\Xlet \,\, \Xrec \,\, f = e$}
+%  & \phrase{$\textsf{let} \,\, \Xrec \,\, f_1 = e_1 \,\,
+%      \Xand \, \ldots \, \Xand \,\, f_n  = e_n$}
+\end{tabular}
+
+Les phrases sont terminées par «~\textsf{;;}~» et un \emph{programme}
+est une suite de phrases.
+
+La fonction d'une phrase est d'associer des expressions à des
+variables (une expression par variable): on parle de \emph{liaison}
+(p.ex. $f \mapsto e$). Un sous-programme définit donc un ensemble de
+liaisons appelé \emph{environnement}.
+
+%% {\small
+%% \begin{verbatim}
+%% (* Ceci est un commentaire (* et ceci un commentaire
+%% imbriqué *) sur plusieurs lignes *)
+%% \end{verbatim}
+%% }
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Les expressions}
+
+Une expression $e$ est définie \emph{récursivement} par les cas
+suivants:
+
+%%  \\
+%%     $\bullet$
+%%   & \textcolor{blue}{filtre}
+%%   & \textsf{match} $e$ \textsf{with} $p_1 \rightarrow e_1
+%%     \mid \ldots \mid p_n \rightarrow e_n$\\
+%%     $\bullet$
+%%   & \textcolor{blue}{définition locale}
+%%   & \textsf{let} $\ipat{p}_1 = e_1 \,\, \textrm{[}\Xand \,\,
+%%     \ipat{p}_2 = e_2 \ldots\textrm{]}$ \textsf{in} $e$\\ 
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{variable}
+  & $f, g, h$ (fonctions) et $x, y, z$ (autres). \\
+    $\bullet$
+  & \textcolor{blue}{fonction} (ou \textcolor{blue}{abstraction})
+  & $\Xfun \,\, \ipat{p} \rightarrow e$\\
+    $\bullet$
+  & \textcolor{blue}{appel} (ou \textcolor{blue}{application})
+  & $e_1 \,\, e_2$ \\ 
+    $\bullet$
+  & \textcolor{blue}{constante}
+  & \unit ou \Xtrue ou \textsf{0} ou \textsf{1.2}
+    ou \textsf{'a'} ou \textsf{"abc"} etc.\\
+    $\bullet$
+  & \textcolor{blue}{n-uplet}
+  & $e_1, \ldots, e_n$\\
+    $\bullet$
+  & \textcolor{blue}{conditionnelle}
+  & \Xif $e_0$ \Xthen $e_1$ \Xelse $e_2$\\
+    $\bullet$
+  & \textcolor{blue}{parenthèse}
+  & $(e)$\\
+    $\bullet$
+  & \textcolor{blue}{définition locale}
+  & $\Xlet \,\, \ipat{p}_1 = e_1 \,\, \Xin \,\, e_2$
+\end{tabular}
+
+\begin{tabular}{ll}
+    \remarques 
+  & Ce que nous écrivons joliment $\rightarrow$ s'écrit \verb+->+ en
+    \textsc{ascii}.\\
+  & Les parenthèses sont recommandées autour des n-uplets.
+\end{tabular}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les motifs irréfutables}
+
+Un \emph{motif irréfutable} $\ipat{p}$ est défini \emph{récursivement}
+par les cas suivants:
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{variable}
+  & $f, g, h$ (fonctions) et $x, y, z$ (autres). \\
+    $\bullet$
+  & \textcolor{blue}{unité}
+  & \unit\\
+    $\bullet$
+  & \textcolor{blue}{n-uplet}
+  & $\ipat{p}_1, \ldots, \ipat{p}_n$\\
+    $\bullet$
+  & \textcolor{blue}{parenthèse}
+  & $(\ipat{p})$\\
+    $\bullet$
+  & \textcolor{blue}{joker}
+  & {\Large \_}
+\end{tabular}
+
+\remarques
+
+\begin{itemize}
+
+  \item Les parenthèses sont recommandées autour des n-uplets.
+
+  \item Du point de vue syntaxique, mis à part le joker, les motifs
+  irréfutables sont des cas particuliers d'expressions.
+
+%%  \item Un joker est un cas spécial pour que la phrase ne crée pas
+%%  de liaison.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Un programme correct}
+
+\phrase{1+4}\\
+\phrase{let x = 0}\\
+\phrase{let id = fun x -> x}\\
+\phrase{let rec fact = fun n -> if n = x then 1 else n * fact (n-1)}\\
+\phrase{let (x) = 6}\\
+\phrase{x+1}
+
+%\remarques
+
+\begin{itemize}
+
+  \item Les variables commencent par une minuscule.
+
+  \item L'avant-dernière phrase redéfinit la liaison de \ident{x} qui
+  est finalement lié à \num{6} \emph{après cette phrase}. Avant
+  celle-ci, il est lié à \num{0} (cf. \ident{fact}).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Évaluation des fonctions récursives}
+
+Lorsque l'on évalue une fonction récursive, il faut changer un peu la
+règle vue page~\pageref{semantique_let_in}. Elle devient (différence
+en bleu):
+
+\begin{tabular}{rll}
+    $\bullet$
+  & $\Xlet \,\, \Xrec \,\, f = e_1 \,\, \Xin \,\, e_2$
+  & Évaluer $e_1$ en $v_1$ dans $\rho$;\\
+  &
+  & on doit avoir $v_1 = \langle\Xfun \,\, x \rightarrow
+  e,\rho'\rangle$;\\ 
+  & 
+  & évaluer $e_2$ en $v$ dans $(f \mapsto v_1) \oplus \rho$.
+\end{tabular}
+
+XXXXX A REVOIR XXXXX
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les opérateurs}
+
+Un opérateur est une fonction qui est représentée par un symbole
+plutôt que par un nom, par exemple $+$ et $||$.
+
+Les opérateurs sont \emph{infixes}, c.-à-d. qu'ils sont placés entre
+leurs arguments, contrairement aux fonctions qui sont \emph{préfixes},
+c.-à-d. placées avant leurs arguments. La nouvelle syntaxe des
+expressions est alors:
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{application complète d'opérateur}
+  & $e_1 \,\, \textsf{\&\&} \,\, e_2$ \ \ ou \ \ $\textsf{not} \,\, e$
+     \,\, etc.
+\end{tabular}
+
+Pour permettre un usage préfixe des opérateurs, nous étendons encore:
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{application}
+  & $f \,\, e$ \ \ ou \ \ $(r) \, e$
+\end{tabular}
+
+où $r$ est le symbole d'un opérateur. Ainsi \textcolor{blue}{\textsf{(+)} $e_1$
+$e_2$} est équivalent à \textcolor{blue}{$e_1$ \textsf{+} $e_2$}. Mais quel est
+le sens de \textcolor{blue}{$(+) \, e_1$}? Nous y reviendrons quand nous aborderons
+l'évaluation.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Types, constantes et primitives (suite)}
+
+\textcolor{blue}{Cas polymorphe}
+
+\begin{tabular}{|l|l|c|}
+\hline
+     tableaux
+   & \textsf{[|0;1;2|]}, \textsf{[|'a';'b'|]}
+   & \textsf{a.(i)} \ \textsf{a.(i) $\leftarrow$ v}\\
+    n-uplets
+  & \textsf{(1,2)}, \textsf{(true,false,true)}
+  & \\ %\textsf{fst} \, \textsf{snd}\\
+    listes
+  & \textsf{[1;2;3]}, \textsf{["a";"b"]}
+  & \textsf{List.hd} \ \textsf{List.tl}\\
+\hline
+\end{tabular}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Exemples de fonctionnelle}
+
+\textcolor{blue}{La composition de deux fonctions est une fonction}
+
+\phrase{let compose f g = fun x -> f (g (x))}
+
+\textcolor{blue}{Dérivation numérique}
+
+\topin{let der dx f = fun x -> (f(x+.dx) -. f(x)) /. dx}\\
+\topout{val der : float $\rightarrow$ (float $\rightarrow$ float)
+$\rightarrow$ float $\rightarrow$ float= $\topclos$} 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application}
+
+\textbf{Exercice 1} \ Quelle différence entre $f \, x \, y$, $(f \, x) \,
+y$, $f \, (x \, y)$ et $(f \, (x)) \, (y)$?
+
+\textcolor{blue}{Application partielle}
+
+On peut ne passer qu'un argument à une fonction qui en attend deux:
+
+\topin{let plus x y = x + y}\\
+\topout{val plus~:~int $\rightarrow$ int $\rightarrow$ int}\\
+\topin{let incr = plus 1}\\
+\topout{val incr~:~int $\rightarrow$ int}
+
+\remarque
+
+On aurait pu écrire \phrase{let plus = ( + )}\\
+Mettre des espaces autour du symbole d'opérateur:\\
+essayez \topin{let mult = (*)} \ et \ \topin{let mult = ( * )}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Les enregistrements}
+
+Ce sont les \textsf{record} et \textsf{struct} de Pascal et C.
+
+Il faut les déclarer avant de les utiliser.
+
+\begin{verbatim}
+type monnaie = {nom : string; valeur : float}
+let x = {nom = "euro"; valeur = 6.55957}
+let v = x.valeur
+\end{verbatim}
+
+\textcolor{blue}{Champs polymorphes}
+
+\topin{type 'a info = \{nom : string; info : 'a\}}\\
+\topout{type 'a info = \{nom : string; info : 'a\}}\\
+\topin{let proj = fun x $\rightarrow$ x.valeur}\\
+\topout{val proj : 'a info $\rightarrow$ 'a}
+
+\end{frame}
+
+
+% ---------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Les motifs}
+
+Un \emph{motif} $p$ est défini récusivement par les cas:
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{variable}
+  & $x,y,z$\\
+    $\bullet$
+  & \textcolor{blue}{constantes simples}
+  & \unit ou \Xtrue ou \textsf{0} ou \textsf{1.2}
+    ou \textsf{'a'} ou \textsf{"abc"} etc.\\
+    $\bullet$
+  & \textcolor{blue}{n-uplets et listes}
+  & $(p_1, \ldots, p_n)$ et $[p_1; \ldots; p_n]$\\
+    $\bullet$
+  & \textcolor{blue}{parenthèse}
+  & $(p)$\\
+    $\bullet$
+  & \textcolor{blue}{joker}
+  & \_
+\end{tabular}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Listes}
+
+Autre définition possible (avec un \textcolor{blue}{enregistrement}):
+
+{\small
+\begin{verbatim}
+type 'a liste = Vide | Cellule of 'a cell
+and 'a cell = {hd : 'a; tl : 'a liste}
+\end{verbatim}
+}
+
+\textcolor{blue}{Listes modifiables en place}:
+
+{\small
+\begin{verbatim}
+type 'a liste = Vide | Cellule of 'a cell
+and 'a cell = {mutable hd : 'a; mutable tl : 'a liste}
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Le jeu de cartes}
+
+Il combine types somme et types enregistrement.
+
+{\small
+\begin{verbatim}
+type carte = Carte of ordinaire | Joker
+and ordinaire = {couleur: couleur; figure: figure}
+and couleur = Coeur | Carreau | Pique | Trefle
+and figure = As | Roi | Reine | Valet | Simple of int
+\end{verbatim}
+}
+
+Définition de fonctions auxiliaires:
+
+\topin{let valet\_de\_pique = Carte \{couleur=Pique; figure=Valet\}}\\
+\topout{val valet\_de\_pique : carte = \{couleur=Pique;
+  figure=Valet\}}\\
+\topin{let carte f c = Carte \{couleur=c;figure=f\}\\
+let roi = carte Roi}\\
+\topout{val carte : figure $\rightarrow$ couleur $\rightarrow$ carte =
+  $\topclos$\\
+val roi : couleur $\rightarrow$ carte = $\topclos$}
+ 
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Filtrage des cartes}
+
+{\small
+\begin{verbatim}
+let valeur = function
+  Carte {figure = As}       -> 14
+| Carte {figure = Roi}      -> 13
+| Carte {figure = Reine}    -> 12
+| Carte {figure = Valet}    -> 11
+| Carte {figure = Simple k} -> k
+| Joker                     -> 0
+\end{verbatim}
+}
+
+Un motif peut capturer plusieurs cas:
+
+{\small
+\begin{verbatim}
+let petite = function
+  Carte {figure = Simple _} -> true
+| _ -> false
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les motifs}
+
+
+Ils peuvent
+
+\begin{itemize}
+  \item être emboîtés, contenir des produits et des sommes;
+
+  \item ne pas énumérer tous les champs d'un enregistrement;
+
+  \item lier une valeur intermédiaire avec le mot-clé \textsf{as};
+ 
+  \item n'imposer aucune contrainte (caractère \textsf{\_}).
+\end{itemize}
+
+\topin{function Carte (\{figure=Simple \_\} as z) -> z.couleur}\\
+\error{Warning: this pattern-matching is not exhaustive.\\
+Here is an example of a value that is not matched:\\
+Joker\\
+- : carte $\rightarrow$ couleur = $\topclos$}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+
+%
+\begin{frame}
+\frametitle{Le type option}
+
+\centerline{\textbf{À FAIRE}}
+
+\end{frame}
+
+------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Exemple: la commande Unix \textsf{cat}}
+
+Voici une version restreinte:
+
+\begin{verbatim}
+try
+  while true do
+    print_string (read_line()); 
+    print_newline ()
+  done
+with End_of_file -> ()
+\end{verbatim}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Solution de l'exercice~3}
+
+\begin{verbatim}
+let last = Array.length (Sys.argv) - 1 in
+  let print_args (first) =
+    begin
+      if first < last then print_string Sys.argv.(first) else ();
+      for i = first + 1 to last do
+        print_char ' '; print_string Sys.argv.(i)
+      done
+    end
+in if last > 0 && Sys.argv.(1) = "-n"
+   then print_args (2)
+   else begin print_args (1); print_newline () end
+\end{verbatim}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Solution de l'exercice~4}
+
+Programme \Xtrue: \phrase{exit 0}
+
+Programme \Xfalse: \phrase{exit 1}
+
+Pour les compiler:
+
+\shellin{ocamlc -o true true.ml}\\
+\shellin{ocamlc -o false false.ml}
+
+Pour les tester:
+
+\shellin{./true}\\
+\shellin{echo \$?}\\
+\shellin{./false}\\
+\shellin{echo \$?}
+
+\end{frame}
+
+---------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Tableaux}
+
+Les opérations sur les tableaux sont polymorphes, c'est-à-dire que
+l'on peut créer des tableaux \insist{homogènes} d'entiers, de booléens
+etc. 
+
+\begin{center}
+\begin{tabular}{rcl}
+  \textsf{[|0 ; 1 ; 3|]} & : & \textsf{int array}\\
+  \textsf{[| true ; false |]} & : & \textsf{bool array}
+\end{tabular}
+\end{center}
+
+Les indices de tableaux varient de $0$ à $n-1$, où $n$ est la taille
+du tableau.
+
+Les projections sont polymorphes: elles opèrent aussi bien sur des
+tableaux d'entiers que de booléens etc.
+
+\begin{center}
+\begin{tabular}{rcl}
+    \textsf{fun x $\rightarrow$ x.(0)} 
+  & :
+  & \textsf{$\alpha$ array $\rightarrow$ $\alpha$}\\
+    \textsf{fun t k x $\rightarrow$ t.(k) $\leftarrow$ x}
+  & :
+  & \textsf{$\alpha$ array $\rightarrow$ int $\rightarrow$ $\alpha$
+       $\rightarrow$ unit}
+\end{tabular}
+\end{center}
+
+Les tableaux sont toujours initialisés par \textsf{Array.create : int
+$\rightarrow \alpha \rightarrow \alpha$ array} où le premier
+argument est la taille et le second est la valeur initiale des cases.
+
+\end{frame}
+
+
+% ---------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Exemples de tableaux}
+
+\topin{let chr = Array.create 5 ' '}\\
+\topout{val chr : char array = [|' ';' ';' ';' ';' '|]}\\
+\topin{for i = 0 to 4 do chr.(i) $\leftarrow$ Char.chr (Char.code '0' + i) done}\\
+\topout{- : unit = ()}
+\topin{let chiffre_trois = chr.(3)}
+\topout{val chiffre_trois : char = '3'}
+
+Polymorphisme
+
+\topin{Array.set}\\
+\topout{- : 'a array $\rightarrow$ int $\rightarrow$ 'a $\rightarrow$ unit = \topclos}\\
+\topin{Array.set chr}\\
+\topout{- : int $\rightarrow$ char $\rightarrow$ unit = \topclos}\\
+
+\end{frame}
+
+------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\'{E}galité (suite)}
+
+En réalité il existe un second opérateur d'égalité:
+
+\textcolor{blue}{\'{E}galité physique} (notée \textsf{==}, et \textsf{!=} pour la
+différence)
+
+C'est l'égalité des emplacements mémoire.
+
+\topin{[1] != [1] \&\& \str{non} != \str{non}\\ \&\& (let x = ref 1 in x
+== (fun y -> y) x)}\\
+\topout{- : bool = true}
+
+Pour les valeurs non allouées (dans le tas), les deux égalités
+coïncident:
+
+\topin{1 == 1 \&\& 'a' == 'a'}\\
+\topout{- : bool = true}
+
+\end{frame}
+
+
+------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La ligne de commande}
+
+\textcolor{blue}{Les arguments passés à un exécutable}
+
+Ils sont placés dans le tableau \textsf{Sys.argv : string array}
+
+Le nom de la commande est compté.
+
+\textcolor{blue}{Exemple} \ La commande Unix \textsf{echo}:
+
+\begin{verbatim}
+for i = 1 to Array.length (Sys.argv) - 1 do
+  print_string Sys.argv.(1); print_char ' '
+done
+print_newline ()
+\end{verbatim}
+
+\textcolor{blue}{Exercice 3} \ Corrigez le programme précédent pour qu'il accepte
+l'option \str{-n} qui supprime l'impression de la fin de
+ligne. Supprimez également l'espace finale.
+
+\end{frame}
+
+------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Retourner un résultat}
+
+\textcolor{blue}{La fonction} \textsf{exit : int $\rightarrow$ unit}
+
+Elle arrête l'exécution du programme et retourne au système
+d'exploitation la valeur entière reçue en argument (modulo 256). Par
+défaut une exécution retourne 0 si elle se termine normalement, et une
+valeur non nulle autrement. (Sous Unix on peut observer la valeur de
+retour des commandes shell avec: \textsf{echo \$?})
+
+\textcolor{blue}{Exercice 4} \ \'{E}crire deux programmes \Xtrue et
+\Xfalse qui se comportent comme les commandes Unix
+\textsf{/bin/true} et \textsf{/bin/false} qui ne font rien et
+retournent respectivement 0 et 1.
+
+\end{frame}
+
+---------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les champs mutables}
+
+On peut déclarer des champs mutables dans les définitions
+d'enregistrements. 
+
+\textsf{type personne = \{nom : string; mutable age : int\}}
+
+permet de modifier (en place) la seconde composante, mais pas la
+première.
+
+\topin{let p = \{nom="Paul"; age=23\}}\\
+\topout{val p : personne = \{nom="Paul"; age=23\}}\\
+\topin{let anniversaire x = x.age <- x.age + 1}\\
+\topout{val anniversaire : personne $\rightarrow$ unit = \topclos}\\
+\topin{p.nom $\leftarrow$ "Pierre"}\\
+\error{Characters 0-17}\\
+\error{The label nom is not mutable}
+
+\end{frame}
+
+---------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Le type option}
+
+\textcolor{blue}{Les références sont toujours initialisées.} Parfois il est
+nécessaire de créer des références qui seront vraiment initialisées
+plus tard. Ce traitement doit être explicite.
+
+\begin{verbatim}
+type 'a option = None | Some of 'a  (* Prédéfini *)
+let statut = ref None
+\end{verbatim}
+
+Plus tard on pourra définir 
+
+\phrase{statut := Some 3}
+
+\textbf{Mais} le filtrage de \texttt{statut} doit toujours inclure le cas
+où il est indéfini (c-à-d. valant \texttt{None}):
+
+\phrase{match !statut with Some n -> n | None -> 0}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les entrées/sorties}
+
+\begin{tabular}{|rl|}
+\hline
+\multicolumn{2}{|c|}{Canaux prédéfinis}\\
+\hline
+\textsf{stdin} & \textsf{: in\_channel}\\
+\textsf{stdout} & \textsf{: out\_channel}\\
+\textsf{stderr} & \textsf{: out\_channel}\\
+\hline
+\end{tabular} \hspace*{5mm}
+\begin{tabular}{|rl|}
+\hline
+\multicolumn{2}{|c|}{Ouverture de canaux}\\
+\hline
+\textsf{open\_out} & \textsf{: string $\rightarrow$ out\_channel}\\
+\textsf{open\_in} & \textsf{: string $\rightarrow$ in\_channel}\\
+\textsf{close\_out} & \textsf{: out\_channel $\rightarrow$ unit}\\
+\textsf{close\_in} & \textsf{: in\_channel $\rightarrow$ unit}\\
+\hline
+\end{tabular}
+
+\begin{tabular}{|rl|}
+\hline
+\multicolumn{2}{|c|}{Lecture sur \textsf{stdin}}\\
+\hline
+\textsf{read\_line} & \textsf{: unit $\rightarrow$ string}\\
+\textsf{read\_int} & \textsf{: unit $\rightarrow$ int}\\
+\hline
+\end{tabular} \hspace*{5mm}
+\begin{tabular}{|rl|}
+\hline
+\multicolumn{2}{|c|}{\'{E}criture sur \textsf{stdout}}\\
+\hline
+\textsf{print\_string} & \textsf{: string $\rightarrow$ unit}\\
+\textsf{print\_int} & \textsf{: int $\rightarrow$ unit}\\
+\hline
+\end{tabular}
+
+\end{frame}
+
+------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les entrées/sorties (suite)}
+
+Pour plus de fonctionnalités, voir
+\begin{itemize}
+
+  \item la bibliothèque noyau (\emph{The Core Library});
+
+  \item la bibliothèque \textsf{Printf} avec laquelle on écrira,
+        comme en C:\\
+        \excerpt{Printf.printf \str{\%s \%d\symbol{92}n} \str{Année} 2003}
+
+\end{itemize}
+
+\end{frame}
+
+------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les champs mutables}
+
+On peut déclarer des champs mutables dans les définitions
+d'enregistrements.
+
+\phrase{type personne = \{nom : string; mutable age : int\}}
+
+\topin{let p = \{nom="Paul"; age=23\}}\\
+\topout{val p : personne = \{nom="Paul"; age=23\}}\\
+\topin{let anniversaire x = x.age <- x.age + 1}\\
+\topout{val anniversaire : personne $\rightarrow$ unit = $\topclos$}\\
+\topin{p.nom <- "Paul"}\\
+\error{Characters 0-17\\ The label nom is not mutable}
+
+\end{frame}
+
+------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les références}
+
+Le passage d'arguments se fait toujours par valeur.
+
+Il n'existe pas de constructions telles que \verb+&x+ ou \verb+*x+ en
+C qui retournent l'adresse à laquelle se trouve une valeur ou la
+valeur qui se trouve à une adresse: \insist{la valeur d'une variable
+n'est pas modifiable.}
+
+
+Mais on peut modifier les champs \emph{mutables} d'un
+enregistrement.
+
+\phrase{type $\alpha$ ref = \{mutable contents : $\alpha$\} (* Prédéfini *)}
+
+\begin{center}
+\begin{tabular}{l|l|l}
+  Langage C & OCaml & OCaml raccourci\\
+  \hline 
+  \verb+int x = 0;+ & \verb+let x = {contents=0}+ & \verb+let x = ref 0+\\
+  \verb|x = x + 1;| & \verb|x.contents <- x.contents + 1| &
+  \verb|x := !x + 1|
+\end{tabular}
+\end{center}
+
+\insist{Peu de valeurs ont besoin d'être des références en Caml.}
+
+\end{frame}

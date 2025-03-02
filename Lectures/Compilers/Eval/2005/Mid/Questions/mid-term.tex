@@ -1,0 +1,49 @@
+%%-*-latex-*-
+
+\documentclass[a4paper,11pt]{article}
+
+% Language
+%
+\usepackage[english]{babel}
+
+% Alternate font encoding
+%
+\usepackage{times}
+\usepackage{mathptmx}
+\renewcommand{\ttdefault}{cmtt}
+\renewcommand{\sfdefault}{cmss}
+
+% Maths
+%
+\usepackage{amssymb,amsmath,stmaryrd}
+
+% Miscellanea
+%
+
+% New environments and commands
+%
+
+% Input files
+%
+\input{token}
+\input{grammar}
+\input{trace}
+
+% ------------------------------------------------------------------------
+% Document
+%
+\author{Christian Rinderknecht}
+\date{25 October 2005}
+\input{title}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\input{question_01}
+\input{question_02}
+\input{question_03}
+
+\end{document}

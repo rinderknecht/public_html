@@ -1,0 +1,6 @@
+#include ".links"
+
+$HOME/Makefiles/Tools/xmllint.mk
+$HOME/Makefiles/Tools/saxon.mk
+$HOME/Makefiles/Tools/xml2ps.mk
+$HOME/Makefiles/Tools/html2ps.mk

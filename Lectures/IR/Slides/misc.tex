@@ -1,0 +1,77 @@
+%%-*-latex-*-
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{slide}
+\titre{Subset construction (continued)}
+
+\raggedslides[0pt]
+
+Why is \(2^n\) the number of subsets of a finite set of cardinal
+\(n\)?
+
+Let us note \(\dbinom{n}{k}\) the number of \myblue{combinations} of
+\(k\) elements taken among \(n\).
+
+For instance, \(\dbinom{5}{3} = 10\) because, assuming \(\{a, b, c, d,
+e\}\), we can form the subsets
+\[abc, \quad adb, \quad abe, \quad acd, \quad ace, \quad ade, \quad
+bcd, \quad bce, \quad bde, \quad cde
+\]
+
+In general, the choice of the first element can be made among \(n\),
+so \[\dbinom{n}{k} = n \dots\]
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% 
+\begin{slide}
+\titre{Subset construction (continued)}
+
+\raggedslides[0pt]
+
+The second element can be chosen among \(n-1\) remining ones, but the
+choice of the second element does not depend on the choice of the
+first one, so
+\[\dbinom{n}{k} = n \times (n-1) \times \dots\]
+Until we choose the \(k\)-th element:
+\[\dbinom{n}{k} = n (n-1) \dots (n - k + 1) \dots\]
+But since there is no order among the \(k\) elements (it is a set), we
+have to not count the repeated \myblue{permutations}.
+
+In the example above, \(abc, bca, cab\) should be counted as one
+combination, not three.
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% 
+\begin{slide}
+\titre{Subset construction (continued)}
+
+\raggedslides[0pt]
+
+How many permutations of \(k\) elements are they? The first element
+can be chosen among \(k\), the second among the \(k-1\) remaining ones
+etc. So the number of permutations of \(k\) elements is \(k (k-1)
+\dots 1 = k!\)
+
+So, finally, the number of combinations of \(k\) elements chosen among
+\(n\), without order is:
+\[
+\dbinom{n}{k} = \frac{n (n-1) \dots (n - k + 1)}{k (k-1) \dots 1} =
+  \frac{n!}{k! (n-k)!}
+\quad \text{where} \; n \geqslant k \geqslant 0
+\]
+So the number of subsets of a set of size \(n\) is the number of
+subsets of size 0 plus the number of subsets of size 1 plus
+etc. Formally, it is
+\[
+\binom{n}{0} + \binom{n}{1} + \dots + \binom{n}{n}=
+\sum_{k=0}^{n}{\binom{n}{k}}
+\]
+
+\end{slide}
+

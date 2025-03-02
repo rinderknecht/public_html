@@ -1,0 +1,76 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Queues}
+
+There is another common and useful linear data structure call
+\textbf{queue}. 
+
+\bigskip
+
+As the stack, it is fairly intuitive, since we experience the concept
+when we are waiting at some place to get some goods or service.
+
+\bigskip
+
+Let us note \proc{Empty} the empty queue. This is the same name as for
+the empty stacks, because it is a convenient choice. When the context
+is clear, there is no need to be more precise, otherwise we can write
+\proc{Stack}.\proc{Empty} for noting empty stacks and
+\proc{Queue}.\proc{Empty} for empty queues.
+
+\bigskip
+
+Let us note \(\proc{Put} (i, q)\) the queue made by adding item
+\(i\) at the end of queue \(q\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Queues (cont)}
+
+Let us define an operation on queues, named dequeuing, which consists
+in returning the next available item in the queue and a new queue
+without this item.
+
+\bigskip
+
+That is to say, \(\proc{Get} (q)\) is a pair \((q', i)\).
+\begin{mathpar}
+\inferrule
+{}
+{\proc{Get} (\proc{Put} (i, \proc{Empty})) \rightarrow
+  (\proc{Empty}, i)}
+\and
+\inferrule
+{\proc{Get} (q) \rightarrow (q_1, i_1)}
+{\proc{Get} (\proc{Put} (i, q)) \rightarrow (\proc{Put}
+  (i, q_1), i_1)}
+\end{mathpar}
+
+\end{frame}
+
+%% % ------------------------------------------------------------------------
+%% %
+%% \begin{frame}
+%% \frametitle{Stacks/Queues (cont)}
+
+%% We can give an alternative definition by swapping the components of
+%% the pair:
+%% \begin{mathpar}
+%% \inferrule
+%% {}
+%% {\proc{Get} (\proc{Put} (i, \proc{Empty})) \rightarrow (i,
+%%   \proc{Empty})}
+%% \and
+%% \inferrule
+%% {\proc{Get} (q) \rightarrow (i_1, q_1)}
+%% {\proc{Get} (\proc{Put} (i, q)) \rightarrow (i_1, \proc{Put}
+%%   (i, q_1))}
+%% \end{mathpar}
+
+%% \end{frame}

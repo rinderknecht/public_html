@@ -1,0 +1,20 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-tree,pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=1cm,nodesep=2pt]{\TR{\texttt{add}}}{
+  \TR{\texttt{5}}
+  \pstree{\TR{\texttt{mult}}}{
+  \TR{\texttt{X}}
+  \TR{\texttt{6.3}}
+  }
+}
+\endTeXtoEPS
+
+\end{document}
+

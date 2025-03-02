@@ -1,0 +1,159 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{ae,aecompl}
+
+\input{trace}
+
+\title{Examen de programmation fonctionnelle en Objective Caml}
+\author{Christian Rinderknecht}
+\date{Mardi 22 avril 2003}
+
+\begin{document}
+
+\maketitle
+
+
+Les exercices peuvent \^etre trait\'es de fa\c{c}on ind\'ependante.
+Bar\^eme: A:3, B:3, C:10, D:4.
+
+\smallskip
+
+\textbf{Exercice A:}
+Donner le type de chacune des expressions suivantes:
+
+\noindent
+\textbf{A.1}: \verb"fun (x,y) -> (y+1, not x)"\\
+\textbf{A.2}: \verb"fun p -> (snd p, fst p)"\\
+\textbf{A.3}: \verb"fun f -> fun (x,y) -> f(x+1) + f y"\\
+\textbf{A.4}: \verb"fun f -> fun (x,y) -> (f(x+1), f y)"\\
+\textbf{A.5}: \verb"fun f -> fun (x,y) -> (f x, f y)"\\
+\textbf{A.6}: \verb"fun f -> fun (x,y) -> (f x + 1, f y)"
+%A.7: \verb"fun (f,g) -> fun x -> (f x, g x)"\\
+
+\medskip
+
+\textbf{Exercice B:}
+Pour chacun des types suivants, trouver une expression Caml
+poss\'edant ce type:
+
+\noindent
+%B.1: \verb"(int * int) -> bool"\\
+\textbf{B.1}: \verb"int -> bool -> int"\\
+\textbf{B.2}: \verb"int -> (bool * int)"\\
+\textbf{B.3}: \verb"int list -> bool list"\\
+\textbf{B.4}: \verb"('a * 'b) list -> 'a list"\\
+\textbf{B.5}: \verb"('a * 'b) list -> 'b -> 'a"\\
+\textbf{B.6}: \verb"'a list -> 'b list -> ('a * 'b) list"
+
+\medskip
+
+\textbf{Exercice C:}
+
+Un arbre peut repr\'esenter une collection de mots de sorte qu'il soit
+tr\`es efficace de v\'erifier si une s\'equence donn\'ee de
+caract\`eres est un mot valide ou pas. Dans ce type d'arbre, appel\'e
+un {\em{trie}}, les arcs ont une lettre associ\'ee, chaque n{\oe}ud
+possède une indication si la lettre de l'arc entrant est une fin de
+mot et la suite des mots partageant le m\^eme d\'ebut. La figure
+suivante montre le \emph{trie} des mots «~le~», «~les~», «~la~» et
+«~son~», l'astérisque marquant la fin d'un mot:
+\begin{center}
+\includegraphics[scale=0.8]{trie.eps}
+\end{center}
+\noindent
+On utilisera le type Caml suivant pour implanter les {\em{tries}}:
+
+\begin{verbatim}
+type trie = 
+  { mot_complet : string option; suite : (char * trie) list }
+\end{verbatim}
+
+Le type prédéfini \verb+type 'a option = None | Some of 'a+ sert à
+représenter une valeur éventuellement absente. Chaque n{\oe}ud d'un
+\emph{trie} contient les informations suivantes:
+
+\begin{itemize}
+  \item Si le n{\oe}ud marque la fin d'un mot {\tt s} (ce qui
+        correspond aux n{\oe}uds étoilés de la figure), alors le champ
+        {\tt mot\_complet} contient {\tt Some s}, sinon ce champ
+        contient {\tt None}.
+
+  \item Le champ {\tt suite} contient une liste qui associe les
+        caractères aux n{\oe}uds.
+\end{itemize}
+
+\medskip
+
+\noindent
+\textbf{C.1}: Écrire la valeur Caml de type \verb+trie+ correspondant
+à la figure ci-dessus.\\
+\textbf{C.2}: Écrire une fonction \texttt{compte\_mots} qui compte le
+nombre de mots dans un \emph{trie}.\\
+\textbf{C.3}: Écrire une fonction \texttt{select} qui prend en
+argument un \emph{trie} et une lettre, et renvoie le \emph{trie}
+correspondant aux mots commençant par cette lettre. Si ce \emph{trie}
+n'existe pas (parce qu'aucun mot ne commence par cette lettre), la
+fonction devra lancer une exception {\tt Absent}, que l'on
+définira. On utilisera la fonction prédéfinie \texttt{List.assoc} pour
+effectuer la recherche dans la liste des sous-arbres \verb+suite+.\\
+\textbf{C.4}: Écrire une fonction \texttt{recherche} qui v\'erifie si
+une cha\^{\i}ne de caract\`eres est un mot dans un {\em trie}
+donn\'e. La fonction devra prendre un argument supplémentaire {\tt i},
+qui représente la position dans le mot associée au n{\oe}ud courant.
+Le i\ieme{} caractère d'une chaîne {\tt s} s'obtient en écrivant {\tt
+s.[i]}, le premier caractère étant numéroté $0$. La longueur de la
+chaîne {\tt s} s'écrit {\tt String.length s}. On emploiera la fonction
+\texttt{select}.
+
+\medskip
+
+\textbf{Exercice D:}
+
+\noindent
+On s'int\'eresse aux expressions bool\'eennes \'ecrites \`a l'aide des
+connecteurs \texttt{or} («~ou~» bool\'een), \texttt{and} («~et~»
+bool\'een), \texttt{not} (n\'egation bool\'eenne), des constantes
+\texttt{true} et \texttt{false}, et de variables.  Par exemple: $(x
+~or~ y) ~and~ not(x ~and~ y)$.
+
+\noindent
+\textbf{D.1}: D\'efinir un type Caml \texttt{bool\_exp} pour ces
+expressions.
+
+\noindent
+\textbf{D.2}: Écrire une fonction \texttt{eval} permettant d'\'evaluer
+de telles expressions.Cette fonction devra prendre en param\`etre un
+environnement associant les noms de variables à leur valeur.
+
+\noindent
+\textbf{D.3}: 
+Les connecteurs bool\'eens consid\'er\'es satisfont en particulier
+les identit\'es
+\begin{align*}
+not(a ~or~ b)  & = not(a) ~and~ not(b)\\
+not(a~ and~ b) & = not(a)~ or~ not(b)\\
+not(not(a))    & = a\\
+not(true)      & = false\\
+not(false)     & = true
+\end{align*}
+
+\noindent
+Ces identit\'es permettent de transformer toute expression bool\'eenne
+en une expression \'equivalente o\`u les n\'egations ne sont
+appliqu\'ees qu'\`a des variables. Par exemple, l'expression $not(x
+~and~ (y~ or~ not(z)))$ peut \^etre transform\'ee en $not(x) ~or~
+not(y ~or ~not(z)))$ puis en $not(x) ~or~ (not(y)~ and ~not(not(z))))$
+et enfin en $not(x) ~or~ (not(y) ~and~ z)$.
+
+\noindent
+Écrire une fonction Caml \texttt{normalise} qui r\'ealise cette
+transformation.
+
+\end{document}

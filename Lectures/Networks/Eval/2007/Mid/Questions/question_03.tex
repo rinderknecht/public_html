@@ -1,0 +1,15 @@
+We consider sending voice from host \(A\) to host \(B\) over a
+packet\hyp{}switched network (for example, Internet phone). Host \(A\)
+converts analog voice to a digital \textbf{64~Kbps} bit stream on the
+fly. Host \(A\) then groups the bits into a \textbf{48\hyp{}byte}
+packets. There is one link between host \(A\) and \(B\); its
+transmission rate is \textbf{1~Mbps} and its propagation delay is
+\textbf{2~msec}.
+
+As soon as host \(A\) gathers a packet, it sends it to host \(B\). As
+soon as host \(B\) receives an \emph{entire} packet, it converts the
+packet's bits into an analog signal.
+
+\textbf{Question.} How much time elapses from the time a bit is
+created (from the original analog signal at host \(A\)) until the bit
+is decoded (as part of the analog signal at host \(B\))?

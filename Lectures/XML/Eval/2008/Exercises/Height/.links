@@ -1,0 +1,13 @@
+#include "../.common_links"
+
+../common.mk.in
+
+toc.xml height1.xml
+toc.xml height2.xml
+toc.xml height3.xml
+toc.xml height4.xml
+
+book.dtd height1.dtd
+book.dtd height2.dtd
+book.dtd height3.dtd
+book.dtd height4.dtd

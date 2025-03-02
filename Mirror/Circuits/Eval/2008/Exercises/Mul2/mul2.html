@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Multiplication of two binary numbers</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Multiplication of two binary numbers</h2>
+
+<p><strong>Question.</strong> The purpose of this exercise is to
+  write a C program which reads on the command-line two strings
+  representing two positive integers in binary form and multiply them,
+  then outputs the result. The two numbers must have equal number of
+  bits and if the result is longer than the inputs, a fatal error
+  is issued, called `overflow'. Otherwise, the result has the same
+  length as the input.
+</p>
+
+<strong>Hints.</strong>
+<ul>
+
+  <li>The input must be checked in the <tt>main</tt> function, before
+  the computation takes place, in the <tt>mul2</tt> function.</li>
+  
+  <li>The leftmost zeros must not be removed because we use overflow:
+  if more bits are needed for the output, just add enough zeros to
+  left of the input.</li>
+
+  <li>The signature of <tt>mul2</tt> must be <tt>char* mul2(const char
+  p[], const char q[], int len)</tt>, where
+  <tt>len</tt> is the length of the bit strings <tt>p</tt> and
+  <tt>q</tt>.</li>
+
+  <li>Only one carry is necessary: <tt>int carry = 0;</tt></li>
+
+  <li>Use <tt>int</tt> everywhere instead of <tt>unsigned
+  int</tt>. This avoids problem when mixing signed and unsigned
+  integers, with the danger of overflow when C is implicitly casting
+  unsigned into signed. Also, this avoids the underflow when an
+  unsigned number is used in the test of a loop, and it goes down to
+  -1.</li>
+
+  <li>Use <tt>for</tt> loops. They make the code shorter.</li>
+
+  <li>To ease debugging, reuse the function <tt>from2to10</tt> as
+  in a previous homework and print, after the result, the operation
+  in decimal. For instance,<br/>
+  <tt>$ ./mul2 000111 000100<br/>
+      011100 (7 * 4 = 28)
+  </tt>
+</li>
+
+</ul>
+
+<p><strong>Answers.</strong> <a href="./mul2.c">Here</a> is an answer
+  using signed integers. From it, <a href="./mul2u.c">a version using
+  unsigned integers</a> can be derived mechanically.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

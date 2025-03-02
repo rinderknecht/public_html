@@ -1,0 +1,13 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+$HOME/LaTeX/Packages/mathpartir/mathpartir.sty
+
+../../../TP1/Sujet/ast.ml
+../../Sujet/doc/tp2-questions.tex
+../eval.ml
+../main.ml
+
+$HOME/LaTeX/TeX/commands.tex
+$HOME/LaTeX/TeX/ocaml_syntax.tex
+$HOME/LaTeX/TeX/ocw-redef.tex
+
+$HOME/LaTeX/TeX/trace.tex

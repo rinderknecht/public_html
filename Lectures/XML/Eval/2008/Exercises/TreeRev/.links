@@ -1,0 +1,15 @@
+#include "../.common_links"
+
+../common.mk.in
+
+toc_simple.xml flip1.xml
+toc.xml flip2.xml
+toc.xml flip3.xml
+toc.xml flip4.xml
+toc.xml flip5.xml
+
+book_simple.dtd flip1.dtd
+book.dtd flip2.dtd
+book.dtd flip3.dtd
+book.dtd flip4.dtd
+book.dtd flip5.dtd

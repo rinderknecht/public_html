@@ -1,0 +1,424 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{enumerate}
+
+  \item Computer Networks and the Internet
+
+    \begin{itemize}
+
+      \item What is the Internet?
+
+      \item The network edge
+
+      \item The network core
+
+      \item Network access and physical media
+
+      \item ISPs and Internet backbones
+
+      \item \textbf{Delay and loss in packet-switched networks}
+ 
+      \item Protocol layers and their service models
+
+    \end{itemize}
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Delay and loss in packet-switched networks}
+
+Let us come back to the packets that travel a packet-switched network
+like the Internet.
+
+\bigskip
+
+When a packet crosses a link and a router, it suffers different kinds
+of delays: 
+\begin{itemize}
+
+  \item \textbf{nodal processing delay}, 
+
+  \item \textbf{queuing delay},
+
+  \item \textbf{transmission delay},
+ 
+  \item \textbf{propagation delay}. 
+
+\end{itemize}
+All together, they give the \textbf{total nodal delay}.
+
+\bigskip
+
+Let us now look with more attention to each of these delays, because
+it is necessary if we want to acquire a deep understanding of packet
+switching.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Delay and loss in packet-switched networks/Types of delay}
+
+\begin{itemize}
+
+  \item \textbf{Processing delay} is the time needed to examine the
+    packet's header and find where to direct the packet. Also it can
+    include the time for checking for bit-level errors in the packet.
+
+    \item \textbf{Queuing delay} happens when some earlier-arriving
+      packet is already waiting in the queue, else it is 0.
+
+    \item \textbf{Transmission delay} is the time needed to ``push''
+      the packet out on the link (size of the packet/rate of the
+      link).
+
+    \item \textbf{Propagation delay} is the time needed to propagate
+      a signal on the link (distance A-B/signal speed).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Delay and loss in packet-switched networks/Types of delay}
+
+\begin{center}
+  \includegraphics[scale=0.35]{01-18.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Delay and loss in packet-switched networks/Types of delay}
+
+What is the difference between transmission delay and propagation
+delay?
+
+\bigskip
+
+Transmission delay depends on the packet's length (measured in bits)
+and the bit rate of the link (measured in bits per seconds), but has
+nothing to do with the distance between two routers.
+
+\bigskip
+
+Propagation delay is the time it takes a bit to propagate from one
+router to the next; it is a function of the distance between to
+adjacent routers, but has nothing to do with the packet's length or
+the transmission rate of the link.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Queuing delay and packet loss}
+
+The delay which can be the highest and is the most difficult to assess
+is the queuing delay. 
+
+\bigskip
+
+The main reason is because it depends from
+packet to packet, contrary to the other kinds of delays. For instance,
+if ten packets arrive at very short intervals to an empty queue, the
+first one will suffer no queuing delay but the tenth will have to wait
+in the queue the other have been retransmitted.
+
+\bigskip
+
+That is why the usual tool to evaluate the queuing delay are
+\textbf{statistical models}, including average queuing delay and the
+probability that the queuing delay exceeds some specified value.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Queuing delay and packet loss (cont)}
+
+The queuing delay depends on
+\begin{itemize}
+
+  \item the rate at which traffic arrives at the queue,
+
+  \item the transmission rate of the (out-going) link,
+
+  \item the nature of the incoming traffic:
+
+  \begin{itemize}
+
+    \item is it periodical?
+
+    \item does it arrives in bursts?
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Queuing delay and packet loss (cont)}
+
+Let us assume that the average rate at which packets reach the queue
+is \(a\). It is measured in packets/sec.
+
+\bigskip
+
+Let \(R\) be the transmission rate, measured in bits/sec, which is the
+rate at which bits are pushed in the out-going link.
+
+\bigskip
+
+Suppose that all packets are \(L\) bits long.
+
+\bigskip
+
+Then the average rate at which bits arrive at the queue is \(La\).
+
+\bigskip
+
+Assume the queue is unbounded.
+
+\bigskip
+
+The ratio \(La/R\), called the \textbf{traffic intensity}, plays an
+important role in estimating the growth of the queue.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Queuing delay and packet loss (cont)}
+
+If \(La/R > 1\) then the flow of incoming bits exceeds the capacity of
+the out-going link: the queue will grow forever. So the most important
+rule here is: \emph{design your network so that the traffic intensity
+is no greater than 1}.
+
+\bigskip
+
+If \(La/R \leqslant 1\) then the nature of the arriving traffic
+impacts the queuing delay. For example, if packets arrive
+periodically, one each \(L/R\) second, then every packet will arrive
+at an empty queue and there will be no queuing delay (this is the best
+case).
+
+\bigskip
+
+If packets arrive in bursts, i.e., if the number of packets per second
+varies, the delay can be significant (especially if the variation is
+not linear).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Queuing delay and packet loss (cont)}
+
+In practice, periodic arrival or linear bursts are improbable: the
+arrival is \emph{random}. 
+
+\bigskip
+
+Thus the quantity \(La/R\) is not enough to fully characterise the
+queuing delay, but it helps you to grasp the concept.
+
+\bigskip
+
+The curve in the facing column gives you more intuition on the average
+queuing delay. The important thing to note is that a little variation
+on \(La/R\), when this quantity is close to 1, may lead to a huge
+augmentation of the average delay.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Queuing delay and packet loss (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.40]{01-19.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Queuing delay and packet loss (cont)}
+
+In our previous presentation, we assumed an unbounded queue,
+i.e., allowing an infinite number of packets to remain in the
+queue. That is why the traffic intensity could approach~1 at any
+distance.
+
+\bigskip
+
+But, in practice, routers have a finite memory, so a packet can arrive
+and find a full queue. In this case the packet is dropped, i.e., it is
+lost.
+
+\bigskip
+
+The packet losses increase as the traffic intensity increases.
+
+\bigskip
+
+Therefore, performance at a router is not only measured in terms of
+traffic intensity but also of packet loss.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Queuing delay and packet loss (cont)}
+
+Until now we considered the delay at one node (a router). What about
+the \textbf{end-to-end delay}, that is the cumulated delay of each
+node from the source to the destination? Assume there are \(N\)
+routers along the path. Let us suppose that there is no congestion
+(queuing delay is negligible).
+\begin{itemize}
+
+  \item Let \(d_{\text{proc}}\) be the processing delay at each node
+  (including the source),
+
+  \item \(d_{\text{prop}}\) the propagation delay of each link,
+
+  \item the transmission rate of each node is \(R\) bits/sec.
+
+\end{itemize}
+The nodal delays accumulate and give an end-to-end delay
+\[d_{\text{end-end}} = N (d_{\text{proc}} + d_{\text{trans}} +
+d_{\text{prop}})\]
+where \(d_{\text{trans}} = L/R\), where \(L\) is the packet size.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Delays and routes in the Internet}
+
+\textsf{Traceroute} is a simple program that can run on any Internet
+host. It is given a destination host and this program sends special
+packets to this destination. Along their way, the packets pass through
+several routers, which send back to the source a message containing
+their name (if any) and their address, called \textbf{IP address} and
+whose structure we will discuss later.
+
+\bigskip
+
+This allows \textsf{Traceroute} to reconstruct the path and to show it
+to the end-user.
+
+\bigskip
+
+Imagine there are \(N\) routers along the path. Then the source will
+send \(N\) special packets, all addressed to the destination. They are
+numbered from 1 to \(N\) and sent by increasing numbers. The \(n\)-th
+router receives the \(n\)-th packet, destroys it and sends an
+identification message back to the source.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Delays and routes in the Internet (cont)}
+
+The source records the elapsed time between the moment it sent a
+packet and the moment the corresponding return message is received,
+coming from a router. This delay is called \textbf{round-trip delay}.
+
+\bigskip
+
+\textsf{Traceroute} repeats the experiment three times, because the
+round-trip delay can vary due to queuing delays, so the user gets an
+idea of the delay variation.
+
+\bigskip
+
+The web site \url{http://www.traceroute.org} provides a list of links
+to web sites, classified by countries, which provide an interface to
+\textsf{Traceroute}. 
+
+\bigskip
+
+This way you can experiment by giving the address or name of a
+destination and the interface will report the path from the host
+running the web site to the destination host, as given by
+\textsf{Traceroute}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Delays and routes in the Internet (cont)}
+
+Here is an example of output of \textsf{Traceroute} from a host in the
+Faroe Islands (Denmark) to a host in France (at INRIA):
+{\tiny
+\begin{verbatim}
+traceroute to pauillac.inria.fr (128.93.11.35), 30 hops max, 38 byte packets
+ 1  L4-0-0.bone.olivant.fo (212.55.32.1)  0.977 ms  0.612 ms  0.766 ms
+ 2  feth1-0-0.utland1.bone2.olivant.fo (212.55.32.98)  1.108 ms  1.234 ms  1.601 ms
+ 3  ser4-0.45M.ldn2nxi2.ip.tele.dk (195.215.170.85)  30.455 ms  30.676 ms  29.567 ms
+ 4  ge1-2-2.1000M.ldn2nxg1.ip.tele.dk (195.249.13.121)  30.745 ms  30.134 ms  31.431 ms
+ 5  pos6-0.2488M.asd9nxg1.ip.tele.dk (195.249.2.134)  37.281 ms  37.332 ms  36.983 ms
+ 6  Ge7-1.AMSBB1.Amsterdam.opentransit.net (193.251.254.9)  37.103 ms  37.334 ms  37.726 ms
+ 7  * * *
+ 8  * * *
+ 9  * * *
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Delays and routes in the Internet (cont)}
+
+{\tiny
+\begin{verbatim}
+10  P14-0.PASCR2.Pastourelle.opentransit.net (193.251.128.105) 58.415 ms  57.089 ms  57.764 ms
+11  193.51.185.2 (193.51.185.2)  57.802 ms  61.880 ms  58.485 ms
+12  inria-g3-1.cssi.renater.fr (193.51.180.174)  60.999 ms  58.497 ms  57.900 ms
+13  royal-inria.cssi.renater.fr (193.51.182.73)  58.860 ms  63.028 ms  58.961 ms
+14  193.48.202.2 (193.48.202.2)  63.017 ms  58.502 ms  57.889 ms
+15  rocq-gw-bb.inria.fr (192.93.1.100)  60.721 ms  61.437 ms  61.078 ms
+16  pauillac.inria.fr (128.93.11.35)  60.759 ms  62.540 ms  61.703 ms
+\end{verbatim}
+}
+The domain extensions (\texttt{.fo}, \texttt{.dk}, \texttt{.fr}) help
+you to follow the packets along the corresponding countries. Note that
+some routers have no name (only address). Routers 7, 8 and 9 do not
+send back their identification messages, that is why
+\textsf{Traceroute} prints an asterisk for each try.
+
+\end{frame}

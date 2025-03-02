@@ -1,0 +1,10 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/LaTeX/TeX/trace.tex
+
+../Questions/question_01.tex
+../Questions/question_02.tex
+../Questions/question_03.tex
+../Questions/question_04.tex
+../Questions/question_05.tex
+../Questions/mid-term.tex mid-term-QA.tex

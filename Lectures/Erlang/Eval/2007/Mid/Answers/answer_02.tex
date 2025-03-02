@@ -1,0 +1,21 @@
+\paragraph{Answer.} In the one-stack implementation, every time
+we dequeue, we must traverse all the items in the stack. In the
+two-stack implementation, we only traverse the second stack, which is
+always shorter or equal than the stack in the first case.
+\begin{enumerate}
+
+  \item The best case for the one-stack implementation is when the
+    queue contains only one item, and the best case for the two-stack
+    implementation is when the second stack is not empty: any
+    dequeuing then has a constant cost (a pop).
+
+  \item All configurations of the one-stack implementation is the
+    worst case: the cost of dequeuing is always the size of the stack,
+    whilst the worst case for the two-stack implementation is when the
+    second stack is empty, in which case the first stack has to be
+    reversed, so the total cost is the number of items in the queue
+    (which are then all in the first stack).
+
+\end{enumerate}
+As a conclusion, the two-stack implementation is more efficient.
+

@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Shuffling Sequences</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Shuffling Sequences</h2>
+
+<p><strong>Aim.</strong> The purpose of this exercise is to write an
+XSLT transform which takes as input two sequences of elements and
+output one sequence containing the items of each sequence shuffled,
+i.e., the first item of the first sequence comes out first, the first
+item of the second sequence comes out second, the second item of the
+first sequence comes out third, the second item of the second sequence
+comes out fourth etc. A useful analogy is shuffling a deck of cards
+with two hands.</p>
+
+<p><strong>Question 1.</strong> The problem is actually
+underspecified: nothing is said about what to do if the two sequences
+are not of the same length. Let us assume first that they are of the
+same length, in which case this is called a <em>perfect
+shuffle</em>. If the first items of both sequences are taken out
+<em>at the same time</em>, then comes a moment when either both
+sequences are empty or only one of them is. In the latter case, a
+perfect shuffle ignores the dangling items.</p>
+
+<strong>Examples 1.</strong> The perfect shuffle
+transforms
+<ul>
+  <li> <a href="./persons1.xml">this</a> input
+  into <a href="./shuffle1_1.xml">that</a> output;</li>
+  <li> <a href="./persons2.xml">this</a> input
+  into <a href="./shuffle2_1.xml">that</a> output;</li>
+  <li> <a href="./persons3.xml">this</a> input
+  into <a href="./shuffle3_1.xml">that</a> output.</li>
+</ul>
+You need to download the <a href="./persons.dtd">DTD</a> to run these
+examples.
+
+<p><strong>Answer 1.</strong> Consider this <a
+   href="./shuffle1.xsl">solution</a>.</p>
+
+<hr/>
+
+<p><strong>Question 2.</strong> The second possibility, when
+  confronted to dangling items is to append them to the already
+  outputted items.</p>
+
+<strong>Examples 2.</strong> The second method transforms
+<ul>
+  <li> <a href="./persons1.xml">this</a> input
+  into <a href="./shuffle1_2.xml">that</a> output;</li>
+  <li> <a href="./persons2.xml">this</a> input
+  into <a href="./shuffle2_2.xml">that</a> output;</li>
+  <li> <a href="./persons3.xml">this</a> input
+  into <a href="./shuffle3_2.xml">that</a> output.</li>
+</ul>
+
+<p><strong>Answers 2.</strong> Consider this <a
+   href="./shuffle2.xsl">solution</a> which extracts two items at a
+  time and <a href="./shuffle3.xsl">this other one</a> which extracts
+  only one item at each call</p>
+
+<hr/>
+
+<p><strong>Question 3 (Threesome Shuffling).</strong> Write a
+  shuffling that operates on <em>three</em> sequences,
+  like <a href="./shuffle4.xml">this input</a>. The order of shuffling
+  is 3-1-2, i.e., first, pick the first element of the third sequence;
+  second, pick the first element of the first sequence; third, pick
+  the first element of the second sequence. When trying to pick up and
+  element on an empty sequence, skip to the next sequence until all
+  the sequences are empty. The result with the previous input
+  is <a href="./shuffle4_out.xml">this output</a>.
+</p>
+
+<p><strong>Answer 3.</strong> <a href="./shuffle4.xsl">This</a> is a
+solution.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

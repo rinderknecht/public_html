@@ -1,0 +1,579 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item Application layer
+
+  \begin{itemize}
+
+    \item Principles of application layer protocols
+
+    \item The Web and \textsc{http}
+
+    \item File transfer: \textsc{ftp}
+
+    \item Electronic mail in the Internet
+
+    \item \textbf{DNS --- The Internet's directory service}
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Internet Directory Service (\textsc{dns})}
+
+The internet protocols use \textbf{IP addresses} to identify
+hosts. They are a series of numbers, between 0 and 255, separated by
+periods like \url{202.30.38.143}.
+
+But these numbers have are difficult to remember, contrary to
+\textbf{host names}, which are made of a series of words separated by
+periods, like \url{mail.konkuk.ac.kr}.
+
+The internet provides an application-layer service that allows
+applications to find the IP address of a host from its name: the
+\textbf{Domain Name Service} (\textbf{\textsc{dns}}). 
+
+Because of its functional similarity with the telephone directories,
+which map subscri\-bers' names to their phone number, this service is
+also called \textbf{Internet Directory Service}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Internet Directory Service (\textsc{dns}) (cont)}
+
+The \textsc{dns} is
+\begin{itemize}
+
+  \item a client/server protocol;
+
+  \item a distributed database implemented in a hierarchy of
+  \textbf{name servers};
+
+  \item an application-layer protocol that allows hosts and name
+  servers to communicate in order to provide the translation service.
+
+\end{itemize}
+
+Name servers are often machines running the UNIX operating system and
+the Berkeley Internet Name Domain (BIND) software.
+
+The \textsc{dns} protocol runs over \textsc{udp} and uses port 53. 
+
+\textsc{dns} is commonly used by other application-layer protocols, like
+\textsc{http}, \textsc{smtp} and \textsc{ftp}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Internet Directory Service (\textsc{dns}) (cont)}
+
+When a user wants to retrieve the web page whose URL is
+\url{http://konkuk.ac.kr/index.html}, 
+\begin{enumerate}
+
+  \item its browser extracts the hostname \url{konkuk.ac.kr} from the URL,
+
+  \item passes it to the client side of the \textsc{dns} application,
+
+  \item this application sends to a \textsc{dns} server the hostname,
+
+  \item after some delay, it receives back the IP address of the
+    referred host,
+
+  \item this IP address is returned to the browser,
+
+  \item the browser opens a \textsc{tcp} connection to the host and to
+    the \textsc{http} server process located there.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Internet Directory Service (\textsc{dns}) (cont)}
+
+DNS provides a few other important services in addition to translating
+hostnames to IP addresses:
+
+\begin{itemize}
+
+  \item \textbf{Host aliasing.} A host with a complicated name can
+    have one or more (simpler) names. For example
+    \url{relay1.west-coast.enterprise.com} may have two alia\-ses,
+    e.g., \url{enterprise.com} and \url{www.enterprise.com}. In this
+    case, \url{relay1.west-coast.enterprise.com} is said to be the
+    \textbf{canonical hostname}.
+
+  \item \textbf{Mail server aliasing.} Mail server names can also be
+  aliased in order to get a simple e-mail address, as
+  \url{bob@hotmail.com} instead of
+  \url{bob@relay1.west-coast.hotmail.com}.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Internet Directory Service (\textsc{dns}) (cont)}
+
+\begin{itemize}
+
+  \item \textbf{Load distribution.} Busy sites are replicated over
+  multiple servers, hence an \emph{ordered list} of IP addresses is
+  associated with one canonical hostname. Each time a client requires
+  an IP address in the list, the first is returned and the list is
+  rotated. This way, the load is balanced between all the servers.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Internet Directory Service (\textsc{dns}) (cont)}
+
+What if there were only one name server in the internet?
+
+\begin{itemize}
+
+  \item If the name server crashes, so does the internet.
+
+  \item A single name server would have to handle all the
+  \textsc{dns} queries (from \textsc{http} requests and e-mails at
+  hundreds of millions of hosts).
+
+  \item A single name server cannot be geographically close to all
+  the hosts, imposing unfair delays to the hosts.
+
+  \item A single name server would need a huge database to store all
+  the hostname on the internet.
+
+\end{itemize}
+
+Therefore \emph{a centralised database does not scale}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Internet Directory Service (\textsc{dns}) (cont)}
+
+That is why
+
+\begin{itemize}
+
+  \item there is a large number of name servers around the world
+
+  \item which are organised in a hierarchy;
+
+  \item no single name server has all the mappings for all the hosts;
+
+  \item the mappings are distributed across the name servers;
+
+  \item there are three kind of name servers:
+  \begin{enumerate}
+
+    \item \textbf{local name servers},
+
+    \item \textbf{root name servers},
+
+    \item \textbf{authoritative name servers}.
+
+  \end{enumerate}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Local name servers}
+
+Each ISP has a \textbf{local name server} (also called a
+\textbf{default name server}), so it is relatively close to the users
+of this ISP:
+\begin{itemize}
+
+  \item in an institution, it can be on the same LAN as the user;
+
+  \item in case of a residential ISP, it is separated from the users
+  by no more than a few routers.
+
+\end{itemize}
+
+The IP address of the local name server has to be set by the user in
+the network configuration of his host.
+
+If the user requests a translation for a host which is part of the
+same ISP domain, the request will be \emph{immediately} served by the
+local name server. As host \url{surf.eurecom.fr} requesting the IP
+address of \url{baie.eurecom.fr}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Root name servers}
+
+When a local name server can not serve a request, it then acts as a
+\textsc{dns} client and queries a \textbf{root name server}.
+
+If the root name server has the required mapping, it returns the IP
+address to the local name server which, in turn, delivers it to the
+querying (initial) host.
+
+If the root name server has not the required record, it knows the IP
+address of an \emph{authoritative name server} which has it.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Authoritative name
+  servers}
+
+Every host is registered with an authoritative name server.
+
+This authoritative name server is a name server in the
+(\emph{registered}) host's local ISP. 
+
+In principle, each host should be registered in two authoritative name
+servers, in case of failures.
+
+By definition, a name server is authoritative for a given host if it
+always translates the host name into its IP address.
+
+Many name servers act both as local and authoritative name servers.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Example}
+
+Let us consider an example. Assume that host \url{surf.eurecom.fr}
+queries the IP address of host \url{gaia.cs.umass.edu}.
+\begin{enumerate}
+  \item \url{surf.eurecom.fr} sends its query to its local name server
+    \url{dns.eurecom.fr},
+
+  \item which, in turn, forwards the query to a root name server,
+
+  \item which, in turn, forwards the query to an authoritative name
+    server for the host \url{gaia.cs.umass.edu}, named
+    \url{dns.umass.edu}.
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Example (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.32]{02-16.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Example (cont)}
+
+Finally, the IP address of host \url{gaia.cs.umass.edu} is forwarded
+back to host \url{surf.eurocom.fr}, through all the \textsc{dns}
+clients (steps 4, 5 and 6).
+
+Until now we assumed that a root name server always knows an
+authoritative name server for the requested host. In fact, this is not
+always true: it usually knows an \textbf{intermediary name server},
+which may know an authoritative name server or another intermediary
+name server.
+
+Let us reconsider the previous example and assume that the root name
+server does not know an authoritative name server for
+\url{gaia.cs.umass.edu} but, instead, a name server for the whole
+domain (the university) \url{umass.edu}, called
+\url{dns.umass.edu}. This intermediary name server knows all the name
+servers for all the departments, in particular \url{cs.umass.edu}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Example (cont)}
+
+\begin{center}
+\includegraphics[scale=0.28]{02-17.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Recursive
+  and iterative queries}
+
+As in our example, when a name server \emph{A} becomes a \textsc{dns}
+client of name server \emph{B} which, in turn, is client of \emph{C}
+and that \emph{C} sends the result to \emph{B}, this is called a
+\textbf{recursive query} because \emph{B} acts in behalf of \emph{A}.
+
+It is also possible that \emph{B} responds to \emph{A} with the IP
+address of name server \emph{C}, leaving to \emph{A} the task to
+\emph{directly} query \emph{C}: this is an \textbf{iterative query}
+--- \emph{A} makes all the queries.
+
+It is possible to mix recursive and iterative queries for serving a
+single user's request.
+
+Iterative queries save bandwidth and processing resources in some name
+servers (here, \emph{B}), that is why it is a good idea to use them to
+ease the burden of root name servers (here, \emph{B}).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Recursive
+  and iterative queries (cont)}
+
+\begin{center}
+\includegraphics[scale=0.28]{02-18.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Caching}
+
+In order to improve the performances, name servers make use of
+\textbf{caches}.
+
+When a name server receives a translation query and, later, the
+corresponding IP address, it copies the pair (hostname, address) in
+its memory or saves it on its local disk --- as well as serving the
+result to its client.
+
+Therefore, the next time the same query is received, the name server
+can answer just but by searching its cache.
+
+In order to cope with ephemeral hosts, mapping pairs are kept in the
+caches only for a pre-configured period of time (often set to two
+days).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Records}
+
+A (hostname, address) is embedded in a data structure called a
+\textbf{resource record} (\textbf{RR}). In turn, resource records are
+stored in databases in each name server.
+
+Each \textsc{dns} message (either query or response) carries one or
+more resource records.
+
+More precisely, a resource record has the structure (\emph{name},
+\emph{value}, \emph{type}, \emph{TTL}) where \emph{TTL} is the
+\textbf{Time To Live} record; it determines the time at which a
+resource should be removed from the cache.
+
+We will ignore the \emph{TTL} field in the following description.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Records (cont)}
+
+The meaning of \emph{name} and \emph{value} depend on the field
+\emph{type}:
+
+\begin{itemize}
+
+  \item if \emph{type} is \emph{A}, then \emph{name} is a hostname and
+  \emph{value} is the corresponding IP address. This is the standard
+  hostname-to-address mapping. For example (\url{konkuk.ac.kr},
+  202.30.38.143, \emph{A}).
+
+  \item if \emph{type} is \emph{NS}, then \emph{name} is a domain
+  (such as \url{umass.edu}) and \emph{value} is the hostname of an
+  authoritative name server for all the hosts in \emph{name}. This
+  kind of record is used to route \textsc{dns} queries along in the
+  query chain. For instance, (\url{umass.edu}, \url{dns.umass.edu},
+  \emph{NS}).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Records (cont)}
+
+\begin{itemize}
+
+  \item if \emph{type} is \emph{CNAME}, then \emph{value} is a
+  canonical hostname for the alias hostname \emph{name}. This record
+  provide querying hosts the canonical name of a host. As an example,
+  (\url{google.com}, \url{www.google.com}, \emph{CNAME}).
+
+  \item if \emph{type} is \emph{MX}, then \emph{value} is the
+  canonical name of the mail server \emph{name}, like the record
+  (\url{google.com}, \url{mail.google.com}, \emph{MX}). A company can
+  both have an \emph{MX} record and a \emph{CNAME} record, allowing
+  the same alias both for its mail server and its web server:
+  depending on the querying application, the corresponding record will
+  be requested.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Records (cont)}
+
+Now we can better understand what is being an authoritative name
+server or not.
+
+\begin{itemize}
+
+  \item If a name server is authoritative for a given hostname, then
+  it must contain a \emph{type A} record for this hostname. 
+
+  \item If a name server is not authoritative for a given hostname,
+  it may contain a \emph{type A} record in its cache. Otherwise it
+  must contain a \emph{type NS} record for the domain including the
+  hostname, as well as a \emph{type A} record giving the IP address of
+  the domain name server given in the \emph{type NS} record.
+
+  For example, assume that a root name server is not authoritative for
+  the hostname \url{gaia.cs.umass.edu} and no \emph{type A} record is
+  in cache for it. Therefore this name server must contain a record
+  like (\url{umass.edu}, \url{dns.umass.edu}, \emph{NS}) and
+  (\url{dns.umass.edu}, 128.119.40.111, \emph{A}).
+
+\end{itemize}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Messages}
+
+\vspace*{-1pt}
+
+There are only two kind of \textsc{dns} messages and both queries and
+replies have the same format:
+\begin{center}
+\includegraphics[scale=0.37]{02-19.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Messages (cont)}
+
+The first 12 bytes are the \textbf{header section}, which is made of
+successive fields:
+\begin{enumerate}
+
+  \item the \textbf{identifier} is a 16 bits number that identifies
+    a query and its answer;
+
+  \item the \textbf{flags} are one bit flags:
+  \begin{itemize}
+
+    \item \textbf{query} is 0 and \textbf{reply} is 1;
+
+    \item \textbf{authoritative} name server or not;
+
+    \item \textbf{recursive query} required/not required (by client)
+    or supported/not supported (by server);
+
+  \end{itemize}
+
+  \item the \textbf{numbers} are four numbers that count the number of
+    occurrences of four kind of data in the next sections.
+ 
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{dns}/Messages (cont)}
+
+There are now four \textbf{data sections}:
+
+\begin{enumerate}
+
+  \item the \textbf{question section} contains information about the
+  current query:
+  \begin{enumerate}
+
+    \item the \textbf{hostname} being queried;
+
+    \item the type of query, e.g., \emph{type A} or \emph{type MX};
+
+  \end{enumerate}
+
+  \item the \textbf{answer section} contains information about the
+    current reply: possibly multiple records (because a host can be
+    duplicated);
+
+  \item the \textbf{authority section} contains records of other
+    authoritative servers;
+
+  \item the \textbf{additional section} complements other
+    informations, e.g., if a reply is an \emph{MX} record, this section
+    provides the IP address of the canonical mail server.
+
+\end{enumerate}
+
+\end{frame}

@@ -1,0 +1,36 @@
+%%-*-latex-*-
+
+\paragraph{Answer.}
+
+We can generalise the answer to any header size. So let \(h =
+40\). Then the size of each packet is \(L = h + S\). The number of
+packets is \(\frac{F}{S}\), which is an integer by assumption. One
+packet takes \(\frac{L}{R}\) seconds to cross over one link. So the
+first packet takes \(2{\frac{L}{R}}\) seconds from source to
+destination. Then, every \(\frac{L}{R}\) seconds another packet, among
+the \(F/S-1\) remaining, arrives to destination, because of
+pipelining. So the total time to receive all the packets is
+\[
+    2{\frac{L}{R}} + \biggl(\frac{F}{S}-1\biggr)\frac{L}{R} 
+  = \biggl(1 + \frac{F}{S}\biggr)\frac{L}{R} 
+  = \biggl(1 + \frac{F}{S}\biggr)\frac{h + S}{R}.
+\]
+In other words, the delay \({\cal D}\) in function of \(S\) is
+expressed as
+\[
+  {\cal D}(S) = \frac{1}{R}\frac{(S + F)(h + S)}{S} =
+  \frac{1}{R}\biggl(h + F + S + \frac{hF}{S}\biggr).
+\]
+The minumum of this function is reached at \(S_{m}\) such as
+\[
+  \frac{d}{dS} {\cal D} (S_m) = 0.
+\]
+Since
+\[
+  \frac{d}{dS} {\cal D} (S) = \frac{1}{R}\biggl(1 -
+  \frac{hF}{S^2}\biggr).
+\]
+We deduce finally \(S_m = \lfloor\sqrt{hF}\rfloor\), where
+\(\lfloor{x}\rfloor\) is the biggest integer which is smaller than
+\(x\) (in this example, we could choose also the smallest integer
+which is bigger than \(x\)).

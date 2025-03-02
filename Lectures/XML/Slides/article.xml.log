@@ -1,0 +1,932 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/Debian) (preloaded format=latex 2015.2.2)  4 FEB 2015 15:58
+entering extended mode
+ \write18 enabled.
+ %&-line parsing enabled.
+**\batchmode\def\java{/usr/bin/java }\def\saxlib{/home/rinderkn/bin/saxon.jar }
+\def\xmllint{/usr/bin/xmllint }\def\xmlURL{http://konkuk.ac.kr/~rinderkn/Mirror
+/XML/Slides/XML}\def\xsltURL{http://konkuk.ac.kr/~rinderkn/Mirror/XML/Slides/XS
+LT}\def\XMLdir{XML}\def\XSLTdir{XSLT}\def\homepage{\url{http://konkuk.ac.kr/~ri
+nderkn}}\def\baseurl{http://konkuk.ac.kr/~rinderkn/Mirror/XML/Slides}\listfiles
+\input article.xml.tex
+(./article.xml.tex (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size11.clo
+File: size11.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerarticle.sty (/usr/share
+/texlive/texmf-dist/tex/latex/beamer/beamerbasercs.sty
+Package: beamerbasercs 2013/12/25 (rcs-revision 31cc758a62ae)
+)
+Package: beamerarticle 2012/04/15 (rcs-revision cc6557182d97)
+(/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasemodes.sty
+Package: beamerbasemodes 2013/09/03 (rcs-revision 768f2d98ca64)
+\beamer@tempbox=\box26
+\beamer@tempcount=\count87
+\c@beamerpauses=\count88
+(/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasedecode.sty
+Package: beamerbasedecode 2010/05/01 (rcs-revision efa082c6111d)
+\beamer@slideinframe=\count89
+\beamer@minimum=\count90
+)
+\beamer@commentbox=\box27
+\beamer@modecount=\count91
+)) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasearticle.sty
+Package: beamerbasearticle 2012/04/15 (rcs-revision cc6557182d97)
+(/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbaseoptions.sty
+Package: beamerbaseoptions 2013/03/10 (rcs-revision 47431932db0d)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/05/08 v1.15 key=value parser (DPC)
+\KV@toks@=\toks14
+)) (/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2007/01/21 v2.11 LaTeX color extensions (UK)
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package xcolor Info: Package option `override' ignored on input line 216.
+Package xcolor Info: Driver file: dvips.def on input line 225.
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/dvips.def
+File: dvips.def 2014/04/23 v3.0j Driver-dependant file (DPC,SPQR)
+)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1337.
+Package xcolor Info: Model `RGB' extended on input line 1353.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1355.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1356.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1357.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1358.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1359.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbaserequires.sty
+Package: beamerbaserequires 2010/05/01 (rcs-revision efa082c6111d)
+(/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasecompatibility.sty
+Package: beamerbasecompatibility 2012/05/01 (rcs-revision 67c48b3b652d)
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasefont.sty
+Package: beamerbasefont 2013/10/18 (rcs-revision 72f39e01808a)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\@emptytoks=\toks15
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasetranslator.sty
+Package: beamerbasetranslator 2010/06/11 (rcs-revision 85fd1cc7fc42)
+(/usr/share/texlive/texmf-dist/tex/latex/beamer/translator/translator.sty
+Package: translator 2010/06/12 ver 1.10
+
+(/usr/share/texlive/texmf-dist/tex/latex/beamer/translator/translator-language-
+mappings.tex))) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasemisc.
+sty
+Package: beamerbasemisc 2013/09/03 (rcs-revision a55719c41d85)
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasetwoscreens.sty
+Package: beamerbasetwoscreens 2010/05/01 (rcs-revision efa082c6111d)
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbaseoverlay.sty
+Package: beamerbaseoverlay 2013/12/25 (rcs-revision f6bd5e3805da)
+\beamer@argscount=\count92
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasetitle.sty
+Package: beamerbasetitle 2010/09/21 (rcs-revision f0446ed0b6ae)
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasesection.sty
+Package: beamerbasesection 2013/06/07 (rcs-revision 60b9fe0f342f)
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbaseframe.sty
+Package: beamerbaseframe 2013/10/02 (rcs-revision cdc8e9a3aaac)
+\c@framenumber=\count93
+LaTeX Info: Redefining \\ on input line 753.
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbaseverbatim.sty
+Package: beamerbaseverbatim 2012/08/30 (rcs-revision dfdb135076b3)
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbaseframesize.sty
+Package: beamerbaseframesize 2011/09/12 (rcs-revision 70f9d8411e54)
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbaseframecomponents.sty
+Package: beamerbaseframecomponents 2013/10/18 (rcs-revision 5cf6c5555a45)
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasecolor.sty
+Package: beamerbasecolor 2010/06/06 (rcs-revision d1a9b48be06d)
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasenotes.sty
+Package: beamerbasenotes 2012/12/19 (rcs-revision 1686da3db3c9)
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasetoc.sty
+Package: beamerbasetoc 2013/05/23 (rcs-revision 0fdf5bc43be8)
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasetemplates.sty
+Package: beamerbasetemplates 2010/05/01 (rcs-revision efa082c6111d)
+\beamer@sbttoks=\toks16
+(/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbaseauxtemplates.sty
+Package: beamerbaseauxtemplates 2013/09/04 (rcs-revision 4ac715c499d0)
+)) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbaselocalstructure.sty
+Package: beamerbaselocalstructure 2013/09/04 (rcs-revision 4ac715c499d0)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/enumerate.sty
+Package: enumerate 1999/03/05 v3.00 enumerate extensions (DPC)
+\@enLab=\toks17
+)) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasenavigation.sty
+Package: beamerbasenavigation 2013/10/05 (rcs-revision 62be157fe783)
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasetheorems.sty
+Package: beamerbasetheorems 2010/06/06 (rcs-revision 7e7cc5e53e9d)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2013/01/14 v2.14 AMS math features
+\@mathmargin=\skip43
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks18
+\ex@=\dimen103
+)) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen104
+) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count94
+LaTeX Info: Redefining \frac on input line 210.
+\uproot@=\count95
+\leftroot@=\count96
+LaTeX Info: Redefining \overline on input line 306.
+\classnum@=\count97
+\DOTSCASE@=\count98
+LaTeX Info: Redefining \ldots on input line 378.
+LaTeX Info: Redefining \dots on input line 381.
+LaTeX Info: Redefining \cdots on input line 466.
+\Mathstrutbox@=\box28
+\strutbox@=\box29
+\big@size=\dimen105
+LaTeX Font Info:    Redeclaring font encoding OML on input line 566.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
+\macc@depth=\count99
+\c@MaxMatrixCols=\count100
+\dotsspace@=\muskip10
+\c@parentequation=\count101
+\dspbrk@lvl=\count102
+\tag@help=\toks19
+\row@=\count103
+\column@=\count104
+\maxfields@=\count105
+\andhelp@=\toks20
+\eqnshift@=\dimen106
+\alignsep@=\dimen107
+\tagshift@=\dimen108
+\tagwidth@=\dimen109
+\totwidth@=\dimen110
+\lineht@=\dimen111
+\@envbody=\toks21
+\multlinegap=\skip44
+\multlinetaggap=\skip45
+\mathdisplay@stack=\toks22
+LaTeX Info: Redefining \[ on input line 2665.
+LaTeX Info: Redefining \] on input line 2666.
+) (/usr/share/texlive/texmf-dist/tex/latex/amscls/amsthm.sty
+Package: amsthm 2004/08/06 v2.20
+\thm@style=\toks23
+\thm@bodyfont=\toks24
+\thm@headfont=\toks25
+\thm@notefont=\toks26
+\thm@headpunct=\toks27
+\thm@preskip=\skip46
+\thm@postskip=\skip47
+\thm@headsep=\skip48
+\dth@everypar=\toks28
+)
+\c@theorem=\count106
+) (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasethemes.sty
+Package: beamerbasethemes 2010/05/01 (rcs-revision efa082c6111d)
+))) (./main.tex (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2014/04/25 v1.0g Enhanced LaTeX Graphics (DPC,SPQR)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+) (/usr/share/texlive/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: dvips.def on input line 91.
+)
+\Gin@req@height=\dimen112
+\Gin@req@width=\dimen113
+) (/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2014/03/24 3.9k The Babel package
+(/usr/share/texlive/texmf-dist/tex/generic/babel-english/english.ldf
+Language: english 2012/08/20 v3.3p English support from the babel system
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.def
+File: babel.def 2014/03/24 3.9k Babel common definitions
+\babel@savecnt=\count107
+\U@D=\dimen114
+)
+\l@canadian = a dialect from \language\l@american 
+\l@australian = a dialect from \language\l@british 
+\l@newzealand = a dialect from \language\l@british 
+)) (/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.def
+File: t1enc.def 2005/09/27 v1.99g Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
+)) (/usr/share/texlive/texmf-dist/tex/latex/bera/beramono.sty
+Package: beramono 2004/01/31 (WaS)
+) (/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip11
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+) (/usr/share/texlive/texmf-dist/tex/latex/tools/xspace.sty
+Package: xspace 2009/10/20 v1.13 Space after command names (DPC,MH)
+) (/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2005/04/14 v1.61803 publication quality tables
+\heavyrulewidth=\dimen115
+\lightrulewidth=\dimen116
+\cmidrulewidth=\dimen117
+\belowrulesep=\dimen118
+\belowbottomsep=\dimen119
+\aboverulesep=\dimen120
+\abovetopsep=\dimen121
+\cmidrulesep=\dimen122
+\cmidrulekern=\dimen123
+\defaultaddspace=\dimen124
+\@cmidla=\count108
+\@cmidlb=\count109
+\@aboverulesep=\dimen125
+\@belowrulesep=\dimen126
+\@thisruleclass=\count110
+\@lastruleclass=\count111
+\@thisrulewidth=\dimen127
+) (./beamer_cfg.tex) (./trace.tex) (./xmllint.tex (/usr/share/texlive/texmf-dis
+t/tex/latex/tools/verbatim.sty
+Package: verbatim 2003/08/22 v1.5q LaTeX2e package for verbatim enhancements
+\every@verbatim=\toks29
+\verbatim@line=\toks30
+\verbatim@in@stream=\read1
+)) (./saxon.tex)
+<doc name="XML and XSLT">
+(./article.xml.aux (./xml_intro.aux) (./xhtml.aux) (./dtd.aux) (./xslt.aux))
+\openout1 = `article.xml.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+
+(/usr/share/texlive/texmf-dist/tex/latex/beamer/translator/dicts/translator-bas
+ic-dictionary/translator-basic-dictionary-English.dict
+Dictionary: translator-basic-dictionary, Language: English 
+)
+(/usr/share/texlive/texmf-dist/tex/latex/beamer/translator/dicts/translator-bib
+liography-dictionary/translator-bibliography-dictionary-English.dict
+Dictionary: translator-bibliography-dictionary, Language: English 
+)
+(/usr/share/texlive/texmf-dist/tex/latex/beamer/translator/dicts/translator-env
+ironment-dictionary/translator-environment-dictionary-English.dict
+Dictionary: translator-environment-dictionary, Language: English 
+)
+(/usr/share/texlive/texmf-dist/tex/latex/beamer/translator/dicts/translator-mon
+ths-dictionary/translator-months-dictionary-English.dict
+Dictionary: translator-months-dictionary, Language: English 
+)
+(/usr/share/texlive/texmf-dist/tex/latex/beamer/translator/dicts/translator-num
+bers-dictionary/translator-numbers-dictionary-English.dict
+Dictionary: translator-numbers-dictionary, Language: English 
+)
+(/usr/share/texlive/texmf-dist/tex/latex/beamer/translator/dicts/translator-the
+orem-dictionary/translator-theorem-dictionary-English.dict
+Dictionary: translator-theorem-dictionary, Language: English 
+)
+LaTeX Info: Redefining \includegraphics on input line 55.
+LaTeX Font Info:    Try loading font information for U+msa on input line 57.
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 57.
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+<part basename="xml_intro" title="XML">
+[1
+
+]
+\openout2 = `xml_intro.aux'.
+
+(./xml_intro.tex
+LaTeX Font Info:    Try loading font information for T1+cmss on input line 8.
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1cmss.fd
+File: t1cmss.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 38.
+(/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 38.
+LaTeX Font Info:    Try loading font information for T1+fvm on input line 62.
+(/usr/share/texlive/texmf-dist/tex/latex/bera/t1fvm.fd
+File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
+)
+LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
+(Font)              scaled to size 8.76003pt on input line 62.
+LaTeX Font Info:    Font shape `T1/fvm/m/it' in size <10.95> not available
+(Font)              Font shape `T1/fvm/m/sl' tried instead on input line 67.
+LaTeX Font Info:    Font shape `T1/fvm/m/sl' will be
+(Font)              scaled to size 8.76003pt on input line 67.
+LaTeX Font Info:    Font shape `T1/fvm/bx/n' in size <10.95> not available
+(Font)              Font shape `T1/fvm/b/n' tried instead on input line 67.
+LaTeX Font Info:    Font shape `T1/fvm/b/n' will be
+(Font)              scaled to size 8.76003pt on input line 67.
+File: mail.ps Graphic file (type eps)
+<mail.ps> [2
+
+]
+LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
+(Font)              scaled to size 8.00003pt on input line 98.
+[3]
+File: axiom.ps Graphic file (type eps)
+<axiom.ps> [4]
+LaTeX Font Info:    Font shape `T1/fvm/bx/n' in size <10> not available
+(Font)              Font shape `T1/fvm/b/n' tried instead on input line 235.
+LaTeX Font Info:    Font shape `T1/fvm/b/n' will be
+(Font)              scaled to size 8.00003pt on input line 235.
+File: mailtoto.ps Graphic file (type eps)
+<mailtoto.ps> [5]
+File: urgent.ps Graphic file (type eps)
+<urgent.ps>
+File: attr.ps Graphic file (type eps)
+<attr.ps> [6] [7]
+runsystem(/usr/bin/xmllint XML/entities.xml && touch entities.xml.ok)...execute
+d.
+
+runsystem(rm -f entities.xml.ok)...executed.
+
+File XML/entities.xml is well-formed
+LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
+(Font)              scaled to size 7.20003pt on input line 490.
+File: XML/entities.xml  (verbatim)
+[8]
+Overfull \hbox (2.43217pt too wide) in paragraph at lines 499--502
+\T1/cmr/m/n/10.95 de-note char-ac-ters by us-ing their \T1/cmss/m/n/10.95 uni-c
+ode \T1/cmr/m/n/10.95 code (which ranges from $\OT1/cmr/m/n/10.95 0$ \T1/cmr/m/
+n/10.95 to $\OT1/cmr/m/n/10.95 65\OML/cmm/m/it/10.95 ; \OT1/cmr/m/n/10.95 536$\
+T1/cmr/m/n/10.95 ). 
+ []
+
+[9]
+runsystem(/usr/bin/xmllint XML/espana.xml && touch espana.xml.ok)...executed.
+
+runsystem(rm -f espana.xml.ok)...executed.
+
+File XML/espana.xml is well-formed
+File: XML/espana.xml  (verbatim)
+[10] [11] [12]
+runsystem(/usr/bin/xmllint XML/notation.xml && touch notation.xml.ok)...execute
+d.
+
+runsystem(rm -f notation.xml.ok)...executed.
+
+File XML/notation.xml is well-formed
+File: XML/notation.xml  (verbatim)
+[13]
+File: entities.ps Graphic file (type eps)
+<entities.ps> [14] [15]
+runsystem(/usr/bin/xmllint XML/id_idref.xml && touch id_idref.xml.ok)...execute
+d.
+
+runsystem(rm -f id_idref.xml.ok)...executed.
+
+File XML/id_idref.xml is well-formed
+File: XML/id_idref.xml  (verbatim)
+[16]
+LaTeX Font Info:    Font shape `T1/fvm/m/it' in size <10> not available
+(Font)              Font shape `T1/fvm/m/sl' tried instead on input line 1042.
+LaTeX Font Info:    Font shape `T1/fvm/m/sl' will be
+(Font)              scaled to size 8.00003pt on input line 1042.
+[17] [18] [19]
+runsystem(/usr/bin/xmllint XML/beers.xml && touch beers.xml.ok)...executed.
+
+runsystem(rm -f beers.xml.ok)...executed.
+
+File XML/beers.xml is well-formed
+File: XML/beers.xml  (verbatim)
+[20]
+runsystem(/usr/bin/xmllint XML/scoping.xml && touch scoping.xml.ok)...executed.
+
+runsystem(rm -f scoping.xml.ok)...executed.
+
+File XML/scoping.xml is well-formed
+File: XML/scoping.xml  (verbatim)
+[21]
+Overfull \hbox (0.58846pt too wide) in paragraph at lines 1354--1356
+[]\T1/cmr/m/n/10.95 the pre-de-fined en-ti-ties must be re-ally pre-de-fined (u
+ni-codes are checked), 
+ []
+
+[22]) [23]
+</part>
+<part basename="xhtml" title="XHTML">
+\openout2 = `xhtml.aux'.
+
+(./xhtml.tex
+runsystem(/usr/bin/xmllint XML/h.html && touch h.html.ok)...executed.
+
+runsystem(rm -f h.html.ok)...executed.
+
+File XML/h.html is well-formed
+File: XML/h.html  (verbatim)
+[24
+
+
+] [25] [26] [27]
+Overfull \hbox (17.67252pt too wide) in paragraph at lines 374--378
+\T1/cmr/m/n/10.95 text ``\T1/cmr/bx/n/10.95 Av-er-age\T1/cmr/m/n/10.95 '' and c
+ov-ers two columns be-cause []\T1/fvm/m/n/10.95 <th colspan="2">Average</th>\T1
+/cmr/m/n/10.95 . 
+ []
+
+[28]) [29]
+</part>
+<part basename="dtd" title="DTD">
+\openout2 = `dtd.aux'.
+
+(./dtd.tex [30
+
+
+] [31]) [32]
+</part>
+<part basename="xslt" title="XSLT">
+\openout2 = `xslt.aux'.
+
+(./xslt.tex
+Overfull \hbox (0.78377pt too wide) in paragraph at lines 15--17
+\T1/cmr/m/n/10.95 so one needs \T1/cmss/m/n/10.95 XSLT \T1/cmr/m/n/10.95 (\T1/c
+mr/bx/n/10.95 eXtensible Stylesheet Lan-guage Trans-for-ma-tions\T1/cmr/m/n/10.
+95 ). 
+ []
+
+runsystem(/usr/bin/xmllint XSLT/empty.xsl && touch empty.xsl.ok)...executed.
+
+runsystem(rm -f empty.xsl.ok)...executed.
+
+File XSLT/empty.xsl is well-formed
+[33
+
+
+]
+File: XSLT/empty.xsl  (verbatim)
+runsystem(/usr/bin/xmllint XML/cookbook.xml && touch cookbook.xml.ok)...execute
+d.
+
+runsystem(rm -f cookbook.xml.ok)...executed.
+
+File XML/cookbook.xml is well-formed
+File: XML/cookbook.xml  (verbatim)
+runsystem(/usr/bin/java -jar /home/rinderkn/bin/saxon.jar XML/cookbook.xml XSLT
+/empty.xsl | sed '/^[ ]*$/d' >| tmp.xml)...executed.
+
+File: tmp.xml  (verbatim)
+runsystem(rm -f tmp.xml)...executed.
+
+[34]
+runsystem(/usr/bin/xmllint XSLT/chapte.xsl && touch chapte.xsl.ok)...executed.
+
+runsystem(rm -f chapte.xsl.ok)...executed.
+
+File XSLT/chapte.xsl is well-formed
+File: XSLT/chapte.xsl  (verbatim)
+[35]
+runsystem(/usr/bin/java -jar /home/rinderkn/bin/saxon.jar XML/cookbook.xml XSLT
+/chapte.xsl | sed '/^[ ]*$/d' >| tmp.xml)...executed.
+
+File: tmp.xml  (verbatim)
+runsystem(rm -f tmp.xml)...executed.
+
+runsystem(/usr/bin/xmllint XSLT/chapters.xsl && touch chapters.xsl.ok)...execut
+ed.
+
+runsystem(rm -f chapters.xsl.ok)...executed.
+
+File XSLT/chapters.xsl is well-formed
+File: XSLT/chapters.xsl  (verbatim)
+runsystem(/usr/bin/java -jar /home/rinderkn/bin/saxon.jar XML/cookbook.xml XSLT
+/chapters.xsl | sed '/^[ ]*$/d' >| tmp.xml)...executed.
+
+File: tmp.xml  (verbatim)
+runsystem(rm -f tmp.xml)...executed.
+
+[36]
+runsystem(/usr/bin/xmllint XSLT/cookbook.xsl && touch cookbook.xsl.ok)...execut
+ed.
+
+runsystem(rm -f cookbook.xsl.ok)...executed.
+
+File XSLT/cookbook.xsl is well-formed
+File: XSLT/cookbook.xsl  (verbatim)
+runsystem(/usr/bin/java -jar /home/rinderkn/bin/saxon.jar XML/cookbook.xml XSLT
+/cookbook.xsl | sed '/^[ ]*$/d' >| tmp.xml)...executed.
+
+File: tmp.xml  (verbatim)
+runsystem(rm -f tmp.xml)...executed.
+
+[37]
+runsystem(/usr/bin/xmllint XSLT/select_chapter.xsl && touch select_chapter.xsl.
+ok)...executed.
+
+runsystem(rm -f select_chapter.xsl.ok)...executed.
+
+File XSLT/select_chapter.xsl is well-formed
+File: XSLT/select_chapter.xsl  (verbatim)
+[38]
+runsystem(/usr/bin/java -jar /home/rinderkn/bin/saxon.jar XML/cookbook.xml XSLT
+/select_chapter.xsl | sed '/^[ ]*$/d' >| tmp.xml)...executed.
+
+File: tmp.xml  (verbatim)
+runsystem(rm -f tmp.xml)...executed.
+
+
+Overfull \hbox (1.11934pt too wide) in paragraph at lines 410--414
+[]\T1/cmr/m/n/10.95 Since we want to han-dle ex-plic-itly how the chil-dren of 
+\T1/fvm/m/n/10.95 chapter \T1/cmr/m/n/10.95 are printed,
+ []
+
+[39] [40] [41]
+Overfull \hbox (15.25856pt too wide) in paragraph at lines 660--663
+[]\T1/cmr/m/n/10.95 From this anal-y-sis, we de-duce the fol-low-ing struc-ture
+ for the \T1/cmss/m/n/10.95 XSLT \T1/cmr/m/n/10.95 stylesheet. 
+ []
+
+[42] [43]
+runsystem(/usr/bin/xmllint XSLT/var.xsl && touch var.xsl.ok)...executed.
+
+runsystem(rm -f var.xsl.ok)...executed.
+
+File XSLT/var.xsl is well-formed
+File: XSLT/var.xsl  (verbatim)
+[44]
+runsystem(/usr/bin/xmllint XML/num_list.xml && touch num_list.xml.ok)...execute
+d.
+
+runsystem(rm -f num_list.xml.ok)...executed.
+
+File XML/num_list.xml is well-formed
+File: XML/num_list.xml  (verbatim)
+[45] [46] [47] [48]
+runsystem(/usr/bin/xmllint XML/menu.xml && touch menu.xml.ok)...executed.
+
+runsystem(rm -f menu.xml.ok)...executed.
+
+File XML/menu.xml is well-formed
+File: XML/menu.xml  (verbatim)
+
+Overfull \hbox (2.96158pt too wide) in paragraph at lines 1157--1161
+[]\T1/cmr/m/n/10.95 For ex-am-ple, to se-lect the third dish in \T1/fvm/m/n/10.
+95 entrees\T1/cmr/m/n/10.95 : []\T1/fvm/m/n/10.95 "/menu/entrees/dish[3]"
+ []
+
+[49]
+runsystem(/usr/bin/xmllint XSLT/03list12.xsl && touch 03list12.xsl.ok)...execut
+ed.
+
+runsystem(rm -f 03list12.xsl.ok)...executed.
+
+File XSLT/03list12.xsl is well-formed
+File: XSLT/03list12.xsl  (verbatim)
+runsystem(/usr/bin/java -jar /home/rinderkn/bin/saxon.jar XML/menu.xml XSLT/03l
+ist12.xsl | sed '/^[ ]*$/d' >| tmp.xml)...executed.
+
+File: tmp.xml  (verbatim)
+runsystem(rm -f tmp.xml)...executed.
+
+runsystem(/usr/bin/xmllint XSLT/03list16.xsl && touch 03list16.xsl.ok)...execut
+ed.
+
+runsystem(rm -f 03list16.xsl.ok)...executed.
+
+File XSLT/03list16.xsl is well-formed
+File: XSLT/03list16.xsl  (verbatim)
+[50]
+runsystem(/usr/bin/xmllint XSLT/sixth_none.xsl && touch sixth_none.xsl.ok)...ex
+ecuted.
+
+runsystem(rm -f sixth_none.xsl.ok)...executed.
+
+File XSLT/sixth_none.xsl is well-formed
+File: XSLT/sixth_none.xsl  (verbatim)
+runsystem(/usr/bin/xmllint XSLT/sixth_dish.xsl && touch sixth_dish.xsl.ok)...ex
+ecuted.
+
+runsystem(rm -f sixth_dish.xsl.ok)...executed.
+
+File XSLT/sixth_dish.xsl is well-formed
+File: XSLT/sixth_dish.xsl  (verbatim)
+runsystem(/usr/bin/xmllint XML/cars1.xml && touch cars1.xml.ok)...executed.
+
+runsystem(rm -f cars1.xml.ok)...executed.
+
+File XML/cars1.xml is well-formed
+File: XML/cars1.xml  (verbatim)
+[51]
+runsystem(/usr/bin/xmllint XML/cars2.xml && touch cars2.xml.ok)...executed.
+
+runsystem(rm -f cars2.xml.ok)...executed.
+
+File XML/cars2.xml is well-formed
+File: XML/cars2.xml  (verbatim)
+[52]
+runsystem(/usr/bin/java -jar /home/rinderkn/bin/saxon.jar XML/cars1.xml XSLT/05
+list07.xsl | sed '/^[ ]*$/d' >| tmp.xml)...executed.
+
+File: tmp.xml  (verbatim)
+runsystem(rm -f tmp.xml)...executed.
+
+[53]
+runsystem(/usr/bin/xmllint XSLT/dyn_elm.xsl && touch dyn_elm.xsl.ok)...executed
+.
+
+runsystem(rm -f dyn_elm.xsl.ok)...executed.
+
+File XSLT/dyn_elm.xsl is well-formed
+File: XSLT/dyn_elm.xsl  (verbatim)
+runsystem(/usr/bin/java -jar /home/rinderkn/bin/saxon.jar XML/cars1.xml XSLT/dy
+n_elm.xsl | sed '/^[ ]*$/d' >| tmp.xml)...executed.
+
+File: tmp.xml  (verbatim)
+runsystem(rm -f tmp.xml)...executed.
+
+runsystem(/usr/bin/xmllint XSLT/05list14.xsl && touch 05list14.xsl.ok)...execut
+ed.
+
+runsystem(rm -f 05list14.xsl.ok)...executed.
+
+File XSLT/05list14.xsl is well-formed
+[54]
+File: XSLT/05list14.xsl  (verbatim)
+runsystem(/usr/bin/java -jar /home/rinderkn/bin/saxon.jar XML/cars1.xml XSLT/05
+list14.xsl | sed '/^[ ]*$/d' >| tmp.xml)...executed.
+
+File: tmp.xml  (verbatim)
+runsystem(rm -f tmp.xml)...executed.
+
+runsystem(/usr/bin/xmllint XSLT/05list15.xsl && touch 05list15.xsl.ok)...execut
+ed.
+
+runsystem(rm -f 05list15.xsl.ok)...executed.
+
+File XSLT/05list15.xsl is well-formed
+File: XSLT/05list15.xsl  (verbatim)
+[55]
+runsystem(/usr/bin/java -jar /home/rinderkn/bin/saxon.jar XML/cars1.xml XSLT/05
+list15.xsl | sed '/^[ ]*$/d' >| tmp.xml)...executed.
+
+File: tmp.xml  (verbatim)
+runsystem(rm -f tmp.xml)...executed.
+
+runsystem(/usr/bin/xmllint XSLT/05list16.xsl && touch 05list16.xsl.ok)...execut
+ed.
+
+runsystem(rm -f 05list16.xsl.ok)...executed.
+
+File XSLT/05list16.xsl is well-formed
+File: XSLT/05list16.xsl  (verbatim)
+[56]
+runsystem(/usr/bin/xmllint XSLT/05list19.xsl && touch 05list19.xsl.ok)...execut
+ed.
+
+runsystem(rm -f 05list19.xsl.ok)...executed.
+
+File XSLT/05list19.xsl is well-formed
+File: XSLT/05list19.xsl  (verbatim)
+[57] [58]
+runsystem(/usr/bin/xmllint XSLT/verb.xsl && touch verb.xsl.ok)...executed.
+
+runsystem(rm -f verb.xsl.ok)...executed.
+
+File XSLT/verb.xsl is well-formed
+File: XSLT/verb.xsl  (verbatim)
+runsystem(/usr/bin/xmllint XSLT/onetwo.xsl && touch onetwo.xsl.ok)...executed.
+
+runsystem(rm -f onetwo.xsl.ok)...executed.
+
+File XSLT/onetwo.xsl is well-formed
+File: XSLT/onetwo.xsl  (verbatim)
+runsystem(/usr/bin/xmllint XSLT/node_id.xsl && touch node_id.xsl.ok)...executed
+.
+
+runsystem(rm -f node_id.xsl.ok)...executed.
+
+File XSLT/node_id.xsl is well-formed
+[59]
+File: XSLT/node_id.xsl  (verbatim)
+runsystem(/usr/bin/java -jar /home/rinderkn/bin/saxon.jar XML/cars1.xml XSLT/no
+de_id.xsl | sed '/^[ ]*$/d' >| tmp.xml)...executed.
+
+File: tmp.xml  (verbatim)
+runsystem(rm -f tmp.xml)...executed.
+
+File: tests.ps Graphic file (type eps)
+<tests.ps> [60]
+runsystem(/usr/bin/xmllint XSLT/node_id_bis.xsl && touch node_id_bis.xsl.ok)...
+executed.
+
+runsystem(rm -f node_id_bis.xsl.ok)...executed.
+
+File XSLT/node_id_bis.xsl is well-formed
+File: XSLT/node_id_bis.xsl  (verbatim)
+runsystem(/usr/bin/xmllint XSLT/identity.xsl && touch identity.xsl.ok)...execut
+ed.
+
+runsystem(rm -f identity.xsl.ok)...executed.
+
+File XSLT/identity.xsl is well-formed
+File: XSLT/identity.xsl  (verbatim)
+[61]
+runsystem(/usr/bin/xmllint XSLT/identity_bis.xsl && touch identity_bis.xsl.ok).
+..executed.
+
+runsystem(rm -f identity_bis.xsl.ok)...executed.
+
+File XSLT/identity_bis.xsl is well-formed
+File: XSLT/identity_bis.xsl  (verbatim)
+[62] [63]
+Overfull \hbox (6.49939pt too wide) in paragraph at lines 1901--1904
+\T1/cmr/m/n/10.95 empty. If empty, it dis-ap-pear from the con-cate-na-tion, e.
+g., []\T1/fvm/m/n/10.95 (1,(),2) eq (1,2)\T1/cmr/m/n/10.95 . 
+ []
+
+runsystem(/usr/bin/xmllint XSLT/by_name.xsl && touch by_name.xsl.ok)...executed
+.
+
+runsystem(rm -f by_name.xsl.ok)...executed.
+
+File XSLT/by_name.xsl is well-formed
+File: XSLT/by_name.xsl  (verbatim)
+runsystem(/usr/bin/xmllint XSLT/by_name_bis.xsl && touch by_name_bis.xsl.ok)...
+executed.
+
+runsystem(rm -f by_name_bis.xsl.ok)...executed.
+
+File XSLT/by_name_bis.xsl is well-formed
+File: XSLT/by_name_bis.xsl  (verbatim)
+[64]
+runsystem(/usr/bin/java -jar /home/rinderkn/bin/saxon.jar XML/cars1.xml XSLT/mo
+des.xsl | sed '/^[ ]*$/d' >| tmp.xml)...executed.
+
+File: tmp.xml  (verbatim)
+[65]
+runsystem(rm -f tmp.xml)...executed.
+
+) [66]
+</part>
+(./article.xml.aux (./xml_intro.aux) (./xhtml.aux) (./dtd.aux) (./xslt.aux))
+
+ *File List*
+ article.cls    2007/10/19 v1.4h Standard LaTeX document class
+  size11.clo    2007/10/19 v1.4h Standard LaTeX file (size option)
+beamerarticle.sty    2012/04/15 (rcs-revision cc6557182d97)
+beamerbasercs.sty    2013/12/25 (rcs-revision 31cc758a62ae)
+beamerbasemodes.sty    2013/09/03 (rcs-revision 768f2d98ca64)
+beamerbasedecode.sty    2010/05/01 (rcs-revision efa082c6111d)
+beamerbasearticle.sty    2012/04/15 (rcs-revision cc6557182d97)
+beamerbaseoptions.sty    2013/03/10 (rcs-revision 47431932db0d)
+  keyval.sty    2014/05/08 v1.15 key=value parser (DPC)
+  xcolor.sty    2007/01/21 v2.11 LaTeX color extensions (UK)
+   color.cfg    2007/01/18 v1.5 color configuration of teTeX/TeXLive
+   dvips.def    2014/04/23 v3.0j Driver-dependant file (DPC,SPQR)
+beamerbaserequires.sty    2010/05/01 (rcs-revision efa082c6111d)
+beamerbasecompatibility.sty    2012/05/01 (rcs-revision 67c48b3b652d)
+beamerbasefont.sty    2013/10/18 (rcs-revision 72f39e01808a)
+ amssymb.sty    2013/01/14 v3.01 AMS font symbols
+amsfonts.sty    2013/01/14 v3.01 Basic AMSFonts support
+beamerbasetranslator.sty    2010/06/11 (rcs-revision 85fd1cc7fc42)
+translator.sty    2010/06/12 ver 1.10
+translator-language-mappings.tex
+beamerbasemisc.sty    2013/09/03 (rcs-revision a55719c41d85)
+beamerbasetwoscreens.sty    2010/05/01 (rcs-revision efa082c6111d)
+beamerbaseoverlay.sty    2013/12/25 (rcs-revision f6bd5e3805da)
+beamerbasetitle.sty    2010/09/21 (rcs-revision f0446ed0b6ae)
+beamerbasesection.sty    2013/06/07 (rcs-revision 60b9fe0f342f)
+beamerbaseframe.sty    2013/10/02 (rcs-revision cdc8e9a3aaac)
+beamerbaseverbatim.sty    2012/08/30 (rcs-revision dfdb135076b3)
+beamerbaseframesize.sty    2011/09/12 (rcs-revision 70f9d8411e54)
+beamerbaseframecomponents.sty    2013/10/18 (rcs-revision 5cf6c5555a45)
+beamerbasecolor.sty    2010/06/06 (rcs-revision d1a9b48be06d)
+beamerbasenotes.sty    2012/12/19 (rcs-revision 1686da3db3c9)
+beamerbasetoc.sty    2013/05/23 (rcs-revision 0fdf5bc43be8)
+beamerbasetemplates.sty    2010/05/01 (rcs-revision efa082c6111d)
+beamerbaseauxtemplates.sty    2013/09/04 (rcs-revision 4ac715c499d0)
+beamerbaselocalstructure.sty    2013/09/04 (rcs-revision 4ac715c499d0)
+enumerate.sty    1999/03/05 v3.00 enumerate extensions (DPC)
+beamerbasenavigation.sty    2013/10/05 (rcs-revision 62be157fe783)
+beamerbasetheorems.sty    2010/06/06 (rcs-revision 7e7cc5e53e9d)
+ amsmath.sty    2013/01/14 v2.14 AMS math features
+ amstext.sty    2000/06/29 v2.01
+  amsgen.sty    1999/11/30 v2.0
+  amsbsy.sty    1999/11/29 v1.2d
+  amsopn.sty    1999/12/14 v2.01 operator names
+  amsthm.sty    2004/08/06 v2.20
+beamerbasethemes.sty    2010/05/01 (rcs-revision efa082c6111d)
+    main.tex
+graphicx.sty    2014/04/25 v1.0g Enhanced LaTeX Graphics (DPC,SPQR)
+graphics.sty    2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+    trig.sty    1999/03/16 v1.09 sin cos tan (DPC)
+graphics.cfg    2010/04/23 v1.9 graphics configuration of TeX Live
+   babel.sty    2014/03/24 3.9k The Babel package
+ english.ldf    2012/08/20 v3.3p English support from the babel system
+ fontenc.sty
+   t1enc.def    2005/09/27 v1.99g Standard LaTeX file
+beramono.sty    2004/01/31 (WaS)
+     url.sty    2013/09/16  ver 3.4  Verb mode for urls, etc.
+  xspace.sty    2009/10/20 v1.13 Space after command names (DPC,MH)
+booktabs.sty    2005/04/14 v1.61803 publication quality tables
+beamer_cfg.tex
+   trace.tex
+ xmllint.tex
+verbatim.sty    2003/08/22 v1.5q LaTeX2e package for verbatim enhancements
+   saxon.tex
+translator-basic-dictionary-English.dict    
+translator-bibliography-dictionary-English.dict    
+translator-environment-dictionary-English.dict    
+translator-months-dictionary-English.dict    
+translator-numbers-dictionary-English.dict    
+translator-theorem-dictionary-English.dict    
+    umsa.fd    2013/01/14 v3.01 AMS symbols A
+    umsb.fd    2013/01/14 v3.01 AMS symbols B
+xml_intro.tex
+  t1cmss.fd    1999/05/25 v2.5h Standard LaTeX font definitions
+  omscmr.fd    1999/05/25 v2.5h Standard LaTeX font definitions
+   t1fvm.fd    2004/09/07 scalable font definitions for T1/fvm.
+    mail.ps    Graphic file (type eps)
+   axiom.ps    Graphic file (type eps)
+mailtoto.ps    Graphic file (type eps)
+  urgent.ps    Graphic file (type eps)
+    attr.ps    Graphic file (type eps)
+XML/entities.xml 
+XML/espana.xml 
+XML/notation.xml 
+entities.ps    Graphic file (type eps)
+XML/id_idref.xml 
+XML/beers.xml 
+XML/scoping.xml 
+   xhtml.tex
+   XML/h.html 
+     dtd.tex
+    xslt.tex
+XSLT/empty.xsl 
+XML/cookbook.xml 
+     tmp.xml     (verbatim)
+XSLT/chapte.xsl 
+     tmp.xml     (verbatim)
+XSLT/chapters.xsl 
+     tmp.xml     (verbatim)
+XSLT/cookbook.xsl 
+     tmp.xml     (verbatim)
+XSLT/select_chapter.xsl 
+     tmp.xml     (verbatim)
+XSLT/var.xsl 
+XML/num_list.xml 
+XML/menu.xml 
+XSLT/03list12.xsl 
+     tmp.xml     (verbatim)
+XSLT/03list16.xsl 
+XSLT/sixth_none.xsl 
+XSLT/sixth_dish.xsl 
+XML/cars1.xml 
+XML/cars2.xml 
+     tmp.xml     (verbatim)
+XSLT/dyn_elm.xsl 
+     tmp.xml     (verbatim)
+XSLT/05list14.xsl 
+     tmp.xml     (verbatim)
+XSLT/05list15.xsl 
+     tmp.xml     (verbatim)
+XSLT/05list16.xsl 
+XSLT/05list19.xsl 
+XSLT/verb.xsl 
+XSLT/onetwo.xsl 
+XSLT/node_id.xsl 
+     tmp.xml     (verbatim)
+   tests.ps    Graphic file (type eps)
+XSLT/node_id_bis.xsl 
+XSLT/identity.xsl 
+XSLT/identity_bis.xsl 
+XSLT/by_name.xsl 
+XSLT/by_name_bis.xsl 
+     tmp.xml     (verbatim)
+ ***********
+
+ ) ) 
+Here is how much of TeX's memory you used:
+ 4535 strings out of 493105
+ 67747 string characters out of 6136959
+ 121068 words of memory out of 5000000
+ 7714 multiletter control sequences out of 15000+600000
+ 20662 words of font info for 62 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 56i,7n,48p,707b,385s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on article.xml.dvi (66 pages, 132280 bytes).

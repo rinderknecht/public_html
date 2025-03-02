@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Comma-Separated Values (CSV)</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Comma-Separated Values (CSV)</h2>
+
+<p><strong>Question 1.</strong> The purpose of this exercise is to
+write an XSLT transform which takes as input a sequence of elements
+containing a text node and output the contents of theses text nodes in
+the same order, separated by commas and ended by a period. If the
+input sequence is empty, the result is the empty sequence.</p>
+
+<p><strong>Example.</strong>
+<a href="./csv.xml">This</a> is an example of input document
+and
+<a href="./csv1.txt">this</a> is the corresponding output. You need
+to download the <a href="./csv.dtd">DTD</a> to run this example.
+</p>
+
+<strong>Hints.</strong>
+<ul>
+
+  <li>The output is text, so you need to set the attribute
+  <tt>method="text"</tt>.</li>
+
+</ul>
+
+<p><strong>Answer 1.</strong> The algorithm is implemented <a
+ href="./csv1.xsl">straightforwardly</a> with one named
+template. Notice how in the sequence <tt>&lt;xsl:sequence
+select="($items[1],',')"/></tt>, the type of <tt>$items[1]</tt> is
+actually <tt>text()</tt>, which is a subtype of the most general
+<tt>item()</tt>. Thus, the sequence in question contains a text node,
+followed by a string <tt>','</tt>. The responsibility of casting
+everything to strings is left to the serialiser. If the type of the
+return value of the template matching <tt>numbers</tt> were
+<tt>as="xs:string*"</tt>, then the result would contain additional
+blank characters. These are the result of the casting of text nodes to
+<tt>xs:string</tt>, despite the types being then less precise
+(<tt>item()</tt> instead of <tt>xs:string</tt>).</p>
+
+</hr>
+
+<p><strong>Question 2.</strong> If the contents is held in an
+attribute <tt>val</tt>, like in <a href="./csv_att.xml">this
+example</a>, simply changing the value of the parameter <tt>items</tt>
+to <tt>hexa/@val</tt> leads to a run-time error because the only way
+to extract the text value of an attribute is by means
+of <tt>xsl:value-of</tt> (here, <tt>xsl:sequence</tt> was previously
+used instead). Also, the attribute <tt>separator</tt> must be set to
+the empty sequence, so that serialization does not add an extra
+whitespace. You need to download the <a href="./csv_att.dtd">DTD</a>
+to run this example.</p>
+
+<p><strong>Answer 2.</strong> <a href="./csv2.xsl">This</a> transform
+solves the problem. The <a href="./csv2.txt">output</a> must be
+invariant.</p>
+
+<hr/>
+
+<p><strong>After matching templates and parallel processing have been
+explained:</strong> It is possible to use a template matching
+elements <tt>num</tt> instead of a named template. The trick is to use
+the special function <tt>last()</tt> to know if the position of the
+current matched element is the last of the original sequence. If so,
+then a period must be issued after the text value. Otherwise, a
+comma.</p>
+
+<p><strong>Answer 3.</strong> Consider this <a
+ href="./csv3.xsl">transform</a>. The result of its application to the
+same input yields <a href="./csv3.txt">the same output</a>.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

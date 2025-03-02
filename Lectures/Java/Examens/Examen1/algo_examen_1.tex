@@ -1,0 +1,273 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{ae,aecompl}
+\usepackage[latin1]{inputenc}
+\usepackage{xspace}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\newcommand{\boxitem}{\item[$\Box$]}
+\newcommand{\java}{\textsf{Java}\xspace}
+
+\input{trace}
+
+\title{Examen 1 de Programmation en Java}
+\author{Christian Rinderknecht}
+%\date{Mercredi 19 novembre 2003}
+
+\begin{document}
+
+\maketitle
+
+\noindent
+\textbf{Durée: deux heures. Les documents et les calculatrices ne sont
+ pas autorisés.}
+
+\smallskip
+
+\section{Questionnaire à choix multiples}
+
+\emph{Attention: il peut y avoir plusieurs bonnes réponses par question.}
+
+\begin{enumerate}
+
+  \item Quelles commandes lancent la compilation d'un programme \java?
+  \begin{itemize}
+    \boxitem \texttt{java prog.java}
+    \boxitem \texttt{javac prog}
+    \boxitem \texttt{javac prog.java}
+    \boxitem \texttt{java prog.class}
+  \end{itemize}
+
+  \item Quelles commandes lancent l'exécution d'un programme \java?
+  \begin{itemize}
+    \boxitem \texttt{javac prog}
+    \boxitem \texttt{java prog.class}
+    \boxitem \texttt{java prog}
+    \boxitem \texttt{javac prog.java}
+  \end{itemize}
+
+  \item Qu'affiche l'extrait de programme suivant?
+  \begin{verbatim}
+int value = 0;
+int count = 1;
+value = count++;
+System.out.println("value:"+value+" count:"+count);
+  \end{verbatim}
+  \vspace*{-10pt}
+  \begin{itemize}
+    \boxitem \verb+value:0 count:0+
+    \boxitem \verb+value:0 count:1+
+    \boxitem \verb+value:1 count:1+
+    \boxitem \verb+value:1 count:2+
+  \end{itemize}
+ 
+  \item Quelle est la valeur de \verb+values[2][1]+ dans le tableau
+  suivant?
+  \begin{verbatim}
+double[][] values =
+  {{1.2,9.0,3.2},{9.2,0.5,1.5,-1.2},{7.3,7.9,4.8}}
+  \end{verbatim}
+  \begin{itemize}
+    \boxitem \verb+7.3+
+    \boxitem \verb+7.9+
+    \boxitem \verb+9.2+
+    \boxitem Il n'y a pas d'élément correspondant à ces indices.
+  \end{itemize}
+
+  \item Quelle est la valeur retournée par \verb+things.length+?
+  \begin{verbatim}
+double[][] things =
+  {{1.2,9.0},{9.2,0.5,0.0},{7.3,7.9,1.2,3.9}}
+  \end{verbatim}
+  \vspace*{-10pt}
+  \begin{itemize}
+    \boxitem \verb+2+
+    \boxitem \verb+3+
+    \boxitem \verb+4+
+    \boxitem \verb+9+
+  \end{itemize}
+
+  \item Étant donné la déclaration de variable suivante:
+  \verb+long[][] stuff;+
+  Quelles instructions ci-dessous construisent un tableau de 5~lignes et
+  7~colonnes et l'affecte à \verb+stuff+?
+  \begin{itemize}
+    \boxitem \verb+stuff = new stuff[5][7]+
+    \boxitem \verb+stuff = new long[5][7]+
+    \boxitem \verb+stuff = long[5][7]+
+    \boxitem \verb+stuff = long[7][5]+
+  \end{itemize}
+
+  \item Étant donnée la déclaration 
+  \begin{verbatim}
+int[][] items = {{0,1,3,4},{4,4,99,0,7},{3,2}};
+  \end{verbatim}
+  \vspace*{-10pt}
+  Quelles boucles affichent tous les éléments de \verb+items+?
+  \begin{itemize}
+    \boxitem 
+      \begin{verbatim}
+for (int row=0; row < items.length; row++) {
+  System.out.println();
+  for (int col=0; col < items.length; col++)
+    System.out.print (items[row][col] + " ");
+}
+      \end{verbatim}
+      \vspace*{-10pt}
+    \boxitem
+      \begin{verbatim}
+for (int row=0; row < items.length; row++) {
+  System.out.println();
+  for (int col=0;col < items[col].length; col++)
+    System.out.print (items[row][col] + " ");
+}
+      \end{verbatim}
+      \vspace*{-10pt}
+    \boxitem
+      \begin{verbatim}
+for (int row=0; row < items.length; row++) {
+  System.out.println();
+  for (int col=0; col < items[row].length; col++)
+    System.out.print (items[row][col] + " ");
+}
+      \end{verbatim}
+      \vspace*{-10pt}
+    \boxitem
+      \begin{verbatim}
+for (int row=0; row < items.length; row++) {
+  for (int row=0; row < items[row].length; row++)
+    System.out.print (items[row][col] + " ");
+  System.out.println();
+}
+      \end{verbatim}
+  \end{itemize}
+
+  \item Soit la déclaration\\
+  \verb+int[][] items = {{0,1,3,4},{4,3,99,0,7},{3,2}}+\\
+  Quelles instructions remplacent entièrement les valeurs de la
+  première ligne de \texttt{items}?
+  \begin{itemize}
+
+      \boxitem 
+      \begin{verbatim}
+items[0][0] = 8;
+items[0][1] = 12;
+items[0][2] = 6;
+      \end{verbatim}
+      \vspace*{-10pt}
+    
+      \boxitem \verb+items[0] = new {8,12,6};+
+ 
+      \boxitem
+      \begin{verbatim}
+int[] temp = {8,12,6};
+items[0] = temp;
+      \end{verbatim}
+      \vspace*{-10pt}
+
+      \boxitem \verb+items[0] = {8,12,6};+
+  \end{itemize}
+    
+  \item Dans l'extrait de code suivant, qu'elle est la valeur de
+    \texttt{discount}?
+    \begin{verbatim}
+double discount;
+char code = 'C';
+
+switch (code) {
+  case 'A':
+    discount = 0.0;
+  case 'B':
+    discount = 0.1;
+  case 'C':
+    discount = 0.2;
+  default:
+    discount = 0.3;
+}
+    \end{verbatim}
+
+  \item Qu'affiche l'extrait de programme suivant?
+  \begin{verbatim}
+int[] tab = {1,4,3,6,8,2,5};
+int what = tab[0];
+
+for (int index=0; index < tab.length; index++) {
+  if (tab[index] < what) what = tab[index];
+}
+System.out.println (what);
+  \end{verbatim}
+  \vspace*{-10pt}
+  \begin{itemize}
+    \boxitem \verb+1+
+    \boxitem \verb+5+
+    \boxitem \verb+1 4 3 6 8 2 5+
+    \boxitem \verb+8+
+  \end{itemize}
+
+\end{enumerate}
+
+
+\section{Exercices}
+
+\begin{enumerate}
+
+  \item Que fait et affiche la suite d'instructions suivante?
+  \begin{verbatim}
+int[] z = new int[10];
+for (int i=0; i < z.length; i++) {
+  z[i] = i+1;
+}
+for (int i = z.length - 1; i >= 0; i--) {
+  System.out.println (z[i]);
+}
+  \end{verbatim}
+
+  \vspace*{4cm}
+  
+  \item Écrivez, une fois avec une boucle \texttt{for}, une fois
+  avec une boucle \texttt{while}, le code qui calcule et affiche la
+  valeur de $4^5$.
+
+\pagebreak
+
+  \item Écrire un programme \texttt{ChangeSousChaine} qui permet de
+  substituer une sous-chaîne par une autre dans une chaîne saisie par
+  l'utilisateur sur la ligne de commande.
+
+  \noindent Exemple:
+
+  \noindent \texttt{java ChangeSousChaine "Bonjour Mister Java" Mister
+  Madame}
+  
+  \noindent devra exactement afficher:
+
+  \noindent
+  \texttt{Le remplacement de "Mister" par "Madame" dans la\\
+  phra\-se "Bonjour Mister Java" donne:}\\
+  \texttt{Bonjour Madame Java}
+
+  \noindent De même
+
+  \noindent \texttt{\small java ChangeSousChaine "Bonjour Mister Java"
+  Bonjour Bonsoir}
+
+  \noindent devra exactement afficher
+
+  \noindent \texttt{Le remplacement de "Bonjour" par "Bonsoir" dans la
+  phrase\\
+  "Bonjour Mister Java" donne:}\\
+  \texttt{Bonsoir Mister Java}
+
+  \noindent \emph{Réponse:}
+
+
+\end{enumerate}
+
+
+\end{document}

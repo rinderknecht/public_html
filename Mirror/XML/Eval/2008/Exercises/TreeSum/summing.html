@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Summing Integers in a Tree</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Summing Integers in a Tree</h2>
+
+<p><strong>Question.</strong>
+  The purpose of this exercise is to write an XSLT transform which
+  takes as input a document made of one kind of element with one kind
+  of attribute whose value is a positive integer, and computes the
+  sum of all these numbers.
+</p>
+
+<p><strong>Example.</strong>
+<a href="./numbers.xml">This</a> is an input document whose
+processing leads to the <a href="./sum1.txt">total</a>. You need to
+download the <a href="./numbers.dtd">DTD</a> to run the example.
+</p>
+
+<p><strong>Hints.</strong> The key is to understand the difference
+  between this exercise and the exercise where you had to count the
+  number of sections in a table of contents. In the former, we counted
+  1 for each section. In the latter, we simply take the value of the
+  attribute <tt>val</tt> instead of 1.</p>
+
+<strong>Answers.</strong>
+<ol>
+
+  <li>Consider this <a href="./sum1.xsl">solution</a>. Note that the
+  output method is text, i.e., <tt>method="text"</tt>.</li>
+
+  <li>This <a href="./sum2.xsl">transform</a> makes use of an
+  accumulator and a <em>default parameter</em> <tt>current</tt>, thus
+  avoiding to initialise it in the first call (in the template
+  matching element <tt>numbers</tt>).</li>
+
+</ol>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

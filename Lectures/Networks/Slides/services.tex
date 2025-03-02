@@ -1,0 +1,416 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{enumerate}
+
+  \item Computer Networks and the Internet
+
+    \begin{itemize}
+
+      \item What is the Internet?
+
+      \item The network edge
+
+      \item The network core
+
+      \item Network access and physical media
+
+      \item ISPs and Internet backbones
+
+      \item Delay and loss in packet-switched networks
+ 
+      \item \textbf{Protocol layers and their service models}
+
+    \end{itemize}
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture}
+
+Until now we have been presenting the different components (switches,
+hosts, links), their relationships, different switching policies and
+different protocols, or services.
+
+\bigskip
+
+We need now a model to describe the \textbf{architecture} of the
+services provided by the Internet.
+
+\bigskip
+
+A useful analogy is an airline system.
+
+\bigskip
+
+One way to guess a structure of it, is to describe the actions taken
+to make a trip: first we purchase a flight ticket, then we go to
+airport, we give our luggage to be checked, then we board the plane as
+the baggage is loaded, then we take off, the plane travels to
+destination, lands, we get off the plane, our baggage is unloaded, we
+claim it and we complain to the ticketing service if the trip was bad.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+The figure in the next slide summarises the series of actions
+undertaken to make an airplane travel. 
+
+\bigskip
+
+It appears that each kind of activity, based on a functionality, in
+the departing airport has a corresponding counterpart in the arrival
+airport.
+
+\bigskip
+
+This suggests that we can look at the services in a \emph{horizontal
+manner}, i.e., as belonging to same levels.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.4]{01-20.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+The following picture changes the focus according to the horizontal
+point of view on the service usages we described so far. The structure
+is divided into \textbf{service layers}.
+
+\begin{center}
+\includegraphics[scale=0.45]{01-21.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+This layered architecture is of great value because it allows to
+reason on a specific part of the system, just by considering the upper
+layer (to which the current layer is a provider) and the lower layer
+(to which the current layer is a customer).
+
+\bigskip
+
+For instance, this model allows to change the service of one layer in
+a way that is not noticed by the surrounding layers. 
+
+\bigskip
+
+The way a service is achieved internally can be changed without
+changing its observable behaviour (like reorganising the workflow of
+the staff at the airport gates: this does not change anything outside
+the service).
+
+\bigskip
+
+It is even possible sometimes to change some properties of the service
+that are not noticed by the surrounding layers, like imposing that
+boarding should be done depending on the height of the passengers:
+this is not noticed by the baggage check and the runway takeoff
+services.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+Coming back to networks services, these are also structured into
+layers. The input and output behaviour of one layer (service) is the
+\textbf{protocol}. The way this behaviour is achieved internally to
+the layer is the \textbf{protocol implementation}. 
+
+\bigskip
+
+As we just saw, these are different notions: you can change the
+protocol (as imposing more constraints on the output, like sorting by
+height the passengers), or independently change its implementation (as
+reorganising the staff at the gates).
+
+\bigskip
+
+Notice also that a protocol in a given layer is implemented by remote
+entities of the network, just as the services in the airplane system
+were \emph{distributed} between the departing and arriving airports.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+In a network, the protocols can either be implemented by hardware or
+software, or even by a mixture of hardware and software.
+
+\bigskip
+
+Each implementation of layer \(n\) communicates with its peer at the
+same level \(n\) by exchanging messages whose structure is specific to
+this level, called \textbf{\(n\)-layer protocol data units} or, in
+short, \textbf{\(n\)-PDUs}.
+
+\bigskip
+
+On one entity, all the protocols taken as a whole is called the
+\textbf{protocol stack}.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+When the layer \(n\) of host A sends an \(n\)-PDU to layer \(n\) of
+host B, it passes the PDU to the \(n-1\) layer of host A and lets it
+deliver the \(n\)-PDU to the layer \(n\) of host B. Thus layer \(n\)
+is said to \emph{rely} on layer \(n-1\) for achieving the delivering,
+and, in turn, layer \(n-1\) \emph{offers services} to layer \(n\).
+
+\bigskip
+
+Layer \(n\) is an \textbf{upper layer} with respect to layer \(n-1\),
+which is then a \textbf{lower layer}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+Let us give more insight about protocol layering. Consider a network
+with four layers in the following figure.
+\begin{center}
+\includegraphics[scale=0.37]{01-22.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+The application message, \(M\), is cut into two packets, \(M_1\) and
+\(M_2\). They are both sent to the layer below, which is layer~3. This
+layer does not know how to interpret the contents of \(M_1\) and
+\(M_2\), and does not care about it. His role is to add a
+\textbf{header} \(H_3\) to each packet, whose structure is specific to
+layer~3, and then passes them to the layer below.
+
+\bigskip
+
+Layer~2, similarly, does not know the structure of the incoming 3-PDU,
+and does not care. It just adds a header \(H_2\) specific to layer~2.
+The next layer behaves similarly.
+
+\bigskip
+
+The remote protocol stack works symmetrically, as the message goes
+up. Each level reads the outermost header (supposed to correspond, by
+construction, to the current level) and removes it.
+
+\bigskip
+
+Finally, the application message is reassembled back into \(M\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+In order for one layer to \textbf{interoperate} with the layer below
+it, the \textbf{interfaces} between the two layers must be precisely
+defined. 
+
+\bigskip
+
+An interface contains the format of the PDU as well as the kind of
+functionality a layer provides (you can think to the types of
+functions in programming languages).
+
+\bigskip
+
+This allows to improve the implementation of a service to be unnoticed
+from adjacent layers, as long as the interface remains the same (this
+is similar to changing the code of a function, while keeping its
+type).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+In a computer networks, each layer may perform one or more of the
+following general tasks:
+\begin{itemize}
+
+  \item \textbf{Error control}, which makes the logical channel
+  (i.e., from one peer to another, at the same stack level, while
+  ignoring the lower levels) more reliable.
+
+  \item \textbf{Flow control}, which avoids overwhelming a slower
+  peer with PDUs.
+
+  \item \textbf{Segmentation and reassembly}, which divides data at
+  the source and reassembles the pieces at the destination.
+
+  \item \textbf{Multiplexing}, which allows several high-level
+  sessions (i.e., full runs of a given service instance) to share a
+  single lower-level channel.
+
+  \item \textbf{Connection setup}, which provides handshaking with a
+  peer.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+The \textbf{Internet protocol stack} is made of five layers: the
+physical layer, the data link layer, the network layer, the transport
+layer and the application layer (bottom-up).
+
+\bigskip
+
+It is common usage to give a name to the four upper layers, instead of
+\(n\)-PDU. They are, from data link layer to application layer:
+\textbf{frame}, \textbf{datagram}, \textbf{segment},
+\textbf{message}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.40]{01-23.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+The \textbf{application layer} supports network-oriented programs
+and may include many different protocols, like \textsc{http} to
+support the Web, \textsc{smtp} to support e-mail and \textsc{ftp} to
+support file transfer.
+
+\bigskip
+
+The \textbf{transport layer} provides the service of transporting
+application-layer messages between the client and the server. In the
+Internet, there are two protocols at this level: \textsc{tcp} and
+\textsc{udp}.
+
+\bigskip
+
+The \textbf{network layer} routes datagrams from one host to the
+other. It has two main components. One defines the fields of the
+datagrams as well as how the hosts and the routers acts on these
+fields: this is the famous \textsc{IP} protocol. Another one contains
+routing protocols, which determines the paths between sources and
+destinations. 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+The \textbf{link layer} is in charge of moving a packet from one
+router to another. By contrast, the network layer moves a packet
+along the whole path, not just two switches. 
+
+\bigskip
+
+At each node, the network layer passes the datagram to the link
+layer, which delivers the corresponding frame to the next node. At
+this node, the frame is passed up to the network layer again.
+
+\bigskip
+
+This is because the services provided by the link layer depends on the
+specific link protocols, which may be different for the incoming link
+and the out-going link (hence the frame must go up to the network
+layer at each node). For instance, one link can use \textsc{ppp} and
+the next one Ethernet.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+The \textbf{physical layer} is in charge of moving bits along a link,
+by propagating electromagnetic signals along a link. As with the link
+layer, the protocols at this layer are link-dependent and also depend
+on the actual transmission rate of the link.
+
+\bigskip
+
+For instance, Ethernet has many physical layer protocols: one for
+twisted-pair copper wire, another for coaxial cable, another for fiber
+optics etc. This is because in each case the way to move a bit across
+the link is different.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Layered architecture (cont)}
+
+\begin{center}
+\includegraphics[scale=0.40]{01-24.eps}
+\end{center}
+\textbf{Bridges} are a special kind of switches (they do not support IP).
+
+\end{frame}

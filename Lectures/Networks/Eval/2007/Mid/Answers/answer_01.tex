@@ -1,0 +1,16 @@
+%% Do not remove following blank line
+
+\textbf{Answer.}  It takes \(\frac{NL}{R}\) seconds to transmit the
+\(N\) packets. Thus, the buffer is empty when a batch of \(N\) packets
+arrive.
+
+The first of the \(N\) packets has no queuing delay. The second packet
+has a queuing delay of \(\frac{L}{R}\) seconds. The \(n\)-th packet
+has a delay of \((n-1){\frac{L}{R}}\).
+
+Therefore the average delay is \setlength\mathindent{-1pc}
+\[
+ {\frac{1}{N}}\sum_{n=1}^{N}(n-1){\frac{L}{R}} = \frac{L}{R}
+ \frac{1}{N} \sum_{n=0}^{N-1}n = \frac{L}{R} \frac{1}{N}
+ \frac{(N-1)N}{2} = \frac{1}{2} (N-1) \frac{L}{R} 
+\]

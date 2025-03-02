@@ -1,0 +1,60 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amssymb}
+
+\title{Test 1d of \textsf{Erlang}}
+\author{Christian Rinderknecht}
+\date{7 October 2011}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\begin{enumerate}
+
+  \item Write a function \fun{filter/1} such that, if
+    \[\fun{filter}(P) \xrightarrow{+} \{R,S\},\]
+    then \(R\)~is the list of the non-list items of~\(P\) and \(S\)~is
+    the list of the list in~\(P\), in the same order as in~\(P\). For
+    example,
+    \begin{align*}
+      \fun{filter}([\fun{a},1,[\,],2,[\fun{b},[3]]])
+    &\xrightarrow{+} \{[\fun{a},1,2],[[\,],[\fun{b},[3]]]\}.\\
+      \fun{filter}([\fun{a},1,2])
+    &\xrightarrow{+} \{[\fun{a},1,2],[\,]\}.\\
+      \fun{filter}([\,])
+    &\xrightarrow{+} \{[\,],[\,]\}.
+    \end{align*}
+    
+  \item Strings in \textsf{Erlang} are like in \textsf{Java}. For
+    example, \fun{"This is a string"}. Concatenation of strings is
+    performed by the \fun{++} operator, as in \textsf{Java}; for
+    instance, \fun{"This is a" ++ " fruit"} evaluates in \fun{"This is
+      a fruit"}. Write a function \fun{punc/1} (\emph{punctuates})
+    such that, if
+    \[\fun{punc}(P) \xrightarrow{+} S,\]
+    then \(S\)~is the string made of the concatenation of the strings
+    in the list~\(P\), separated by commas, except the last two
+    strings, which require "and". The resulting string is terminated
+    by a period as well, like in English. For example,
+    \[
+    \fun{punc}([\textnormal{"One"}, \textnormal{"two"},
+      \textnormal{"three"}, \textnormal{"four"}]) \xrightarrow{+}
+    \textnormal{"One, two, three and four."}\] If there is only one
+    string in~\(P\), only the terminal period is required, for
+    instance:
+    \[\fun{punc}([\textnormal{"One"}]) \xrightarrow{+} \textnormal{"One."}\] If \(P\)~is empty,
+    the result is the empty string \fun{""} (no period inside).
+
+\end{enumerate}
+
+\end{document}

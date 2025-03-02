@@ -1,0 +1,5 @@
+#include ".links"
+
+$HOME/Makefiles/Tools/gcc.mk
+$HOME/Makefiles/Tools/html2ps.mk
+$HOME/Makefiles/Tools/gnuc2ps.mk

@@ -1,0 +1,47 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{alltt}
+\usepackage{verbatim}
+\usepackage{amsmath}
+
+\input{trace}
+\input{prolog}
+
+\input{title}
+\author{Christian Rinderknecht}
+\date{19 October 2006}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\section{Matching}
+
+\input{question_01}
+
+\section{Mirroring binary trees}
+
+\begin{multicols}{2}
+\noindent A \emph{binary tree} is either a \emph{leaf} or is made of a
+\emph{root} and two subtrees (left and right). Here roots and leaves
+are integers. Assume the predicates \texttt{leaf(X)}, which denotes a
+tree made of a leaf \texttt{X}, and \texttt{tree(Root, Left, Right)},
+which denotes a tree made of a root \texttt{Root}, a left subtree
+\texttt{Left} and a right subtree \texttt{Right}.
+
+\columnbreak
+\noindent Consider \texttt{tree(1,tree(5,leaf(3), leaf(4)),
+  leaf(2))} denoting
+\begin{center}
+\includegraphics{example}
+\end{center}
+\end{multicols}
+
+\input{question_02}
+
+\end{document}

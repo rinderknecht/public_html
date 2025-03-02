@@ -1,0 +1,68 @@
+\paragraph{Answer.} The solution with error reporting in case of the
+number of items is not the same in the three stacks is
+\begin{align*}
+\proc{TSS}'(\proc{Push}(a,A), \proc{Push}(b,B), \proc{Push}(c,C), D)
+&\rightarrow\\
+\proc{TSS}'(A, B, C, \proc{Push}(c, \proc{Push}(a,
+\proc{Push}(b, D))))\\
+\proc{TSS}'(\proc{Empty}, \proc{Empty}, \proc{Empty}, D) &\rightarrow
+\proc{Rev}(D)\\
+\proc{TSS}'(\proc{Push}(a,A), \proc{Push}(b,B), \proc{Empty}, D)
+&\rightarrow \proc{Error}\\
+\proc{TSS}'(\proc{Push}(a,A), \proc{Empty}, \proc{Push}(c,C), D)
+&\rightarrow \proc{Error}\\
+\proc{TSS}'(\proc{Push}(a,A), \proc{Empty}, \proc{Empty}, D)
+&\rightarrow \proc{Error}\\
+\proc{TSS}'(\proc{Empty}, \proc{Push}(b,B), \proc{Push}(c,C), D)
+&\rightarrow \proc{Error}\\
+\proc{TSS}'(\proc{Empty}, \proc{Push}(b,B), \proc{Empty}, D)
+&\rightarrow \proc{Error}\\
+\proc{TSS}'(\proc{Empty}, \proc{Empty}, \proc{Push}(c,C), D)
+&\rightarrow \proc{Error}
+\end{align*}
+\noindent Here we define efficiency as the number of rewrite
+steps. Therefore, we can improve \proc{TSS} by taking items three by
+three as in \(\proc{TSS}'\), but without reporting any errors.
+\begin{align*}
+\proc{TSS}(\proc{Push}(a,A), \proc{Push}(b,B), \proc{Push}(c,C))
+&\rightarrow  \notag\\
+\proc{Push}(c, \proc{Push}(a,\proc{Push}(b, \proc{TSS}(A, B, C))))\\
+\proc{TSS}(\proc{Empty}, \proc{Empty}, \proc{Empty}) &\rightarrow
+\proc{Empty}\\
+\proc{TSS}(\proc{Push}(a,A), \proc{Push}(b,B), \proc{Empty})
+&\rightarrow\\
+ \proc{Push}(a, \proc{Push}(b, \proc{TSS}(A,B,\proc{Empty})))\\
+\proc{TSS}(\proc{Push}(a,A), \proc{Empty}, \proc{Push}(c,C))
+&\rightarrow\\
+ \proc{Push}(c, \proc{Push}(a, \proc{TSS}(A, \proc{Empty}, C)))\\
+\proc{TSS}(\proc{Push}(a,A), \proc{Empty}, \proc{Empty})
+&\rightarrow \proc{Push}(a,A)\\
+\proc{TSS}(\proc{Empty}, \proc{Push}(b,B), \proc{Push}(c,C))
+&\rightarrow\\
+\proc{Push}(c, \proc{Push}(b,\proc{TSS}(\proc{Empty},B,C)))\\
+\proc{TSS}(\proc{Empty}, \proc{Push}(b,B), \proc{Empty})
+&\rightarrow \proc{Push}(b,B)\\
+\proc{TSS}(\proc{Empty}, \proc{Empty}, \proc{Push}(c,C))
+&\rightarrow \proc{Push}(c,C)
+\end{align*}
+
+\noindent The version with error handling is straightforward:
+\begin{align*}
+\proc{TSS}(\proc{Push}(a,A), \proc{Push}(b,B), \proc{Push}(c,C))
+&\rightarrow  \notag\\
+\proc{Push}(c, \proc{Push}(a,\proc{Push}(b, \proc{TSS}(A, B, C))))\\
+\proc{TSS}(\proc{Empty}, \proc{Empty}, \proc{Empty}) &\rightarrow
+\proc{Empty}\\
+\proc{TSS}(\proc{Push}(a,A), \proc{Push}(b,B), \proc{Empty})
+&\rightarrow \proc{Error}\\
+\proc{TSS}(\proc{Push}(a,A), \proc{Empty}, \proc{Push}(c,C))
+&\rightarrow \proc{Error}\\
+\proc{TSS}(\proc{Push}(a,A), \proc{Empty}, \proc{Empty})
+&\rightarrow \proc{Error}\\
+\proc{TSS}(\proc{Empty}, \proc{Push}(b,B), \proc{Push}(c,C))
+&\rightarrow \proc{Error}\\
+\proc{TSS}(\proc{Empty}, \proc{Push}(b,B), \proc{Empty})
+&\rightarrow \proc{Error}\\
+\proc{TSS}(\proc{Empty}, \proc{Empty}, \proc{Push}(c,C))
+&\rightarrow \proc{Error}
+\end{align*}

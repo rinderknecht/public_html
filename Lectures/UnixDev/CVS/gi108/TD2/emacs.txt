@@ -1,0 +1,96 @@
+Lorsque Emacs est appelé, une fenêtre destinée à  l'édition des
+fichiers apparait.
+
+Toutes les modifications que peut faire l'utilisateur opèrent sur le
+tampon ("buffer" en anglais), c'est à dire une image mémoire du
+fichier, et non pas directement sur le fichier.
+
+Il est donc nécessaire que l'utilisateur exécute lui-même une commande
+pour sauver son travail, et il est fortement conseillé de le faire
+assez souvent pour éviter une trop grande perte en cas de panne de
+l'ordinateur ou d'une manoeuvre maladroite de la part de
+l'utilisateur.
+
+
+      La fenêtre Emacs
+
+Emacs se lance par la commande UNIX emacs &. Une fenêtre apparaît alors
+à l'écran. Cette fenêtre est constituée de plusieurs parties:
+
+    * Du *mini-buffer*, tout en bas: cette ligne est à la fois utilisée
+      par Emacs pour vous fournir des informations et comme zone pour
+      taper les commandes.
+    * De la ligne d'état, ou *mode line*, juste au-dessus du
+      mini-buffer: celle-ci vous apprend dans l'ordre si le texte a été
+      modifié (**), s'il est en mode lecture seulement (&&), le nom du
+      document en mémoire (buffer) et le mode d'édition (*Fundamental*,
+      etc.).
+    * D'une fenêtre d'édition, contenant le buffer actif (le texte édité).
+    * D'une ligne de menus (dans les dernières versions et sous X
+      seulement), utilisables à l'aide de la souris.
+
+Lorsque Emacs travaille sur un fichier, il ne le fait pas directement
+sur le fichier, mais sur une copie en mémoire de ce fichier: un
+*buffer*. Cependant, un buffer ne correspond pas toujours à un fichier.
+Plusieurs buffers peuvent être chargés simultanément, mais un seul est
+actif à la fois.
+
+
+      Touches Control, Meta et Escape
+
+Toutes les commandes dans l'éditeur Emacs s'expriment par une
+combinaison des touches Control (C-), Meta (M-) et de caractères. La
+touche Meta étant absente de la plupart des claviers, elle peut être
+simulée par la touche ESC. Pour la suite, les abréviations suivantes
+seront utilisée:
+
+    * C-*<*caractère*>*: presser simultanément les touches Control et *<*caractère*>*
+    * M-*<*caractère*>*:
+          o soit presser simultanément les touches Meta et *<*caractère*>*,
+          o soit presser la touche ESC /puis/ *<*caractère*>*.
+
+Par conséquent, C-x C-c (quitter Emacs) s'effectue en tapant
+successivement C-x puis C-c.
+
+A chaque commande correspond une fonction de Emacs, appelée par M-x
+nom_fonction. Par exemple, l'annulation de la dernière modification du
+texte s'effectue par la commande M-x undo, où /undo/ est la fonction
+exécutée. Certaines commandes acceptent des abréviations: C-x u est
+l'abréviation de la fonction d'annulation de la dernière modification.
+
+Dans les versions les plus récentes d'Emacs, certaines commandes sont
+également accessibles via des menus.
+
+
+      Suppression
+
+·         Backspace efface le caractère à gauche du curseur.
+
+    * C-d efface le caractère au-dessus du curseur.
+    * C-k efface le contenu de la ligne à partir du curseur jusqu'à la
+      fin de la ligne et ajoute ce qui a été supprimé dans un tampon.
+
+
+      Copier et coller
+
+Emacs permet d'effectuer du copier-coller sur des blocs de texte,
+appelés /régions/. Une région est définie entre une marque et la
+position courante du curseur. La marque est fixée par la commande
+C-space à l'endroit où se trouve le curseur.
+
+Après avoir délimité une région,
+
+·         C-w "coupe" (cut) la région (la supprime et la sauvegarde dans
+une mémoire tampon).
+
+    * M-w copie la région dans une mémoire tampon.
+
+C-y (yank) "colle" (paste) une région à la position du curseur. M-y
+juste après permet de remplacer la région par celle qui a été
+sauvegardée précédemment.
+
+
+      Quitter Emacs
+
+C-x C-c permet de quitter Emacs.
+

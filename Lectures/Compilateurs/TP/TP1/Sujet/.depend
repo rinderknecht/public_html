@@ -1,0 +1,6 @@
+evalue.cmo: ast.cmo 
+evalue.cmx: ast.cmx 
+lexical.cmo: grammaire.cmi 
+lexical.cmx: grammaire.cmx 
+main.cmo: evalue.cmo grammaire.cmi lexical.cmo 
+main.cmx: evalue.cmx grammaire.cmx lexical.cmx 

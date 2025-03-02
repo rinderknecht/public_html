@@ -1,0 +1,1342 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+% Morris and Pratt
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm}
+
+The slowness of the naive algorithm in the worst case is due to the
+fact that, in case of failure, it starts again to compare the first
+letters of \(x\) etc. (see line \(5\)), \emph{without using the
+  information of the partial success of the previous attempt.}
+
+\bigskip
+
+If the failure occurred at the index \(i\) in the word \(x\) and index
+\(j\) in the text, we have
+\begin{align*}
+   x[1 \dots i-1] 
+&= t[j-i \dots j-1]\\
+x[i] &\neq t[j]
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% Morris and Pratt
+%
+\renewcommand\arraystretch{0.95}
+
+\begin{frame}
+\frametitle{Morris-Pratt algorithm (cont)}
+
+\vspace*{-25pt}
+\[
+\begin{array}{rcc@{\,}c@{}ccr@{}r@{\,}c@{}ccc@{}ccc}
+  & & & \scriptstyle j-i 
+  & & & 
+  & & \multicolumn{2}{@{}l}{\scriptstyle j-i+p}
+  & & 
+  & \multicolumn{1}{r@{}}{\scriptstyle j-1}
+  & \multicolumn{1}{c}{\scriptstyle j}\\
+\cline{2-15}
+    \multicolumn{1}{r|}{t:}
+  & \multicolumn{2}{c}{\phantom{H}\ldots\phantom{H}}
+  & \multicolumn{1}{|c|}{a}
+  & \multicolumn{1}{c|}{b}
+  & \multicolumn{1}{c|}{c}
+  & \multicolumn{2}{c|}{\ldots}
+  &
+  & 
+  &
+  & \phantom{HHHH}
+  & 
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{\texttt{b}}}
+  & \phantom{HHHH}\\
+\cline{2-15}
+  &
+  & 
+  & \multicolumn{1}{:c}{\scriptstyle 1}
+  &
+  &
+  & 
+  & \multicolumn{1}{r@{\,}:}{\scriptstyle p}
+  & 
+  &
+  &
+  &
+  & \multicolumn{1}{c@{}:}{\scriptstyle i-1}
+  & \multicolumn{1}{c}{\scriptstyle i}\\ 
+\cline{4-15}
+    \multicolumn{1}{r}{x:}
+  &
+  &
+  & \multicolumn{1}{|c|}{a}
+  & \multicolumn{1}{c|}{b}
+  & \multicolumn{1}{c|}{c}
+  & \multicolumn{2}{c}{\ldots}
+  &
+  &
+  & 
+  & 
+  &
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{\texttt{a}}}
+  & \\
+\cline{4-15}
+  &&&&&&
+  & 
+  & \multicolumn{1}{:c}{\scriptstyle 1}
+  &
+  &
+  & 
+  & \multicolumn{1}{c:}{}\\
+\cline{9-15}
+  &&&&&
+  & \text{slided}
+  & \multicolumn{1}{c}{x:}
+  & \multicolumn{1}{|c|}{a}
+  & \multicolumn{1}{c|}{b}
+  & \multicolumn{1}{c|}{c}
+  & \multicolumn{2}{c}{\ldots}\\
+\cline{9-15}
+\end{array}
+\]
+Any subsequent search in the factor \(t[j-i \dots j-1]\) could use the
+information that it is a prefix of \(x\) --- the first comparison
+failure is coloured in grey.
+
+\bigskip
+
+If a new search starts in \(t\) at position \(j-i+p\), with \(2
+\leqslant p \leqslant i-1\), it compares \(x[1 \dots]\) to \(t[j-i+p
+  \dots]\). Since \(t[j-i+p \dots j-1]\) is a suffix of \(t[j-i \dots
+  j-1]\), which is equal to \(x[1 \dots i-1]\), it compares \(x[1
+  \dots]\) to a suffix of \(x[1 \dots i-1]\), i.e., to a part of
+itself!
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm (cont)}
+
+The important point here is that these comparisons are
+\textbf{independent} of the text \(t\), since they apply to part of
+the pattern itself, i.e., the word \(x\).
+
+\bigskip
+
+The strategy devised here is to compute all the comparisons on \(x\)
+\emph{before} we start the search in the text, and then use this
+information to avoid repeating the same comparisons at different
+positions.
+
+\bigskip
+
+This \textbf{preprocessing} on \(x\) will indeed allow to recognise
+the sole configurations where the search may succeed.
+
+\bigskip
+
+Therefore the subproblem now is to determine the positions \(i\) where
+the word \(x[1 \dots i-1]\) ends with a prefix of \(x\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Maximum borders}
+
+\label{MP_supply_def}
+
+Let \(u\) be a non-empty word. A \textbf{border} of \(u\) is a word
+different from \(u\) which is both prefix and suffix of \(u\). For
+example, the word \(u = \texttt{abacaba}\) has the three borders
+\(\epsilon\), \texttt{a} and \texttt{aba}.
+
+\bigskip
+
+Let us note \(\Border{}{x}\) the \textbf{longest border} of a non-empty
+word \(x\). 
+
+\bigskip
+
+For a given word \(x\), let us define a function \(\MPsupplyName_{x}\) on
+all its prefixes as
+\[
+  \MPsupply{x}{}{i} = \len{\Border{}{x[1 \dots i]}} 
+  \qquad 1 \leqslant i \leqslant \len{x}
+\]
+or, equivalently
+\[
+\MPsupply{x}{}{\len{y}} = \len{\Border{}{y}} \qquad y \preccurlyeq x
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Pattern preprocessing (cont)}
+
+Here is the table of the maximum borders for the prefixes of the word
+\texttt{abacabac}:
+\[
+\begin{array}{c|ccccccccc|}
+x & \texttt{a} & \texttt{b} & \texttt{a} & \texttt{c} 
+ & \texttt{a} & \texttt{b} & \texttt{a} & \texttt{c}\\
+\hline
+  i
+& 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8\\
+  \Border{}{y}
+& \epsilon & \epsilon & \texttt{a} 
+& \epsilon & \texttt{a} & \texttt{ab} & \texttt{aba} & \texttt{abac}\\ 
+  \MPsupply{x}{}{i}
+& 0 & 0 & 1 & 0 & 1 & 2 & 3 & 4\\
+\hline
+\end{array}
+\]
+Each row corresponds to a prefix \(y\) of \(x\), not just to a
+letter. So, at index \(7\), you should read \(
+\Border{}{\underline{\texttt{aba}}\texttt{c}\underline{\texttt{aba}}}
+= \texttt{aba} \), at index \(4\), \(\Border{}{\texttt{abac}} =
+\varepsilon\) because \(\texttt{abac} =
+\underline{\varepsilon}\texttt{abac}\underline{\varepsilon}\).
+
+\bigskip
+
+\noindent Also, note that borders can overlap, e.g.,. \(\texttt{aaaa}
+= \underline{\texttt{aaa}}\texttt{a} =
+\texttt{a}\underline{\texttt{aaa}}\), so \(\Border{}{\texttt{aaaa}} =
+\texttt{aaa}\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Pattern preprocessing (cont)}
+
+\label{morris-pratt-conf}
+
+Coming back to the naive search:
+\[\small
+\begin{array}{rcc@{\,}c@{}ccr@{}r@{\,}c@{}ccc@{}ccc}
+  & & & \scriptstyle j-i & & & 
+  & & \multicolumn{2}{@{}l}{\scriptstyle j-i+p}
+  & &
+  & \multicolumn{1}{r@{}}{\scriptstyle j-1}
+  & \multicolumn{1}{c}{\scriptstyle j}\\
+\cline{2-15}
+    \multicolumn{1}{r|}{t:}
+  & \multicolumn{2}{c}{\phantom{l}\ldots\phantom{l}}
+  & \multicolumn{3}{|c|}{\Border{}{x[1 \dots i-1]}}
+  & \multicolumn{2}{c|}{\ldots}
+  & \multicolumn{5}{c}{\Border{}{x[1 \dots i-1]}}
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{\texttt{b}}}
+  & \phantom{ll}\\
+\cline{2-15}
+  &
+  & 
+  & \multicolumn{1}{:@{\,}l}{\scriptstyle 1}
+  &
+  & \multicolumn{1}{c:}{}
+  & 
+  & \multicolumn{1}{r@{\,}:}{\scriptstyle p}
+  & 
+  &
+  &
+  &
+  & \multicolumn{1}{r@{}:}{\scriptstyle i-1}
+  & \scriptstyle i\\ 
+\cline{4-15}
+    \multicolumn{1}{r}{x:}
+  &
+  &
+  & \multicolumn{3}{|c|}{\Border{}{x[1 \dots i-1]}}
+  & \multicolumn{2}{c}{\ldots}
+  & \multicolumn{5}{|c}{\Border{}{x[1 \dots i-1]}}
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{\texttt{a}}}
+  & \\
+\cline{4-15}
+  &&&&&&
+  & 
+  &\multicolumn{1}{:@{\,}l}{\scriptstyle 1}
+  &&&& \multicolumn{1}{r@{}:}{\scriptstyle \MPsupply{x}{}{i-1}}\\
+\cline{9-15}
+  &&&&&
+  & \text{slided}
+  & \multicolumn{1}{c}{x:}
+  & \multicolumn{5}{|c}{\Border{}{x[1 \dots i-1]}}
+  & \multicolumn{1}{|c|}{\textbf{?}}\\
+\cline{9-15}
+\end{array}
+\]
+the difference here is that, in case of failure (in grey), we do
+\textbf{not} decrement the position in \(t\) and we slide \(x\) of
+\(p=i - 1 - \MPsupply{x}{}{i-1}\) positions with respect to \(t\),
+i.e., the current position in \(x\) does not decrement to \(1\) but
+becomes \(1 + \MPsupply{x}{}{i-1}\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Pattern preprocessing (cont)}
+
+\label{beta_zero}
+
+What happens in the extreme case \(i = 1\), that is, when the
+comparison fails on the first letter of the pattern?
+
+\bigskip
+
+In this case, there is no optimisation left, we just can try our luck
+by comparing the next position in \(t\) to the first letter of \(x\)
+(again): this is exactly what the naive algorithm would do.
+
+\bigskip
+
+This means that the sliding offset must equal one when \(i=1\):
+\[
+i - 1 - \MPsupply{x}{}{i-1} = 1 \quad \text{where} \; i = 1
+\]
+which is equivalent to
+\[
+\MPsupply{x}{}{0} = -1
+\]
+Therefore we need to extend \(\MPsupplyName\) to be defined on \(0\) as
+\(\MPsupply{x}{}{0} = -1\) for all words \(x\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Pattern preprocessing (cont)}
+
+\label{supply}
+
+In practice, it is convenient to use a function
+\(
+s_{x}: \{1, \dots, \len{x}\} \rightarrow \{0, \dots, \len{x}\}
+\)
+defined as 
+\[
+\sX{x}{}{i} = 1 + \MPsupply{x}{}{i-1} \qquad 1 \leqslant i \leqslant
+\len{x}
+\]
+Then the sliding consists simply in replacing \(i\) by \(\sX{x}{}{i}\).
+
+\bigskip
+
+This function \(s_{x}\) is called the \textbf{failure function} of
+pattern \(x\). For the word \texttt{abacabac}, it is
+\[
+\begin{array}{c|ccccccccc|}
+x & & \texttt{a} & \texttt{b} & \texttt{a} & \texttt{c} & \texttt{a} 
+ & \texttt{b} & \texttt{a} & \texttt{c}\\
+\hline
+  i
+& 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8\\
+  \MPsupply{x}{}{i}
+& -1 & 0 & 0 & 1 & 0 & 1 & 2 & 3 & 4\\
+  \sX{x}{}{i}
+& \boxempty & 0 & 1 & 1 & 2 & 1 & 2 & 3 & 4\\
+\hline
+\end{array}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Imperative pseudo-code}
+
+{\small
+\begin{codebox}
+\(\proc{MP} (x, t)\)\\
+\li \(s \gets \proc{MP-Fail} (x)\)\>\>\>\>\>\>\>\>\>\>\Comment The failure function as an array.
+\li \(i \gets 1\); \(j \gets 1\)
+\li \While \(i \leqslant \len{x}\) \LogAnd \(j \leqslant \len{t}\)
+\li \Do \If \(i = 0\) \LogOr \(x[i] = t[j]\)\>\>\>\>\>\>\>\>\Comment Test on \(i\) because now \(i\) can be 0.
+\li	  \Then \(i \gets i + 1\); \(j \gets j + 1\)\>\>\>\>\>\>\Comment Schedule next letter in \(x\).
+\li	  \Else \(i \gets s[i]\)\>\>\>\>\>\>\Comment Failed: we slide \(x\) on \(t\). 
+          \End 
+    \End
+\li \If \(\len{x} < i\) 
+\li \Then \(\ldots\) \>\>\>\>\>\>\>\>\Comment Occurrence of \(x\) in \(t\) at \(j - \len{x}\).
+\li \Else \(\ldots\)\>\>\>\>\>\>\>\>\Comment No occurrences. 
+    \End
+\end{codebox}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Single-assignment pseudo-code}
+ 
+\begin{codebox}
+\(\proc{MP} (x, t)\)\\
+\li \(s \gets \proc{MP-Fail} (x)\)
+\li \((i, j) \gets \proc{Offsets} (s,x,t,1,1)\)
+\li \If \(\len{x} < i\) 
+\li \Then \(\ldots\) \textbf{else} \(\ldots\)
+    \End
+\end{codebox}
+\begin{codebox}
+\(\proc{Offsets} (s,x,t,i,j)\)\\
+\li \If \(i \leqslant \len{x}\) \LogAnd \(j \leqslant \len{t}\)
+\li \Then \If \(i = 0\) \LogOr \(x[i] = t[j]\)
+\li	      \Then \(\proc{Offsets} \gets \proc{Offsets} (s, x, t, i+1, j+1)\)
+\li       \Else \(\proc{Offsets} \gets \proc{Offsets} (s, x, t, s[i], j)\)
+          \End
+\li	\Else \(\proc{Offsets} \gets (i, j)\)
+    \End
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Analysis and example}
+
+The Morris-Pratt algorithm finds an occurrence of a word \(x\) in a
+text \(t\), or fail to do so, in at most \(2\len{t} - 1\) letter
+comparisons, if we already have the failure function on \(x\).
+
+\bigskip
+
+\textbf{Example.} Consider the following table for the search of the
+word \(x=\texttt{abacabac}\) in the text
+\(t=\texttt{babacacabacaab}\).
+\[
+\begin{array}{c|cccccccccccccc|}
+j & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14\\
+  & \texttt{b} & \texttt{a} & \texttt{b} & \texttt{a} & \texttt{c} 
+  & \texttt{a} & \texttt{c} & \texttt{a} & \texttt{b} & \texttt{a} 
+  & \texttt{c} & \texttt{a} & \texttt{a} & \texttt{b}\\
+\hline
+i & 1 & 1 & 2 & 3 & 4 & 5 & 6 & 1 & 2 & 3 & 4 & 5 & 6 & 2 \\
+  & 0 &   &   &   &   &   & 2 &   &   &   &   &   & 2 &   \\
+  &   &   &   &   &   &   & 1 &   &   &   &   &   & 1 &   \\
+  &   &   &   &   &   &   & 0 &   &   &   &   &   &   &  
+\end{array}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Example}
+
+\label{mp_example}
+
+\setlength\arraycolsep{3pt}
+
+\vspace*{-11pt}
+\[
+\begin{array}{rc|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+  & \multicolumn{1}{c}{\scriptstyle 1}
+  & \multicolumn{1}{c}{\scriptstyle 2}
+  & \multicolumn{1}{c}{\scriptstyle 3}
+  & \multicolumn{1}{c}{\scriptstyle 4}
+  & \multicolumn{1}{c}{\scriptstyle 5}
+  & \multicolumn{1}{c}{\scriptstyle 6}
+  & \multicolumn{1}{c}{\scriptstyle 7}
+  & \multicolumn{1}{c}{\scriptstyle 8}
+  & \multicolumn{1}{c}{\scriptstyle 9}
+  & \multicolumn{1}{c}{\scriptstyle 10}
+  & \multicolumn{1}{c}{\scriptstyle 11}
+  & \multicolumn{1}{c}{\scriptstyle 12}
+  & \multicolumn{1}{c}{\scriptstyle 13}
+  & \multicolumn{1}{c}{\scriptstyle 14}\\
+\cline{2-15}
+    \multicolumn{1}{r|}{t:}
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{b}}}
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{c}}}
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{a}}}
+  & \texttt{b}\\
+\cline{2-15}
+\\
+\cline{2-9}
+    \multicolumn{1}{r|}{x:}
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{a}}}
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c}\\
+\cline{2-10}
+  &
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{b}}}
+  & \texttt{a} 
+  & \texttt{c}\\
+\cline{3-14}
+    \multicolumn{6}{c|}{}
+  & \texttt{a} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{b}}}
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c}\\
+\cline{7-15}
+    \multicolumn{7}{c|}{}
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{a}}}
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c}\\
+\cline{8-16}
+    \multicolumn{8}{c|}{}
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{b}}}
+  & \texttt{a} 
+  & \texttt{c}\\
+\cline{9-20}
+    \multicolumn{12}{c|}{}
+  & \texttt{a} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{b}}}
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c}\\
+\cline{13-21}
+    \multicolumn{13}{c|}{}
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c}\\
+\cline{14-21}
+\end{array}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Maximum borders (cont)}
+
+\label{longest_borders_fig}
+
+We need to show how to compute the function \(\MPsupplyName\) or,
+equivalently, the failure function \(s\). Both rely on the computation
+of maximum-length borders.
+
+How do we compute the longest borders?
+\[
+\begin{array}{r@{}>{\,}cccccc@{\,}c}
+  & {\scriptstyle 1}
+  & 
+  &&
+  & 
+  & \phantom{HHHHHI}{\scriptstyle \len{y}}
+  &\\
+\cline{2-8}
+    \multicolumn{1}{r|}{y \cdot a:}
+  & \multicolumn{2}{c|}{\Border{}{y}}
+  & \multicolumn{1}{c|}{a?}
+  & \phantom{HHHHHHHH}
+  & \multicolumn{2}{|c}{\Border{}{y}}
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{a}}\\
+\cline{2-8}
+  & {\scriptstyle 1}
+  & 
+  &&
+  & 
+  & \phantom{HH}{\scriptstyle \len{\Border{}{y}}}
+  &\\
+\cline{2-8}
+    \multicolumn{1}{r|}{\Border{}{y} \cdot a:}
+  & \multicolumn{2}{c|}{\Border{2}{y}}
+  & \multicolumn{1}{c|}{a?}
+  & \phantom{HHHHHHHH}
+  & \multicolumn{2}{|c}{\Border{2}{y}}
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{a}}\\
+\cline{2-8}
+  & {\scriptstyle 1}
+  & 
+  &&
+  & 
+  & \phantom{HH}{\scriptstyle \len{\Border{2}{y}}}
+  &\\
+\cline{2-8}
+    \multicolumn{1}{r|}{\Border{2}{y} \cdot a:}
+  & \multicolumn{2}{c|}{\Border{3}{y}}
+  & \multicolumn{1}{c|}{a?}
+  & \phantom{HHHHHHHH}
+  & \multicolumn{2}{|c}{\Border{3}{y}}
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{a}}\\
+\cline{2-8}
+\end{array}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Maximum borders (cont)}
+
+Let us find the longest border of a word \(ya\),
+i.e., \(\Border{}{ya}\), where \(a\) is a letter. 
+
+\bigskip
+
+The idea is to, recursively, consider \(\Border{}{y} \cdot a\).
+
+\bigskip
+
+If \(\Border{}{y} \cdot a\) is a prefix of \(y\), then
+\(\Border{}{ya} = \Border{}{y} \cdot a\).
+
+\bigskip
+
+Otherwise, we must consider the border of the border of \(y\),
+i.e., \(\Border{2}{y} \cdot a\), instead of \(\Border{}{y} \cdot a\)
+and repeat this process, until \(\Border{k}{y} \cdot a\) is a prefix
+of \(y\) of \(\Border{k}{y}\) is empty.
+
+\end{frame}
+
+%% % ------------------------------------------------------------------------
+%% %
+%% \begin{frame}
+%% \frametitle{Morris-Pratt algorithm/Maximum borders (cont)}
+
+%% \raggedslides[0pt]
+
+%% \label{decreasing_borders}
+
+%% Let \(y\) be a non-empty word and let \(k\) be the smallest integer
+%% such that \(\Border{k}{y} = \epsilon\). Then
+%% \begin{enumerate}
+
+%%   \item the borders of \(y\) are \(\{\Border{}{y}, \Border{2}{y},
+%%     \ldots, \Border{k-1}{y}, \epsilon\}\); \label{border:1}
+
+%%   \item let \(a\) be a letter, then \(\Border{}{ya}\) is the longest
+%%     prefix of \(y\) which is in\\ \(\{\Border{}{y} \cdot a,
+%%     \Border{2}{y} \cdot a, \dots, \Border{k-1}{y} \cdot a, a,
+%%     \epsilon\}\) \label{border:2}
+
+%% \end{enumerate}
+%% Note that we ordered the borders by strictly decreasing lengths:
+%% \[
+%% \len{\Border{}{y} \cdot a} > \len{\Border{2}{y} \cdot a} >
+%% \ldots \; > \len{\Border{k-1}{y} \cdot a} > \len{a} > 0
+%% \]
+%% and that \(1 \leqslant k\).
+
+%% \end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Maximum borders (cont)}
+
+This can be formally summarised as follows. For all word \(y \neq
+\epsilon\) and all letter \(a\):
+\[
+\begin{aligned}
+  \Border{}{a}
+ &= \epsilon\\
+\Border{}{y \cdot a} &= \left\{
+\begin{aligned}
+& \Border{}{y} \cdot a 
+&& \text{if} \; \Border{}{y} \cdot a \preccurlyeq y\\
+& \Border{}{\Border{}{y} \cdot a} 
+&& \text{otherwise}
+\end{aligned}
+\right.
+\end{aligned}
+\]
+For example, let \(y = \texttt{ababbb}\) and assume \(\Border{}{y}  =
+\epsilon\).\\ Then \(\Border{}{y \cdot \texttt{a}} = \Border{}{y} \cdot
+\texttt{a} = \texttt{a}\) because \(\texttt{a} \preccurlyeq y\). Other
+examples:
+\begin{align*}
+  y             &= \texttt{babbaa}
+& \Border{}{y}  &= \epsilon
+& \Border{}{y \cdot \texttt{a}} &= \Border{}{\epsilon \cdot
+    \texttt{a}} = \epsilon\\
+  y             &= \texttt{abaaab}
+& \Border{}{y}  &= \texttt{ab}
+& \Border{}{y \cdot \texttt{a}} &= \Border{}{y} \cdot \texttt{a} =
+  \texttt{aba}\\
+  y             &= \texttt{abbaab}
+& \Border{}{y}  &= \texttt{ab}
+& \Border{}{y \cdot \texttt{a}} &= \Border{}{\texttt{ab} \cdot
+    \texttt{a}} = \texttt{a}
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Maximum borders (cont)}
+
+\label{decreasing_borders_proof}
+
+Let us prove that, when we take the border of a word, we get a prefix
+of this word, i.e.,
+\[
+\Border{}{y} \prec y \qquad y \neq \varepsilon
+\]
+First, the property holds on words of length \(1\) since, by
+definition,
+\[
+\Border{}{a} = \varepsilon \prec a
+\]
+Assume now that the property holds for all words of length lower or
+equal to \(n\) and let us prove that it holds for words of length
+\(n+1\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Maximum borders (cont)}
+
+Let \(y\) be a word of length \(n\), \(1 \leqslant n\), and a letter
+\(a\). 
+
+\bigskip
+
+By definition, we have 
+\[
+\Border{}{ya} = \left\{
+\begin{aligned}
+& \Border{}{y} \cdot a 
+&& \text{if} \; \Border{}{y} \cdot a \preccurlyeq y\\
+& \Border{}{\Border{}{y} \cdot a} 
+&& \text{otherwise}
+\end{aligned}
+\right.
+\]
+So, if \(\Border{}{y} \cdot a \preccurlyeq y\), then 
+\[
+\Border{}{ya} = \Border{}{y} \cdot a \preccurlyeq y \prec ya 
+\]
+This is the property for words of length \(n+1\) such that
+\(\Border{}{y} \cdot a \preccurlyeq y\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Maximum borders (cont)}
+
+Otherwise, if \(\Border{}{y} \cdot a \npreccurlyeq y\) then
+\[
+\Border{}{ya} = \Border{}{\Border{}{y} \cdot a}.
+\]
+Since \(\Border{}{y} \prec y\) and \(\len{y} = n\) then 
+\begin{align*}
+\len{\Border{}{y}} < \len{y}
+&\Leftrightarrow
+\len{\Border{}{y}} < n
+\Leftrightarrow
+\len{\Border{}{y}} + 1 < n + 1\\
+&\Leftrightarrow
+\len{\Border{}{y}} + 1 \leqslant n
+\end{align*}
+Thus \(\len{\Border{}{y} \cdot a} = \len{\Border{}{y}} + 1 \leqslant
+n\), and the inductive assumption holds:
+\begin{align*}
+  \Border{}{\Border{}{y} \cdot a} 
+& \prec \Border{}{y} \cdot a\\
+  \Border{}{ya}
+& \preccurlyeq \Border{}{y} \prec y \prec ya
+\end{align*}
+This is the property for words of length \(n+1\) such that
+\(\Border{}{y} \cdot a \npreccurlyeq y\), so this achieves the proof.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Maximum borders (cont)}
+
+Let us try now the following.
+
+\bigskip
+
+\(\Border{}{ya}\)
+\begin{align*}
+&= \Border{}{\Border{}{y} \cdot a}
+                &  \Border{}{y} \cdot a \npreccurlyeq y\\
+                &= \Border{}{\Border{2}{y} \cdot a}
+                &  \Border{2}{y} \cdot a \npreccurlyeq \Border{}{y}\\
+                &= \ldots
+                & \ldots\\
+                &= \Border{}{\Border{k-1}{y} \cdot a}
+                & \Border{k-1}{y} \cdot a \npreccurlyeq \Border{k-2}{y}
+\end{align*}
+and \(\forall p \leqslant k-2.\Border{p}{y} \neq \varepsilon\).
+
+\bigskip
+
+\noindent Then there is a smallest \(k\) such that \(\Border{k}{y}
+\cdot a \preccurlyeq \Border{k-1}{y}\) or \(\Border{k-1}{y} =
+\varepsilon\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Pattern preprocessing (resumed)}
+
+We proved page~\pageref{decreasing_borders_proof}, that
+\[
+\Border{}{y} \prec y \qquad y \neq \varepsilon
+\]
+Therefore
+\[
+\Border{k}{y} \prec \Border{k-1}{y} \prec y
+\qquad 2 \leqslant k
+\]
+Then, 
+\[
+\Border{k}{y} \cdot a \preccurlyeq \Border{k-1}{y}
+\Longleftrightarrow
+\Border{k}{y} \cdot a \preccurlyeq y
+\qquad 1 \leqslant k
+\]
+(Make a picture to convince yourself.)
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Pattern preprocessing (resumed)}
+
+\label{border_def}
+
+If \(\Border{k}{y} \cdot a \preccurlyeq y\) and \(\Border{k-1}{y} \neq
+\varepsilon\) then, using the definition
+\[
+  \Border{}{ya}
+= \Border{}{\Border{k-1}{y} \cdot a} 
+= \Border{k}{y} \cdot a 
+\]
+Otherwise, if \(\Border{k-1}{y} = \varepsilon\) then
+\[
+  \Border{}{ya} 
+= \Border{}{\Border{k-1}{y} \cdot a} 
+= \Border{}{a} 
+= \varepsilon
+\]
+and we cannot have \(\Border{k}{y} \cdot a \preccurlyeq y\) since
+\(\Border{k}{y} = \Border{}{\Border{k-1}{y}}\) is then
+undefined (the empty word has no border). Finally, we can summarise
+all cases:
+\[
+\Border{}{ya} = 
+\left\{
+  \begin{aligned}
+   & \Border{k}{y} \cdot a 
+   && \text{if} \; \Border{k}{y} \cdot a \preccurlyeq y\\
+   & \varepsilon 
+   && \text{if} \; \Border{k-1}{y} = \varepsilon
+  \end{aligned}
+\right. 
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Pattern preprocessing (resumed)}
+
+\label{condition}
+
+Let us give a computational definition of function
+\(\MPsupplyName_{x}\). Let \(ya \preccurlyeq x\).
+\begin{align*}
+   \MPsupply{x}{}{\len{ya}}  
+&= \len{\Border{}{ya}}
+&& \text{by substitution of} \; y \; \text{by}
+                             \; ya \; \text{in definition}\\
+   \MPsupply{x}{}{\len{y}+1} 
+&= \len{\Border{}{ya}}
+&& \text{by property of length} \tag{1}
+\end{align*}
+From the definition of \(\MPsupplyName_{x}\)
+page~\pageref{MP_supply_def}, we deduce the corollary
+\[
+\MPsupply{x}{k}{\len{y}} = \len{\Border{k}{y}} \quad y \preccurlyeq x \tag{2}
+\]
+which we can prove by induction on \(k\). The property is true for
+\(k=1\) (even \(k=0\)), by definition. Then assume
+\(\MPsupply{x}{k}{\len{y}} = \len{\Border{k}{y}}\) and do
+\begin{align*}
+  \MPsupply{x}{k+1}{\len{y}}
+&= \MPsupply{x}{k}{\MPsupply{x}{}{\len{y}}} 
+= \MPsupply{x}{k}{\len{\Border{}{y}}}
+= \len{\Border{k}{\Border{}{y}}}\\
+&= \len{\Border{k+1}{y}}
+\end{align*} 
+which proves that the property holds for all \(k\) such that \( 1
+\leqslant k\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Morris-Pratt algorithm/Pattern preprocessing (resumed)}
+
+For the sake of clarity, let us mimic the setting of
+figure page~\pageref{morris-pratt-conf} by letting \(\len{ya}=i\).
+
+\bigskip
+
+\(\Border{k}{y} \cdot a \preccurlyeq y\)
+\begin{align*}
+&\Longleftrightarrow y [\len{\Border{k}{y}} + 1] = a
+&& \text{since} \; \Border{}{y} \prec y\\
+&\Longleftrightarrow y [\MPsupply{x}{k}{\len{y}} + 1] = a
+&& \text{by property} \; (2)\\
+&\Longleftrightarrow x [\MPsupply{x}{k}{\len{y}} + 1] = x [\len{y} + 1]
+&& \text{since} \; ya \preccurlyeq x\\
+&\Longleftrightarrow x [\MPsupply{x}{k}{i-1} + 1] = x [i]
+&& \text{since} \; \len{y} = i - 1 \tag{3}
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing (cont)}
+
+Let us consider again the recursive definition of \textsc{Border} at
+page~\pageref{border_def}:
+\[
+\Border{}{ya} = 
+\left\{
+  \begin{aligned}
+   & \Border{k}{y} \cdot a 
+   && \text{if} \; \Border{k}{y} \cdot a \preccurlyeq y\\
+   & \varepsilon 
+   && \text{if} \; \Border{k-1}{y} = \varepsilon
+  \end{aligned}
+\right. 
+\]
+where \(k\) is the smallest non-zero integer such that \(\Border{k}{y}
+\cdot a \preccurlyeq y\) or \(\Border{k-1}{y} = \varepsilon\).
+
+\bigskip
+
+By taking the lengths of each side of the equations, it comes
+\[
+\len{\Border{}{ya}} = 
+\left\{
+  \begin{aligned}
+   & \len{\Border{k}{y} \cdot a }
+   && \text{if} \; \Border{k}{y} \cdot a \preccurlyeq y\\
+   & \len{\varepsilon}
+   && \text{if} \; \Border{k-1}{y} = \varepsilon
+  \end{aligned}
+\right. 
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing (cont)}
+
+By equation \((1)\) we get
+\[
+\MPsupply{x}{}{\len{y} + 1} = 
+\left\{
+  \begin{aligned}
+  & \len{\Border{k}{y}} + 1
+  && \text{if} \; \Border{k}{y} \cdot a \preccurlyeq y\\
+  & 0
+  && \text{if} \; \Border{k-1}{y} = \varepsilon
+\end{aligned}
+\right.
+\]
+Using equations \((2)\) and \((3)\):
+\[
+\MPsupply{x}{}{\len{y} + 1} = 
+\left\{
+  \begin{aligned}
+   & \MPsupply{x}{k}{\len{y}} + 1
+   && \text{if} \; x [\MPsupply{x}{k}{i-1} + 1] = x [i]\\
+   & 0
+   && \text{if} \; \MPsupply{x}{k-1}{i-1} = 0
+\end{aligned}
+\right.
+\]
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing (cont)}
+
+Finally, taking into account the value in \(0\) and \(1\), we have, for
+\(\len{x} = i \geqslant 2\)
+\[
+\begin{aligned}
+  \MPsupply{x}{}{0} &= -1 \qquad \MPsupply{x}{}{1} = 0\\
+\MPsupply{x}{}{i} &=
+\left\{
+\begin{aligned}
+& 1 + \MPsupply{x}{k}{i-1}
+&& \text{if} \; x [1 + \MPsupply{x}{k}{i-1}] = x [i]\\
+& 0
+&& \text{if} \; \MPsupply{x}{k-1}{i-1} = 0
+\end{aligned}
+\right.
+\end{aligned}
+\]
+where \(k\) is the smallest nonzero integer such that
+\(x[1+\MPsupply{x}{k}{i-1}] = x[i]\) or \(\MPsupply{x}{k-1}{i-1} =
+0\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing (cont)}
+
+\label{beta_def}
+
+From that definition, it is clear that \(\MPsupplyName\) returns the value
+\(-1\) only on \(0\). 
+
+\bigskip
+
+Thus
+\begin{align*}
+  \MPsupply{x}{k-1}{i-1} = 0
+&\Longleftrightarrow
+  \MPsupply{x}{}{\MPsupply{x}{k-1}{i-1}} = \MPsupply{x}{}{0}
+\Longleftrightarrow
+  \MPsupply{x}{k}{i-1} = -1\\
+&\Longleftrightarrow
+  1 + \MPsupply{x}{k}{i-1} = 0
+\end{align*}
+Then we can rewrite the previous definition of \(\MPsupplyName_{x}\) as
+\[
+\MPsupply{x}{}{0} = -1 \qquad \MPsupply{x}{}{i} = 1 + \MPsupply{x}{k}{i-1}
+\quad 1 \leqslant i
+\]
+where \(k\) is the smallest non-zero integer such that
+\begin{itemize}
+
+  \item either \(1 + \MPsupply{x}{k}{i-1} = 0\)
+
+  \item or \(x[1+\MPsupply{x}{k}{i-1}] = x[i]\)
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing/Imperative}
+
+It is then straightforward to write an algorithm for \(\MPsupplyName_{x}\),
+assuming \(0 \leqslant i \leqslant \len{x}\):
+\begin{codebox}
+\(\proc{Beta} (x, i)\)\\
+\li \If \(i = 0\)
+\li \Then \(\proc{Beta} \gets -1\)\RComment \(\MPsupply{x}{}{0} = -1\)
+\li \Else \(\id{offset} \gets i-1\) 
+\li       \Repeat
+\li         \(\id{offset} \gets \proc{Beta}(x,\id{offset})\)
+\li       \Until \(\id{offset} = -1\) \LogOr \(x[1+\id{offset}] = x[i]\)
+\li       \(\proc{Beta} \gets 1 + \id{offset}\)\RComment \(\MPsupply{x}{}{i}
+= 1+\MPsupply{x}{k}{i-1}\)
+    \End
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing/Single-assignment pseudo-code}
+
+\begin{codebox}
+\(\proc{Beta} (x, i)\)\\
+\li \If \(i = 0\)
+\li \Then \(\proc{Beta} \gets -1\)
+\li \Else \(\proc{Beta} \gets 1 + \proc{Offset} (x, \proc{Beta} (x,i-1))\)
+    \End
+\end{codebox}
+\begin{codebox}
+\(\proc{Offset}(x,\id{offset})\)\\
+\li \If \(\id{offset} = -1\) \LogOr \(x[1+\id{offset}] = x[i]\)
+\li \Then \(\proc{Offset} \gets \id{offset}\)
+\li \Else \(\proc{Offset} \gets \proc{Offset} (x, \proc{Beta} (x,
+            \id{offset}))\)
+    \End
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing (cont)}
+
+The problem here is inefficiency: 
+\begin{enumerate}
+
+  \item successive calls with the same arguments trigger again the
+    same computations,
+
+  \item the recursive calls are expensive.
+
+\end{enumerate}
+It is much preferable to have \(\MPsupplyName\) as an array:
+\begin{enumerate}
+
+  \item the values of \(\MPsupplyName\) are computed only once each
+
+  \item and are accessed in constant time instead of relying on
+    function calls.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing/Imperative}
+
+The idea is to compute all the values of \(\MPsupply{x}{}{i}\) for
+increasing values of \(i\):
+\begin{codebox}
+\(\proc{Make-Beta}(x)\)\\
+\li \(\MPsupplyName_{x}[0] \gets -1\)
+\li \For \(i \gets 1\) \To \(\len{x}\)
+\li	\Do \(\id{offset} \gets i-1\) 
+\li     \Repeat
+\li       \(\id{offset} \gets \MPsupplyName_{x}[\id{offset}]\)
+\li     \Until \(\id{offset} = -1\) \LogOr \(x[1+\id{offset}] = x[i]\)
+\li     \(\MPsupplyName_{x}[i] \gets 1 + \id{offset}\)\RComment \(\MPsupply{x}{}{i}
+= 1+\MPsupply{x}{k}{i-1}\)
+    \End
+\li \(\proc{Make-Beta} \gets \MPsupplyName_{x}\)
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing /
+  Single-assignment pseudo-code}
+
+\begin{codebox}
+\(\proc{Make-Beta}(x)\)\\
+\li \(\MPsupplyName_{x}[0] \gets -1\)
+\li \For \(i \gets 1\) \To \(\len{x}\)
+\li	\Do \(\MPsupplyName_{x}[i] \gets 1 + \proc{Offset} (x, \MPsupplyName_{x}, \MPsupplyName_{x}[i-1])\)
+    \End
+\li \(\proc{Make-Beta} \gets \MPsupplyName_{x}\)
+\end{codebox}
+\begin{codebox}
+\(\proc{Offset}(x, \MPsupplyName_{x}, \id{offset})\)\\
+\li \If \(\id{offset} = -1\) \LogOr \(x[1+\id{offset}] = x[i]\)
+\li \Then \(\proc{Offset} \gets \id{offset}\)
+\li \Else \(\proc{Offset} \gets \proc{Offset} (x, \MPsupplyName_{x},
+          \MPsupplyName_{x}[\id{offset}])\)
+    \End
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing (cont)}
+
+In order to finish, we need to give the algorithm for the failure
+function \(s_{x}\) (see page~\pageref{supply}). Recall that
+\[
+\sX{x}{}{i} = 1 + \MPsupply{x}{}{i-1} \quad 1 \leqslant i
+\]
+We could then keep \proc{Beta} and create a separate function
+\proc{MP-Fail} simply by sticking to the above definition:
+\begin{codebox}
+\(\proc{MP-Fail} (\MPsupplyName_{x}, i)\)\\
+\li \(\proc{MP-Fail} \gets 1 + \MPsupplyName_{x}[i-1]\)\>\>\>\>\>\>\>\>\Comment \(s_{x}[i] \gets 1 + \MPsupplyName_{x}[i-1]\)
+\end{codebox}
+But, again, this is not efficient: it would be better to precompute
+and store all the values of \proc{MP-Fail} in an array.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing (cont)}
+
+Instead, let us prove by induction on \(k\) that
+\[
+\sX{x}{k}{i} = 1 + \MPsupply{x}{k}{i-1} \quad 1 \leqslant i
+\]
+The case \(k=1\) is the definition of \(s\). Let us then assume that
+the property is true for all values from \(1\) to \(k\). We have
+\[
+  \sX{x}{k+1}{i} 
+= \sX{x}{k}{\sX{x}{}{i}} 
+= 1 + \MPsupply{x}{k}{\sX{x}{}{i}-1} 
+= 1 + \MPsupply{x}{k}{\MPsupply{x}{}{i-1}}
+= 1 + \MPsupply{x}{k+1}{i-1}
+\]
+which proves the property for all \(1 \leqslant k\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing (cont)}
+
+Let us recall the definition of \(\MPsupplyName_{x}\) (page~\pageref{beta_def}):
+\[
+\MPsupply{x}{}{0} = -1 \qquad \MPsupply{x}{}{i} = 1 + \MPsupply{x}{k}{i-1}
+\qquad 1 \leqslant i
+\]
+where \(k\) is the smallest non-zero integer such that
+\begin{itemize}
+
+  \item either \(1 + \MPsupply{x}{k}{i-1} = 0\) or
+    \(x[1+\MPsupply{x}{k}{i-1}] = x[i]\)
+
+\end{itemize}
+This becomes
+\[
+\sX{x}{}{1} = 0 \qquad \sX{x}{}{1 + i} = 1 + \sX{x}{k}{i}
+\qquad 1 \leqslant i
+\]
+where \(k\) is the smallest non-zero integer such that
+\begin{itemize}
+
+  \item either \(\sX{x}{k}{i} = 0\) or \(x[\sX{x}{k}{i}] = x[i]\)
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing/Imperative}
+
+\begin{codebox}
+\(\proc{MP-Fail}(x)\)\\
+\li \(s_{x}[1] \gets 0\)
+\li \For \(i \gets 1\) \To \(\len{x}-1\)
+\li	\Do \(\id{offset} \gets i\)
+\li     \Repeat
+\li     \(\id{offset} \gets s_{x}[\id{offset}]\)
+\li     \Until \(\id{offset} = 0\) \LogOr \(x[\id{offset}] = x[i]\)
+\li	    \(s_{x}[1 + i] \gets 1 + \id{offset}\)
+    \End
+\li \(\proc{MP-Fail} \gets s\)
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Pattern preprocessing/Single-assignment pseudo-code}
+
+\begin{codebox}
+\(\proc{MP-Fail}(x)\)\\
+\li \(s_{x}[1] \gets 0\)
+\li \For \(i \gets 1\) \To \(\len{x}-1\)
+\li \Do \(s_{x}[1 + i] \gets 1 + \proc{Offset} (x, s_{x}, s_{x}[i])\)
+    \End
+\li \(\proc{MP-Fail} \gets s_{x}\)
+\end{codebox}
+\begin{codebox}
+\(\proc{Offset} (x, s_{x}, \id{offset})\)\\
+\li \If \(\id{offset} = 0\) \LogOr \(x[\id{offset}] = x[i]\)
+\li \Then \(\proc{Offset} \gets \id{offset}\)
+\li \Else \(\proc{Offset} \gets \proc{Offset} (x, s_{x}, 
+                                               s_{x}[\id{offset}])\)
+    \End
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Analysis}
+
+The Morris-Pratt algorithm makes at most \(2 (\len{t} + \len{x} - 2)\)
+comparisons to find a word \(x\) in a text \(t\) or to fail.
+
+\bigskip
+
+This is much better than the naive algorithm whose cost was \((\len{t}
+- \len{x} + 1) \times \len{x}\).
+
+\end{frame}

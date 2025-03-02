@@ -1,0 +1,7 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/LaTeX/TeX/beamer_cfg.tex
+$HOME/LaTeX/TeX/trace.tex
+
+../../article_mode.tex article.fm.tex
+../../slide_mode.tex fm.tex

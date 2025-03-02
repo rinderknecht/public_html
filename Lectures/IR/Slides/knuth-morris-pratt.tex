@@ -1,0 +1,924 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+% Knuth, Morris and Pratt
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt algorithm}
+
+The algorithm we present now is an improvement due to Knuth of the
+Morris-Pratt algorithm, based on avoiding situations which lead to
+certain letter comparison failures.
+\[\small
+\begin{array}{rcc@{\,}c@{}ccr@{}r@{\,}c@{}ccc@{}ccc}
+  & & & \scriptstyle j-i & & & 
+  & & \multicolumn{2}{@{}l}{\scriptstyle j-i+p}
+  & &
+  & \multicolumn{1}{r@{}}{\scriptstyle j-1}
+  & \multicolumn{1}{c}{\scriptstyle j}\\
+\cline{2-15}
+    \multicolumn{1}{r|}{t:}
+  & \multicolumn{2}{c}{\phantom{l}\ldots\phantom{l}}
+  & \multicolumn{3}{|c|}{\Border{}{x[1 \dots i-1]}}
+  & \multicolumn{2}{c|}{\ldots}
+  & \multicolumn{5}{c}{\Border{}{x[1 \dots i-1]}}
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{\texttt{b}}}
+  & \phantom{ll}\\
+\cline{2-15}
+  &
+  & 
+  & \multicolumn{1}{:c}{\scriptstyle 1}
+  &
+  & \multicolumn{1}{c:}{}
+  & 
+  & \multicolumn{1}{r@{\,}:}{\scriptstyle p}
+  & 
+  &
+  &
+  &
+  & \multicolumn{1}{r@{}:}{\scriptstyle i-1}
+  & \scriptstyle i\\ 
+\cline{4-15}
+    \multicolumn{1}{r}{x:}
+  &
+  &
+  & \multicolumn{3}{|c|}{\Border{}{x[1 \dots i-1]}}
+  & \multicolumn{2}{c}{\ldots}
+  & \multicolumn{5}{|c}{\Border{}{x[1 \dots i-1]}}
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{\texttt{a}}}
+  & \\
+\cline{4-15}
+  &&&&&&
+  & 
+  &\multicolumn{1}{:c}{\scriptstyle 1}
+  &&&& \multicolumn{1}{r@{}:}{\scriptstyle \MPsupply{x}{}{i-1}}
+  & \multicolumn{1}{@{}c@{}}{\scriptstyle \sX{x}{}{i}}\\
+\cline{9-15}
+  &&&&&
+  & \text{slided}
+  & \multicolumn{1}{c}{x:}
+  & \multicolumn{5}{|c}{\Border{}{x[1 \dots i-1]}}
+  & \multicolumn{1}{|c|}{a}\\
+\cline{9-15}
+\end{array}
+\]
+The observation is that if \(a = \texttt{a}\) then the sliding would
+lead to a comparison failure. So let us enforce that a sliding to
+compare \(x[\sX{x}{}{i}]\) to \(t[j]\) is done if and only if
+  \(x[\sX{x}{}{i}] \neq x[i]\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders}
+
+If \(x[\sX{x}{}{i}] = x[i]\), what should we do?
+
+\bigskip
+
+Let us note \(y=x[1...i-1]\). We should consider successively
+\(\Border{2}{y} \cdot \texttt{a}\), \(\Border{3}{y} \cdot \texttt{a}\)
+etc., until we find a \(k\) such that \(\Border{k}{y} \cdot \texttt{a}
+\npreccurlyeq x\) or \(\Border{k}{y} = \varepsilon\). Such a border
+\(\Border{k}{y}\) is called a \textbf{maximum disjoint border} of
+\(y\) in \(x\).
+
+\bigskip
+
+If it is non-empty, we slide the word so that we compare
+\(x[\sX{x}{k}{i}]\) and \(t[j]\).
+
+\bigskip
+
+This disjointedness constraint can be precomputed on the pattern \(x\)
+\emph{alone} before comparing it to the text \(t\): all we have to do
+is to change the failure function \(s_{x}\) of the algorithm of Morris
+and Pratt and provide a new one. \emph{The search algorithm itself
+  does not change.}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders (cont)}
+
+The disjointedness implicitly entails that it is a relative concept:
+we consider the disjoint border of a \emph{proper prefix} of another
+word. Thus, the letter with follows the prefix is used as a
+constraint, i.e., it must not follow the disjoint border.
+
+\bigskip
+
+Let \(ya \preccurlyeq x\). Let us note \(\DBorder{x}{}{y}\) the
+maximum disjoint border of \(y\) \emph{in \(x\)}. In this case, the
+letter \(a\) is used to constrain the definition of the disjoint
+border, as we must have \(\DBorder{x}{}{y} \cdot a \npreccurlyeq y\).
+
+\bigskip
+
+What if \(y = x\), then? In this case, there is no right-context, like
+the letter \(a\) above, to constrain the maximum disjoint border. In
+this case, we still can take the maximum border, i.e., \(\DBorder{y}{}{y} =
+\Border{}{y}\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders (cont)}
+
+More precisely, if the maximum border of \(y\) is not followed by
+\(a\), then it is also the maximum disjoint border we are looking
+for. In other words:
+\[
+\DBorder{x}{}{y} = \Border{}{y} \qquad \text{if} \; ya \preccurlyeq x
+\; \text{and} \; \Border{}{y} \cdot a \npreccurlyeq y
+\]
+If the maximum border of \(y\) is followed by \(a\) we must take the
+maximum disjoint border of the maximum border:
+\[
+\DBorder{x}{}{y} = \DBorder{x}{}{\Border{}{y}} 
+\qquad \text{if} \; ya \preccurlyeq x \; \text{and} \; \Border{}{y}
+\cdot a \preccurlyeq y
+\]
+By extension, if \(x = y\), we take the maximum border:
+\[
+\DBorder{y}{}{y} = \Border{}{y}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders (cont)}
+
+In summary, assuming \(ya \preccurlyeq x\) \textbf{and} \(y \neq
+\varepsilon\)
+\[
+\begin{aligned}
+   \DBorder{y}{}{y}
+&= \Border{}{y}\\
+   \DBorder{x}{}{y}
+&= \left\lbrace
+   \begin{aligned}
+    &  \DBorder{x}{}{\Border{}{y}}
+    && \text{if} \; \Border{}{y} \cdot a \preccurlyeq y\\
+    &  \Border{}{y}
+    && \text{otherwise}
+   \end{aligned}
+   \right.
+\end{aligned}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders (cont)}
+
+By taking the length of each side of the equations,
+\[
+  \len{\DBorder{x}{}{y}}
+= \left\lbrace
+  \begin{aligned}
+    &  \len{\Border{}{y}}
+    && \text{if} \; x = y \; \text{or} 
+       \; \Border{}{y} \cdot a \npreccurlyeq y\\
+    &  \len{\DBorder{x}{}{\Border{}{y}}}
+    && \text{otherwise}
+  \end{aligned}
+  \right.
+\]
+Let \(\KMPsupply{x}{}{i}\) be the length of the disjoint maximum border of
+\(x[1 \dots i]\):
+\[
+\KMPsupply{x}{}{i} = \len{\DBorder{x}{}{x[1...i]}} 
+\qquad 1 \leqslant i \leqslant \len{x}
+\]
+or, equivalently,
+\[
+\KMPsupply{x}{}{\len{y}} = \len{\DBorder{x}{}{y}} 
+\qquad y \preccurlyeq x
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders (cont)}
+
+Therefore
+\[
+  \KMPsupply{x}{}{\len{y}}
+= \left\lbrace
+  \begin{aligned}
+    &  \MPsupply{x}{}{\len{y}}
+    && \text{if} \; x = y \; \text{or} 
+       \; \Border{}{y} \cdot a \npreccurlyeq y\\
+    &  \KMPsupply{x}{}{\len{\Border{}{y}}}
+    && \text{otherwise}
+  \end{aligned}
+  \right.
+\]
+that is to say
+\[
+  \KMPsupply{x}{}{\len{y}}
+= \left\lbrace
+  \begin{aligned}
+    &  \MPsupply{x}{}{\len{y}}
+    && \text{if} \; x = y \; \text{or} 
+       \; \Border{}{y} \cdot a \npreccurlyeq y\\
+    &  \KMPsupply{x}{}{\MPsupply{x}{}{\len{y}}}
+    && \text{otherwise}
+  \end{aligned}
+  \right.
+\]
+If \(\len{y} = i\), we can write instead
+\[
+  \KMPsupply{x}{}{i}
+= \left\lbrace
+  \begin{aligned}
+    &  \MPsupply{x}{}{i}
+    && \text{if} \; x = y \; \text{or} 
+       \; \Border{}{y} \cdot a \npreccurlyeq y\\
+    &  \KMPsupply{x}{}{\MPsupply{x}{}{i}}
+    && \text{otherwise}
+  \end{aligned}
+  \right.
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders (cont)}
+
+\label{gamma_ref_def}
+
+The condition can also be rewritten in terms of \(\MPsupplyName_{x}\)
+and \(i\), just as we did with the Morris-Pratt algorithm,
+pages~\pageref{condition} and~\pageref{morris-pratt-conf}. Let
+\(\len{y} = i\), then
+\begin{align*}
+  \Border{}{y} \cdot a \npreccurlyeq y
+& \Longleftrightarrow x [\MPsupply{x}{}{i} + 1] \neq x [i + 1]\\
+  x = y
+& \Longleftrightarrow \len{x} = i
+\end{align*}
+So, finally, for \(1 \leqslant i \leqslant \len{x}\),
+\[
+  \KMPsupply{x}{}{i}
+= \left\lbrace
+  \begin{aligned}
+    &  \MPsupply{x}{}{i}
+    && \text{if} \; i = \len{x} \; \text{or} 
+       \; x [\MPsupply{x}{}{i} + 1] \neq x [i + 1]\\
+    &  \KMPsupply{x}{}{\MPsupply{x}{}{i}}
+    && \text{otherwise}
+  \end{aligned}
+  \right.
+\]
+which allows us to naturally extends \(\KMPsupplyName_{x}\) on \(0\): 
+\(\KMPsupply{x}{}{0} = \MPsupply{x}{}{0} = -1\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders (cont)}
+
+Before going further, let us check by hand the following values of
+\(\KMPsupply{x}{}{i}\) and compare them to \(\MPsupply{x}{}{i}\): we must
+always have \(\KMPsupply{x}{}{i} \leqslant \MPsupply{x}{}{i}\), since we
+plan an optimisation. 
+\[
+\begin{array}{c|ccccccccccc|}
+x & & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{a} 
+  & \texttt{b} & \texttt{a} & \texttt{b} & \texttt{c}
+  & \texttt{a} & \texttt{c}\\
+\hline
+                  i  &  0 & 1 & 2 &  3 & 4 & 5 & 6 & 7 &  8 & 9 & 10\\
+   \MPsupply{x}{}{i} & -1 & 0 & 0 &  0 & 1 & 2 & 1 & 2 &  3 & 4 &  0\\
+  \KMPsupply{x}{}{i} & -1 & 0 & 0 & -1 & 0 & 2 & 0 & 0 & -1 & 4 &  0\\
+\hline
+\end{array}
+\]
+One difference between \(\MPsupplyName_{x}\) and
+\(\KMPsupplyName_{x}\) is that, in the worst case, there is always an
+empty maximum border \(\varepsilon\), i.e., \(\MPsupply{x}{}{i} = 0\),
+whereas there may be no maximum disjoint border at all,
+i.e., \(\KMPsupply{x}{}{i} = -1\). For instance, the prefix
+\texttt{abc} of \(x\) has an empty maximum border,
+i.e., \(\MPsupply{x}{}{3}=0\), but has no maximum disjoint border,
+i.e., \(\KMPsupply{x}{}{3} = -1\), since \(x[1] = x[4]\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders (cont)}
+
+This definition of \(\KMPsupplyName_{x}\) relies on
+\(\MPsupplyName_{x}\), more precisely, the computation of
+\(\KMPsupply{x}{}{i}\) requires \(\MPsupply{x}{p}{i}\), i.e.,
+values \(\MPsupply{x}{}{j}\) with \(j < i\), since
+\[
+\MPsupply{x}{}{0} = -1 
+\qquad \MPsupply{x}{}{i} = 1 + \MPsupply{x}{k}{i-1}
+\qquad 1 \leqslant i
+\]
+where \(k\) is the smallest non-zero integer such that
+\begin{itemize}
+
+  \item either \(1 + \MPsupply{x}{k}{i-1} = 0\) or
+    \(x[1+\MPsupply{x}{k}{i-1}] = x[i]\)
+
+\end{itemize}
+or, equivalently,
+\[
+\Border{}{ya} = 
+\left\{
+  \begin{aligned}
+   & \Border{k}{y} \cdot a 
+   && \text{if} \; \Border{k}{y} \cdot a \preccurlyeq y\\
+   & \varepsilon 
+   && \text{if} \; \Border{k-1}{y} = \varepsilon
+  \end{aligned}
+\right. 
+\]
+where \(k\) is the smallest non-zero integer such that \(\Border{k}{y}
+\cdot a \preccurlyeq y\) or \(\Border{k-1}{y} = \varepsilon\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders (cont)}
+
+Therefore, let us find another definition of \(\Border{}{ya}\) which
+relies on \(\Border{}{y}\) but \textbf{not} on \(\Border{q}{y}\) with
+\(2 \leqslant q\). This can be achieved by considering again the
+figure
+\[
+\begin{array}{r@{}>{\,}cccccc@{\,}c}
+\cline{2-8}
+    \multicolumn{1}{r|}{y \cdot a:}
+  & \multicolumn{2}{c|}{\Border{}{y}}
+  & \multicolumn{1}{c|}{b}
+  & \phantom{HHHHHHHH}
+  & \multicolumn{2}{|c}{\Border{}{y}}
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{a}}\\
+\cline{2-8}
+\end{array}
+\]
+Indeed, if \(a = b\) then \(\Border{}{ya} = \Border{}{y}\). Else, \(a
+\neq b\), and thus the maximum border can be found among the
+\emph{disjoint} borders of \(\Border{}{y}\), otherwise \(\Border{}{ya} =
+\varepsilon\).
+\[
+\Border{}{ya} = \left\{
+\begin{aligned}
+ & \DBorder{x}{q}{\Border{}{y}} \cdot a
+ \quad \text{if} \; \DBorder{x}{q}{\Border{}{y}} \cdot a \preccurlyeq y\\
+ & \varepsilon
+ \qquad\qquad\qquad\quad \text{if} \; y = \varepsilon \;\text{or}\;
+    \DBorder{x}{q-1}{\Border{}{y}} = \varepsilon
+\end{aligned}
+\right.
+\]
+where \(ya \preccurlyeq x\) and \(q\) is the smallest integer such
+that \(\DBorder{x}{q}{\Border{}{y}} \cdot a \preccurlyeq y\) or
+\(\DBorder{x}{q-1}{\Border{}{y}} = \varepsilon\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders (cont)}
+
+By taking the lengths and letting \(0 \leqslant i \leqslant \len{x} - 1\)
+and \(\len{y} = i\),
+\begin{align*}
+\MPsupply{x}{}{0} &= -1\\
+\MPsupply{x}{}{i + 1} &=
+\left\lbrace
+\begin{aligned}
+  & \KMPsupply{x}{q}{\MPsupply{x}{}{i}} + 1
+  && \text{if} \; x[\KMPsupply{x}{q}{\MPsupply{x}{}{i}} + 1]=x[i + 1]\\
+  & 0
+  && \text{if} \; i = 0 \; \text{or} \;
+     \KMPsupply{x}{q-1}{\MPsupply{x}{}{i}} = 0
+\end{aligned}
+\right.
+\end{align*}
+where \(q\) is the smallest integer such that
+\begin{itemize}
+
+  \item either \(x[\KMPsupply{x}{q}{\MPsupply{x}{}{i}} + 1]=x[i+1]\) 
+
+  \item or \(\KMPsupply{x}{q-1}{\MPsupply{x}{}{i}} = 0\)
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders (cont)}
+
+Since \(\KMPsupply{x}{}{i} = -1\) if and only if \(i=0\), we have
+\begin{align*}
+\KMPsupply{x}{q-1}{\MPsupply{x}{}{i}} = 0
+&\Longleftrightarrow
+\KMPsupply{x}{}{\KMPsupply{x}{q-1}{\MPsupply{x}{}{i}}} =
+\KMPsupply{x}{}{0}
+\Longleftrightarrow
+\KMPsupply{x}{q}{\MPsupply{x}{}{i}} = -1\\
+&\Longleftrightarrow
+\KMPsupply{x}{q}{\MPsupply{x}{}{i}} + 1 = 0
+\end{align*}
+Therefore we can simplify the new definition of \(\MPsupplyName_{x}\)
+as
+\begin{align*}
+\MPsupply{x}{}{0} &= -1\\
+\MPsupply{x}{}{1} &= 0\\
+\MPsupply{x}{}{i + 1} &= \KMPsupply{x}{q}{\MPsupply{x}{}{i}} + 1
+\qquad 1 \leqslant i \leqslant \len{x} - 1
+\end{align*}
+where \(q\) is the smallest integer such that
+\begin{itemize}
+
+  \item either \(x[\KMPsupply{x}{q}{\MPsupply{x}{}{i}} + 1]=x[i+1]\)
+  
+  \item or \(\KMPsupply{x}{q}{\MPsupply{x}{}{i}} + 1 = 0\)
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders/Imperative}
+
+{\small
+\begin{codebox}
+\(\proc{Gamma} (x)\)\\
+\li \(\KMPsupplyName_{x}[0] \gets -1\); \(\id{offset} \gets -1\)
+    \RComment \(\id{offset} = \MPsupply{x}{}{0}\)
+\li \For \(i \gets 1\) \To \(\len{x}-1\) 
+\li \Do \Repeat
+\li       \(\id{offset} \gets \KMPsupplyName_{x}[\id{offset}]\)
+\li     \Until \(\id{offset} = -1\) \LogOr \(x[\id{offset} + 1] = x[i]\)
+\li     \(\id{offset} \gets \id{offset} + 1\)
+        \RComment \(\id{offset} = \KMPsupply{x}{q}{\MPsupply{x}{}{i-1}} +
+        1 = \MPsupply{x}{}{i}\)
+\li     \If \(i = \len{x}\) \LogOr \(x[\id{offset}+1] = x[i+1]\)
+\li     \Then \(\KMPsupplyName_{x}[i] \gets \id{offset}\)
+              \RComment \(\KMPsupply{x}{}{i} = \MPsupply{x}{}{i}\)
+\li     \Else \(\KMPsupplyName_{x}[i] \gets \KMPsupplyName_{x}[\id{offset}]\)
+              \RComment \(\KMPsupply{x}{}{i} =
+              \KMPsupply{x}{}{\MPsupply{x}{}{i}}\)
+        \End
+    \End
+\li \(\proc{Gamma} \gets \KMPsupplyName_{x}\)
+\end{codebox}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Better failure function}
+
+With the algorithm of Morris and Pratt, it was convenient to use a
+failure function \(s(i) = 1 + \MPsupplyName(i-1)\). Similarly, we need
+here another failure function, noted \(r\), such that \(r(i) = 1 +
+\KMPsupplyName(i-1)\), for \(1 \leqslant i\).
+
+\bigskip
+
+In order to finish, we need to give the algorithm for the failure
+function \(r\).
+
+\bigskip
+
+We could then keep \proc{Beta} and create a separate function
+\proc{KMP-Fail} simply by sticking to the above definition:
+\begin{codebox}
+\(\proc{KMP-Fail} (\KMPsupplyName_{x}, i)\)\\
+\li \(\proc{KMP-Fail} \gets 1 + \KMPsupplyName_{x}[i-1]\)\RComment \(r_{x}[i] \gets 1 + \KMPsupplyName_{x}[i-1]\)
+\end{codebox}
+But this is not efficient: it would be better to precompute
+and store all the values of \proc{KMP-Fail} in an array.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Better failure function (cont)}
+
+Let us recall the definition of \(\KMPsupplyName_{x}\). Let \(1
+\leqslant i \leqslant \len{x}\) and
+\begin{align*}
+\KMPsupply{x}{}{0} &= -1\\
+  \KMPsupply{x}{}{i}
+&= \left\lbrace
+  \begin{aligned}
+    &  \MPsupply{x}{}{i}
+    && \text{if} \; i = \len{x} \; \text{or} 
+       \; x [\MPsupply{x}{}{i} + 1] \neq x [i + 1]\\
+    &  \KMPsupply{x}{}{\MPsupply{x}{}{i}}
+    && \text{otherwise}
+  \end{aligned}
+  \right.
+\end{align*}
+Then, for \(1 \leqslant i \leqslant \len{x}-1\)
+\begin{align*}
+   \rX{x}{}{1} 
+&= 1 + \KMPsupply{x}{}{0} = 0\\
+   \rX{x}{}{1+i}
+&= 1 + \KMPsupply{x}{}{i}
+ = \left\lbrace
+   \begin{aligned}
+   & 1 + \MPsupply{x}{}{i}
+   && \text{if} \; x [\MPsupply{x}{}{i} + 1] \neq x [i + 1]\\
+   & 1 + \KMPsupply{x}{}{\MPsupply{x}{}{i}}
+   && \text{otherwise}
+   \end{aligned}
+   \right.
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Better failure function (cont)}
+
+This can be slightly simplified into
+\begin{align*}
+   \rX{x}{}{1} 
+&= 0\\
+   \rX{x}{}{1+i}
+&= \left\lbrace
+   \begin{aligned}
+   & \rX{x}{}{1 + \MPsupply{x}{}{i}}
+   && \text{if} \; x [1 + \MPsupply{x}{}{i}] = x [1 + i]\\
+   & 1 + \MPsupply{x}{}{i}
+   && \text{otherwise}
+   \end{aligned}
+   \right.
+\end{align*}
+where for \(1 \leqslant i \leqslant \len{x}-1\).
+
+\bigskip
+
+Now, we need to express \(\MPsupplyName_{x}\) in terms of \(r_{x}\)
+instead of \(\KMPsupplyName_{x}\). 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Better failure function (cont)}
+
+First, let us prove by induction on \(0 \leqslant p\) that
+\[
+\rX{x}{p}{1+i} = 1 + \KMPsupply{x}{p}{i} \qquad 0 \leqslant i
+\leqslant \len{x} - 1
+\]
+Because 
+\[
+\rX{x}{0}{1+i} = 1 + \KMPsupply{x}{0}{i}
+\Longleftrightarrow
+1 + i = 1 + i
+\]
+and, assuming it is true up to \(p\), we have
+\[
+  \rX{x}{p+1}{1+i}
+= \rX{x}{}{\rX{x}{p}{1+i}} = \rX{x}{}{1 + \KMPsupply{x}{p}{i}}
+= 1 + \KMPsupply{x}{}{\KMPsupply{x}{p}{i}}
+= 1 + \KMPsupply{x}{p+1}{i}
+\]
+which is the property at rank \(p+1\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Better failure function (cont)}
+
+So, the definition of \(\MPsupplyName_{x}\)
+\[
+\MPsupply{x}{}{0} = -1
+\qquad
+\MPsupply{x}{}{1} = 0
+\qquad
+\MPsupply{x}{}{1+i} = 1 + \KMPsupply{x}{q}{\MPsupply{x}{}{i}}
+\qquad 1 \leqslant i \leqslant \len{x} - 1
+\]
+where \(q\) is the smallest integer such that either
+\(x[\KMPsupply{x}{q}{1 + \MPsupply{x}{}{i}}]=x[1+i]\) or
+\(1+\KMPsupply{x}{q}{\MPsupply{x}{}{i}} = 0\), is equivalent to
+\[
+\MPsupply{x}{}{0} = -1
+\qquad
+\MPsupply{x}{}{1} = 0
+\qquad
+\MPsupply{x}{}{1+i} = \rX{x}{q}{1 + \MPsupply{x}{}{i}}
+\qquad 1 \leqslant i \leqslant \len{x} - 1
+\]
+where \(q\) is the smallest integer such that
+\begin{itemize}
+
+  \item either \(x[\rX{x}{q}{1 + \MPsupply{x}{}{i}}]=x[1+i]\)
+  
+  \item or \(\rX{x}{q}{1 + \MPsupply{x}{}{i}} = 0\)
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Better failure function (cont)}
+
+Or, by changing \(i+1\) into \(i\),
+\[
+\MPsupply{x}{}{0} = -1
+\qquad
+\MPsupply{x}{}{1} = 0
+\qquad
+\MPsupply{x}{}{i} = \rX{x}{q}{1 + \MPsupply{x}{}{i-1}}
+\qquad 2 \leqslant i \leqslant \len{x}
+\]
+where \(q\) is the smallest integer such that
+\begin{itemize}
+
+  \item either \(x[\rX{x}{q}{1 + \MPsupply{x}{}{i-1}}]=x[i]\)
+  
+  \item or \(\rX{x}{q}{1 + \MPsupply{x}{}{i-1}} = 0\)
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Better failure function/Imperative}
+
+{\small
+\begin{codebox}
+\(\proc{KMP-Fail} (x)\)\\
+\li \(r_{x}[1] \gets 0\); \(\id{offset} \gets 0\)
+    \RComment \(\id{offset} = 1 + \MPsupply{x}{}{1-1}\)
+\li \For \(i \gets 1\) \To \(\len{x}-1\) 
+\li \Do \Repeat
+\li       \(\id{offset} \gets r_{x}[\id{offset}]\)
+\li     \Until \(\id{offset} = 0\) \LogOr \(x[\id{offset}] = x[i]\)
+\li     \(\id{offset} \gets \id{offset} + 1\)
+        \RComment \(\id{offset} = 1 + \MPsupply{x}{}{i}\)
+\li     \RComment \(\id{offset} = 1 + \rX{x}{q}{1+\MPsupply{x}{}{i-1}}\)
+\li     \If \(x[\id{offset}] = x[1+i]\)
+\li     \Then \(r_{x}[i] \gets r_{x}[\id{offset}]\)
+              \RComment \(\rX{x}{}{i} = \rX{x}{}{1+\MPsupply{x}{}{i}}\)
+\li     \Else \(r_{x}[i] \gets \id{offset}\)
+              \RComment \(\rX{x}{}{i} = 1 + \MPsupply{x}{}{i}\)
+        \End
+    \End
+\li \(\proc{KMP-Fail} \gets r_{x}\)
+\end{codebox}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/The code}
+
+The Knuth-Morris-Pratt algorithm is exactly the Morris-Pratt
+algorithm, except that we use a better failure function \(r\) instead
+of \(s\):
+\begin{codebox}
+\(\proc{KMP} (x, t)\)\\
+\li \(r \gets \proc{KMP-Fail} (x)\)
+\li \(i \gets 1\); \(j \gets 1\)
+\li \While \(i \leqslant \len{x}\) \LogAnd \(j \leqslant \len{t}\)
+\li \Do \If \(i = 0\) \LogOr \(x[i] = t[j]\)
+\li	\Then \(i \gets i + 1\); \(j \gets j + 1\)
+\li	\Else \(i \gets r[i]\)
+        \End
+    \End
+\li \If \(\len{x} < i\) 
+\li \Then \(\ldots\) \RComment Occurrence of \(x\) in \(t\) at position \(j - \len{x}\).
+\li \Else \(\ldots\) \RComment No occurrences. 
+    \End
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/The code (cont)}
+
+If we allow arguments to be functions, we can elegantly factorise the
+two text search algorithms into one:
+\begin{codebox}
+\(\proc{Search} (x,t,f)\)\\
+\li \(i \gets 1\); \(j \gets 1\)
+\li \While \(i \leqslant \len{x}\) \LogAnd \(j \leqslant \len{t}\)
+\li \Do \If \(i = 0\) \LogOr \(x[i] = t[j]\)
+\li	\Then \(i \gets i + 1\); \(j \gets j + 1\)
+\li	\Else \(i \gets f[i]\)
+        \End
+    \End
+\li \If \(\len{x} < i\) 
+\li \Then \(\ldots\) \RComment Occurrence of \(x\) in \(t\) at position \(j - m\).
+\li \Else \(\ldots\) \RComment No occurrences. 
+    \End
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/The code (cont)}
+
+Then 
+\begin{align*}
+   \proc{MP} (x, t) 
+&= \proc{Search} (x, t, \proc{MP-Fail})\\
+   \proc{KMP} (x, t)
+&= \proc{Search} (x, t, \proc{KMP-Fail})
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Maximum disjoint borders (cont)}
+
+\textbf{Example.} Consider the following table for the search of the
+word \(x=\texttt{abacabac}\) in the text
+\(t=\texttt{babacacabacaab}\).
+\[
+\begin{array}{c|cccccccccccccc|}
+j & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14\\
+  & \texttt{b} & \texttt{a} & \texttt{b} & \texttt{a} & \texttt{c} 
+  & \texttt{a} & \texttt{c} & \texttt{a} & \texttt{b} & \texttt{a} 
+  & \texttt{c} & \texttt{a} & \texttt{a} & \texttt{b}\\
+\hline
+i & 1 & 1 & 2 & 3 & 4 & 5 & 6 & 1 & 2 & 3 & 4 & 5 & 6 & 2 \\
+  & 0 &   &   &   &   &   & 1 &   &   &   &   &   & 1 &   \\
+  &   &   &   &   &   &   & 0 &   &   &   &   &   &   &
+\end{array}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Knuth-Morris-Pratt/Example}
+
+\label{kmp_example}
+
+\setlength\arraycolsep{3pt}
+
+\[
+\begin{array}{rc|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+  & \multicolumn{1}{c}{\scriptstyle 1}
+  & \multicolumn{1}{c}{\scriptstyle 2}
+  & \multicolumn{1}{c}{\scriptstyle 3}
+  & \multicolumn{1}{c}{\scriptstyle 4}
+  & \multicolumn{1}{c}{\scriptstyle 5}
+  & \multicolumn{1}{c}{\scriptstyle 6}
+  & \multicolumn{1}{c}{\scriptstyle 7}
+  & \multicolumn{1}{c}{\scriptstyle 8}
+  & \multicolumn{1}{c}{\scriptstyle 9}
+  & \multicolumn{1}{c}{\scriptstyle 10}
+  & \multicolumn{1}{c}{\scriptstyle 11}
+  & \multicolumn{1}{c}{\scriptstyle 12}
+  & \multicolumn{1}{c}{\scriptstyle 13}
+  & \multicolumn{1}{c}{\scriptstyle 14}\\
+\cline{2-15}
+    \multicolumn{1}{r|}{t:}
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{b}}}
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{c}}}
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{a}}}
+  & \texttt{b}\\
+\cline{2-15}
+\\
+\cline{2-9}
+    \multicolumn{1}{r|}{x:}
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{a}}}
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c}\\
+\cline{2-10}
+  &
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{b}}}
+  & \texttt{a} 
+  & \texttt{c}\\
+\cline{3-15}
+    \multicolumn{7}{c|}{}
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{a}}}
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c}\\
+\cline{8-16}
+    \multicolumn{8}{c|}{}
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\texttt{b}}}
+  & \texttt{a} 
+  & \texttt{c}\\
+\cline{9-21}
+    \multicolumn{13}{c|}{}
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c} 
+  & \texttt{a} 
+  & \texttt{b} 
+  & \texttt{a} 
+  & \texttt{c}\\
+\cline{14-21}
+\end{array}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Comparison of Morris-Pratt and Knuth-Morris-Pratts}
+
+For example, here is the table comparing the values of the two failure
+functions for the same pattern:
+\[
+\begin{array}{c|cccccccc|}
+ x & \texttt{a} & \texttt{b} & \texttt{a} & \texttt{c} 
+ & \texttt{a} & \texttt{b} & \texttt{a} & \texttt{c}\\
+\hline
+  i
+& 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8\\
+  s_{x}(i)
+& 0 & 1 & 1 & 2 & 1 & 2 & 3 & 4\\
+  r_{x}(i)
+& 0 & 1 & 0 & 2 & 0 & 1 & 0 & 2\\
+\hline
+\end{array}
+\]
+
+\end{frame}

@@ -1,0 +1,95 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{vaucanson-g}
+\usepackage{pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+% Settings
+%
+%\ShowGrid
+\SetEdgeLabelColor{blue}
+\SetEdgeLabelScale{1.1}
+
+% Automaton
+%
+
+\VCDraw{%
+\begin{VCPicture}{(0,0)(10,6)}
+%% Inputs
+\ChgStateFillColor{green}
+\VSState{(0,0)}{I3}
+\nput{-90}{I3}{\Large $s_3$}
+\RstStateFillColor
+\ChgStateFillColor{red}
+\VSState{(0,3)}{I2}
+\nput{90}{I2}{\Large $s_2$}
+\RstStateFillColor
+\ChgStateFillColor{magenta}
+\VSState{(0,6)}{I1}
+\nput{90}{I1}{\Large $s_1$}
+\RstStateFillColor
+
+%% Outputs
+\State[O_2]{(9,2)}{O2}
+\State[O_1]{(9,4)}{O1}
+\Final{O2}
+\Final{O1}
+
+%% First layer
+\State[A_2]{(3,2)}{A2}
+\State[A_1]{(3,4)}{A1}
+
+%% Second Layer
+\State[B_3]{(6,0)}{B3}
+\State[B_2]{(6,3)}{B2}
+\State[B_1]{(6,6)}{B1}
+
+%% From input to first layer
+\EdgeBorder 
+\ChgEdgeLineColor{green}
+\EdgeL[0.2]{I3}{A1}{-1}
+\EdgeR{I3}{A2}{0.5}
+\RstEdgeLineColor
+\ChgEdgeLineColor{red}
+\EdgeL[0.3]{I2}{A1}{-1}
+\EdgeR[0.3]{I2}{A2}{-0.8}
+\RstEdgeLineColor
+\ChgEdgeLineColor{magenta}
+\EdgeL{I1}{A1}{0.4}
+\EdgeR[0.2]{I1}{A2}{1}
+\RstEdgeLineColor
+\EdgeBorderOff
+
+%% Connection inside second layer
+\ArcL[0.5]{B1}{B2}{2}
+\ArcL[0.5]{B2}{B1}{1}
+\ArcL[0.5]{B2}{B3}{3}
+\ArcL[0.5]{B3}{B2}{1}
+
+%% Connection between first and second layer
+\EdgeBorder
+\EdgeL{A1}{B1}{2.3}
+\EdgeL{A1}{B3}{-1.1}
+\EdgeR{A2}{B1}{0.4}
+\EdgeR{A2}{B3}{-3.7}
+\EdgeBorderOff
+
+%% Connection to the ouput
+\EdgeBorder
+\EdgeL{B1}{O1}{-1.5}
+\EdgeL{B1}{O2}{2}
+\EdgeL[0.3]{B2}{O1}{4.2}
+\EdgeR[0.3]{B2}{O2}{-1}
+\EdgeR{B3}{O1}{1.2}
+\EdgeR{B3}{O2}{0.9}
+\EdgeBorderOff
+
+\end{VCPicture}
+}
+\endTeXtoEPS
+
+\end{document}

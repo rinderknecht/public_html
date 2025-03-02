@@ -1,0 +1,12 @@
+<!ELEMENT book (author, chapter+)>
+<!ATTLIST book title CDATA #REQUIRED>
+
+<!ELEMENT author (first,last)>
+<!ELEMENT first  (#PCDATA)>
+<!ELEMENT last   (#PCDATA)>
+
+<!ELEMENT chapter (section*)>
+<!ATTLIST chapter title CDATA #REQUIRED>
+
+<!ELEMENT section (section*)>
+<!ATTLIST section title CDATA #REQUIRED>

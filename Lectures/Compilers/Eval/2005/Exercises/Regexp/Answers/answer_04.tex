@@ -1,0 +1,93 @@
+\paragraph{Answer 3bis.}
+\begin{enumerate}
+
+  \item Here, the key point is how to \emph{exclude} some letters or
+    combinations of letters from the comment. We must use regular
+    expressions corresponding to the \emph{complement} operation on
+    languages of one letter in the alphabet, e.g. \(\overline{a}\)
+    denotes all the letters in the alphabet except \(a\). Therefore,
+    since we have to exclude the end-of-line character and the
+    \verb+}+ symbol inside the comments, the regular expression for
+    any letter different from \verb+}+ and \verb+\n+ is
+    \(\overline{\lparen \texttt{\}} \, \disjM{} \, \backslash{n}
+      \rparen}\). Therefore, we can write the following regular
+    definitions:
+    \begin{quote}
+    \begin{tabular}{r@{}c@{}l}
+      \term{inside}
+    & \ \(\rightarrow\) \ 
+    & \(\overline{\lparen \texttt{\}} \, \disjM{} \, \backslash{n}
+         \rparen}\)\\
+      \term{comment}
+    & \ \(\rightarrow\) \ 
+    & \verb+{+ \term{inside}\kleene \verb+}+
+    \end{tabular}
+    \end{quote}
+
+  \item Here, the delimiters of the comments are \verb+/*+
+    and \verb+*/+, so we can start writing
+    \begin{quote}
+    \begin{tabular}{r@{}c@{}l}
+      \term{inside}
+    & \ \(\rightarrow\) \ 
+    & \\
+      \term{comment}
+    & \ \(\rightarrow\) \ 
+    & \verb+/*+ \term{inside}\kleene \verb+*/+
+    \end{tabular}
+    \end{quote}
+    We have three cases in \term{inside}:
+    \begin{enumerate}
+
+      \item it is a string between double-quotes,
+
+      \item it is \verb+*+ not followed by \verb+/+,
+  
+      \item it is a letter different from \verb+*+ or \verb+"+
+
+    \end{enumerate}
+    These cases are described by the following regular expressions:
+    \begin{enumerate}
+ 
+      \item \term{string}
+
+      \item \verb+*+ \(\overline{\texttt{/}}\)
+
+      \item \(\overline{\texttt{*} \, \disjM{} \, \texttt{"}}\)
+
+    \end{enumerate}
+    In other words:
+    \begin{quote}
+    \begin{tabular}{r@{}c@{}l}
+      \term{string}
+    & \ \(\rightarrow\) \ 
+    & \\
+      \term{inside}
+    & \ \(\rightarrow\) \ 
+    & \(\term{string} \; \disjM{} \; 
+        \verb+*+ \overline{\texttt{/}} \; \disjM{} \; 
+        \overline{\texttt{*} \, \disjM{} \, \texttt{"}}\)\\
+      \term{comment}
+    & \ \(\rightarrow\) \ 
+    & \verb+/*+ \term{inside}\kleene \verb+*/+
+    \end{tabular}
+    \end{quote}
+    The string cannot contain a double-quote, otherwise there is
+      no way to determine where the string finishes.
+    \begin{quote}
+    \begin{tabular}{r@{}c@{}l}
+      \term{string}
+    & \ \(\rightarrow\) \ 
+    & \(\verb+"+ \lparen\overline{\texttt{"}}\rparen\kleeneM{} \verb+"+\)\\
+      \term{inside}
+    & \ \(\rightarrow\) \ 
+    & \(\term{string} \; \disjM{} \; 
+        \verb+*+ \overline{\texttt{/}} \; \disjM{} \; 
+        \overline{\texttt{*} \, \disjM{} \, \texttt{"}}\)\\
+      \term{comment}
+    & \ \(\rightarrow\) \ 
+    & \verb+/*+ \term{inside}\kleene \verb+*/+
+    \end{tabular}
+    \end{quote}
+
+  \end{enumerate}

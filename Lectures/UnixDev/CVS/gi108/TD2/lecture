@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# on s'assure que reponse est vide au depart
+REPONSE=""
+
+# on quote (avec des " les variables)
+while [ "$REPONSE" != "oui" -a "$REPONSE" != "non" ]
+  do
+  echo
+# on despecialise avec un \ les " pour les afficher
+  echo "Entrer une chaine de caracteres. Entrer \"oui\" ou \"non\" pour finir"
+  echo
+  read REPONSE
+done
+echo "Vous avez interrompu avec la reponse : $REPONSE"

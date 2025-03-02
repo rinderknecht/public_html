@@ -1,0 +1,55 @@
+%%-*-latex-*-
+
+% Language
+%
+\usepackage[english]{babel}
+
+% Graphics
+%
+\usepackage{graphicx}
+
+% Maths
+%
+\usepackage{amssymb,amsmath}
+
+% Miscellanea
+%
+\usepackage{xspace}
+
+% Pseudo-code
+%
+\usepackage{clrscode}
+\newcommand{\type}[1]{\textsf{#1}\xspace}
+
+% Input files
+%
+\input{beamer_cfg}
+\input{cpp}
+\input{trace}
+
+% New commands
+%
+\renewcommand{\refname}{}
+\newcommand{\Prolog}{\textsf{Prolog}\xspace}
+\newcommand{\Java}{\textsf{Java}\xspace}
+
+% ------------------------------------------------------------------------
+% Document
+%
+\title{Algebraic Specifications}
+\author{Christian Rinderknecht}
+\date{19 October 2008}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\xinclude{booleans}{Algebraic specification of booleans}
+\xinclude{rewrite}{Rewrite systems}
+\xinclude{stacks}{Algebraic specification of stacks}
+\xinclude{queues}{Algebraic specification of queues}
+\xinclude{trees}{Trees and their classic traversals}
+\xinclude{search}{Search algorithms based on stacks, queues and trees}
+
+
+\end{document}

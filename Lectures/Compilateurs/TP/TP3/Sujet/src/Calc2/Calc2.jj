@@ -1,0 +1,75 @@
+PARSER_BEGIN(Calc2)
+public class Calc2 {
+    static int total;
+    static java.util.Stack argStack = new java.util.Stack();
+
+    public static void main(String args[]) throws ParseException{
+      Calc2 parser = new Calc2(System.in);
+      while (true) {
+        System.out.print("Enter Expression: ");
+        System.out.flush();
+        try {
+          parser.S();
+          System.out.println("Result: " + argStack.pop());
+        } catch (ParseException x) {
+            System.out.println("Exiting.");
+            throw x;
+          }
+      }
+    }
+}
+PARSER_END(Calc2)
+
+SKIP  : { " " | "\t" | "\r" }
+TOKEN : { <EOL: "\n"> }
+TOKEN : { <PLUS: "+"> | <MINUS: "-"> | <TIMES: "*"> | <SLASH: "/"> }
+TOKEN : { <INT: (<DIGIT>)+> | <#DIGIT: ["0"-"9"]> }
+
+void S() : {} { E() <EOL> }
+
+void E() :
+{Token x;}
+{
+ F() 
+ ((x=<PLUS> | x=<MINUS>) F()
+  {
+   int a = ((Integer) argStack.pop()).intValue();
+   int b = ((Integer) argStack.pop()).intValue();
+   if (x.kind == PLUS)
+     argStack.push(new Integer(b + a));
+   else
+     argStack.push(new Integer(b - a));
+  }
+ )*
+}
+
+void F() :
+{Token x;}
+{
+ G() 
+ ((x=<TIMES> | x=<SLASH>) G()
+  {
+   int a = ((Integer) argStack.pop()).intValue();
+   int b = ((Integer) argStack.pop()).intValue();
+   if (x.kind == TIMES)
+     argStack.push(new Integer(b * a));
+   else
+     argStack.push(new Integer(b / a));
+  }
+ )*
+}
+
+void G() :
+{}
+{
+ <INT>
+ {
+  try {
+    int x = Integer.parseInt(token.image);
+    argStack.push(new Integer(x));
+  } catch (NumberFormatException ee) {
+      argStack.push(new Integer(0));
+    }
+ }
+| "(" E() ")"
+}

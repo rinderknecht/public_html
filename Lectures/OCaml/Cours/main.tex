@@ -1,0 +1,47 @@
+%%-*-latex-*-
+
+% Language
+%
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}       % Required for \DJ and hyphenation
+\usepackage[francais]{babel}
+
+% Maths and graphics
+%
+\usepackage{amssymb,amsmath,stmaryrd}
+\usepackage{pst-node,pst-tree}
+\usepackage{graphicx}
+
+% Input files
+%
+\input{beamer_cfg}
+\input{commands}
+\input{ocaml_syntax}
+\input{cpp}
+\input{trace}
+
+% New commands
+%
+\newcommand{\evalf}[2]{\llbracket{#1}\rrbracket{#2}}
+
+% ------------------------------------------------------------------------
+% Document
+%
+\title{Programmation fonctionnelle en OCaml}
+\author{Christian Rinderknecht}
+\date{3 Mars 2003}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\xinclude{introduction}{Pr\'esentation de mini-ML}
+\xinclude{syntax}{Variables, syntaxe abstraite et environnement}
+\xinclude{execution}{\'Evaluation des programmes mini-ML}
+\xinclude{extensions}{Extensions de mini-ML}
+\xinclude{types}{Types}
+\xinclude{matching}{Variantes et filtrage de motifs}
+\xinclude{lists}{Listes}
+\xinclude{exceptions}{Exceptions}
+
+\end{document}

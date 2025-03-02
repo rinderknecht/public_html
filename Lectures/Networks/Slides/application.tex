@@ -1,0 +1,348 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item \textbf{Application layer}
+
+  \begin{itemize}
+
+    \item Application layer protocols
+
+    \item The Web and \textsc{http}
+
+    \item File transfer: \textsc{ftp}
+
+    \item Electronic mail in the Internet
+
+    \item DNS --- The Internet's directory service
+
+    \item Socket programming with TCP and UDP
+
+    \item Content distribution
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application layer}
+
+The network applications are the reason why we use the Internet,
+because they are the programs we interact with to connect our host
+to another host on the network.
+
+\bigskip
+
+There are many popular network applications:
+\begin{itemize}
+
+  \item electronic mail, remote access to computers, file
+  transfers, newsgroups, text chats (in the 1980's);
+  
+  \item Web (mid-1990's);
+
+  \item instant messaging, peer-to-peer (end of 1990's).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item Application layer
+
+  \begin{itemize}
+
+    \item \textbf{Application layer protocols}
+
+    \item The Web and \textsc{http}
+
+    \item File transfer: \textsc{ftp}
+
+    \item Electronic mail in the Internet
+
+    \item DNS --- The Internet's directory service
+
+    \item Socket programming with TCP and UDP
+
+    \item Content distribution
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application-layer protocols}
+
+A network application is made of several distributed software
+components, each of them running on different hosts.
+
+\bigskip
+
+Precisely, we do not say that programs communicate with each other,
+because programs are basically texts. The execution of a program
+gives birth to the notion of \textbf{process}. Processes are the
+communicating entities.
+
+\bigskip
+
+Network applications use application-layer protocols which define the
+format of the exchanged messages and the actions undertaken by the
+hosts on the receipt and sending of given messages.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application-layer protocols (cont)}
+
+The figure in the next slide shows the \textbf{protocol stacks} at
+each communicating host.
+
+\bigskip
+
+Applications are processes which interact, within the same layer, with
+the \textbf{operating system} and the user, and use the transport
+layer services for communicating across the network.
+
+\bigskip
+
+This behaviour is depicted using solid blue arrows.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application-layer protocols (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.27]{02-01.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application-layer protocols (cont)}
+
+Keep in mind the difference between a \textbf{network application} and
+an \textbf{application\hyp{}layer protocol}:
+\begin{itemize}
+
+  \item a network application is a process;
+
+  \item an application-layer protocol is the definition of data
+  formats and of the behaviour of communicating network applications.
+
+\end{itemize}
+In other words, a network application \textbf{implements} an
+application-layer protocol, but also do more, like offering to the
+user a graphical interface etc.
+
+\bigskip
+
+Some application-layer protocols are \textsc{pop} and \textsc{smtp}
+for e-mail. The mail client, like \textsf{Outlook},
+\textsf{Thunderbird} or \textsf{Evolution}, is a network application.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application-layer protocols (cont)}
+
+The figure in the next page shows that a network application is
+made of a \textbf{client} and a \textbf{server}.
+
+\bigskip
+
+Usually a host implements both the client and the server, e.g.,  when
+an \textsc{ftp} session exists between two hosts, either host can
+transfer files to the other host.
+
+\bigskip
+
+However, the host that initiates the session is labeled the client.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application-layer protocols (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.27]{02-02.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application-layer protocols/Sockets}
+
+A process sends and receives messages through its \textbf{socket}. By
+analogy, a socket can be considered as an application's door to the
+network, which is assumed (by the application) to provide a transport
+service for the messages entering it. Formally, it is an \textbf{API}
+(\textbf{Application Programmers' Interface}) between the application
+and the network.
+
+\hfill\includegraphics[scale=0.34]{02-03.eps}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application-layer protocols/Addressing processes}
+
+In order for one process on one host to send a message to another
+process running on another host, it must identify the receiving
+process.
+
+\bigskip
+
+For this, two elements are needed on the Internet:
+\begin{itemize}
+
+  \item the \textbf{IP address} of the receiving host, which is
+  a 32 bits number globally unique;
+
+  \item a \textbf{port number} within the receiving host, which
+  allows addressing the message to the peer process.
+
+\end{itemize}
+Therefore, a network application must be assigned a port number,
+e.g., 80 for Web server processes (using \textsc{http} protocol) or 25
+for mail server processes (using \textsc{smtp} protocol).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application-layer protocols/User agents}
+
+A network application usually offers a graphical interface to the
+user. It is usually called \textbf{user agent} because it relays the
+wishes of the user to the core of the application network, which
+interacts in turn with the transport layer through sockets.
+
+\bigskip
+
+Web browsers and mail readers provide such user agents, while
+implementing specific application-layer protocols, respectively
+\textsc{http} (web), \textsc{smtp} (sending e-mails), \textsc{pop3} or
+\textsc{imap} (retrieving e-mails).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application-layer protocols/Transport services}
+
+The Internet offers several transport protocols to the network
+applications:
+\begin{itemize}
+
+  \item \textbf{Reliable data transfer.} Some applications, such as
+  e-mail, file transfer, remote host access, web document retrieving
+  etc. require no data loss. Others, such as real-time or stored audio
+  and video playing are \textbf{loss-tolerant applications}.
+
+  \item \textbf{Bandwidth.} Some applications, such as Internet
+  telephony, require a minimum bandwidth allocation: they are
+  \textbf{bandwidth-sensitive applications}. Others, such as e-mail,
+  can make use of any available bandwidth. They are \textbf{elastic
+    applications}.
+
+  \item \textbf{Timing.} Some applications, such as multi-player
+  games, require timing constraints on the end-to-end delay: they are
+  \textbf{time-sensitive applications}.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application-layer protocols/Transport services (cont)}
+
+\begin{center}
+\includegraphics[scale=0.4]{02-04.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application-layer protocols/TCP services}
+
+Let us revisit the TCP services:
+\begin{itemize}
+
+  \item \textbf{Connection-oriented service.} TCP has the client and
+    the server exchange transport\hyp{}layer control information
+    before they exchange application\hyp{}level messages: this is
+    \textbf{handshaking}.
+
+  After it, a \textbf{TCP connection} is said to exist between the
+  sockets of the two processes. 
+
+  The connection is \textbf{full-duplex}, i.e., the two processes can
+  send information to the other at the same time. After, the
+  connection must be torn down.
+
+  \item \textbf{Reliable transport service.} The processes rely on
+  TCP to deliver their messages correctly, entirely and orderly.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Application-layer protocols/TCP services (cont)}
+
+TCP does \emph{not} guarantee
+\begin{itemize}
+
+  \item minimum transfer rate (due to flow and congestion control),
+
+  \item end-to-end delay (due to routing protocols and queuing).
+
+\end{itemize}
+\begin{center}
+\includegraphics[scale=0.42]{02-05.eps}
+\end{center}
+
+\end{frame}

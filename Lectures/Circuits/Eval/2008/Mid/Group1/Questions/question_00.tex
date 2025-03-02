@@ -1,0 +1,11 @@
+\paragraph{Definitions.} An integer \(N\) is said to be represented
+in \emph{balanced ternary} if there are \(t_i \in \{-1,0,1\}\), called
+\emph{trits}, such that \(N = t_{n-1}3^{n-1} + \dots + t_13^1 +
+t_0\). It is convenient to write \(\overline{1}\) instead of \(1\),
+so, for example, we have \(\overline{1}01\overline{1}_{3b} =
+(-1)3^3+(0)3^2+(1)3^1+(-1)3^0 = -27 + 3 - 1 = -25\). One can also
+consider a complement operator such that \(\overline{0} = 0\)
+and \(\overline{\overline{1}} = 1\). By extension, \(\overline{N}
+= \overline{t_{n-1}3^{n-1} + \dots + t_13^1 + t_0}
+= \overline{t_{n-1}}3^{n-1} + \dots + \overline{t_1}3^1
++ \overline{t_0}\).

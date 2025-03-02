@@ -1,0 +1,73 @@
+% Language
+%
+\usepackage[english]{babel}
+
+% Graphics
+%
+\usepackage{graphicx}
+
+% Maths
+%
+\usepackage{amssymb,amsmath,stmaryrd}
+
+% Pseudo-code
+%
+\usepackage{clrscode}
+
+% Miscellanea
+%
+\usepackage{xspace}
+
+% Tables
+%
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tabulary}
+\usepackage{hhline}
+
+% New environments and commands
+%
+\renewcommand\refname{}
+
+\newcommand\Lex{\textsf{Lex}\xspace}
+\newcommand\Pascal{\textsf{Pascal}\xspace}
+\newcommand\Ada{\textsf{Ada}\xspace}
+\newcommand\strlen[1]{\lvert#1\rvert}
+\newcommand\eof{\textbf{eof}\xspace}
+\newcommand\eNFA{\(\epsilon\)-NFA\xspace}
+\newcommand\eClose{\epsilon\text{-close}}
+\newcommand\eDFS{\epsilon\text{-DFS}}
+\newcommand\eDFSset{\overline{\epsilon\text{-DFS}}}
+\newcommand\eCloseSet{\overline{\eClose}}
+
+% Input files
+%
+\input{token}
+\input{grammar}
+\input{dfa_macros}
+\input{beamer_cfg}
+\input{trace}
+
+% ------------------------------------------------------------------------
+% Document
+%
+\title{Compiler Construction}
+\author{Christian Rinderknecht}
+\date{31 October 2008}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\xinclude{overview}{Overview of the compilation chain}
+\xinclude{token_spec}{Token specification}
+\xinclude{regexp}{Regular expressions}
+\xinclude{lex}{Lex, a tool for building lexers}
+\xinclude{token_recog}{Transition diagrams and regular expressions}
+\xinclude{dfa}{Deterministic Finite Automata (DFA)}
+\xinclude{nfa}{Non-deterministic Finite Automata (NFA)}
+\xinclude{subset}{The subset construction}
+\xinclude{enfa}{Non-deterministic Finite Automata with epsilon-transitions (e-NFA)}
+\xinclude{re_to_enfa}{From regular expressions to e-NFAs}
+
+\end{document}

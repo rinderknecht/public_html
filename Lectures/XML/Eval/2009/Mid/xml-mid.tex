@@ -1,0 +1,39 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\input{trace}
+
+\input{title}
+\author{Christian Rinderknecht}
+\date{16 April 2009}
+
+% Packages
+%
+\usepackage{verbatim}
+\usepackage{url,xspace}
+
+% xmllint & Saxon
+%
+\input{xmllint}
+\input{saxon}
+
+\newcommand\XML{\textsf{XML}\xspace}
+\newcommand\XSLT{\textsf{XSLT}\xspace}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\section{Merging two sorted lists}
+
+Given the following \XML document \smallXMLin{ordered_lists.xml}
+containing two lists sorted in increasing order of some attribute, as
+\smallXMLin{ordered_lists.xml}
+\noindent output an \XML where the lists are merged in increasing order:
+\saxon{tmp.xml}{ordered_lists}{merge1}
+
+\end{document}
+

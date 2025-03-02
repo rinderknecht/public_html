@@ -1,0 +1,54 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amssymb}
+
+\title{Test 1a of \textsf{Erlang}}
+\author{Christian Rinderknecht}
+\date{7 October 2011}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\begin{enumerate}
+
+  \item Write a function \fun{rmlst/1} (\emph{remove the last}) such
+    that if \[\fun{rmlst}(P) \xrightarrow{+} Q,\] then \(Q\) is the
+    list \(L\) without its last item. For example,
+    \[\fun{rmlst}([1,2,3]) \xrightarrow{+} [1,2].\] If the list is
+    empty, the result is the atom \fun{empty}: \(\fun{rmlst}([\,])
+    \xrightarrow{+} \fun{empty}\).
+
+  \item Write a function \fun{pair/2} such that if \[\fun{zip}(P,Q)
+    \xrightarrow{+} R,\] then \(R\) is the list made of the pairs of
+    items of lists \(P\) and~\(Q\). For example,
+    \[\fun{zip}([1,2,3],[\fun{a},\fun{b},\fun{c}]) \xrightarrow{+}
+          [\{1,\fun{a}\}, \{2,\fun{b}\}, \{3,\fun{c}\}].\] If one list
+          is longer than the other, then the atom \fun{length} should
+          be the result, e.g., \(\fun{zip}([1,2],[\fun{a}])
+          \xrightarrow{+} \fun{length}\).
+
+  \item Write a function \fun{twoway/1} such that if the input list
+    is the same when read from right to left, the result is
+    \fun{true}, otherwise it is \fun{false}. For instance,
+    \begin{align*}
+      \fun{twoway}([0,1,0,1,0]) &\xrightarrow{+} \fun{true},\\
+      \fun{twoway}([0,1,1,0]) &\xrightarrow{+} \fun{true},\\
+      \fun{twoway}([\fun{r},\fun{a},\fun{d},\fun{a},\fun{r}])
+      &\xrightarrow{+} \fun{true},\\
+      \fun{twoway}([0,1,1,0,0,1,0]) &\xrightarrow{+} \fun{false},\\
+      \fun{twoway}([\,]) &\xrightarrow{+} \fun{false}.
+    \end{align*}
+
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,110 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{pstricks,pst-tree}
+\usepackage{multicol}
+
+\input{trace}
+
+\input{title}
+\author{Christian Rinderknecht}
+\date{24 October 2013}
+
+\begin{document}
+
+\maketitle
+
+\section{Binary Search Trees}
+
+\noindent Consider the following classes implementing persistent
+binary search trees:
+{\small
+\begin{verbatim}
+public class Pair<Fst,Snd> {
+  protected final Fst fst;
+  protected final Snd snd;
+  public Pair (final Fst f, final Snd s) { fst = f; snd = s; }
+  public Fst fst () { return fst; }
+  public Snd snd () { return snd; }
+}
+
+public abstract class BST<Key extends Comparable<Key>> {
+  public    abstract boolean isEmpty ();
+  protected abstract Pair<Key,BST<Key>> min_aux (final Int<Key> p);
+}
+
+public final class Ext<Key extends Comparable<Key>> extends BST<Key>{
+  public boolean isEmpty () { return true; }
+  protected final Pair<Key,BST<Key>> min_aux (final Int<Key> p) {
+    return new Pair<Key,BST<Key>>(p.root,p.right); }
+}
+
+public final class Int<Key extends Comparable<Key>>
+       extends BST<Key> {
+  protected final Key root;
+  protected final BST<Key> left, right;
+  public Int (final Key i, final BST<Key> l, final BST<Key> r) {
+    root = i; left = l; right = r; }
+  public boolean isEmpty () { return fakse; }
+  public Pair<Key,BST<Key>> min_aux (final Int<Key> p) {
+    Pair<Key,BST<Key>> m = left.min_aux(this);
+    return new Pair<Key,BST<Key>>(m.fst(),
+                          new Int<Key>(p.root,m.snd(),p.right));
+  }
+  public Pair<Key,BST<Key>> min () { return left.min_aux(this); }
+}
+\end{verbatim}
+}
+Extend the classes \texttt{BST}, \texttt{Ext} and \texttt{Int} with a method \texttt{rm} (\emph{remove}) which returns the same tree without a given key and whose signature is
+\begin{verbatim}
+public BST<Key> rm (final Key k);
+\end{verbatim}
+Note: you must use the method \texttt{min\_aux}.
+
+\section{Leaf trees}
+
+Using a functional style, design a binary tree whose leaves alone
+contain comparable keys, for instance numbers, while the other
+internal nodes do not. Such kind of tree is called a \emph{leaf tree}
+and an example is shown in Figure~\ref{fig:leaf_tree}. The nodes
+without information are simply called \emph{nodes}, whereas the nodes
+carrying a comparable key are \emph{leaves}.
+
+Write a method \texttt{sort} which operates on a leaf tree and
+produces the nondecreasingly ordered stack of its leaves. The example
+in the figure yields the stack \texttt{(1,2,3,4)}, where the
+leftmost number is at the top of the stack. The signature is
+\begin{verbatim}
+public Stack<Key> sort ();
+\end{verbatim}
+Give the best and worst costs with the corresponding configurations.
+
+Note: you can reuse any of the methods of the class \texttt{Stack} we
+have defined during the course and you do not need to define insertion
+into the tree.
+\begin{figure}[h]
+\centering
+\includegraphics{tree}
+\caption{A leaf tree\label{fig:leaf_tree}}
+\end{figure}
+
+\section{Mirroring}
+
+\begin{multicols}{2}
+Add a method \texttt{mirror} to the class \texttt{BST}, which takes a
+binary search tree and returns the same tree as in a mirror. Consider
+the facing example. What does the inorder traverval of the mirror
+yields?
+\par\vfill\columnbreak
+\begin{center}
+\includegraphics[bb=71 656 233 721]{mirrors}
+\end{center}
+\end{multicols}
+
+
+\end{document}

@@ -1,0 +1,1054 @@
+%%-*-latex-*-
+
+% Language
+%
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% Maths
+%
+\usepackage{amsmath,amssymb}
+
+% Miscellanea
+%
+\usepackage{url,xspace}
+
+% New environments and commands
+%
+
+% Input files
+%
+\input{beamer_cfg}
+\input{trace}
+
+% Bibliography
+%
+\renewcommand{\refname}{R\'ef\'erences}
+
+% ------------------------------------------------------------------------
+% Document
+%
+\title{Introduction aux m\'ethodes formelles}
+\author{Christian Rinderknecht \& Jean-François Monin}
+\date{25 October 2008}
+
+\begin{document}
+
+\frame{\maketitle}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Introduction}
+
+\begin{itemize}
+
+  \item Les méthodes formelles sont des méthodes outillées pour le
+  développement de logiciel qui font appel à des concepts
+  d'informatique théorique.
+
+  \item Les raisons de leur emploi sont en général: réduction des
+  coûts de maintenance (en particulier corrective), robustesse (en
+  délimitant explicitement le champ de validité du logiciel) et
+  fiabilité.
+
+  \item Leur domaine d'application est donc, en particulier, la
+  sûreté de fonctionnement des systèmes critiques ou embarqués, car la
+  correction et la continuité de service de ceux-ci peut mettre en
+  jeu la vie d'êtres humains ou simplement d'importantes sommes
+  d'argent.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La maîtrise de la complexité}
+
+\begin{itemize}
+
+  \item Il ne faut pas sous-estimer l'intérêt des méthodes
+  formelles. Elles ont nécessité des dizaines d'années de recherche
+  théorique ainsi que d'expérimentation et sont en pleine expansion.
+
+  \item L'augmentation de la puissance de calcul des ordinateurs et
+  la baisse de leur prix contribuent \emph{de facto} à la pertinence
+  de leur application et même parfois rendent leur application tout
+  simplement possible dans certains domaines.
+
+  \item Ce dont il est question ici, de façon indirecte, c'est la
+  maîtrise de la taille et de la complexité logique des systèmes
+  informatiques, qui est le thème central du génie logiciel.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les limites de l'informatique}
+\begin{itemize}
+
+  \item Les inventeurs de mouvements perpétuels nous font sourire car
+  leurs inventions contredisent nos connaissances fondamentales sur la
+  physique: nous savons \emph{a priori} qu'il y a une faille sans
+  avoir besoin d'examiner le détail des mécanismes.
+
+  \item En informatique il existe des réalisations qui doivent faire
+  sourire. Mais lesquelles? Devant le programme énorme qui fonctionne
+  \emph{presque}, que faire?
+
+  \begin{itemize}
+
+    \item Essayer de le compléter et de le corriger pour qu'il
+    fonctionne correctement et complètement?
+
+    \item Revoir la conception et recommencer avec une autre méthode
+    de résolution du problème?
+
+    \item Conclure avec amusement que le problème censé être résolu
+    par le programme n'est en fait soluble par aucun programme, cette
+    conclusion étant tirée sans examen détaillé du programme?
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les limites et l'ingénieur}
+\begin{itemize}
+
+  \item Certaines limites à l'usage des méthodes formelles sont
+  levées par des progrès techniques, mais certaines limites ne sont
+  pas dues à l'électronique mais sont intrinsèques aux mathématiques,
+  donc au calcul. Il est ainsi possible de démontrer que certains
+  problèmes ne sont pas solubles et ne le seront jamais. La
+  connaissance de ces limites extrinsèques et inhérentes fait donc
+  partie des méthodes formelles.
+
+  \item De nos jours, l'industrie du logiciel promeut fortement la
+  «~technologie à la carte~» et la valse des mots-clés dans les
+  \emph{curriculum vit{\ae}}. C'est pourquoi il est important pour
+  l'ingénieur informaticien de comprendre les fondements de sa
+  discipline, qui sont indépendants de toute technologie à la mode: il
+  saura alors appréhender correctement les outils en fonction des
+  concepts qu'ils impliquent.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Enjeux}
+
+\begin{itemize}
+
+  \item Les organismes publics ont pris conscience des progrès
+  effectués. En Europe (et en France depuis 1995), les ITSEC
+  (\emph{Information Technology Security Evaluation Criteria}) exigent
+  l'usage de méthodes formelles à partir d'un certain niveau de
+  sécurité.
+
+  \item En même temps qu'un élargissement des champs d'application
+  (cartes à puces, systèmes d'information hautement sécurisés,
+  robotique, commerce électronique, contrôle aérien etc.), on observe
+  une montée des exigences.
+
+  \item Dans certains cas (transports, pilotage de centrales
+  nucléaires, informatique médicale) des vies humaines sont en jeu.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Enjeux (suite et fin)}
+
+\begin{itemize}
+
+  \item Dans les télécommunications, la panne d'un réseau d'ATT en
+  janvier 1990 a causé des pertes économiques considérables.
+
+  \item L'explosion du vol~501 de la fusée européenne Ariane en 1995
+  et l'échec d'un missile sol-air \textsf{Patriot} (provoquant de
+  nombreux morts dans un camp militaire états-unien) sont tous deux
+  dus à des problèmes logiciels et ont montré l'insuffisance des
+  méthodes en vigueur face aux enjeux d'aujourd'hui.
+
+  \item Actuellement, les méthodes formelles s'appliquent à des
+  systèmes situés entre l'algorithme sophistiqué de quelques pages et
+  le logiciel de plusieurs dizaines de milliers de lignes, \emph{ce
+  qui est déjà fort utile}.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Spécification pour la réingénierie}
+
+\begin{itemize}
+
+  \item Une expérience a été menée en 1990 entre IBM et l'université
+  d'Oxford: une restructuration majeure dans un gros logiciel de
+  gestion de transactions (800~000 lignes d'assembleur et d'un langage
+  propriétaire de haut niveau).
+
+  \item 268~000 lignes ont été modifiées ou réécrites, dont 37~000
+  ont été rédigées avec la méthode formelle \textsf{Z}. Des moyens de
+  mesure ont été mis en place.
+
+  \item Les coûts de développement ont diminué de 9\%.
+
+  \item Au cours des huit premiers mois suivant la remise en service,
+  les clients ont recensé 2,5 fois moins d'erreurs sur les parties
+  développées en \textsf{Z} par rapport aux autres et ces erreurs
+  étaient perçues comme moins graves.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Preuve de logiciel ferroviaire critique}
+
+\begin{itemize}
+
+  \item Pour apporter des garanties forte de correction du logiciel
+  il faut d'abord bien spécifier le comportement attendu et délimiter
+  le champ d'application des preuves.
+
+  \item L'utilisation de la méthode \textsf{B} par GEC-Alsthom et
+  récemment par Matra Transport International dans le métro de
+  Calcutta (1992) et la ligne~14 (1999) du métro parisien illustre
+  cette approche.
+
+  \item Cette méthode permet de raffiner pas à pas la spécification
+  initiale et offre un outil (reposant sur une théorie des ensembles)
+  pour prouver à chaque étape la conformité (correction) du
+  raffinement par rapport à l'étape précédente. La dernière phase
+  consiste à produire quelques dizaines de milliers de lignes de code
+  \textsf{C} dont on possède alors par transitivité une preuve de
+  correction par rapport à la spécification initiale.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Communication et rigueur}
+
+\begin{itemize}
+
+  \item Un intérêt souvent méconnu de la sémantique rigoureuse ou
+  formelle est de faciliter la \emph{communication} en constituant un
+  cadre non ambigu au discours et un arbitre impartial. C'est aussi un
+  excellent guide pour construire des outils de support (cf. les
+  techniques de compilation). Il est aussi parfois possible d'énoncer
+  alors les propriétés attendues d'un système et même d'en prouver
+  certaines.
+
+  \item N'oublions pas que la maintenance logicielle engloutit en
+  moyenne les deux tiers du coût total d'un projet et que la
+  réparation d'une erreur de spécification demande environ vingt fois
+  plus d'efforts si elle n'est détectée que lors de l'exploitation.
+
+  \item Les méthodes formelles introduisent une \emph{rigueur}
+  supplémentaire dans le génie logiciel pour réduire ces coûts.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Dans \og méthode \fg formelle il y a \og méthode \fg}
+
+\begin{itemize}
+
+  \item Le génie logiciel montre qu'il est important de consacrer un
+  gros effort dans les premières étapes du cycle de vie et,
+  particulièrement, d'établir des spécifications fiables, c'est-à-dire
+  \begin{itemize}
+  
+    \item correspondant bien à ce que l'on en attend intuitivement
+
+    \item et cohérentes.
+
+  \end{itemize}
+
+  \item Le premier point repose sur une bonne connaissance des
+  besoins du client, connaissance que ce dernier ne peut pas toujours
+  exposer d'emblée. Une \emph{maïeutique} doit alors s'établir entre
+  lui et le concepteur pour dégager les propriétés du résultat
+  attendu. Le concepteur construit pas à pas un modèle formel qu'il ne
+  partage pas forcément avec le client mais dont il confronte avec lui
+  les implications logiques dans le but d'affiner les propriétés.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Dans \og méthode formelle \fg il y a \og méthode \fg
+  (suite et fin)}
+
+\begin{itemize}
+
+  \item Le concepteur peut aussi recourir au \emph{prototypage
+  rapide}, qui permet d'élaborer en peu de temps une version
+  facilement modifiable du système qui semble souhaité. Les techniques
+  employées doivent alors avant tout favoriser la vitesse de réaction
+  du processus de développement.
+
+  \item Les considérations relatives à la propreté ou à l'efficacité
+    du logiciel peuvent s'avérer pénalisantes \emph{à ce niveau}.
+
+  \item Lorsque l'étape du prototypage est franchie, les priorités
+  changent et les objectifs de qualité et de rigueur reviennent au
+  premier plan. 
+
+  \item L'emploi de langages fonctionnels, comme \textsc{ML},
+  simplifie le passage du prototype au produit.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Du langage formel comme fil conducteur}
+
+\begin{itemize}
+
+  \item Formuler le problème à résoudre dans un langage formel ou
+  semi-formel est la première étape de la solution.
+
+  \item En effet, un langage formel peut être muni d'une sémantique
+  sûre, surtout s'il est fondé sur des théories mathématiques
+  éprouvées.
+
+  \item Il devient possible de prouver des propriétés du système,
+  d'une part, au niveau de la spécification, d'autre part, au niveau
+  du code qui peut donc être garanti conforme à la spécification.
+
+  \item La \emph{correction} dit que toutes les valeurs retournées
+  par le programme sont bien prévues par la spécification. 
+
+  \item La \emph{complétude} dit que le programme n'en oublie
+  aucune. 
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Du langage formel comme fil conducteur (suite et fin)}
+
+\begin{itemize}
+
+  \item Pour des raisons qui touchent aux fondements des
+  mathématiques, ces propriétés, comme d'autres, peuvent ne pas être
+  démontrables en général (on parle d'\emph{indécidabilité}). Cela
+  nous ramène donc aux limites de la calculabilité.
+
+  \item Il y a plusieurs façon d'aborder la conformité (correction):
+  logique de Hoare, énumération des états atteignables, raffinage des
+  spécifications, réécriture, calcul ou extraction de programmes.
+
+  \item Un langage formel se prête bien à l'élaboration d'outils
+  permettant d'assister automatiquement les différentes tâches.
+
+  \item Les efforts de test, de maintenance et parfois de codage
+  sont diminués et la maîtrise du cycle augmente, la documentation
+  étant devenue bien plus fiable.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les méthodes formelles pour le donneur d'ordre}
+
+\begin{itemize}
+
+  \item Les méthodes formelles concernent également les organismes
+  qui font réaliser tout ou partie de leurs développements logiciels
+  par des tiers. En effet, le donneur d'ordre doit s'assurer
+
+  \begin{itemize}
+
+    \item que ses spécifications sont correctes,
+
+    \item que le produit livré correspond aux spécifications.
+ 
+  \end{itemize}
+
+  \item Pour le second point, le donneur d'ordre doit au minimum
+  valider le produit et, pour cela, il le soumet à une batterie de
+  tests.
+
+  \item La complexité des tests croît grandement avec celle du
+  produit et de ses nouvelles versions.
+
+  \item La production automatique de jeux de test à partir de
+  spécifications formelles enregistre de plus en plus de succès.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les limites du test pour le donneur d'ordre}
+
+\begin{itemize}
+
+  \item Le test, s'il est toujours nécessaire, peut se révéler
+  insuffisant, selon le degré d'exigence, car il ne couvre qu'un
+  certain nombre de comportements du système. La couverture
+  structurelle de toutes les branches du code ne tient pas compte de
+  toutes les combinaisons possibles de valeurs (qui peuvent être
+  infinies en théorie).
+
+  \item Parfois le donneur d'ordre fournit au réalisateur le jeu de
+  test que doit réussir le produit. Cela peut se révéler problématique
+  si le réalisateur fournit volontairement un produit vérifiant les
+  tests (donc un nombre fini de cas) mais erroné par ailleurs.
+
+  \item Si le produit est construit au moyen de méthodes formelles,
+  il peut être livré avec une preuve de sa conformité, que le donneur
+  d'ordre peut alors vérifier. Il est bien plus facile de vérifier une
+  démonstration que de la découvrir.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Quelques bémols...}
+
+\begin{itemize}
+
+  \item Les méthodes formelles ne sont pas une panacée: face à des
+  problèmes complexes il n'y a pas de solution de facilité mais des
+  compromis raisonnés.
+
+  \item Il faut garder à l'esprit la distance qui sépare la
+  spécification formelle et la réalité qu'elle modélise. Elle ne peut
+  être réduite que par une démarche de relectures, de reformulations,
+  de confrontation à des conjectures, de maïeutique.
+
+  \item Un obstacle à l'emploi des méthodes formelles est le manque
+  de culture mathématique et de maîtrise des notations. En génie civil
+  ou en électronique les mathématiques font partie du paysage.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{... et bécarres}
+
+\begin{itemize}
+
+  \item Les méthodes formelles exploitent beaucoup les phases
+  initiales du développement (spécification, conception) au risque de
+  produire une impression négative de ralentissement.
+
+  \item Mais les phases ultérieures (tests, intégration) sont
+  raccourcies et mieux maîtrisées.
+
+  \item La formalisation (c.-à-d. l'emploi d'une logique pour
+  modéliser) révèle plus tôt nombre de points délicats.
+
+  \item Ces points délicats sont souvent inhérents au problème à
+  résoudre, qui peut donc être bien plus complexe qu'il n'y paraît au
+  premier abord.
+
+  \item L'usage de notations abstraites est alors en fait une simple
+  nécessité, pas une complication adventice.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Tour d'horizon des méthodes formelles}
+
+Les approches formelles présentent des aspects très variés. Il en
+existe actuellement plusieurs familles, la plupart comportant
+
+\begin{itemize}
+
+  \item une théorie sous-jacente particulièrement mise en avant (par
+  exemple les systèmes de transitions, les théories des ensembles, les
+  algèbres universelles, le $\lambda$-calcul),
+
+  \item un domaine de prédilection (par exemple les traitements de
+  données, le temps-réel, les protocoles)
+
+  \item et une communauté de chercheurs et d'utilisateurs, parfois
+  répartis en plusieurs variantes ou écoles.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Approches spécialisées ou générales}
+
+\begin{itemize}
+
+  \item La spécification d'un système recouvre plusieurs aspects dont
+  l'architecture, les comportements observables, les bases de données,
+  les algorithmes etc.
+
+  \item Certaines méthodes modélisent les systèmes sous l'angle de la
+  transformation de données, ou de flux, ou de machines à états.
+
+  \item Les échanges d'information peuvent être modélisés par partage
+  de données (mémoire centralisée), par communication synchrone
+  (suppose une horloge unique sans délai de propagation) ou asynchrone
+  de messages, par invocation de fonctions (type \emph{Remote
+  Procedure Call} en \textsf{C} ou \emph{Remote Method Invocation} en
+  \textsf{Java}).
+
+  \item D'autres méthodes sont moins contraignantes et fournissent
+  un excellent cadre interprétatif général.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Approches spécialisées ou générales (suite)}
+
+\begin{itemize}
+
+  \item Les approches spécialisées, en privilégiant souvent l'aspect
+  opérationnel (outillage), peuvent obscurcir la compréhension
+  d'ensemble et suivre difficilement les évolutions de l'objet étudié.
+
+  \item Les approches générales, plus proches de la logique
+  mathématique, offrent une grande liberté d'expression mais pêchent
+  sur le plan méthodologique.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Exemple: le rôle des états}
+
+\begin{itemize}
+
+  \item Un exemple typique de différence d'approche est le rôle
+  accordé aux états d'un système dans sa modélisation.
+
+  \item Cette notion semble fondamentale si l'on considère le support
+  d'exécution des logiciels (ordinateurs ou machines virtuelles) qui
+  suppose une mémoire dont le contenu peut changer et, éventuellement,
+  une horloge.
+
+  \item D'un autre côté, cette notion n'est pas fondamentale en
+  mathématiques, bien que les mathématiques peuvent parler
+  d'états. D'un point de vue théorique, il est plus délicat de décrire
+  la composition d'intructions avec des effets sur la mémoire que de
+  fonctions purement mathématiques.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Exemple: le rôle des états (suite et fin)}
+
+\begin{itemize}
+
+  \item Cette dualité est traitée différement selon les techniques
+  formelles.
+
+  \item Par exemple, dans la méthode \textsf{B} existe une notion
+  d'\emph{affectation simultanée} dont l'intérêt, en regroupant une
+  suite d'affectations qui n'interfèrent pas, est de réduire le nombre
+  d'états.
+
+  \item Par ailleurs, les \emph{langages fonctionnels} offrent une
+  sémantique sans notion d'état, mais permettent aussi d'employer
+  ceux-ci: le soin est laissé au programmeur de n'utiliser les états
+  (on parle de \emph{traits impératifs} en programmation, comme les
+  boucles et les tableaux) que de façon périphérique.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Privilégier la spécification ou la vérification}
+\begin{itemize}
+
+  \item Une méthode formelle se bâtit à partir de deux ingrédients
+  principaux: un langage de spécification et un système de
+  vérification. Ces deux éléments sont inégalement développés selon
+  les approches et les outils.
+
+  \item Ainsi les systèmes d'assistance à la preuve de Boyer-Moore
+  privilégient l'automatisation des démonstations au détriment de la
+  facilité d'expression. À l'opposé, la conception de \textsf{Z}
+  visait avant tout la capacité d'expression et a conduit à un langage
+  difficile à outiller.
+
+  \item Les approches plus récentes, comme \textsf{HOL} et
+  \textsf{Coq}, tentent de conjuguer le meilleur des deux mondes:
+  s'appuyant sur des logiques puissantes, elles viennent avec des
+  outils qui, d'une part, aident à la construction des preuves et,
+  d'autre part, permettent de vérifier ces dernières complètement avec
+  une grande confiance.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Présentation des outils logiques}
+
+La logique mathématique s'est développée suivant plusieurs axes:
+\begin{itemize}
+
+  \item la théorie des modèles,
+
+  \item la théorie de la démonstration,
+
+  \item la théorie des ensembles,
+
+  \item la théorie des types,
+
+  \item la théorie de la calculabilité.
+ 
+\end{itemize}
+L'importance de la logique dans le contexte du génie logiciel se
+résume à deux points:
+\begin{itemize}
+
+  \item elle fournit un cadre pour exprimer de nombreuses notions;
+
+  \item elle se prête bien à la formalisation.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La logique en tant que cadre}
+
+Concernant le premier point:
+\begin{itemize}
+
+  \item Les données manipulées par les programmes peuvent être
+  décrites par des combinaisons d'ensembles élémentaires (entiers,
+  caractères etc.) telles que des produits cartésiens (pour les
+  \texttt{struct} du langage \textsf{C}) ou des unions (pour les
+  \texttt{union} de \textsf{C}) par exemple.
+
+  \item La théorie de la calculabilité nous apprend l'existence des
+  limites, c'est-à-dire ici de spécifications irréalisables.
+
+  \item La théorie des types conduit à des compilateurs qui
+  garantissent la sûreté de la programmation (par le biais de
+  la vérification et de l'inférence statique de types).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La logique pour la modélisation}
+
+Concernant le second point, il y a deux intérêts à formaliser:
+\begin{itemize}
+
+  \item la rigueur des textes et des raisonnements est augmentée car
+  on peut les ramener au moins en partie à des manipulations
+  interprètables de symboles;
+
+  \item le travail induit peut être assisté ou, parfois,
+  automatisable --- dans tous les cas outillé.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La théorie des modèles}
+
+Il y a essentiellement deux façons de spécifier qui se complètent:
+\begin{itemize}
+
+  \item représenter un système par ses propriétés,
+
+  \item en donner un modèle constructif.
+
+\end{itemize}
+
+On parle parfois de \emph{spécification par propriétés} ou \emph{par
+modèles}. Les propriétés sont exprimées par des axiomes logiques et les
+modèles par des opérations ensemblistes. On parle dans le premier cas
+d'aspect syntaxique et dans le second cas d'aspect sémantique (car il
+décrit l'univers du discours lui-même). Par exemple, des modèles
+satisfaisant l'énoncé $\forall x.\exists y.(y \, R \, x)$ sont
+$(\mathbb{N},>)$ ou $(\mathbb{R},<)$ ou $(\mathbb{N},\mbox{«~est
+multiple de~»})$ etc.
+
+\bigskip
+
+La \emph{conséquence sémantique} est fondamentale: un énoncé E est
+une conséquence sémantique des énoncés A, B, C etc. si \emph{tout}
+modèle ayant les propriétés A, B, C etc. a également la propriété E.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La théorie de la démonstration}
+
+La relation de conséquence sémantique a l'inconvénient de devoir être
+vérifiée sur tous les modèles possibles et il peut y en avoir une
+infinité en général. On peut préférer alors une \emph{relation de
+prouvabilité}: un énoncé E est dit prouvable (ou démontrable) à
+partir des énoncés A, B, C etc. si on peut construire une preuve
+formelle de E en n'utilisant que les hypothèses A, B, C etc. ainsi que
+les axiomes et les règles de la logique. L'énoncé E est dit
+\emph{réfutable} si sa négation est démontrable.
+
+\bigskip
+
+Il faut néanmoins que les manipulations formelles conservent la
+sémantique des énoncés: c'est la \emph{validité}. Si toute conséquence
+sémantique est démontrable alors la théorie est \emph{complète}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La théorie de la démonstration (suite et fin)}
+
+Indépendamment des liens entre les notions de conséquence sémantique
+et de prouvabilité, il est des questions intrinsèques à la seconde,
+comme par exemple: si E est démontrable, en existe-t-il une preuve ne
+comportant que des sous-formules de E? Si oui, l'espace de recherche
+est considérablement réduit, ce qui a un impact sur l'assistance à la
+preuve.
+
+\bigskip
+
+L'étude des axiomes et des règles en tant que calculs formels
+(c'est-à-dire purement syntaxiques) ainsi que leurs relations avec la
+notion de conséquence sémantique constitue la théorie de la
+démonstration.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La théorie des ensembles de Cantor et le paradoxe de Russell}
+
+Il est utile de former un ensemble dont les éléments possèdent une
+propriété donnée --- une telle définition est dite \emph{par
+  compréhension}. Si ce type de définition n'est pas contraint, on se
+retrouve dans le cadre de la première théorie des ensembles, dite
+naïve, qui s'est révélée contradictoire au début du XX\ieme{} siècle.
+
+\bigskip
+
+Une théorie est contradictoire si on peut prouver un énoncé et son
+contraire, donc n'importe quoi \emph{in fine}.
+
+\bigskip
+
+Considérons le paradoxe de Russell. Formons par compréhension le
+curieux ensemble $R = \{x \mid \neg(x \in x)\}$. Si $R \in R$ alors
+$R$ doit vérifier la propriété de ses éléments, soit $\neg(R \in
+R)$. Réciproquement, si $\neg(R \in R)$ alors $R$ vérifie la propriété
+caractéristique des éléments de $R$, c.-à-d. $R \in R$. Donc, en
+posant la propriété $P = R \in R$, on a prouvé $P$ et $\neg{P}$, ce
+qui est contradictoire.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La théorie axiomatique des ensembles de Zermelo-Fraenkel}
+
+Une façon de contourner l'écueil des paradoxes consiste à reformuler
+la théorie des ensembles de façon axiomatique (c.-à-d. avec des règles
+logiques) en introduisant une forme de \emph{stratification des
+constructions}. Ainsi une propriété ne peut être définie
+arbitrairement en portant sur une propriété arbitraire, comme c'est le
+cas dans le paradoxe de Russell.
+
+\bigskip
+
+Cette théorie, proposée par Zermelo et Fraenkel, a permis une
+refondation des mathématiques sans que personne n'ait reproduit de
+paradoxe jusqu'à présent. 
+
+\bigskip
+
+Les langages de spécification \textsf{Z} et \textsf{B} s'appuient sur
+cette théorie en y ajoutant un zeste de typage pour la rendre plus
+proche des préoccupations de l'informatique.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La théorie des types}
+
+Une autre voie pour éviter les paradoxes a été proposée par Russell
+lui-même: la théorie des types. Il s'agit aussi de stratifier les
+ensembles (et les propriétés): au niveau~0 les individus; au niveau~1
+les ensembles d'individus (et les propriétés portant sur les
+individus); au niveau~2 les ensembles d'ensembles d'individus etc. Les
+types caractérisent ces couches. Ils sont associés aux individus et
+aux propriétés de base et contraignent la construction des couches
+supérieures.
+
+\bigskip
+
+En informatique, cette approche s'est révélée très fructueuse, comme
+le montrent de nombreux langages de programmation récents. Pour
+permettre la récursivité il faut une règle de typage plus
+permissive. L'inconvénient inévitable est alors de devoir autoriser
+des programmes qui ne terminent pas.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La théorie de la calculabilité}
+
+Un autre aspect fondamental est la question de savoir quelles sont les
+fonctions mathématiques qui sont calculables par des machines: c'est
+le sujet de la théorie de la calculabilité. 
+
+\bigskip
+
+Dans les années 1940, plusieurs approches ont été proposées:
+\begin{itemize}
+
+  \item les machines de Turing,
+
+  \item le $\lambda$-calcul (Church),
+
+  \item les fonctions partielles récursives (Gödel, Herbrand).
+
+\end{itemize}
+Chacune constitue un cadre où exprimer une notion de \emph{procédure
+effective} (algorithme). La \emph{thèse de Church} est que ces
+différents formalismes sont équivalents (calculent le même ensemble de
+fonctions mathématiques).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les ensembles dénombrables}
+
+Est-ce que toutes les fonctions sont calculables? Pour le dire, un
+détour par la théorie des langages formels s'avère utile.
+
+\bigskip
+
+Un ensemble est \emph{dénombrable} s'il est fini ou peut être mis en
+bijection avec l'ensemble des entiers naturels $\mathbb{N}$. Le
+cardinal d'un ensemble infini dénombrable est noté $\aleph_0$. Par
+exemple
+\begin{itemize}
+
+  \item L'ensemble des nombres pairs est dénombrable (la bijection
+  triviale est $2n \mapsto n$). Généralement, tout sous-ensemble
+  infini des naturels est dénombrable.
+
+  \item L'ensemble des mots finis sur l'alphabet $\{a,b\}$ est
+  dénombrable (la bijection se construit en classant les mots avec
+  l'ordre lexicographique).
+
+  \item Les nombres rationnels sont dénombrables.
+
+  \item Les expressions régulières sont dénombrables.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La diagonalisation de Cantor}
+
+On peut se demander alors s'il existe des ensembles dont le cardinal
+est supérieur à $\aleph_0$, c.-à-d. non dénombrables. La réponse est
+oui: \emph{l'ensemble des sous-ensembles d'un ensemble dénombrable
+n'est pas dénombrable.} 
+
+\bigskip
+
+On prouve cela par un procédé appelé \emph{diagonalisation}. Soit un
+ensemble dénombrable $A = \{a_0, a_1, \ldots\}$ et soit $S$ l'ensemble
+de ses sous-ensembles. 
+
+\bigskip
+
+Raisonnons par l'absurde et supposons que $S$ est dénombrable et donc
+que $S = \{s_0, s_1, \ldots\}$.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La diagonalisation de Cantor (suite)}
+
+Construisons alors le tableau infini suivant:
+\[
+\begin{array}{c|cccccc}
+       & a_0    & a_1    & a_2    & a_3   & a_4      & \ldots\\
+\hline
+s_0    & \times & \times &        & \times \\
+s_1    & \times & \circ  &        & \times \\
+s_2    &        & \times & \times &        & \times\\
+s_3    & \times &        & \times & \circ  & \\
+s_4    &        & \times &        & \times & \circ\\
+\vdots &        &        &        &        &         & \ddots
+\end{array}
+\]
+Il indique quels éléments de $A$ appartiennent à quels éléments de
+$S$: une croix à la colonne $i$ et la ligne $j$ indique que $a_i \in
+s_j$.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{La diagonalisation de Cantor (suite et fin)}
+
+Considérons l'ensemble $D = \{a_i \mid \neg(a_i \in s_i)\}$. Ses
+éléments sont marqués par un rond dans notre tableau (sur la
+diagonale). On a $D \subset A$, mais est-ce que $D$ est bien listé
+parmi les $s_j$?
+
+\bigskip
+
+Supposons qu'il existe $k$ tel que $D = s_k$. Or $a_k \in D
+\Leftrightarrow \neg(a_k \in s_k)$, ce qui implique $D \neq s_k$, donc
+contredit l'hypothèse. Donc $D$ n'est pas listé parmi les
+sous-ensembles de $A$ alors qu'il est un sous-ensemble de $A$. Ceci
+contredit donc l'hypothèse que l'ensemble des sous-ensembles d'un
+ensemble dénombrable est dénombrable.
+
+\bigskip
+
+On note $2^{\aleph_0}$ le cardinal d'un ensemble non dénombrable, par
+analogie avec le fait que le cardinal de l'ensemble des sous-ensembles
+d'un ensemble fini de cardinal $n$ est $2^n$.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Problèmes indécidables}
+
+\begin{itemize}
+
+  \item L'ensemble des langages est l'ensemble des sous-ensembles
+  d'un ensemble dénombrable (l'ensemble des mots), donc, d'après le
+  théorème précédent, il n'est pas dénombrable.
+
+  \item La solution à un problème correspond à un langage, donc le
+  nombre de solutions (ou problèmes) est égal au nombre de langages et
+  n'est donc pas dénombrable.
+
+  \item Un algorithme est une chaîne finie, donc l'ensemble des
+  algorithmes est dénombrable.
+
+\end{itemize}
+
+Il y a donc plus de solutions que de solutions calculables (par des
+algorithmes). On parle de \emph{problèmes décidables} pour ceux dont
+la solution est calculable et de \emph{problèmes indécidables} pour
+ceux dont la solution n'est pas calculable.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+
+\bibliographystyle{plain}
+\bibliography{fm}
+\nocite{*}
+
+\end{frame}
+
+\end{document}

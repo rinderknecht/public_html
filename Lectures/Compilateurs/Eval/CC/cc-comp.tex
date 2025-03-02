@@ -1,0 +1,113 @@
+%%-*-latex-*-
+
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{xspace}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathpartir}
+\usepackage{ae,aecompl}
+
+\input{commands}
+\input{trace}
+
+\title{Contrôle continu de compilation}
+\author{Christian Rinderknecht}
+\date{Mercredi 8 octobre 2003}
+
+\begin{document}
+
+\maketitle
+
+\noindent
+\textbf{Durée: deux heures. Longueur: deux pages. Les documents et les
+calculatrices ne sont pas autorisés.}
+
+\smallskip
+
+
+\bigskip
+
+\begin{enumerate}
+
+  \item Quelle est la structure simplifiée d'un compilateur? Que sont
+  les phases d'analyse et de synthèse?
+
+  \item Qu'est-ce que le typage? Pourquoi est-ce utile que le typage
+  soit statique?
+
+  \item Qu'est-ce qu'un interprète? Comparez un interprète à un
+  compilateur.
+
+  \item Qu'est-ce que le lexique d'un langage? Qu'est-ce que la
+  syntaxe concrète d'un langage? Qu'est-ce que la syntaxe abstraite
+  d'un langage?
+
+  \item Considérez la session suivante:
+  {\small
+  \begin{verbatim}
+$ javac Toto.java
+Toto.java:3: integer number too large: 300000000000
+        int x = 300000000000;
+                ^
+1 error
+  \end{verbatim}
+  }
+
+  En supposant que le compilateur \textsf{javac} est bien conçu, à
+  quel moment a-t-il émis ce message?
+
+  \item À quoi sert la sémantique formelle d'un langage de
+  programmation?
+
+  \item Qu'est-ce qu'une sémantique opérationnelle déterministe? En
+  quoi ce déterminisme est-il pertinent?
+
+  \item En suivant la syntaxe concrète de O'Caml, donnez une syntaxe
+  abstraite et une sémantique opérationnelle pour une calculette
+  comprenant les cons\-tan\-tes entières, les booléens, les variables,
+  les quatres opérations arithmétiques, la conditionnelle et la
+  liaison locale --- sans tenir compte des erreurs. Commentez vos
+  choix.
+
+  \item Établissez formellement la valeur de \texttt{let x = 1 in
+  ((let x = x in x) + x)}.
+
+  \item Considérez la sémantique opérationnelle de la division qui ne
+  spécifie pas l'ordre d'évaluation des opérandes. Réécrivez la règle
+  pour qu'elle force l'évaluation de son second opérande avant le
+  premier. Pour cela, inspirez-vous de la règle de la liaison locale
+  et faites attention aux captures de variables temporaires.
+
+  L'implantation fidèle de cette nouvelle sémantique est
+  maladroite. Proposez une variation simple du code O'Caml pour la
+  division qui répond au problème.
+
+  \item Ajoutez à votre sémantique la prise en compte de toutes les
+  erreurs possibles tout en minimisant le nombre de calculs. Commentez
+  vos choix.
+
+  \item Répondez formellement aux questions: 
+
+  \begin{enumerate}
+
+    \item Qu'est-ce qu'une variable libre dans une expression? 
+
+    \item Qu'est-ce qu'une expression close?
+
+    \item Quels sont les variables libres de \texttt{let x = 1 in ((let
+    x = 2 in x) + x)}?
+
+  \end{enumerate}
+
+  \item Est-ce utile de déterminer les variables libres d'une
+  expression avant son évaluation?
+
+\end{enumerate}
+
+
+\end{document}

@@ -1,0 +1,57 @@
+%%-*-latex-*-
+
+% Language
+%
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+
+% Graphics
+%
+\usepackage{graphicx}
+
+% Maths
+%
+\usepackage{amssymb,amsmath,stmaryrd}
+
+% Graphs and trees
+%
+\usepackage{pst-node,pst-tree}
+
+% Inference rules
+%
+\usepackage{mathpartir}
+
+% Miscellanea
+%
+\usepackage{url,xspace}
+
+% New environments and commands
+%
+\newtheorem{Prop}{Proposition}
+
+% Input files
+%
+\input{commands}
+\input{ocaml_syntax}
+\input{cpp}
+\input{beamer_cfg}
+\input{trace}
+
+% ------------------------------------------------------------------------
+% Document
+%
+\title{Interpr\'etation et compilation}
+\author{Christian Rinderknecht}
+\date{25 October 2008}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\xinclude{introduction}{Introduction}
+\xinclude{semantics}{S\'emantique formelle}
+\xinclude{lexing}{Analyse lexicale}
+\xinclude{typing}{Typage statique}
+
+\end{document}

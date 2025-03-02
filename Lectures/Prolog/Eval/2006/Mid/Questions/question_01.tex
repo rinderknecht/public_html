@@ -1,0 +1,8 @@
+\paragraph{Question.} Show the results (\texttt{Yes}/\texttt{No}) and
+resulting variable bindings for the queries
+\begin{enumerate}
+   \item \verb|?- f(g(X,X), h(Y,Y)) = f(g(Z), Z).|
+   \item \verb|?- f(g(X,X), h(Y,Y)) = f(g(h(W,a),Z), Z).|
+   \item \verb|?- f(g(X,X), h(_,_)) = f(g(h(W,a),Z), Z).|
+   \item \verb|?- f(x(A,B), C) = f(C, x(B,A)).|
+\end{enumerate}

@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Reversing a Sequence</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Reversing a Sequence</h2>
+
+<p><strong>Question 1.</strong> The purpose of this exercise is to write
+  an XSLT transform which takes as input a table of contents with
+  chapters and outputs the same table of contents in XML where the
+  chapters have been reversed with respect to the document order (so,
+  for example, the introduction is listed last).
+</p>
+
+<p><strong>Example.</strong>
+<a href="./rev1.xml">This</a> is an example of input document and
+<a href="./rev1_out.xml">this</a> is the corresponding output. You
+need to download the <a href="./rev1.dtd">DTD</a> to run this example.
+</p>
+
+<strong>Hints.</strong>
+<ul>
+
+  <li>Think where the first chapter has to go and find the proper
+  recursive template call and its location.</li>
+
+  <li>Use the <tt>&lt;xsl:copy></tt> element to copy the root element
+  (shallow copy), and the <tt>xsl:sequence</tt> for any other content
+  that needs to be referenced instead of being duplicated.</li>
+
+</ul>
+
+<p><strong>Answer 1.</strong> <a href="./rev1.xsl">This</a> is a
+possible transform solving the problem.</p>
+
+<hr/>
+
+<p><strong>After HTML output has been explained:</strong> Make a new
+transform that outputs the <a href="./rev2_out.html">reversed
+table</a> of contents in HTML.</p>
+
+<p><strong>Answer 2.</strong> Consider
+this <a href="./rev2.xsl">transform</a>.
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

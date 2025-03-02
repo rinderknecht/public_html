@@ -1,0 +1,12 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/LaTeX/TeX/commands.tex
+$HOME/LaTeX/TeX/cpp.tex
+$HOME/LaTeX/TeX/ocaml_syntax.tex
+$HOME/LaTeX/Packages/mathpartir/mathpartir.sty
+
+$HOME/LaTeX/TeX/beamer_cfg.tex
+$HOME/LaTeX/TeX/trace.tex
+
+../../article_mode.tex article.comp.tex
+../../slide_mode.tex comp.tex

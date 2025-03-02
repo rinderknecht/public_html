@@ -1,0 +1,50 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{pstricks,pst-tree}
+
+\input{trace}
+
+\input{title}
+\author{Christian Rinderknecht}
+\date{10 December 2009}
+
+\newcommand\erlcode[1]{\texttt{#1}}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+Design a binary tree whose leaves alone contain numbers, while the
+other internal nodes do not. For instance
+\begin{center}
+\pstree[nodesep=2pt,levelsep=20pt,treesep=14pt]{\TR{.}}{
+  \pstree{\TR{.}}{
+    \TR{3}
+    \pstree{\TR{.}}{
+      \TR{1}
+      \TR{4}
+    }
+  }
+  \pstree{\TR{.}}{
+    \TR{2}
+    \pstree{\TR{.}}{
+      \TR{5}
+      \Tn
+    }
+  }
+}
+\end{center}
+Write a function \erlcode{tsort/1} which takes as argument a tree of
+this kind and evaluates into the nondecreasingly ordered list of its
+leaves. The example above leads to \erlcode{[1,2,3,4,5]}. Give the
+best and worst delays.
+
+\end{document}

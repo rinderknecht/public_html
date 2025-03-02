@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+  <entrees title="Starters">
+    <dish id="1" price="8.95">Crab Cakes</dish>
+    <dish id="2" price="9.95">Jumbo Prawns</dish>
+    <dish id="3" price="10.95">Smoked Salmon</dish>
+  </entrees>
+  <main title="Main course">
+    <dish id="4" price="19.95">Grilled Salmon</dish>
+    <dish id="5" price="17.95">Seafood Pasta</dish>
+    <dish id="6" price="16.95">Linguini al Pesto</dish>
+  </main>
+  <desserts title="Sweet End">
+    <dish id="7" price="6.95">Dame Blanche</dish>
+    <dish id="8" price="5.95">Chocolat Mousse</dish>
+  </desserts>
+</menu>

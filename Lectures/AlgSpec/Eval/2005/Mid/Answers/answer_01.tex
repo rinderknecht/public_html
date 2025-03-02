@@ -1,0 +1,328 @@
+\paragraph{Answer 1.} There are two constructors for sets. Since one
+(\proc{Empty}) models the empty set, the other one (\proc{Add})
+necessarily models the non empty sets.
+
+   Usually, there is no need for equations for the constructors but,
+   here, it is said that ``If \(e\) was already in \(s\), then the
+   result is \(s\)'', so some equations are required to formalise
+   this property (it is a constraint).
+
+   Two cases can occur when we define a non empty set \(\proc{Add}
+   (e, s)\): \(e\) is already in \(s\) or it is
+   missing. In fact, we only need to take care of the first case,
+   since if \(e\) is absent in \(s\), we just let \(\proc{Add}
+   (e, s)\) as it is.
+
+   But how do we find out whether \(e\) is in \(s\) or not?  If
+   \(s\) is empty, we do not need an equation: \(\proc{Add} (e,
+   \proc{Empty})\) remains itself. So, let us consider the case where
+   \(s\) is not empty. Then it must be constructed with \proc{Add},
+   so let \(s = \proc{Add} (e_1, s_1)\). In other words, we
+   have to find an equation like
+   \begin{equation*}
+   \proc{Add} (e, \proc{Add} (e_1, s_1)) = \textbf{?}
+   \end{equation*}
+   Two cases occur: if \(e = e_1\) or not:
+   \begin{align}
+        \proc{Add} (e, \proc{Add} (e, s_1)) 
+     &= \textbf{?}
+     &\label{Add_1}\\
+        \proc{Add} (e, \proc{Add} (e_1, s_1)) 
+     &= \textbf{?}
+     & \text{where} \;e \neq e_1 \label{Add_2}
+   \end{align}
+   Equation~\ref{Add_1} is easy to complete: the right-hand side is
+   simply \(s\). So
+   \begin{align*}
+        \proc{Add} (e, \proc{Add} (e, s_1)) 
+     &= \proc{Add} (e, s_1)
+     &\\
+        \proc{Add} (e, \proc{Add} (e_1, s_1)) 
+     &= \textbf{?}
+     & \text{where} \;e \neq e_1
+   \end{align*}
+   In equation~\ref{Add_2}, the left-hand side is equal to the set
+   made of adding \(e\) to \(s_1\) and then \(e_1\) (because we
+   know \(e \neq e_1\)). Formally:
+   \begin{align*}
+           \proc{Add} (e, \proc{Add} (e, s_1)) 
+     &= \proc{Add} (e, s_1)
+     &\\
+        \proc{Add} (e, \proc{Add} (e_1, s_1)) 
+     &= \proc{Add} (e_1, \proc{Add} (e, s_1))
+     & \text{where} \;e \neq e_1
+   \end{align*}
+   Let us try on some examples on integer sets. Let 
+   \[
+     s = \proc{Add} (3, \proc{Add} (1, \proc{Add} (7,
+     \proc{Empty})))
+   \]
+   First let us add \(1\) to \(s\):
+   \begin{align*}
+       \proc{Add} (1, s) 
+    &= \proc{Add} (\mathbf{1}, \proc{Add} (\mathbf{3},
+       \proc{Add} (1, \proc{Add} (7, \proc{Empty}))))\\
+    &= \proc{Add} (3, \proc{Add} (\mathbf{1}, \proc{Add} (\mathbf{1},
+       \proc{Add} (7, \proc{Empty})))) 
+    & \text{because} \;1 \neq 3\\
+    &= \proc{Add} (3, \proc{Add} (1, \proc{Add} (7, \proc{Empty})))) 
+    & \text{because} \;1 = 1
+   \end{align*}
+   Now let us add \(4\) to \(s\):
+   \begin{align*}
+       \proc{Add} (4, s) 
+    &= \proc{Add} (\mathbf{4}, \proc{Add} (\mathbf{3},
+       \proc{Add} (1, \proc{Add} (7, \proc{Empty}))))\\
+    &= \proc{Add} (3, \proc{Add} (\mathbf{4}, 
+       \proc{Add} (\mathbf{1}, \proc{Add} (7, \proc{Empty}))))
+    & \text{because} \; 4 \neq 3\\
+    &= \proc{Add} (3, \proc{Add} (1, 
+       \proc{Add} (\mathbf{4}, \proc{Add} (\mathbf{7},
+       \proc{Empty}))))
+    & \text{because} \; 4 \neq 1\\
+    &= \proc{Add} (3, \proc{Add} (1, 
+       \proc{Add} (7, \proc{Add} (4, \proc{Empty}))))
+    & \text{because} \; 4 \neq 7
+   \end{align*}
+   Now let us consider the defining equations for function
+   \proc{Union}, which models the union of sets. The signature tells
+   us that this function takes two arguments of type \type{t},
+   i.e. two sets. Since a set can be empty or non empty, this means
+   that we have to consider a maximum of four cases:
+   \begin{align}
+        \proc{Union} (\proc{Empty}, \proc{Empty}) 
+     &= \textbf{?} \label{Union_1}\\
+        \proc{Union} (\proc{Empty}, \proc{Add} (e, s))
+     &= \textbf{?} \label{Union_2}\\
+        \proc{Union} (\proc{Add} (e, s), \proc{Empty})
+     &= \textbf{?} \label{Union_3}\\
+        \proc{Union} (\proc{Add} (e_1, s_1), 
+                      \proc{Add} (e_2, s_2))
+     &= \textbf{?} \label{Union_4}
+   \end{align}
+   The left-hand side of equation~\ref{Union_1} corresponds to the
+   mathematical expression \(\varnothing \cup \varnothing\). So it is
+   easy to find the right-hand side:
+   \begin{align*}
+        \proc{Union} (\proc{Empty}, \proc{Empty}) 
+     &= \proc{Empty}\\
+        \proc{Union} (\proc{Empty}, \proc{Add} (e, s))
+     &= \textbf{?}\\
+        \proc{Union} (\proc{Add} (e, s), \proc{Empty})
+     &= \textbf{?} \\
+        \proc{Union} (\proc{Add} (e_1, s_1), 
+                      \proc{Add} (e_2, s_2))
+     &= \textbf{?}
+   \end{align*}
+   The left-hand side of equation~\ref{Union_2} corresponds to
+   \(\varnothing \cup x\), where \(x \neq \varnothing\), and
+   in equation~\ref{Union_3} to \(x \cup \varnothing\), with
+   \(x \neq \varnothing\). So, again, the right-hand sides are
+   simple to find:
+   \begin{align*}
+        \proc{Union} (\proc{Empty}, \proc{Empty}) 
+     &= \proc{Empty}\\
+        \proc{Union} (\proc{Empty}, \proc{Add} (e, s))
+     &= \proc{Add} (e, s)\\
+        \proc{Union} (\proc{Add} (e, s), \proc{Empty})
+     &= \proc{Add} (e, s)\\
+        \proc{Union} (\proc{Add} (e_1, s_1), 
+                      \proc{Add} (e_2, s_2))
+     &= \textbf{?}
+   \end{align*}
+   In equation~\ref{Union_4}, we have two elements, \(e_1\) and
+   \(e_2\), which must be in the union, as well as the union of
+   \(s_1\) and \(s_2\). So, finally we have:
+   \begin{align*}
+        \proc{Union} (\proc{Empty}, \proc{Empty}) 
+     &= \proc{Empty}\\
+        \proc{Union} (\proc{Empty}, \proc{Add} (e, s))
+     &= \proc{Add} (e, s)\\
+        \proc{Union} (\proc{Add} (e, s), \proc{Empty})
+     &= \proc{Add} (e, s)\\
+        \proc{Union} (\proc{Add} (e_1, s_1), 
+                      \proc{Add} (e_2, s_2))
+     &= \proc{Add} (e_1, \proc{Add} (e_2, \proc{Union}
+                      (s_1, s_2)))
+   \end{align*}
+   Note that equations~\ref{Add_1} and~\ref{Add_2} of function
+   \proc{Add} take care of ignoring possible redundant elements, for
+   example if \(e_1\) is actually equal to \(e_2\).
+
+   It is possible to simplify the previous equations into
+   \begin{align*}
+        \proc{Union} (\proc{Empty}, s) 
+     &= s\\
+        \proc{Union} (\proc{Add} (e_1, s_1), s)
+     &= \proc{Add} (e_1, \proc{Union} (s, s_1))
+   \end{align*}
+   Why do we write \(\proc{Union} (s, s_1)\) instead of
+   \(\proc{Union} (s_1, s)\)? Actually, both are correct
+   because the order of the elements in a set is not meaningful. But
+   if we want the \emph{same} order as in equations~\ref{Union_1}
+   to~\ref{Union_4}, we have to write \(\proc{Union} (s,
+   s_1)\). Consider the simplified equations where \(s =
+   \proc{Add} (e_2, s_2)\):
+   \begin{align*}
+        \proc{Union} (\proc{Add} (e_1, s_1), \proc{Add}
+        (e_2, s_2))
+     &= \proc{Add} (e_1, \proc{Union} (\proc{Add} (e_2,
+        s_2), s_1))\\
+     &= \proc{Add} (e_1, \proc{Add} (e_2, \proc{Union}
+        (s_1, s_2)))
+   \end{align*}
+
+   Also we should not forget that the signature says that \proc{Union}
+   is commutative (\(x \cup y = y \cup x\)) and associative (\(x \cup
+   (y \cup z) = (x \cup y) \cup z\)), hence we must add the
+   corresponding equations:
+   \begin{align}
+       \proc{Union} (s_1, s_2) 
+    &= \proc{Union} (s_2, s_1) \label{Union_5}\\
+       \proc{Union} (s_1, \proc{Union} (s_2, s_3))
+    &= \proc{Union} (\proc{Union} (s_1, s_2),
+       s_3) \label{Union_6}
+   \end{align}
+
+   Now let us consider the equations of the set intersection
+   \proc{Inter}.
+
+   The signature, as for the union, informs us that this function
+   takes two sets. So we have four cases at the most:
+   \begin{align}
+      \proc{Inter} (\proc{Empty}, \proc{Empty})
+   &= \textbf{?} \label{Inter_1}\\
+      \proc{Inter} (\proc{Empty}, \proc{Add} (e, s))
+   &= \textbf{?} \label{Inter_2}\\
+      \proc{Inter} (\proc{Add} (e, s), \proc{Empty})
+   &= \textbf{?} \label{Inter_3}\\
+      \proc{Inter} (\proc{Add} (e_1, s_1), \proc{Add}
+      (e_2, s_2))
+   &= \textbf{?} \label{Inter_4}
+   \end{align}
+   Left-hand sides of equations~\ref{Inter_1}, \ref{Inter_2}
+   and~\ref{Inter_3} correspond respectively to \(\varnothing \cap
+   \varnothing\), \(\varnothing \cap x\) and \(x \cap \varnothing\),
+   where \(x \neq \varnothing\). Therefore the right-hand sides are
+   easy to guess:
+   \begin{align*}
+      \proc{Inter} (\proc{Empty}, \proc{Empty})
+   &= \proc{Empty}\\
+      \proc{Inter} (\proc{Empty}, \proc{Add} (e, s))
+   &= \proc{Empty}\\
+      \proc{Inter} (\proc{Add} (e, s), \proc{Empty})
+   &= \proc{Empty}\\
+      \proc{Inter} (\proc{Add} (e_1, s_1), \proc{Add}
+      (e_2, s_2))
+   &= \textbf{?}
+   \end{align*}
+   In the last equation, we keep \(e_1\) in the intersection if and
+   only if it belongs to \(\proc{Add} (e_2, s_2)\). This can
+   be checked using the function \proc{Mem}. Otherwise, \(e_1\) must
+   be skipped. If we let \(s = \proc{Add} (e_2, s_2)\)
+   we get
+   \begin{align*}
+      \proc{Inter} (\proc{Empty}, \proc{Empty})
+   &= \proc{Empty}\\
+      \proc{Inter} (\proc{Empty}, \proc{Add} (e, s))
+   &= \proc{Empty}\\
+      \proc{Inter} (\proc{Add} (e, s), \proc{Empty})
+   &= \proc{Empty}\\
+      \proc{Inter} (\proc{Add} (e_1, s_1), s)
+   &= \proc{Add} (e_1, \proc{Inter} (s_1, s))
+   & \text{if} \; \proc{Mem} (e_1, s)\\
+      \proc{Inter} (\proc{Add} (e_1, s_1), s)
+   &= \proc{Inter} (s_1, s)
+   & \text{if not} \; \proc{Mem} (e_1, s)
+   \end{align*}
+   We can even simplify the equations if we note that in the two last
+   ones, only the first set decreases: it will eventually becomes
+   \proc{Empty} after repeatingly applying these equations from left
+   to right. Then equation~\ref{Inter_2} will apply if the second set
+   is not \proc{Empty}. In order to cope with this case, we can simply
+   change equation~\ref{Inter_2} by allowing \proc{Empty} as second
+   argument. So we just can keep the new equation~\ref{Inter_2} and
+   the two last ones:
+   \begin{align*}
+      \proc{Inter} (\proc{Empty}, s)
+   &= \proc{Empty}\\
+      \proc{Inter} (\proc{Add} (e_1, s_1), s)
+   &= \proc{Add} (e_1, \proc{Inter} (s_1, s))
+   & \text{if} \; \proc{Mem} (e_1, s)\\
+      \proc{Inter} (\proc{Add} (e_1, s_1), s)
+   &= \proc{Inter} (s_1, s)
+   & \text{if not} \; \proc{Mem} (e_1, s)
+   \end{align*}
+   By removing equation~\ref{Inter_3}, we make the conclusion longer
+   to reach if the second set is empty, but the result is the same
+   (this is the same phenomenon that happens with the \proc{Append}
+   function on stacks). The signature says also that the intersection
+   is commutative, associative, as well as distributive over the set
+   union. This means in mathematics: \(x \cap y = y \cap x\), \(x \cap
+   (y \cap z) = (x \cap y) \cap z\) and \(x \cap (y \cup z) = (x \cap
+   y) \cup (x \cap z)\). In terms of our specification these equations
+   become:
+   \begin{align}
+        \proc{Inter} (s_1, s_2)
+     &= \proc{Inter} (s_2, s_1)\\
+        \proc{Inter} (s_1, \proc{Inter} (s_2, s_3))
+     &= \proc{Inter} (\proc{Inter} (s_1, s_2), s_3)\\
+        \proc{Inter} (s_1, \proc{Union} (s_2, s_3))
+     &= \proc{Union} (\proc{Inter} (s_1, s_2), \proc{Inter}
+        (s_1, s_3))
+   \end{align}
+
+   Finally, let us consider the defining equations of function
+   \proc{Mem}, which models the set membership. The signature tells us
+   that this function takes two arguments: the first one is a set
+   element and the second is a set. 
+ 
+   As usual, let us consider two kinds of sets: empty and non empty
+   (this is because we only have two constructors):
+   \begin{align}
+      \proc{Mem} (e, \proc{Empty}) 
+   &= \textbf{?}\\
+      \proc{Mem} (e, \proc{Add} (e_1, s_1))
+   &= \textbf{?}
+   \end{align}
+   If we check for the membership of any element in the empty set, the
+   value is \kw{false} (the return type of the function is
+   \type{boolean}):
+   \begin{align*}
+      \proc{Mem} (e, \proc{Empty}) 
+   &= \kw{false}\\
+      \proc{Mem} (e, \proc{Add} (e_1, s_1))
+   &= \textbf{?}
+   \end{align*}
+   Now two new situations are possible: either \(e = e_1\)
+   or \(e \neq e_1\). In the first case, let \(e =
+   e_1 = e_2\). In other words:
+   \begin{align*}
+      \proc{Mem} (e, \proc{Empty}) 
+   &= \kw{false}\\
+      \proc{Mem} (e, \proc{Add} (e, s_1))
+   &= \textbf{?}\\
+      \proc{Mem} (e, \proc{Add} (e_1, s_1))
+   &= \textbf{?} & \text{where} \; e \neq e_1
+   \end{align*}
+   The first case is actually straightforward: we found \(e\)
+   belonging to \(s = \proc{Add} (e, s_1)\):
+   \begin{align*}
+      \proc{Mem} (e, \proc{Empty}) 
+   &= \kw{false}\\
+      \proc{Mem} (e, \proc{Add} (e, s_1))
+   &= \kw{true}\\
+      \proc{Mem} (e, \proc{Add} (e_1, s_1))
+   &= \textbf{?} & \text{where} \; e \neq e_1
+   \end{align*}
+   In the last case, \(e\) may belong to \(s_1\), we have to check
+   that:
+   \begin{align*}
+      \proc{Mem} (e, \proc{Empty}) 
+   &= \kw{false}\\
+      \proc{Mem} (e, \proc{Add} (e, s_1))
+   &= \kw{true}\\
+      \proc{Mem} (e, \proc{Add} (e_1, s_1))
+   &= \proc{Mem} (e, s_1) & \text{where} \; e \neq e_1
+   \end{align*}
+

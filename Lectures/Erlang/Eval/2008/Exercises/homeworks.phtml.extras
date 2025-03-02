@@ -1,0 +1,6 @@
+      <li><a href="Eval/2008/Exercises/bt.erl">Binary trees</a></li>
+      <li><a href="Eval/2008/Exercises/bst.erl">Binary search trees</a></li>
+      <li><a href="Eval/2008/Exercises/catalan.erl">Catalan trees</a></li>
+      <li><a href="Eval/2008/Exercises/rbt.erl">Red-Black trees</a></li>
+      <li><a href="Eval/2008/Exercises/counter.erl">A simple server incrementing a counter</a></li>
+

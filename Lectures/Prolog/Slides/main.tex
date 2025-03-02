@@ -1,0 +1,56 @@
+%%-*-latex-*-
+
+% Language
+%
+\usepackage[english]{babel}
+
+% Graphics
+%
+\usepackage{graphicx}
+
+% Maths
+%
+\usepackage{amssymb,amsmath}
+
+% Proof trees
+%
+\usepackage{mathpartir}
+
+% Miscellanea
+%
+\usepackage{xspace}
+
+% Input files
+%
+\input{prolog}
+\input{beamer_cfg}
+\input{trace}
+
+% New commands
+%
+\renewcommand{\refname}{}
+\newcommand{\Prolog}{\textsf{Prolog}\xspace}
+\newcommand{\Java}{\textsf{Java}\xspace}
+
+% ------------------------------------------------------------------------
+% Document
+%
+\title{Logic Programming in Prolog}
+\author{Christian Rinderknecht}
+\date{19 October 2008}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\xinclude{overview}{Overview}
+\xinclude{prolog_intro}{Introduction to Prolog}
+\xinclude{rec_rules}{Prolog recursive rules}
+\xinclude{resolution}{How Prolog answers queries}
+\xinclude{lexis}{Prolog lexicon}
+\xinclude{matching}{Matching Prolog terms}
+\xinclude{semantics}{Declarative versus procedural meaning}
+\xinclude{lists}{Tuples, lists and arithmetics}
+\xinclude{eight_queens}{The eight queens problem}
+
+\end{document}

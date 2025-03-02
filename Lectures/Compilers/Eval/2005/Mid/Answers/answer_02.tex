@@ -1,0 +1,42 @@
+\paragraph{Answer 2.}
+
+\begin{enumerate}
+
+  \item The constraint on the words is that they must be of the shape
+    \(c \ldots c\) where the dots stand for ``any combination of
+    \(a\), \(b\) and \(c\).'' In other words, one answer is \(c \,
+    \lparen a \; \disjM{} \, b \; \disjM{} \, c\rparen\kleeneM \, c \,
+    \disjM \, c\).
+
+  \item The question implies that the words we are looking for are of
+    the form \(\ldots b \, \_ \, \_\) where the dots stand for ``any
+    sequence of \(a\), \(b\) and \(c\)'' and each \_ stands for a
+    regular expression denoting any letter. Any letter is described by
+    \(\lparen a \, \disjM{} \, b \, \disjM{} \, c\rparen\); therefore
+    one possible answer is \[\lparen a \, \disjM{} \, b \, \disjM{} \,
+    c\rparen\kleeneM{} b \, \lparen a \, \disjM{} \, b \, \disjM{} \,
+    c\rparen \, \lparen a \, \disjM{} \, b \, \disjM{} \,c\rparen\]
+
+  \item The words we search contain, at any place, exactly three
+    \(a\), so are of the form \(\ldots a \ldots a \ldots a \ldots\),
+    where the dots stand for ``any letter except \(a\)'', i.e., ``any
+    number of \(b\) or \(c\).'' In other words: \[\lparen b \,
+    \disjM{} \, c\rparen\kleeneM{} a \, \lparen b \, \disjM{} \,
+    c\rparen\kleeneM{} a \, \lparen b \, \disjM{} \,
+    c\rparen\kleeneM{} a \, \lparen b \, \disjM{} \,
+    c\rparen\kleeneM\]
+
+  \item The words we search are of the form \(\ldots b \ldots
+      c \ldots\), where the dots stand for ''All words possible words
+      made of \(a\), \(b\) or \(c\).'' Therefore it is easy to
+      understand that a short answer is \[\lparen a \, \disjM{} \, b
+      \, \disjM{} c\rparen\kleeneM{} b \, \lparen a \, \disjM{} \, b
+      \, \disjM{} c\rparen\kleeneM{} c \, \lparen a \, \disjM{} \, b
+      \, \disjM{} c\rparen\kleeneM\]
+
+    \item Because the alphabet is made only of two letters, the
+      answer is easy: we put first all the \(a\), then all the 
+      \(b\) and finally all the \(c\): \[a\kleeneM b\kleeneM
+      c\kleeneM\]
+
+  \end{enumerate}

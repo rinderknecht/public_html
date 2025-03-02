@@ -1,0 +1,3 @@
+Il semble que pour certaines version de make (>= Red Hat 9) il faille un 
+attribut `export' aux variables qui sont dans les .conf (qui sont inclus
+les Makefile).

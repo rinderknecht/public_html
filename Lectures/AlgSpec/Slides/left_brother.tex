@@ -1,0 +1,46 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-tree,pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=7mm]{\Tcircle{1}}{
+  \pstree{\Tcircle[linecolor=blue]{2}}{
+    \Tcircle{5}
+  }
+  \Tcircle[linecolor=blue]{3}
+  \pstree{\Tcircle[linecolor=blue]{4}}{
+    \Tcircle[linecolor=green]{6}
+    \pstree{\Tcircle[linecolor=green]{7}}{
+      \Tcircle{8}
+    }
+  }
+}
+\hspace*{15pt}
+\(\longrightarrow\)
+\hspace*{15pt}
+\pstree[levelsep=7mm,treesep=1cm]{\Tcircle{1}}{
+  \pstree{\Tcircle[linecolor=blue]{2}}{
+    \Tcircle{5}
+    \pstree{\Tcircle[linecolor=blue]{3}}{
+      \Tn
+      \pstree{\Tcircle[linecolor=blue]{4}}{
+        \pstree{\Tcircle[linecolor=green]{6}}{
+          \Tn
+          \pstree{\Tcircle[linecolor=green]{7}}{
+            \Tcircle{8}
+            \Tn
+          }
+        }
+        \Tn
+      }
+    }
+  }
+  \Tn
+}
+\endTeXtoEPS
+
+\end{document}

@@ -1,0 +1,205 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The eight queens problem}
+
+Let us now use \Prolog to solve a more difficult kind of problem. One
+of these famous problems is \textbf{the eight queens problem}.
+
+\bigskip
+
+It consists in placing on a (European) chess board eight queens such
+that they do not attack each other.
+
+\bigskip
+
+We would like to define a predicate \texttt{solution} such that
+{\small
+\begin{verbatim}
+?- solution(Pos).
+\end{verbatim}
+}
+returns a substitution for \texttt{Pos} which corresponds to a
+chess board position satisfying the problem's constraints.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The eight queens problem (cont)}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.85,bb=212 480 380 650]{queens}
+\caption{A solution to the eight queens problem.}
+\end{figure}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The eight queens problem (cont)}
+
+First, we have to choose a representation for the board positions. One
+possibility is to model a square by two coordinates, the leftmost,
+down-most square being \((1,1)\) and the rightmost, uppermost
+\((8,8)\).
+
+\bigskip
+
+The example in the previous slide can be modeled by the list of
+queens
+{\small
+\begin{verbatim}
+[.(1,4),.(2,2),.(3,7),.(4,3),.(5,6),.(6,8),.(7,5),.(8,1)]
+\end{verbatim}
+}
+Keeping this idea, we choose a template solution  of the form
+{\footnotesize
+\begin{verbatim}
+template([.(1,Y1),.(2,Y2),.(3,Y3),.(4,Y4),
+          .(5,Y5),.(6,Y6),.(7,Y7),.(8,Y8)]).
+\end{verbatim}
+}
+because there must be a queen on each column.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The eight queens problem (cont)}
+
+There are two cases:
+\begin{enumerate}
+
+  \item the list of queens is empty: the empty list is certainly a
+    solution since there is no attack;
+
+  \item the list of queens is not empty: then it has the shape
+    \texttt{\small [.(X,Y) | Others]}, that is, the first queen is on
+    the square \texttt{.(X,Y)} and the others in the sub-list
+    \texttt{Others}. If this is a solution, then the following
+    constraints must hold.
+    \begin{enumerate}
+
+      \item there must be no attack between the queens in
+        \texttt{Others}, i.e. \texttt{Others} must be a solution;
+
+      \item \texttt{X} and \texttt{Y} must be integers between 1 and
+        8;
+
+      \item a queen at square \texttt{.(X,Y)} must not attack any of
+        the queens in the list \texttt{Others}.
+
+    \end{enumerate}
+    
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The eight queens problem (cont)}
+
+This is written in \Prolog
+{\small
+\begin{verbatim}
+solution([]).
+
+solution([.(X,Y) | Others]) :-
+  solution(Others),
+  member(Y, [1,2,3,4,5,6,7,8]),
+  no_attack(.(X,Y), Others).
+
+member(Item, [Item | _]).
+
+member(Item, [_ | Tail]) :- member(Item, Tail).
+\end{verbatim}
+}
+It remains to define the relation \texttt{no\_attack}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The eight queens problem (cont)}
+
+Given \texttt{no\_attack(Q, Qlist)}, there are two cases.
+\begin{enumerate}
+
+  \item if the list of queens \texttt{Qlist} is empty, then the
+    relationship is true because there is no queen to attack or to be
+    attacked by;
+
+  \item if the list \texttt{Qlist} is not empty, it must be of the
+    shape \texttt{[Q1 | Qsublist]}, with the following conditions
+    holding:
+    \begin{enumerate}
+
+      \item the queen at \texttt{Q} must not attack the queen at
+        \texttt{Q1},
+
+      \item the queen at \texttt{Q} must not attack the queens in
+        \texttt{Qsublist}.
+
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The eight queens problem (cont)}
+
+A queen does not attack another queen if they are on different
+columns, rows and diagonals. 
+
+\bigskip
+
+Finally:
+{\small
+\begin{verbatim}
+no_attack(_, []).
+
+no_attack(.(X,Y), [.(X1,Y1) | Others]) :-
+  Y =\= Y1,
+  Y1 - Y =\= X1 - X,
+  Y1 - Y =\= X - X1,
+  no_attack(.(X,Y), Others).
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The eight queens problem (cont)}
+
+The query has the shape
+{\small
+\begin{verbatim}
+?- template(S), solution(S).
+\end{verbatim}
+}
+
+\bigskip
+
+Note that 
+{\small
+\begin{verbatim}
+?- solution(S), template(S).
+\end{verbatim}
+}
+is \textbf{wrong}. Why?
+
+\end{frame}

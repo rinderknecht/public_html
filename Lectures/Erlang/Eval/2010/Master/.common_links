@@ -1,0 +1,4 @@
+#include ".links"
+
+$HOME/Makefiles/Tools/erlc.mk
+$HOME/Makefiles/Tools/erlang2ps.mk

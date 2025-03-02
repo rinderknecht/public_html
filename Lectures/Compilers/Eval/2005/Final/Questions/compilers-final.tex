@@ -1,0 +1,52 @@
+%%-*-latex-*-
+
+\documentclass[a4paper,11pt]{article}
+
+% Language
+%
+\usepackage[english]{babel}
+
+% Alternate font encoding
+%
+\usepackage{times}
+\usepackage{mathptmx}
+\renewcommand{\ttdefault}{cmtt}
+\renewcommand{\sfdefault}{cmss}
+
+% Maths
+%
+\usepackage{amssymb,amsmath,stmaryrd,txfonts,bm}
+
+% PostScript inclusion
+%
+\usepackage{graphicx}
+
+% Miscellanea
+%
+\usepackage{xspace}
+\usepackage{alltt}
+\usepackage{hhline}
+
+% New environments and commands
+%
+\newcommand\Lex{\textsf{Lex}\xspace}
+
+% Input files
+%
+\input{token}
+\input{grammar}
+\input{trace}
+
+% ------------------------------------------------------------------------
+
+\author{Christian Rinderknecht}
+\date{13 December 2005}
+\input{title}
+
+\begin{document}
+
+\maketitle
+
+\input{question_01}
+
+\end{document}

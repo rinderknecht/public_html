@@ -1,0 +1,54 @@
+%%-*-latex-*-
+
+% Language
+%
+\usepackage[english]{babel}
+
+% Graphics
+%
+\usepackage{graphicx}
+
+% Maths
+%
+\usepackage{amssymb,amsmath,stmaryrd}
+
+% Miscellanea
+%
+\usepackage{url}
+\usepackage{xspace}
+\usepackage{hyphenat}
+
+% Input files
+%
+\input{beamer_cfg}
+\input{trace}
+
+% New commands
+%
+\renewcommand{\refname}{}
+
+% ------------------------------------------------------------------------
+% Document
+%
+\title{Computer Networks}
+\author{Christian Rinderknecht}
+\date{24 October 2008}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\xinclude{introduction}{Introduction}
+\xinclude{network_edge}{The network edge}
+\xinclude{network_core}{The network core}
+\xinclude{network_access}{The network access and physical media}
+\xinclude{isp}{ISPs and internet backbones}
+\xinclude{delay_loss}{Delay and loss in packet-switched networks}
+\xinclude{services}{Protocol layers and their service models}
+\xinclude{application}{Principle of application layer protocols}
+\xinclude{http}{The web and HTTP}
+\xinclude{ftp}{File transfer with FTP}
+\xinclude{mail}{Mail in the Internet (SMTP, MIME, POP3, IMAP, HTTP)}
+\xinclude{dns}{The Internet's directory service (DNS)}
+
+\end{document}

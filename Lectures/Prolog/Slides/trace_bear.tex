@@ -1,0 +1,40 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{amssymb}
+\usepackage{pst-tree,pst-eps}
+
+\newcommand{\Item}[2]{\TR{\fbox{\parbox{#1}{#2}}}}
+
+\begin{document}
+ 
+\TeXtoEPS 
+\pstree[thislevelsep=20mm,nodesep=2pt,labelsep=1pt,arrows=->]
+  {\Item{12mm}{\texttt{dark(X)}\\\texttt{big(X)}}%
+   ~[tnpos=r]{\(\sigma = \sigma_2 \circ \sigma_1 \circ \sigma_0 = \{\texttt{X} = \texttt{bear}\}\)}}
+  {
+  \pstree[thislevelsep=16mm]{\Item{14mm}{\texttt{black(\(\alpha\))}\\
+                      \texttt{big(\(\alpha\))}}
+          \tlput{clause 7, %
+                 \(\sigma_0(\texttt{X}) = \alpha\)}}{
+    \Item{14mm}{\texttt{big(cat)}}~[tnpos=b]{\texttt{No}}
+    \tlput{clause 5, \(\sigma_1(\alpha) = \texttt{cat}\)}
+  }
+  \pstree[thislevelsep=16mm]{\Item{14mm}{\texttt{brown(\(\beta\))}\\
+                      \texttt{big(\(\beta\))}}
+          \trput{clause 8, %
+                 \(\sigma_0(\texttt{X}) = \beta\)}}{
+    \pstree[thislevelsep=14mm]{\Item{16mm}{\texttt{big(bear)}}%
+                           \trput{clause 4, %
+                                  \(\sigma_1(\beta) = \texttt{bear}\)}%
+                          }{
+      \TR{\(\varnothing\)}~[tnpos=b]{\texttt{Yes}}%
+      \trput{clause 1, \(\forall x.\sigma_2(x)=x\)}
+    }
+  }
+}
+\endTeXtoEPS
+
+\end{document}
+

@@ -1,0 +1,58 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{xspace}
+\usepackage{times,mathptmx}
+\usepackage{vaucanson-g}
+\usepackage{pst-eps}
+
+%\ShowGrid
+ 
+\input{token}
+\input{grammar}
+
+\begin{document}
+
+\TeXtoEPS
+\VCDraw{%
+\begin{VCPicture}{(0,0)(12,4)}
+% States
+\State[1]{(0,4)}{A}
+\FinalState[2]{(4,4)}{B}
+\State[3]{(4,0)}{C}
+\FinalState[4]{(8,0)}{D}
+\State[5]{(8,4)}{E}
+\State[6]{(12,0)}{F}
+\FinalState[7]{(12,4)}{G}
+\State[8]{(0,0)}{H}
+% State annotations
+\nput{-45}{B}{\large \token{num}{yytext}}
+\nput{0}{D}{\large \token{num}{yytext}}
+\nput{0}{G}{\large \token{num}{yytext}}
+% Initial and final states
+\Initial{H}
+% Edges
+\ArcL[0.5]{H}{A}{\exc{+}}
+\ArcR[0.5]{H}{A}{\exc{-}}
+\EdgeR[0.4]{H}{B}{\small \texttt{[0-9]}}
+\EdgeR[0.5]{H}{C}{\exc{.}}
+\EdgeL[0.5]{A}{B}{\small \texttt{[0-9]}}
+\LoopN[0.5]{B}{\small \texttt{[0-9]}}
+\EdgeL[0.5]{B}{C}{\exc{.}}
+\EdgeL[0.5]{B}{E}{\exc{E}}
+\EdgeL[0.5]{C}{D}{\small \texttt{[0-9]}}
+\LoopS[0.5]{D}{\small \texttt{[0-9]}}
+\EdgeBorder
+\EdgeL[0.5]{D}{E}{\exc{E}}
+\EdgeBorderOff
+\ArcL[0.5]{E}{F}{\exc{+}}
+\ArcR[0.5]{E}{F}{\exc{-}}
+\EdgeL[0.5]{E}{G}{\small \texttt{[0-9]}}
+\EdgeR[0.5]{F}{G}{\small \texttt{[0-9]}}
+\LoopN[0.5]{G}{\small \texttt{[0-9]}}
+\end{VCPicture}
+}
+\endTeXtoEPS
+
+\end{document}

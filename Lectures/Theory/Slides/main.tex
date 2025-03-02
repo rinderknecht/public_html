@@ -1,0 +1,72 @@
+%%-*-latex-*-
+
+% Language
+%
+\usepackage[english]{babel}
+
+% Graphics
+%
+\usepackage{graphicx}
+
+% Multi-columns
+%
+\usepackage{multicol}
+
+% Inference rules
+%
+\usepackage{mathpartir}
+
+% Algorithms
+%
+\usepackage{clrscode}
+
+% Maths
+%
+\usepackage{amssymb,amsmath,stmaryrd}
+
+% Miscellanea
+%
+\usepackage{url}
+\usepackage{xspace,hyphenat}
+
+% TeX input files
+%
+\input{commands}
+\input{ocaml_syntax}
+\input{beamer_cfg}
+\input{trace}
+
+% New commands
+%
+\newcommand{\Ada}{\textsf{Ada}\xspace}
+\newcommand{\Java}{\textsf{Java}\xspace}
+\newcommand{\Maude}{\textsf{Maude}\xspace}
+\newcommand{\C}{\textsf{C}\xspace}
+\newcommand{\Csharp}{\textsf{C}\raise 0.7mm \hbox{\(\scriptscriptstyle \textsf{\#}\)}\xspace}
+\newcommand{\Cpp}{\textsf{C}\raise 0.5mm \hbox{\(\scriptscriptstyle ++\)}\xspace}
+\newcommand{\NaN}{\textsf{NaN}\xspace}
+\newcommand{\true}{\textsf{true}\xspace}
+\newcommand{\false}{\textsf{false}\xspace}
+
+\newcommand\rname[1]{\langle{#1}\rangle}
+
+% ------------------------------------------------------------------------
+% Document
+%
+\title{A Simple Theory of Computation}
+\author{Christian Rinderknecht}
+\date{24 October 2008}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\xinclude{introduction}{Introduction}
+\xinclude{calculator}{Fundamental concepts}
+\xinclude{booleans}{Boolean expressions}
+\xinclude{stacks}{Stacks}
+\xinclude{queues}{Queues}
+\xinclude{trees}{Trees and their traversals}
+
+\end{document}
+

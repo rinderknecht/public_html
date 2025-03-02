@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Syllabus of the XML/XSLT course</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h3>Syllabus of the XML/XSLT course</h3>
+
+<h4>Summary</h4>
+
+<p>The goal of this course is to present <b>XML</b> (<i>eXtensible
+Markup Language</i>) as well as some related standards, in particular
+<b>DTD</b> (<i>Document Type Definition</i>), <b>XPath</b> (<i>XML
+Path</i>) and <b>XSLT</b> (<i>eXtensible Stylesheet Language
+Transformations</i>), which are commonly used in web sites and
+document-processing software chains. These languages are formal
+languages standardised by the <a href="http://www.w3c.org/">W3
+Consortium</a>. The tool used in class and for the homeworks is the
+open source XSLT/XQuery processor <a
+href="http://www.saxonica.com/">Saxon</a>.</p>
+
+<h4>Plan</h4>
+
+<ol>
+  <li>First introduction of XML as a formal language for modelling
+    structured multimedia documents independently of any text layout
+    or media players. This specification is then shown to
+    syntactically correspond to the concept of annotated, unranked
+    trees, where elements (sections, in the document-oriented view)
+    are trees and sub-elements (subsections) subtrees. Attributes are
+    special subtrees. Element nodes can be repeated among
+    siblings. Example of modelling an email.</li>
+
+  <li>Escaped characters and the rationale for them are
+    explained. Entities of all kinds (predefined and named,
+    user-defined internal, external), document type declarations,
+    unparsed character data, comments and namespaces are
+    presented. In particular, the interaction between namespaces and
+    attributes is insisted upon, as well as the interaction between
+    embedded namespaces.</li>
+
+  <li>Internal linking is introduced, in order to model hypertext
+    linking (which does not fit in the finite tree model). Processing
+    instructions are introduced.</li>
+
+  <li>The concept of well-formedness is shown to be important as a
+    minimum level of confidence in the model.</li>
+
+  <li>XHTML is presented as a derivative of XML. The rationale behind
+    its design is given and the differences with HTML are insisted
+    upon. Global structure, headings, lists (ordered, unordered and
+    definitions), tables are extensively discussed on examples because
+    XHTML is going to be used as the output of some future XSL
+    transforms.</li>
+
+  <li>The Document Type Declaration (<b>DTD</b>) allows to restrict
+    the set of trees (document) an application processes, by
+    specifying exhaustively all the kinds of nodes and their
+    attributes. It enables a more powerful form of well-formedness
+    checking than just checking the XML syntax of the document. This
+    is the <strong>validation</strong> concept. In particular,
+    attribute lists, all kinds of element declarations are presented
+    in detail as a validation support. The meaning of external and
+    external subsets of a DTD is explained. The well-formedness and
+    validity of XML files will be checked using a tool named
+    <i>xmllint</i>. The XSLT will be applied using the tool named
+    <i>Saxon</i>.</li>
+
+  <li>The next step is to understand how to rewrite an XML document
+    into another text, possibly XML. This can be achieved by use of
+    <b>XSLT</b>. The difficult part is that this language is
+    declarative, i.e., it does not provide notions such as loops or
+    mutable variables (i.e. variables whose contents can change). For
+    most students, XSLT is the first functional language they meet in
+    their curriculum, so special care is devoted to explaining the
+    most puzzling aspects of XSLT, like the absence of mutable
+    variables and loops. Instead the concept of recursive processing,
+    by means of templates, is presented as a powerful
+    alternative.</li>
+
+  <li> Mid-term examination</li>
+
+  <li>Starting with the non-obvious example of the empty XSL
+    transform, the unusual computational model of XSLT (default
+    behaviour for templates) is made apparent. The concept of template
+    matching is explained as a mechanism of control. The application
+    of several templates and their possible interaction is exemplified
+    extensively.</li>
+
+  <li>The selection of nodes inside a matching template is the first
+    glimpse at <b>XPath</b> the students get. More standard XSLT
+    elements are introduced, in particular the ubiquitous
+    <tt>value-of</tt>. First transforms from XML data to
+    XHTML. Example of a table of contents. The importance of
+    validating the output, so to have valid XHTML displayed in a
+    browser, is stressed. </li>
+
+  <li>The difference between the root element and the document root is
+    explained. Variables are immutable. Conditionals. Template
+    parameters.</li>
+
+  <li>Performing preorder traversal on the document (a table of
+    contents) and numbering the entries. Selection of nodes revisited
+    and extended to selection of attributes. Wildcards in XPath,
+    location paths, predicates are explained in their basic instances
+    (e.g., position among a sequence of nodes). Inserting elements in
+    the output.</li>
+  
+  <li>Insertion of attributes in the resulting tree. Copying
+    elements. The classic copy stylesheet is presented and
+    recommended, in conjunction with the importation of
+    stylesheets (which enables its usage).</li>
+
+  <li>Functions are presented and their differences with named
+  templates is insisted upon (with respect to XPath, i.e., selection
+  of elements and attributes).</li>
+
+  <li>Modal templates. Recursion is revisited.</li>
+
+<li>Final examination</li>
+
+</ol>
+
+<p>The slides contain many hyperlinks to the different examples
+discussed.</p>
+
+<h4>Prerequisites</h4>
+
+<p>None.</p>
+
+<h4>Textbook</h4>
+
+<p>Erik T. Ray, <em>Learning XML</em>, O'Reilly & Associates Inc., 2001.</p>
+
+<h4>Evaluation</h4>
+
+<p>Mid-term examination, exercises, final examination. Weekly
+homeworks. Exercises will be solved during class-time. Attendance will
+be checked and taken into account for the final grade.</p>
+
+<h4>On-line ressources</h4>
+
+<p>
+<ul>
+  <li> <a href="http://konkuk.ac.kr/~rinderkn/">My homepage</a></li>
+  <li> <a href="http://www.saxonica.com/">Saxon</a></li>
+</ul>
+</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+
+</html>

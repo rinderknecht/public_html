@@ -1,0 +1,27 @@
+PARSER_BEGIN(Calc1)
+public class Calc1 {
+  public static void main(String args[]) throws ParseException {
+    Calc1 parser = new Calc1(System.in);
+    while (true) {
+      System.out.print("Entrez une expression: ");
+      System.out.flush();
+      try {
+        parser.S();
+      } catch (ParseException x) {
+          System.out.println("Exiting.");
+          throw x;
+        }
+    }
+  }
+}
+PARSER_END(Calc1)
+
+SKIP  : { " " | "\t" | "\r" }
+TOKEN : { <EOL: "\n"> }
+TOKEN : { <PLUS: "+"> | <MINUS: "-"> | <TIMES: "*"> | <SLASH: "/"> }
+TOKEN : { < INT: (<DIGIT>)+ > | <#DIGIT: ["0"-"9"]> }
+
+void S() : {} { E() <EOL> }
+void E() : {} { F() ((<PLUS> | <MINUS>) F())* }
+void F() : {} { G() ((<TIMES> | <SLASH>) G())* }
+void G() : {} { <INT> | "(" E() ")" }

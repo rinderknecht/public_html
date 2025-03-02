@@ -1,0 +1,158 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsfonts}
+
+\usepackage{xspace}
+\usepackage{amssymb,amsmath,stmaryrd}
+\usepackage{graphicx}
+
+\input{trace}
+\input{commands}
+\input{ocaml_syntax}
+
+\title{Examen de programmation fonctionnelle en Objective Caml}
+\author{Christian Rinderknecht}
+\date{Mercredi 28 avril 2004}
+
+\newcommand{\evalf}[2]{\llbracket{#1}\rrbracket{#2}}
+\newcommand{\bitem}{\item[$\bullet$]}
+
+\begin{document}
+
+\maketitle
+
+%\begin{center}
+\centerline{\textbf{Durée: 2 heures. Documents et calculatrices ne sont
+pas autorisés.}}
+%\end{center}
+
+
+\section{Syntaxe et sémantique}
+
+\noindent Pour chacun des programmes suivants \textbf{dans l'ordre du sujet},
+
+\begin{enumerate}
+
+  \item construisez l'arbre correspondant (\textbf{à l'encre}),
+ 
+  \item dans chaque arbre, reliez les variables dans les expressions à
+  leur lieur (\textbf{dans une encre différente}),
+
+  \item identifiez les variables libres (\textbf{à l'encre dans
+  l'arbre et dans une phrase}),
+
+  \item décrivez formellement son exécution à l'aide de la sémantique
+  suivante, où $\evalf{e}{\rho}$ est la valeur de l'expression $e$
+  dans l'environnement $\rho$:
+\begin{align*}
+\evalf{\overline{n}}{\rho} &= \dot{n} \ \ \textnormal{où $\overline{n}$
+  est un entier mini-ML et $\dot{n} \in \mathbb{N}$}\\
+\evalf{e_1 \texttt{+} \, e_2}{\rho} &= \evalf{e_1}{\rho} +
+\evalf{e_2}{\rho} \ \ \textnormal{etc.}\\ 
+\evalf{\lpar{e}\rpar}{\rho} &= \evalf{e}{\rho}\\
+\evalf{x}{\rho} &= \rho(x) \ \ \textnormal{(la première liaison de $x$ dans $\rho$)}\\
+\evalf{\Xfun \,\, x \rightarrow e}{\rho} &= \langle\Xfun \,\, x
+\rightarrow e, \rho\rangle\\
+\evalf{\Xlet \,\, x = e_1 \,\, \Xin \,\, e_2}{\rho} &= \evalf{e_2}{((x
+  \mapsto \evalf{e_1}{\rho}) \oplus \rho)}\\
+\evalf{e_1 \,\, e_2}{\rho} &= \evalf{e}{((x \mapsto \evalf{e_2}{\rho})
+  \oplus \rho')} \ \ \textnormal{où} \ \ \evalf{e_1}{\rho} = \langle\Xfun \,\, x
+\rightarrow e,\rho'\rangle
+\end{align*}
+  L'évaluation consiste à appliquer les équations de la gauche vers la
+  droite jusqu'au résultat ou une impossibilité (c.-à-d. erreur à
+  l'exécution).
+
+\end{enumerate}
+
+\noindent \textbf{Programme 1}
+\begin{verbatim}
+let x = 1 in ((let x = 2 in x) + x);;
+\end{verbatim}
+
+\noindent \textbf{Programme 2}
+\begin{verbatim}
+fun y -> x + (fun x -> x) y;;
+\end{verbatim}
+
+\noindent \textbf{Programme 3}
+\begin{verbatim}
+let x = 1 in
+  let f = fun y -> x + y in
+  let x = 2
+in f(x);;
+\end{verbatim}
+
+\noindent \textbf{Programme 4}
+\begin{verbatim}
+let x = 0 in
+  let id = fun x -> x in
+  let _ = let y = 2 in id (y) in
+  let x = (fun x -> fun y -> x + y) 1 2
+in x+1;;
+\end{verbatim}
+
+\noindent \textbf{Programme 5}
+
+\begin{verbatim}
+let compose = fun f -> fun g -> fun x -> f (g x) in
+  let square = fun f -> compose f f in
+  let double = fun x -> x + x in
+  let quad = square double 
+in square quad;;
+\end{verbatim}
+
+
+\section{Programmation}
+
+\noindent Le type des arbres binaires est défini par:
+\begin{verbatim}
+type 'a arbre = Vide | Noeud of 'a * 'a arbre * 'a arbre
+\end{verbatim}
+
+
+\noindent Un arbre binaire de recherche est un arbre binaire tel que:
+
+\begin{itemize}
+  
+  \bitem toutes les étiquettes du sous-arbre de gauche
+  (respectivement, de droite) sont inférieures (respectivement,
+  supérieures) à l'étiquette de la racine,
+
+  \bitem récursivement, les deux sous-arbres sont eux-mêmes des arbres
+  de recherche.
+
+\end{itemize}
+
+\begin{figure}[htbp]
+\includegraphics[width=320pt]{arech.eps}
+\end{figure}
+
+Le premier arbre ci-dessus est un arbre de recherche. Le second n'en
+est pas un car~7 est plus grand que~3 mais il se trouve dans le
+sous-arbre de gauche de la racine.
+
+\begin{itemize}
+
+  \bitem Écrire une fonction \texttt{minimum} qui renvoie le plus
+  petit élément d'un arbre binaire de recherche. On déclenchera
+  l'exception \texttt{Not\_found} si l'arbre est vide.
+
+  \bitem Écrire une fonction \texttt{appartient} currifyée qui indique
+  si une étiquette donnée apparaît dans un arbre de recherche
+  donné. On tirera parti du fait que l'arbre est classé pour que la
+  recherche soit plus rapide que dans un arbre binaire quelconque.
+
+  \bitem Écrire une fonction \texttt{ajoute} qui ajoute un n{\oe}ud
+  dans un arbre de recherche de façon à ce que celui-ci reste un arbre
+  de recherche. Cela se fait en rajoutant une feuille à l'arbre.
+
+\end{itemize}
+
+
+\end{document}

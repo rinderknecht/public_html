@@ -1,0 +1,74 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+
+\usepackage{amsmath,amssymb}
+\usepackage{hyphenat}
+\usepackage{graphicx}
+
+\input{trace}
+\input{erlc}
+
+\title{The Last Homework}
+\author{Christian Rinderknecht}
+\date{11 June 2009}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\noindent \emph{Red-Black Trees} (RBT) are binary search trees such
+that
+\begin{itemize}
+
+  \item each node is either red or black;
+
+  \item the root is black;
+
+  \item no red node has a red child;
+
+  \item any path from the root to a leaf has the same number of
+    black nodes.
+
+\end{itemize}
+These invariants ensure that the height of a RBT is at most
+\(2\lfloor{\lg(n+1)}\rfloor\), where \(\lfloor{x}\rfloor\) is the
+greatest integer which is lower than \(\lg(n+1)\). As a consequence,
+the longest path from root to leaf is, at worst, twice as long as the
+shortest: this is the balancing property which makes RBT a data
+structure efficiently accessed. The purpose of the homework is to
+write the function \texttt{add/2} that takes an item and a RBT and
+returns the tree with the item (the same tree if the item was already
+present). The following remarkably simple presentation is due to Chris
+Okasaki.
+
+Let us assume that the inserted item is not in the tree. The insertion
+of an item starts as in a binary search tree: going down until an
+empty node is reached. Then add a \textbf{red} leaf. On the way up,
+the tree may need to be rebalanced. The following four cases of
+unbalance are possible:
+\begin{center}
+\includegraphics[scale=.78]{ll}
+\qquad
+\includegraphics[scale=.78]{lr}
+\qquad
+\includegraphics[scale=.78]{rl}
+\qquad
+\includegraphics[scale=.78]{rr}
+\end{center}
+The double circle means ``black'' and a single circle means ``red''.
+These four cases, if any (otherwise no change), must be transformed
+into
+\begin{center}
+\includegraphics[scale=.78]{balanced}
+\end{center}
+Also, make sure that the root of the rebalanced tree is made
+\textbf{black}.
+
+\end{document}

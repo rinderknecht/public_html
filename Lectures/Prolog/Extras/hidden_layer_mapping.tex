@@ -1,0 +1,50 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{vaucanson-g}
+\usepackage{pst-eps}
+\usepackage{xcolor}
+
+\begin{document}
+
+\TeXtoEPS
+\SetEdgeLineColor{blue} 
+\VCDraw{%
+\begin{VCPicture}{(0,0)(13,3)}
+
+\StateVar[\textcolor{blue}{1},\textcolor{red}{1}]{(0,0)}{p1}
+\nput{180}{p1}{\Large \((0,0)\)}
+
+\StateVar[\textcolor{blue}{1},\textcolor{red}{0}]{(3,0)}{p2}
+\nput{0}{p2}{\Large \((1,0)\)}
+
+\StateVar[\textcolor{blue}{0},\textcolor{red}{0}]{(3,3)}{p3}
+\nput{0}{p3}{\Large \((1,1)\)}
+
+\StateVar[\textcolor{blue}{1},\textcolor{red}{0}]{(0,3)}{p4}
+\nput{180}{p4}{\Large \((0,1)\)}
+
+\State[?]{(10,0)}{q1}
+\nput{180}{q1}{\Large \((1,1) \rightarrow (\textcolor{blue}{0}, \textcolor{red}{0})\)}
+
+\State[?]{(13,0)}{q2} \nput{0}{q2}{\Large \((\textcolor{blue}{1},\textcolor{red}{0})
+\leftarrow \lbrace(1,0),(0,1)\rbrace\)}
+
+\State[?]{(13,3)}{q3}
+\nput{0}{q3}{\Large \((\textcolor{blue}{1},\textcolor{red}{1}) \leftarrow (0,0)\)}
+
+%% Mapping
+
+\EdgeLineDouble\VCurveL{angleA=-30,angleB=135,ncurv=0.5}{p3}{q1}{}
+\EdgeBorder
+\EdgeLineDouble\ArcL{p1}{q3}{}
+\EdgeLineDouble\VCurveL{angleA=-30,angleB=135,ncurv=0.5}{p4}{q2}{}
+\EdgeLineDouble\ArcL{p2}{q2}{}
+\EdgeBorderOff
+
+\end{VCPicture}
+}
+\endTeXtoEPS
+
+\end{document}

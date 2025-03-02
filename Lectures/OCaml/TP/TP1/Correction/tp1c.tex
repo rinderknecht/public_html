@@ -1,0 +1,120 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+
+\input{trace}
+
+\title{Corrigé du TP 1 de programmation fonctionnelle en Objective Caml}
+\author{Christian Rinderknecht}
+
+\begin{document}
+
+\maketitle
+
+\section{Nombres}
+
+\begin{verbatim}
+let p x = 2 * x*x + 3 * x - 2
+let q x = 2.0 *. x*.x +. 3.0 *. x -. 2.0
+\end{verbatim}
+
+\section{Expressions conditionnelles}
+
+\begin{verbatim}
+# if -3 < 0 then 3 else 3;;
+- : int = 3
+# let abs_int n = if n < 0 then -n else n;;
+val abs_int : int -> int = <fun>
+\end{verbatim}
+
+\section{Evaluation d'une expression}
+
+Pas de questions.
+
+\section{D\'eclarations}
+
+\subsection{Variables globales}
+
+\begin{verbatim}
+# let an = "2003";;
+val an : string = "2003"
+# let x = int_of_string(an);;
+val x : int = 2003
+# let nouvel_an = string_of_int(x+1);;
+val nouvel_an : string = "2004"
+\end{verbatim}
+
+\subsection{Variables locales}
+
+\begin{verbatim}
+# let x = 3 in let b = x < 10 in if b then 0 else 10;;
+- : int = 0
+# let a = 3.0 and b = 4.0 in sqrt(a*.a+.b*.b);;
+- : float = 5.
+# let solve (a,b,c) =
+    let delta = b *. b -. 4.0 *. a *. c
+  in ((-. b -. sqrt (delta))/. (2.0 *. a),
+      (-. b +. sqrt (delta))/. (2.0 *. a));;
+val solve : float * float * float -> float * float = <fun>
+\end{verbatim}
+
+\section{Produit cartésien}
+
+Pas de questions.
+
+\section{R\'ecursivit\'e}
+
+Pas de questions.
+
+\section{Expressions fonctionnelles}
+
+\begin{verbatim}
+# let compose f g x = f (g(x));;
+val compose : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b = <fun>
+# let add1 = function x -> x + 1;;
+val add1 : int -> int = <fun>
+# let mult5 = function x -> 5 * x;;
+val mult5 : int -> int = <fun>
+# compose add1 mult5 3;;
+- : int = 16
+# compose mult5 add1;;
+- : int -> int = <fun>
+# let deuxfois f x = f(f(x));;
+val deuxfois : ('a -> 'a) -> 'a -> 'a = <fun>
+# let deuxfois f x = compose f f x;;
+val deuxfois : ('a -> 'a) -> 'a -> 'a = <fun>
+\end{verbatim}
+
+\section{Portée statique des variables}
+
+\begin{verbatim}
+# let p = 10;;
+p : int = 10
+# let k x = x + p;;
+k : int -> int = <fun>
+# let p = p+1;;
+p : int = 11
+# p;;
+- : int = 11
+# k 0;;
+- : int = 10
+\end{verbatim}
+
+La variable \texttt{p} qui apparaît dans la définition de la fonction
+\texttt{k}, est liée \emph{définitivement} à la valeur \texttt{10}. La
+troisième phrase redéfinit une nouvelle variable \texttt{p}, rendant
+inaccessible la première variable \texttt{p}, \emph{sauf pour la
+fonction \texttt{k}}. En effet, une fonction est modélisée par une
+\emph{fermeture}, c'est-à-dire une paire constituée du code de la
+fonction et de l'environnement statique au lieu de définition.
+
+\end{document}
+
+
+
+
+\end{document}

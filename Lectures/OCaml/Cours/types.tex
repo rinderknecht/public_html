@@ -1,0 +1,303 @@
+%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les types}
+
+Un type $t$ est défini \emph{récursivement} par les cas:
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{simple}
+  & \textsf{char}, \textsf{bool}, \textsf{int}, \textsf{string},
+    \textsf{float}, \textsf{unit}\\
+    $\bullet$
+  & \textcolor{blue}{produit cartésien}
+  & $t_1 \times \ldots \times t_n$\\
+    $\bullet$
+  & \textcolor{blue}{fonctionnel}
+  & $t_1 \rightarrow t_2$\\
+    $\bullet$
+  & \textcolor{blue}{parenthésé}
+  & $(t)$\\
+    $\bullet$
+  & \textcolor{blue}{variable libre}
+  & $\alpha$, $\beta$, $\gamma$ etc. \\
+    $\bullet$
+  & \textcolor{blue}{type paramétré}
+  & $\alpha$ \textsf{list}
+\end{tabular}
+
+\bigskip
+
+\remarque 
+
+Jusqu'à présent, nous n'avons pas rencontré de valeurs de type
+\textsf{float}, \textsf{char} ou \textsf{string}.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Règles syntaxiques sur les types}
+
+\begin{itemize}
+
+  \item Nous notons $\times$ ce qui s'écrit \textsf{*} en
+  \textsc{ascii}.
+
+   \item Nous notons $\alpha$, $\beta$ etc. ce qui s'écrit
+     respectivement \textsf{'a}, \textsf{'b} etc. en \textsc{ascii}.
+
+  \item Le produit cartésien est n-aire, et non binaire comme en
+    mathématiques, car $\times$ n'est pas associatif en OCaml: $t_1
+    \times t_2 \times t_3 \neq (t_1 \times t_2) \times t_3 \neq t_1
+    \times (t_2 \times t_3)$
+
+  \item La flèche est utilisée aussi dans les expressions. Elle
+    associe à droite: $t_1 \rightarrow t_2 \rightarrow \ldots
+    \rightarrow t_n$ \ \ \ équivaut à \ \ \ $t_1 \rightarrow
+    \textcolor{blue}{(}t_2 \rightarrow \textcolor{blue}{(} \ldots
+    \textcolor{blue}{(}t_{n-1} \rightarrow t_n\textcolor{blue}{))
+      \ldots )}$
+
+  \item Le produit cartésien est prioritaire sur la flèche:\\ $t_1
+    \times t_2 \rightarrow t_3$ \ \ \ équivaut à
+    \ \ \ $\textcolor{blue}{(}t_1 \times t_2\textcolor{blue}{)}
+    \rightarrow t_3$
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Types, constantes simples et primitives}
+
+Les compilateur associe un type à chaque expression du programme: on
+parle d'\emph{inférence de types statique}. Pour les constantes
+simples, nous avons
+\begin{center}
+\begin{tabular}{|l|l|c|}
+\hline
+    \textsf{unit}
+  & \unit
+  & \\
+    \textsf{bool}
+  & \Xtrue \ \Xfalse
+  & \texttt{\&\&} \ \texttt{||} \ \texttt{not} \\
+    \textsf{int}
+  & \textsf{1} \, \textsf{2} \ \textsf{max\_int} \ etc.
+  & \texttt{+} \ \texttt{-} \ \texttt{*} \ \texttt{/} \ etc.\\
+    \textsf{float}
+  & \textsf{1.0} \, \textsf{2.} \ \textsf{1e4} \ etc.
+  & \texttt{+.} \ \texttt{-.} \ \texttt{*.} \ \texttt{/.} \
+    \texttt{cos} \ etc.\\
+    \textsf{char}
+  & \textsf{'a'} \ \textsf{'}\verb+\+\textsf{n'} \
+    \textsf{'}\verb+\+\textsf{097'} \ etc.
+  & \textsf{Char.code} \, \textsf{Char.chr} \ etc.\\
+    \textsf{string}
+  & \textsf{"a}\verb+\+\textsf{tb}\verb+\+\textsf{010c}\verb+\+\textsf{n"}
+    \ etc.
+  & \verb+^+ \, \textsf{s.[i]} \, \textsf{s.[i] $\leftarrow$ c} \ etc.\\
+\hline
+\end{tabular}
+\end{center}
+Les opérations sur les flottants sont notées différemment de leurs
+homologues sur les entiers. Ce que nous notons joliment $\leftarrow$
+s'écrit \verb+<-+ en \textsc{ascii}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{L'évaluation des opérateurs booléens}
+
+
+\begin{itemize}
+
+  \item Les opérateurs booléens sont \emph{séquentiels},
+  c.-à-d. qu'ils n'évaluent leurs arguments que si c'est nécessaire,
+  l'évaluation se faisant de la gauche vers la droite. 
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Extension de la syntaxe des types et des phrases}
+
+On étend la syntaxe des phrases pour permettre de lier un type à un
+nom, comme on peut le faire pour les expressions.
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{liaison de type (ou alias)}
+  & \phrase{$\textsf{type} \,\, q = t$}
+\end{tabular}
+
+où $q$ dénote une variable de type (commençant par une minuscule).
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{types récursifs}
+  & \phrase{$\textsf{type} \,\, q_1 = t_1 \,\, \textrm{[}\Xand
+     \,\, q_2 = t_2 \,\, \ldots\textrm{]}$}
+\end{tabular}
+
+Pour utiliser ces variables, il faut étendre la syntaxe des types:
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{variable}
+  & $q$
+\end{tabular}
+
+On peut maintenant écrire 
+
+\phrase{type abscisse = float}
+
+\phrase{type ordonnée = float}
+
+\phrase{type point = abscisse * ordonnée}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Inférence de types}
+
+Les $n$-uplets sont homogènes et leur arité est fixée par leur type:
+\begin{center}
+\begin{tabular}{lrcl}
+    une paire
+  & \textsf{(1,2)}
+  & de type
+  & \textsf{int} $\times$ \textsf{int}\\
+    et un triplet
+  & \textsf{(1,2,3)}
+  & de type
+  & \textsf{int} $\times$ \textsf{int} $\times$ \textsf{int}
+\end{tabular}
+\end{center}
+sont incompatibles.
+
+\topin{let milieu x y = (x+y)/2}
+
+\topout{val milieu~:~int $\rightarrow$ int $\rightarrow$ int}
+
+\topin{let milieu (x,y) = (x+y)/2}
+
+\topout{val milieu~:~int $\times$ int $\rightarrow$ int}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Polymorphisme}
+
+\textcolor{blue}{$n$-uplets}
+
+Les projections sont polymorphes sur les $n$-uplets de \emph{même arité}:
+\begin{center}
+\begin{tabular}{rcl}
+    \Xfun $(x, y, z) \rightarrow x$
+  & a pour type
+  & $(\alpha \times \beta \times \gamma) \rightarrow \alpha$
+\end{tabular}
+\end{center}
+
+\bigskip
+
+\textcolor{blue}{Fonction puissance}
+
+\begin{semiverbatim}
+\textcolor{blue}{\#} let rec power f n =
+    if n <= 0 then fun x -> x
+              else compose f (power f (n-1))\textcolor{blue}{;;}
+\end{semiverbatim}
+\topout{val power~:~($\alpha \rightarrow \alpha$) $\rightarrow$ int
+  $\rightarrow$ ($\alpha \rightarrow \alpha$) = $\topclos$}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Polymorphisme (suite)}
+
+\topin{let compose f g = fun x -> f (g (x))}
+
+\topout{val compose~: $(\alpha \rightarrow \beta) \rightarrow (\gamma
+\rightarrow \alpha) \rightarrow \gamma \rightarrow \beta = \topclos$}
+
+\bigskip
+
+Le type de la fonction \textsf{compose} se construit ainsi:
+\begin{itemize}
+
+  \item le premier argument \textsf{f} est une fonction quelconque,
+  donc de type $\alpha \rightarrow \beta$; 
+
+  \item le second argument \textsf{g} est une fonction dont le
+  résultat doit être passé en argument à \textsf{f}, donc de type
+  $\alpha$; 
+
+  \item le domaine de \textsf{g} est quelconque, donc \textsf{g} est
+  de type $\gamma \rightarrow \alpha$; 
+
+  \item la fonction \textsf{compose} prend un argument \texttt{x} qui
+  doit être passé à \textsf{g}, donc du type $\gamma$; finalement, le
+  résultat de \textsf{compose} est retouné par \textsf{f}, donc de
+  type $\beta$.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Égalité structurelle}
+
+L'opérateur d'égalité est polymorphe et ne peut être défini en OCaml:
+
+\bigskip
+
+\topin{( = )}
+
+\topout{- : $\alpha \rightarrow \alpha \rightarrow \texttt{bool} = \topclos$}
+
+\bigskip
+
+Donc attention à ce qu'il coïncide avec \emph{votre} notion d'égalité.
+
+C'est l'égalité mathématique: deux valeurs sont égales si elles ont la
+même structure et si leurs parties respectives sont égales. Ne marche
+pas avec les expressions fonctionnelles (problème indécidable).
+
+\bigskip
+
+\topin{1 = 1 \&\& \str{oui} = \str{oui}}
+
+\topout{- : bool = true}
+
+\topin{(fun x -> x) = (fun x -> x)}
+
+\error{Exception: Invalid\_argument "equal: functional value".}
+
+\bigskip
+
+On note \texttt{<>} la négation de l'égalité.
+
+\end{frame}

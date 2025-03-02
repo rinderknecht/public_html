@@ -1,0 +1,268 @@
+<html>
+<head>
+  <title>GI 108</title>
+</head>
+
+<body>
+  <h1 align="center">Correction du TD2</h1>
+
+<h2>Partie Emacs</h2>
+
+<p>
+1. Le fichier <a href="emacs.txt">emacs.txt</a>
+</p>
+
+<p>
+2. on a remplacé le mot 'buffer' par '"buffer" en anglais' en
+
+<ul>
+  <li>
+    se positionnant au debut du buffer avec la commande nommée
+    '<tt><b>beginning-of-buffer</b></tt>', "bindée" (associée à  la séquence
+    de touches) à  <tt><b>M-&lt;</b></tt> (Meta-inferieur)
+  </li>
+
+  <li>
+     en utilisant la commande '<tt><b>Query replace regexp</b></tt>' "bindée"
+     à (<tt><b>C-M-%</b></tt>) (Contrôle-Meta-pourcent)
+  </li>
+</ul>
+</p>
+
+<p>
+3. lorsque l'on ouvre dans un buffer un fichier de type html, on passe
+   en <b>mode HTML</b>" ("<tt>(HTML)</tt>" apparait dans la "modeline"), et l'on peut
+   alors noter la présence de menus spécifiques à  ce mode, avec des
+   items comme par exemple "<tt>Href Anchor</tt> (C-c C-c h)</tt>" permettant
+   d'insérer la balise <tt>"&lt;a href="</tt> dans son buffer.
+</p>
+
+<p>
+4. on défait le dernier changement effectué au buffer en appelant la commande
+   "<tt><b>undo</b></tt>", bindée sur <tt><b>C-_</b></tt> (Contrôle underscore)
+</p>
+
+<p>
+5. on revient sur une unique fenêtre avec la commande
+   '<tt><b>delete-other-windows</b></tt>' bindee a <tt><b>C-x 1</b></tt>
+</p>
+
+<h2>Arborescence de processus pipés</h2>
+
+<tt><b>cat | tail | wc</b></tt>
+
+<p>
+1. Cette commande affiche sur sa <b>sortie standard</b> le nombre de lignes,
+   de mots et de caractères des au plus 10 dernières lignes qu'elle a
+   lues sur son <b>entrée standard</b>.
+</p>
+
+<p>
+   Si le nombre de lignes entrées est &lt;10, le nombre de lignes calculé
+   sera le nombre de lignes entrées. Si le nombre de lignes entrées
+   est &gt=10, le nombre de lignes calculé sera 10
+</p>
+<p>
+On rappelle que par defaut, l'entrée standard, la sortie standard et
+la sortie erreur standard sont associées au terminal, i.e. par défaut,
+l'entrée standard correspond à ce qui est entré au clavier, la sortie
+standard et la sortie erreur standard s'affichent sur un terminal (un
+xterm par exemple).
+</p>
+<p>
+Dépendant du système, une commande alternative est : ps -l -u &lt;username&gt; 
+<br>
+-l : option longue avec PID et PPID
+<br>
+-u <username> : option avec valeur &lt;username&gt; : les processus de l'utilisateur.
+</p>
+
+<p>
+2. la commande <tt>ps -ef</tt> permet de lister, notamment avec les
+   informations <b>PID</b> (numero du processus) et <b>PPID</b>
+   (numero du processus pere) tous les processus du systeme.
+</p>
+
+<p>
+La commande <tt>ps -ef | grep -i &lt;username&gt; </tt>permet de
+lister, avec ces memes informations, tous les processus apartenant a
+l'utilisateur &lt;username&gt;
+</p>
+
+<p>
+ex: <tt>ps -ef | grep -i thummel</tt> permet de lister tous les processus
+       apartenant a l' utilisateur thummel.
+</p>
+
+<p>
+Cette commande permet de voir qu'ici les commandes <tt>cat, tail et
+wc</tt> sont lancées <b>en parallèle</b> et les processus
+correspondant sont tous des <b>fils du shell</b> (bash) les ayant
+lancés (i.e. ayant lancé la commande <tt>cat | tail | wc</tt>).
+</p>
+
+<p>
+En effet, ces 3 processus figurent bien simultanément tous trois
+dans la liste des processus (avec bien sur des PID différents) avec un
+PPID identique égal au PID du shell les ayant lancés.
+</p>
+
+<p>
+3. les commandes cat, tail et wc sont toutes les trois implementées
+   comme des <b>"filtres"</b> : elles lisent sur leurs entrées standard et
+   écrivent toutes les 3 sur leur sorties standard
+</p>
+
+<p>
+   Lorsque l'on lance cat | tail | wc :
+
+<p>
+<ul>
+
+  <li>2 tubes (pipes) et trois processus sont crées par le shell
+      interprétant cette commande
+  </li>
+
+   <li>la sortie standard de cat est connectée a "l'entrée" du premier
+       tube (cat écrit dans le premier tube)
+   </li>
+
+   <li>l'entrée standard de tail est connectée a la "sortie" du
+       premier tube (tail lit dans le premier tube)
+   </li>
+
+   <li>la sortie standard de tail est connectée a "l'entrée" du
+       second tube (tail écrit dans le second tube)
+   </li>
+
+   <li>l'entrée standard de wc est connectée dans la "sortie" du
+       second tube (wc lit dans le second tube)
+   </li>
+</ul>
+</p>
+
+<p>
+a) on tue (kill -15 &lt;pid&gt; ou kill -s TERM &lt;pid&gt; ou encore kill -s sigterm &lt;pid&gt;) wc
+</p>
+
+<p>
+tail tente alors d'écrire dans un tube qui n'a plus de lecteur.  Le
+processus correspondant a tail recoit le signal
+<tt><b>SIGPIPE</b></tt> - situation de "<b>broken pipe</b>", (cf man 7
+signal :
+</p>
+
+<p>
+SIGPIPE      13       Term    Broken pipe: write to pipe with no readers
+
+).
+</p>
+
+<p>
+Sur le terminal, s'affiche le message "<tt>Terminated</tt>" (ou
+"<tt>Killed</tt>" si on a fait un <tt>kill -9</tt> au lieu d'un <tt>kill -15</tt>) correspondant a l'arret de <tt>wc</tt>
+</p>
+
+La commande <tt>tail</tt> se termine en appelant la fonction <tt>exit</tt>
+</p>
+
+<p>
+b) on tue tail (après avoir rentré des caractères et avant d'avoir pressé Ctl-D)
+</p>
+
+<p>
+Il n'y a plus d'écrivain sur le tube dans lequel lit wc.  wc recoit à
+travers le tube un caractere <tt><b>EOF</b></tt> (fin de fichier)
+signe qu'il n'y a plus rien à lire et donc renvoie sur la sortie
+standard le calcul (nb de lignes,mots,octets) portant sur ce qu'il a
+lu, c'est à dire dans ce cas rien (car head attendait de lire un
+caractere EOF (celui qu'elle aurait recu en temps normal suite a
+l'appui de Ctl-D) pour ecrire dans le tube).
+</p>
+
+<p>
+wc affiche donc <tt>0 0 0</tt> sur la sortie standard
+</p>
+
+<p>
+c) on tue cat
+</p>
+
+<p>
+On a une situation similaire a b).
+</p>
+
+<p>
+Le tube dans lequel lit tail n'a plus d'ecrivain. tail lit un
+caractère EOF, retourne (aucune ligne lue), wc retourne alors et écrit
+<tt>0 0 0</tt> sur la sortie standard.
+</p>
+
+<h2>Script datef.sh</h2>
+<p>
+Le script <a href="datef.sh">datef.sh</a>
+</p>
+
+<p>
+L'idee generale est de :
+
+<ul>
+
+  <li>a) récuperer les différents champs (jour, mois) affiches par la
+         commande unix "<tt>date</tt>"
+  </li>
+
+  <li>b) utiliser la structure de contrôle "<tt>case ... esac</tt>" pour
+         regénerer, en fonction de la valeur des champs a traduire
+         (ceux qui contiennent une chaine de caractère en anglais) et
+         en prévoyant tous les cas possibles, des chaines de
+         caractères "francaises"
+</ul>
+</p>
+
+<p>
+Pour a), on utilise :
+
+<ul>
+  <li>les <tt><b>backquotes (`)</b></tt> qui ont pour effet de faire
+      executer par le shell la commande date et de remplacer `date`
+      par le resultat de cette execution
+  </li>
+
+  <li>la commande (interne au shell) <tt><b>set</b></tt> permettant de
+      réassigner les <b>parametres positionnels <tt>$1, $2,
+      $3</tt></b>, ... correspondant normalement a ce que l'on passe
+      en paramètre a la commande (i.e. ici datef.sh).
+  </li>
+
+  <li>le fait que les champs affichés par la commande "<tt>date</tt>" sont
+      sépares par des caracteres "espace" qui est egalement le
+      <b>séparateur du shell</b> (caractère qui sépare les commandes et les
+      arguments), assurant ainsi le bon fonctionnement de la commande
+      "set"
+  </li>
+</ul>
+</p>
+
+<p>
+Pour exécuter le script, il faut 
+
+<ul>
+  <li>rendre le fichier exécutable (<tt>chmod 755 datef.sh</tt>)
+  </li>
+
+  <li>lancer la commande <tt>./datef.sh</tt> si l'on est dans le
+      repertoire le contenant
+  </li>
+</ul>
+</p>
+
+<h2>Le script lecture d'une chaine</h2>
+
+<p>
+Le script <a href="lecture">lecture</a> (lire les commentaires contenus dans le script)
+</p>
+
+</body>
+
+</html>

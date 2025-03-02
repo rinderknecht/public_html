@@ -1,0 +1,42 @@
+\paragraph{Questions.} Define predicates \texttt{enqueue1/3},
+\texttt{dequeue1/3}, \texttt{enqueue2/3} and \texttt{dequeue2/3} for
+the two following cases.
+\begin{enumerate}
+
+  \item \textbf{A one-stack implementation.} A simple idea to
+    implement one queue is to use one stack. In this
+    case, \texttt{enqueue1/3} is simply pushing
+    and \texttt{dequeue1/3} removes the item at the bottom of the
+    stack.
+
+  \item \textbf{A two-stack implementation.} We can implement a
+    queue with two stacks instead of one: one for enqueuing, one for
+    dequeuing.
+    \[
+    \begin{array}{r@{\;}cc|c|c|c|c|c|c|cc@{\;}l}
+      \cline{3-6}\cline{8-10}
+      \texttt{enqueue2/3} & \rightarrow & & a & b & c & & d & e & &
+      \rightarrow & \texttt{dequeue2/3}\\
+      \cline{3-6}\cline{8-10}
+    \end{array}
+    \]
+    \noindent So \texttt{enqueue2/3} is pushing on the first stack
+    and \texttt{dequeue2/3} is popping on the second. If the second
+    stack is empty, we swap the stacks and reverse the (new) second:
+    \[
+    \begin{array}{lr@{\;}cc|c|c|c|c|cc@{\;}l}
+      \cline{4-7}\cline{9-9}
+      \text{If} & \texttt{enqueue2/3} & \rightarrow & & a & b & c & & &
+      \rightarrow & \texttt{dequeue2/3} \, \textbf{???}\\
+      \cline{4-7}\cline{9-9}\\
+      \cline{4-4}\cline{6-9}
+      \text{then} & \texttt{enqueue2/3} & \rightarrow & & & a & b & c & &
+      \rightarrow & \texttt{dequeue2/3}\\
+      \cline{4-4}\cline{6-9}
+    \end{array}
+    \]
+    \noindent Let the pair \texttt{\{S,T\}} denote the queue where
+    \texttt{S} is the stack for enqueuing and \texttt{T} the stack for
+    dequeuing.
+
+\end{enumerate}

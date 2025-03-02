@@ -1,0 +1,11 @@
+\paragraph{Answer.} We have
+\begin{align}
+         S(q,n) &= q^{n-1} + q^{n-2} + \dots + q + 1 \label{def}\\
+q \times S(q,n) &= q^{n} + q^{n-1} + \dots + q^2 + q \label{qtimes}
+\intertext{Let us subtract \eqref{qtimes} from \eqref{def}:}
+q S(q,n) - S(q,n) &= q^n - 1 \notag\\
+(q - 1) S(q,n)    &= q^n - 1 \notag
+\intertext{Since \(q \neq 1\), we have}
+S(q,n)            &= (q^n - 1)/(q-1)\notag
+\end{align}
+Therefore \(S(2,n) = 2^n - 1\) and \(S(3,n) = (3^n - 1)/2\).

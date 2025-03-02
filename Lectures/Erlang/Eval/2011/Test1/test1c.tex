@@ -1,0 +1,51 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amssymb}
+
+\title{Test 1c of \textsf{Erlang}}
+\author{Christian Rinderknecht}
+\date{7 October 2011}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\begin{enumerate}
+
+  \item Write a function \fun{inter/2} (\emph{set intersection}) such
+    that, if \[\fun{inter}(P,Q) \xrightarrow{+} R,\] then \(R\)~is a
+    list made of all the items in common between lists \(P\)
+    and~\(Q\), without repetition. For example,
+    \[\fun{inter}([\fun{a},\fun{b},\fun{a},\fun{c},\fun{e}],
+                  [\fun{e},\fun{e},\fun{b},\fun{b},\fun{d}])
+                  \xrightarrow{+} [\fun{b},\fun{e}].\] The order of
+                  the items in \(R\)~is left unspecified.
+
+  \item Write a function \fun{dist/2} (\emph{distribute}) such that,
+    if \[\fun{dist}(P,Q) \xrightarrow{+} R,\] then \(R\)~is the list
+    made of all the possible pairs between the items of \(P\)
+    and~\(Q\). For example, we can compute a deck of card by
+    distributing the colours over the figures as follows:
+    \begin{align*}
+      \fun{dist}(&[\fun{heart}, \fun{diamond}, \fun{club},
+        \fun{spade}],\\
+                 &[2, 3, 4, 5, 6, 7, 8, 9, 10, \fun{jack},
+                    \fun{queen}, \fun{king},\fun{ace}])\\
+      &\xrightarrow{+} 
+    [\{\fun{heart}, 2\}, \{\fun{heart}, 3\}, \ldots, \{\fun{heart},
+      \fun{ace}\},\\
+     & \{\fun{diamond}, 2\}, \ldots, \{\fun{spade}, \fun{ace}\}].
+    \end{align*}
+
+\end{enumerate}
+
+\end{document}

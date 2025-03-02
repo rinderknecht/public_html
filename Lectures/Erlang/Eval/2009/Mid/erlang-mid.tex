@@ -1,0 +1,38 @@
+%%-*-latex-*- 
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amssymb}
+
+\input{trace}
+
+\input{title}
+\author{Christian Rinderknecht}
+\date{15 October 2009}
+
+\newcommand\erlcode[1]{\texttt{#1}}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\begin{enumerate}
+
+  \item Define two functions \erlcode{insert/2} and
+    \erlcode{isort/1}. The first inserts a number (the first argument)
+    in an ordered list of numbers (the second argument) such that the
+    result is a sorted list. The second function takes a list of
+    numbers, generally unsorted, and returns the same list but
+    sorted. The order of sorting is nondecreasing. This sorting
+    technique is called \emph{insertion sort}.
+
+  \item Find the best and worst cases and delays of \erlcode{isort/1}.
+
+\end{enumerate}
+
+\end{document}

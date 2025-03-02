@@ -1,0 +1,13 @@
+Consider the queuing delay in a router buffer. Suppose all the packets
+are \(L\) bits long, the transmission rate is \(R\) bit/sec and that
+\(N\) packets arrive simultaneously at the buffer every
+\(\frac{LN}{R}\) seconds.
+
+\textbf{Question.} Find the \textbf{average} queuing delay of a
+packet.
+
+\textbf{Hint.} The queuing delay for the first packet is 0; for the
+second packet it is \(\frac{L}{R}\); for the third packet it is
+\(2{\frac{L}{R}}\) etc. The last packet (number \(N\)) has already
+been transmitted when the second batch (i.e., group) of packets
+arrives.

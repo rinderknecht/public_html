@@ -1,0 +1,77 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{vaucanson-g}
+\usepackage{pst-eps}
+
+\begin{document}
+\TeXtoEPS
+% Settings
+%
+%\ShowGrid
+\SetEdgeLabelColor{blue}
+\SetEdgeLabelScale{1.2}
+
+% Automaton
+%
+\VCDraw{%
+\begin{VCPicture}{(0,0)(6,6)}
+
+%% Input layer
+%
+\VSState{(0,4)}{x}
+\nput{180}{x}{\huge \(x\)}
+
+\VSState{(0,2)}{y}
+\nput{180}{y}{\huge \(y\)}
+
+%% Bias
+%
+\VSState{(0,6)}{V1}
+\nput{180}{V1}{\Large \(-1\)}
+\VSState{(0,0)}{V2}
+\nput{180}{V2}{\Large \(-1\)}
+\VSState{(6,0)}{V3}
+\nput{180}{V3}{\Large \(-1\)}
+
+%% Hidden layer
+%
+\State[H_1]{(3,5)}{H1}
+\State[H_2]{(3,1)}{H2}
+
+%% Output layer
+%
+\State[F]{(6,3)}{Out}
+\Final{Out}
+
+%% From input to hidden layer
+%
+\EdgeL[0.6]{y}{H1}{-1}
+\EdgeR{y}{H2}{-1}
+\EdgeBorder
+\EdgeL{x}{H1}{-1}
+\EdgeR[0.6]{x}{H2}{-1}
+\EdgeBorderOff
+
+%% From bias nodes to hidden layer
+%
+\ChgEdgeLabelColor{red}
+\EdgeL{V1}{H1}{-1.5}
+\EdgeR{V2}{H2}{-0.5}
+\EdgeL{V3}{Out}{0.5}
+\RstEdgeLabelColor
+
+%% From hidden layer to output
+%
+\EdgeL{H1}{Out}{1}
+\EdgeL{H2}{Out}{-1}
+
+% Output signal
+%
+\nput{0}{Oute}{\huge \(x \oplus y\)}
+\end{VCPicture}
+}
+\endTeXtoEPS
+
+\end{document}

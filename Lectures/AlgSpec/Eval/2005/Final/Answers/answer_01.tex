@@ -1,0 +1,199 @@
+\paragraph{Answer 1.} 
+
+  \begin{enumerate}
+
+     \item \(\proc{Mem}: \type{t} \times \type{node} \rightarrow
+     \type{bool}\)\\
+     This function takes an argument of type \type{t}, i.e. a
+       binary tree. Since binary trees can be constructed in two
+       different ways, the first step is to write the left-hand sides
+       with these constructors:
+       \begin{align*}
+         \proc{Mem} (\proc{Empty}, e) &= \textbf{?}\\
+         \proc{Mem} (\proc{Make} (r, t_1, t_2), e) &= \textbf{?}
+       \end{align*}
+       The first equation is easy to complete: by definition,
+         there is no node in the empty tree. Therefore
+       \begin{align*}
+         \proc{Mem} (\proc{Empty}, e) &= \proc{False}\\
+         \proc{Mem} (\proc{Make} (r, t_1, t_2), e) &= \textbf{?}
+       \end{align*}
+       In the last equation, we notice that there are two nodes,
+         \(r\) and \(e\), so we can compare them for equality and
+         split the equation correspondingly:
+       \begin{align*}
+            \proc{Mem} (\proc{Empty}, e) 
+         &= \proc{False}\\
+            \proc{Mem} (\proc{Make} (e, t_1, t_2), e) 
+         &= \textbf{?}\\
+            \proc{Mem} (\proc{Make} (r, t_1, t_2), e) 
+         &= \textbf{?} 
+         & \text{if} \; r \neq e
+       \end{align*}
+       We can now complete the second equation because we know,
+         by definition of the case, that \(e\) is in \(t\) (it is its
+         root):
+       \begin{align*}
+            \proc{Mem} (\proc{Empty}, e) 
+         &= \proc{False}\\
+            \proc{Mem} (\proc{Make} (e, t_1, t_2), e) 
+         &= \proc{True}\\
+            \proc{Mem} (\proc{Make} (r, t_1, t_2), e) 
+         &= \textbf{?} 
+         & \text{if} \; r \neq e
+       \end{align*}
+       In the case of the last equation, we know that \(e\) is
+         not the root of \(t\). Therefore, we must check whether \(e\)
+         is not at some other place in \(t\) by means of recursive
+         calls in the left and right subtrees of \(t\):
+       \begin{align*}
+            \proc{Mem} (\proc{Empty}, e) 
+         &= \proc{False}\\
+            \proc{Mem} (\proc{Make} (e, t_1, t_2), e) 
+         &= \proc{True}\\
+            \proc{Mem} (\proc{Make} (r, t_1, t_2), e) 
+         &= \proc{Mem} (t_1, e) \, \| \, \proc{Mem} (t_2, e)
+         & \text{if} \; r \neq e
+       \end{align*}
+       Actually, we can simplify the equations by merging back the
+       third and second equations:
+       \begin{align*}
+            \proc{Mem} (\proc{Empty}, e) 
+         &= \proc{False}\\
+            \proc{Mem} (\proc{Make} (r, t_1, t_2), e) 
+         &= (r = e) \, \| \, \proc{Mem} (t_1, e) \, \| \, \proc{Mem} (t_2, e)
+       \end{align*}
+
+     \item \(\proc{Min-Depth}: \type{t} \times \type{node} \rightarrow
+       \type{int}\)\\
+     The first step is to note that \proc{Min-Depth} takes an argument
+     of type \type{t}, i.e. a binary tree, hence we can consider the
+     two constructors for tree as this argument:
+     \begin{align*}
+       \proc{Min-Depth} (\proc{Empty}, e) &= \textbf{?}\\
+       \proc{Min-Depth} (\proc{Make} (r, t_1, t_2), e) &= \textbf{?}
+     \end{align*}
+     What is the minimum depth of any node \(e\) in the empty
+       tree?  Since, by definition, there is no node in the empty
+       tree, there is no depth for any node: it is
+       unspecified. Therefore, the first equation is meaningless, and
+       we can remove it. Now remains
+     \begin{align*}
+       \proc{Min-Depth} (\proc{Make} (r, t_1, t_2), e) &= \textbf{?}
+     \end{align*}
+     There are two nodes, \(r\) and \(e\), in the left-hand side of
+     this equation, so we can compare them for equality and split the
+     equation accordingly:
+     \begin{align*}
+          \proc{Min-Depth} (\proc{Make} (e, t_1, t_2), e) 
+       &= \textbf{?}\\
+          \proc{Min-Depth} (\proc{Make} (r, t_1, t_2), e) 
+       &= \textbf{?}
+       & \text{if} \; r \neq e
+     \end{align*}
+     In the first equation, the node we are looking for is the root of
+     \(t\). Since the text explaining the signature tells that depth
+     of the root is always 0, we just found the right-hand side:
+     \begin{align*}
+          \proc{Min-Depth} (\proc{Make} (e, t_1, t_2), e) 
+       &= 0\\
+          \proc{Min-Depth} (\proc{Make} (r, t_1, t_2), e) 
+       &= \textbf{?}
+       & \text{if} \; r \neq e
+     \end{align*}
+     In the remaining equation, the node we search, \(e\), is not the
+     root of \(t\). Thus we must search the left and right subtrees
+     recursively and take the minimum of the two depth \textbf{plus
+       one}:
+     \begin{align*}
+          \proc{Min-Depth} (\proc{Make} (e, t_1, t_2), e) 
+       &= 0\\
+          \proc{Min-Depth} (\proc{Make} (r, t_1, t_2), e) 
+       &= 1 + \proc{Min} (&\proc{Min-Depth} (t_1, e),\\
+       && \proc{Min-Depth} (t_2, e))\\
+       && \text{if} \; r \neq e
+     \end{align*}
+     But something is wrong with the last equation... What if \(e\) is
+     not in \(t_1\) or not in \(t_2\)? Then the values
+     \(\proc{Min-Depth} (t_1, e)\) or \(\proc{Min-Depth} (t_2, e)\)
+     would be undefined, but what is the minimum of two undefined
+     values? It is preferable then to constrain \(e\) to be in \(t\)
+     in order to get a specified value \(\proc{Min-Depth} (t, e)\):
+     \begin{align*}
+          \proc{Min-Depth} (\proc{Make} (e, t_1, t_2), e) 
+       &= 0\\
+          \proc{Min-Depth} (\proc{Make} (r, t_1, t_2), e) 
+       &= 1 + \proc{Min} (&\proc{Min-Depth} (t_1, e),\\
+       && \proc{Min-Depth} (t_2, e))
+     \end{align*}
+      \hfill{\(\qquad\qquad\qquad\text{if} \; r \neq e \; \text{and}
+        \; \proc{Mem} (\proc{Make} (r, t_1, t_2), e)\)}
+       
+     \item \(\proc{Inv}: \type{t} \rightarrow \type{t}\)\\ The sole
+       argument of \proc{Inv} is of type \type{t}, i.e. it is a binary
+       tree, so we start by enumerating the tree constructors:
+     \begin{align*}
+       \proc{Inv} (\proc{Empty}) &= \textbf{?}\\
+       \proc{Inv} (\proc{Make} (r, t_1, t_2)) &= \textbf{?}
+     \end{align*}
+     The first equation specifies the image of the empty tree in a
+     mirror (inverse). Since, by definition, there is no node in the
+     empty tree, its image can only be itself:
+     \begin{align*}
+       \proc{Inv} (\proc{Empty}) &= \proc{Empty}\\
+       \proc{Inv} (\proc{Make} (r, t_1, t_2)) &= \textbf{?}
+     \end{align*}
+     Now what about the non-empty tree case? First, we should
+     understand that the invariant part is the root: the image of the
+     root is at the same place:
+     \begin{align*}
+       \proc{Inv} (\proc{Empty}) &= \proc{Empty}\\
+       \proc{Inv} (\proc{Make} (r, t_1, t_2)) &= \proc{Make} (r,
+       \textbf{?}, \textbf{?})
+     \end{align*}
+     The subtrees have to permute, i.e. we swap them in order to get
+     the reverse order \textbf{and} we reverse them also with a
+     recursive call:
+     \begin{align*}
+       \proc{Inv} (\proc{Empty}) &= \proc{Empty}\\
+       \proc{Inv} (\proc{Make} (r, t_1, t_2)) &= \proc{Make} (r,
+       \proc{Inv} (t_2), \proc{Inv} (t_1))
+     \end{align*}
+ 
+     \item \(\proc{Sum}: \proc{Bin-Tree}(\type{int}).\type{t}
+       \rightarrow \type{int}\)\\ We note that \proc{Sum} as a unique
+       argument of type \proc{Bin-Tree}(\type{int}).\type{t}, i.e. it
+       is a binary tree over positive integers. So we start by
+       enumerating the tree constructors for this argument:
+     \begin{align*}
+       \proc{Sum} (\proc{Empty}) &= \textbf{?}\\
+       \proc{Sum} (\proc{Make} (n, t_1, t_2)) &= \textbf{?}
+     \end{align*}
+     The first equation refers to the sum of the nodes of th empty
+     tree. Since, by definition, there is no node in the empty tree,
+     the sum is therefore undefined. Hence we should remove this
+     equation, but... what if the empty tree is part of a non-empty
+     tree (like a tree just made of a root)? For instance,
+     \(\proc{Sum} (\proc{Make} (5, \proc{Empty}, \proc{Empty})) =
+     5\). In this case we expect the sum of the empty tree to be
+     \(0\), because it should no modify the whole sum, so \(5\)
+     actually comes from \(5 + 0 + 0\). Thus we have to stick with
+     \begin{align*}
+       \proc{Sum} (\proc{Empty}) &= 0\\
+       \proc{Sum} (\proc{Make} (n, t_1, t_2)) &= \textbf{?}
+     \end{align*}
+     We already know that we have to sum \(n\) to the rest of
+       the nodes:
+     \begin{align*}
+       \proc{Sum} (\proc{Empty}) &= 0\\
+       \proc{Sum} (\proc{Make} (n, t_1, t_2)) &= n + \textbf{?}
+     \end{align*}
+     We have to add now the sum of the left subtree and the sum of the
+     right subtree nodes, as recursive calls:
+     \begin{align*}
+       \proc{Sum} (\proc{Empty}) &= 0\\
+       \proc{Sum} (\proc{Make} (n, t_1, t_2)) &= n + \proc{Sum} (t_1)
+       + \proc{Sum} (t_2)
+     \end{align*}
+
+\end{enumerate}

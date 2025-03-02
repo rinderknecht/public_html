@@ -1,0 +1,67 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Focus of this course}
+
+The most popular application of Information Retrieval is searching
+information on the World Wide Web, by means of \textbf{search engines}
+as Naver, Google, Yahoo etc.
+
+\bigskip
+
+There are other applications, like \textbf{document databases}
+(e.g., as found in libraries) and \textbf{text searches}, always
+relying on \textbf{complex mathematical models} (e.g., based on
+probability theory) to assess the \emph{relevance} of the retrieved
+information or the \emph{efficiency} of the retrieving algorithms.
+
+\bigskip
+
+In this course, however, we shall focus exclusively on text search,
+because it is the simplest way to start the study of this wide topics.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Focus of this course (cont)}
+
+Text search, in its simplest form, refers to the search of the
+occurrences of a word in a text, i.e. determine whether a word occurs
+in a given text and, if so, where.
+
+\bigskip
+
+All text editors include such a feature, as well as scripting
+languages as \Perl and \AWK.
+
+\bigskip
+
+There is a famous utility called \texttt{grep} under \textsc{UNIX}
+which allows to search a set of strings in a text very efficiently.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Focus of this course (cont)}
+
+A \textbf{text} is nothing else than a string of characters and a
+word is a special case of a \textbf{pattern}.
+
+\bigskip
+
+In general, a pattern can describe a set of words, not only a single
+word. For example, the pattern \verb+abra.*bra+ defines the set of
+words starting by \verb+abra+ and ending by \verb+bra+.
+
+\bigskip
+
+The efficiency of a search algorithm is usually measured by
+\textbf{the number of letter comparisons}: the lower, the better.
+
+\end{frame}

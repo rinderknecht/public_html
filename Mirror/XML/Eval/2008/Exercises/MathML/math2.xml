@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- MathML encoding the equation (x^2 + 1)(4x^3 - 7) = y -->
+
+<math>
+  <apply>
+    <eq/>
+    <apply>
+      <times/>
+      <apply>  <!-- x^2 + 1 -->
+        <plus/>
+        <apply>
+          <power/>
+          <ci>x</ci>
+          <cn>2</cn>
+        </apply>
+        <cn>1</cn>
+      </apply>
+      <apply> <!-- 4x^3 - 7 -->
+        <minus/>
+        <apply>
+          <times/>
+          <cn>4</cn>
+          <apply>
+            <power/>
+            <cn>x</cn>
+            <ci>3</ci>
+          </apply>
+        </apply>
+        <cn>7</cn>
+      </apply>
+    </apply>
+    <ci>y</ci>
+  </apply>
+</math>
+

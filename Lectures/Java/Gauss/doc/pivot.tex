@@ -1,0 +1,252 @@
+%% -*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{ae,aecompl}
+\usepackage{amsmath}
+
+\input{trace}
+
+\title{Pivot de Gauss et JavaCC}
+\author{Christian Rinderknecht}
+\date{Mardi 25 mars 2003}
+
+\begin{document}
+
+\maketitle
+
+\section{Pivot de Gauss}
+
+Un système d'équations affines en nombres entiers, tel que
+
+\begin{align}
+9x + 6y - 12z &= 9\\
+2x + 3y + 3z &= 15\\
+5x - 3y +  z &= 14
+\end{align}
+
+peut être écrit sous forme matricielle:
+
+\[
+\left[
+\begin{array}{rrr|r}
+9 &  6 & -12 &  9\\
+2 &  3 &   3 & 15\\
+5 & -3 &   1 & 14
+\end{array}
+\right]
+\]
+
+Le but est de résoudre ce système en nombre entiers. Pour cela on
+utilise la méthode de Gauss, appelée aussi «~pivot de Gauss~». Elle
+consiste à effectuer des combinaisons linéaires de lignes
+(c-à-d. d'équations) de façon à ce que le système se ramène à la forme
+diagonale
+
+\[
+\left[
+\begin{array}{rrr|r}
+b & 0 & 0 & a\\
+0 & d & 0 & c\\
+0 & 0 & f & e
+\end{array}
+\right]
+\]
+
+où $a , ..., f$ sont des entiers. Dans ce cas: $x=a/b$, $y=c/d$,
+$z=e/f$, où $a$ et $b$ sont premiers entre eux, ainsi que les couples
+$(c,d)$ et $(e,f)$, et $b$, $d$ et $f$ sont positifs. Si une ligne ne
+contient que des zéros, alors le système n'a pas de solution unique (il
+y a autant d'équations que d'inconnues et au moins une des équations
+est une combinaison linéaire des autres). Il se peut aussi que le
+système n'aie pas de solutions.
+
+Plutôt que donner l'algorithme de résolution dans le cas général,
+illustrons-le sur cet exemple. Notons $L_i$ la $i$-ème ligne, et
+$\leftarrow$ l'affectation d'une ligne par une autre. Les coefficients
+$a_{i,j}$ de la matrice sont caractérisés par la ligne $i$ et la
+colonne $j$ où ils se trouvent.
+
+On simplifie initialement chaque ligne en divisant tous ses
+coefficients par le plus grand commun diviseur (PGCD, noté ici
+$\wedge$). Dans notre exemple, la première ligne a pour PGCD 3, on
+effectue donc $L_1 \leftarrow L_1/3$. Le système précédent est donc
+équivalent à:
+
+\[
+\left[
+\begin{array}{rrr|r}
+3 &  2 & -4 &  3\\
+2 &  3 &  3 & 15\\
+5 & -3 &  1 & 14
+\end{array}
+\right]
+\]
+
+Par convention, le PGCD de deux entiers sera toujours un nombre
+positif.
+
+On opère de gauche à droite sur les colonnes. 
+
+Pour la première colonne, on considère alors l'élément diagonal (ici,
+$a_{1,1} = 3$). Si celui-ci est nul, on peut alors permuter les lignes
+pour en faire apparaître un non-nul (on note $L_i \leftrightarrow L_j$
+la permutation de la ligne $i$ avec la ligne $j$). Si cela n'est pas
+possible, le système n'est pas soluble. Ici, il n'y a pas de problème,
+car $3 \neq 0$. Cet élément est alors appelé \emph{pivot} car la ligne
+à laquelle il appartient restera inchangée pendant l'étape
+d'élimination qui suit. Cette dernière consiste à effectuer des
+combinaisons linéaires, avec pour référence la ligne du pivot, qui
+vont annuler les coefficients sous le pivot et au-dessus de lui. Pour
+chacun des coefficients non-nuls sous le pivot, on calcule le plus
+petit commun multiple (PPCM, noté ici $\vee$) avec le pivot (par
+convention, le PPCM sera toujours positif). Ainsi, pour la seconde
+ligne $L_2$, on a $a_{1,1} \, \vee \, a_{2,1} = 3 \, \vee \, 2 =
+6$. On effectue alors la combinaison linéaire: $L_2 \leftarrow (6/3)
+\cdot L_1 - (6/2) \cdot L_2$, soit $L_2 \leftarrow 2 L_1 - 3 L_2$. On
+effectue une soustraction car les deux coefficients, $a_{1,1}$ et
+$a_{2,1}$ sont de même signe, sinon une addition aurait dû être
+effectuée. Pour la ligne suivante on a: $L_3 \leftarrow 5 L_1 - 3
+L_3$. La matrice est donc, à ce stade:
+
+\[
+\left[
+\begin{array}{rrr|r}
+3 &  2 &  -4 &   3\\
+0 & -5 & -17 & -39\\
+0 & 19 & -23 & -27
+\end{array}
+\right]
+\]
+
+On choisit alors de diviser chaque ligne par le PGCD de ses
+coefficients. Ici, les PGCD valent tous 1, donc il n'y a rien à faire.
+
+Il n'y a pas de coefficients au-dessus du pivot $a_{1,1}=3$, donc on
+passe à la colonne suivante (c-à-d. la seconde). On peut choisir
+$a_{2,2}=-5$ comme pivot car il est non-nul (la seule autre
+possibilité étant 19). La combinaison pour annuler $a_{3,2}$ est
+alors: $L_3 \leftarrow 19L_2 + 5L_3$:
+
+\[
+\left[
+\begin{array}{rrr|r}
+3 &  2 &   -4 &    3\\
+0 & -5 &  -17 &  -39\\
+0 &  0 & -438 & -876
+\end{array}
+\right]
+\]
+
+Il y a ici un coefficient au-dessus du pivot: $a_{1,2}=2$. On opère de
+même pour l'annuler: $L_1 \leftarrow 2L_2 + 5L_1$:
+
+\[
+\left[
+\begin{array}{rrr|r}
+15 &  0 &  -54 &  -63\\
+ 0 & -5 &  -17 &  -39\\
+ 0 &  0 & -438 & -876
+\end{array}
+\right]
+\]
+
+On simplifie maintenant chaque ligne, en les divisant par le PGCD de
+leur coefficients: $L_1 \leftarrow L_1/3$ et $L_3 \leftarrow L_3/438$:
+
+\[
+\left[
+\begin{array}{rrr|r}
+5 &  0 & -18 & -21\\
+0 & -5 & -17 & -39\\
+0 &  0 &  -1 & -2
+\end{array}
+\right]
+\]
+
+On recommence ensuite avec la troisième et dernière colonne. Le pivot
+est nécessairement $-1$ (donc non nul). Il faut donc simplement faire:
+$L_1 \leftarrow 18 L_3 - L_1$. De même il faut: $L_2 \leftarrow 17 L_3
+- L_2$. C'est-à-dire:
+
+\[
+\left[
+\begin{array}{rrr|r}
+-5 &  0 &  0 & -15\\
+ 0 & -5 &  0 & -5\\
+ 0 &  0 & -1 & -2
+\end{array}
+\right]
+\]
+
+En simplifiant les deux première lignes ($L_1 \leftarrow L_1/5$ et
+$L_2 \leftarrow L_2/5$), il vient:
+
+\[
+\left[
+\begin{array}{rrr|r}
+-1 &  0 &  0 & -3\\
+ 0 & -1 &  0 & -1\\
+ 0 &  0 & -1 & -2
+\end{array}
+\right]
+\]
+
+Finalement, les coefficients diagonaux doivent être positifs: $L_1
+\leftarrow -L_1$, $L_2 \leftarrow -L_2$ et $L_3 \leftarrow -L_3$:
+
+\[
+\left[
+\begin{array}{rrr|r}
+1 &  0 &  0 & 3\\
+0 & 1 &  0 & 1\\
+0 &  0 & 1 & 2
+\end{array}
+\right]
+\]
+
+Les solutions sont donc $x = 3$, $y = 1$ et $z = 2$.
+
+\section{JavaCC}
+
+On veut écrire les systèmes d'équations dans un fichier. Pour cela, on
+suivra la syntaxe évidente:
+
+\begin{verbatim}
+9 x + 6 y - 12 z =  9
+2 x + 3 y +  3 z = 15
+5 x - 3 y +    z = 14
+\end{verbatim}
+
+\noindent
+où les espaces et les sauts de ligne ne sont pas significatifs.
+
+\noindent
+Vous devez:
+
+\begin{enumerate}
+
+  \item écrire un algorithme qui calcule le PGCD et le PPCM;
+
+  \item écrire l'algorithme du pivot de Gauss dans le cas général;
+
+  \item écrire un lexique et une grammaire \textsf{JavaCC} pour ce
+        type de système;
+
+  \item écrire les actions \textsf{JavaCC} qui implantent l'algorithme
+        du pivot de Gauss, en prenant soin d'afficher toutes les
+        matrices intermédiaires ainsi que les opérations sur les
+        lignes ($\leftarrow$ et $\leftrightarrow$);
+
+  \item prévoir les cas où il n'y a pas de solutions, ou pas de
+        solution unique;
+  
+  \item fournir un jeu de test du programme.
+ 
+\end{enumerate}
+
+
+\end{document}

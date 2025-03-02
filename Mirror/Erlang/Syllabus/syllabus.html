@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Syllabus of the Erlang course</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h3>Syllabus of the Erlang course</h3>
+
+<h4>Summary</h4>
+
+<p>The goal of this course is to provide an introduction to functional
+programming by learning the basics of the functional language <a
+href="http://www.erlang.org">Erlang</a>. Only a subset of the
+sequential subset of Erlang is presented (therefore, concurrency and
+distributed computing are left out for lack of time).</p>
+
+<p>Sequential Erlang is a purely functional subset of Erlang, which
+means that it is free of side-effects. In other words, variables are
+immutable entities: once they are bound to a value, this binding
+cannot be undone (this is what assignments are for in imperative
+languages).</p>
+
+<p>We believe it is paramount that college students are introduced to
+different computational paradigms as possible. While Erlang is
+certainly the most commercially successful functional language, it is
+not widely known outside the telecommunication and distributed
+computing communities. Nonetheless, the concepts presented in this
+course could result very handy if the future engineer is confronted to
+another functional language, like XSLT.</p>
+
+<p>The assumption of this course is that the simplicity of the syntax
+of Erlang and the lack of static typing ease learning the basics of
+functional programming. Also, it will be insisted a lot on the
+complexity of the programs written, both time efficiency and space
+efficiency.</p>
+
+<h4>Plan</h4>
+
+<ol>
+  <li>A rationale for the study of Erlang. What is and and what is not
+  off topic. Where to get the Erlang compiler, install it and use
+  it. First program: the classical factorial function as defined in
+  mathematics. The concept of counting the number of computation steps
+  is introduced, based on the syntax of Erlang.</li>
+
+  <li>The factorial function is rewritten so it uses an accumulating
+  argument. It is shown that that, based on a rewriting model of
+  Erlang program execution, the size of the term is constant. This
+  contextual space, surrounding the function calls, is called the
+  stack.</li>
+
+  <li>Beyond integers, lists are the most useful data type in
+  functional programming. Their operational model (a stack) is
+  explained on examples. First programs on lists: computing the
+  length, the last item and penultimate item. Versions without context
+  are presented together with the direct encoding and it is explained
+  the advantages and inconvenient of both. The context-free version is
+  said to be in tail form and it is paramount to understand that all
+  compilers for functional languages translate tail calls into loops
+  at the assembly level. (In other words, it is as efficient as can be
+  the source, which does not mean that the source is the most
+  efficient version of all possible, of course)</li>
+
+  <li>More exercises: how to compute the sum and the product of
+  integers in a list. The number of steps is computed. A tail form and
+  non-tail form are written and compared. The case of the product can
+  be optimised in case a zero is present in the list: in this case the
+  computation can be stopped as the result has to be zero. Through
+  this example, the notion of worst-case and best-case input is
+  introduced. The case of the empty list is discussed, as many
+  students are tempted to return 0 in that case.</li>
+
+  <li>The appending of two lists is presented in non-tail and tail
+  forms. The number of steps in both cases is computed, as well as the
+  number of pushes (which are taken as a measure of the memory
+  consumption). The reversal of a list, in a direct form (that is,
+  using only itself) of relying upon the appending are presented. The
+  direct form happens to be in tail form and its advantages over the
+  other form go beyond that: it is shown that the number of steps,
+  that is, time efficiency, is linear in the length of the input in
+  the first case, but quadratic in the second.</li>
+
+  <li>Quiz</li>
+
+  <li>Removal of the first occurrence of a given item in a given
+  list. The students are left to judge whether the case of the empty
+  list ought to be taken into account or not. This is a very important
+  point. Most student associate the concept of nullity (as the number
+  zero) with the concept of empty list, which is a wrong view,
+  probably based on teachings from childhood where zero is explained
+  by the analogy with an empty bag. As usual, non-tail and tail forms
+  are envisaged and the number of steps is computed in the
+  worst-case. The students are encouraged to systematically assess
+  what is the worst-case input for the program they write, if
+  any. Removal of all occurrences of a given item in a given
+  list. Same with the removal of all occurrences. Comparison between
+  them and the removal of the first occurrence only. The case of the
+  empty list is left to the judgement of the students. Dropping items
+  at periodic indexes in a list. This is the first example with two
+  accumulators. Pairs are introduced and used to split a list at a
+  given index. Efficiency and the extreme cases (out of bounds
+  indexes, empty list) are detailed.</li>
+
+  <li>Mid-term examination</li>
+
+  <li>Atoms are presented by analogy with the enumerated values of C,
+  or thought as read-only strings. The example of rotating a list is
+  given as an exercise. The remainder of Euclidean division is
+  presented. The difficulty for the student is to think negative
+  rotations and to realise that they can be amenable to positive
+  rotations.</li>
+
+  <li>Guards are presented and the difference between (numerical)
+  comparison and matching is insisted upon. The flattening of lists of
+  lists is proposed as an exercise. This proves a stepping stone as it
+  is the first frontal example of a list containing something else
+  than integers or atoms. Also, it requires the traversing of a
+  branching structure, announcing the forthcoming tree traversal. The
+  case of the empty list, as usual is to be decided by the
+  student. The lack of static typing makes the encoding more
+  compact. It is mentioned in passing how it could be adapted to a
+  strongly and statically typed functional language.</li>
+
+  <li>The technique of using a list accumulator, which is reversed at
+  the end is further wrought on by working on more and more exercises,
+  like compressing a list of items in different ways. Sorting by
+  insertion in a list of integers is explained. Different versions are
+  presented and the number of steps in the worst-case (to be
+  determined by the students) is computed. This is an example of
+  quadratic behaviour, as far as speed is concerned.</li>
+
+  <li>The limitation on sorting only integers and sorting only
+  decreasingly is lifted by introducing functional parameters for the
+  comparison function. Guards cannot be used anymore, so the <tt>case
+  ... of ... end</tt> construct is presented and students are warned
+  against it being used too liberally. The example of sorting a deck
+  of cards is given as an example of the increased power that
+  functional parameters offer.</li>
+
+  <li>Binary trees are presented with the external node encoding that
+  allows an easy matching of the nodes. The size of a tree, the sum of
+  the integers in a tree and the height of a tree are presented. The
+  similar shapes of these programs is underlined and the concept of a
+  fold-up is introduced (a functional, i.e., a function with a
+  functional parameter). These functions are rewritten using fold-up
+  and the number of steps is sought. Tail forms are found and compared
+  in terms of efficiency and compactness. The trade-off which consists
+  in visiting the empty nodes (the external nodes) instead of stopping
+  at the leave (if the tree contains <i>n</i> nodes, then there are
+  <i>n+1</i> such empty nodes), in exchange of a shorter code is
+  discussed.</li>
+
+  <li>Quiz</li>
+
+  <li>Preorder, postorder and inorder traversals on binary trees are
+  introduced, first, by means of a fold-up, and then by using an
+  auxiliary stack. The number of steps of both approaches is
+  computed.</li>
+
+  <li>Final examination</li>
+
+</ol>
+
+<h4>Prerequisites</h4>
+
+<p>None.</p>
+
+<h4>Textbook</h4>
+
+<p>There is only one recent book in English on Erlang, by Joe
+Armstrong, one of the designers of Erlang, but this course does not
+require any book in particular, as the focus is mainly in doing lots
+of short homeworks.</p>
+
+<h4>Evaluation</h4>
+
+<p>Two examinations as usual, plus homeworks twice a week. Exercises
+will be solved during class-time and answers posted on the web
+site. Attendance will be checked and taken into account for the final
+grade.</p>
+
+<h4>On-line ressources</h4>
+
+<ul>
+  <li> <a href="http://konkuk.ac.kr/~rinderkn/">My homepage</a></li>
+  <li> <a href="http://www.erlang.org/">The organisation supporting
+    Erlang</a></li>
+</ul>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+% Naive search
+%
+\begin{frame}
+\frametitle{Naive search}
+
+Let \(t\) be a text and \(x\) a word such that \(\len{x} \leqslant
+\len{t}\), both using the alphabet \(\Sigma\).
+
+\bigskip
+
+Formally, the problem of text search is stated as follows: determine
+if \(x\) is a factor of \(t\) and, if so, give the position of the
+first letter of \(x\) in \(y\).
+
+\bigskip
+
+The simplest algorithm, often called \textbf{naive}, consists in
+comparing \(x\) to \(t[k+1 \dots k+\len{x}]\) for all the \(k \in \{0,
+1, \dots, \len{t} - \len{x}\}\) in the worst case.
+
+\bigskip
+
+It helps to imagine the text is an array of characters and the word we
+are looking up is sliding along this array until we find a match. This
+is referred to as the \textbf{sliding window}, because we can think of
+a frame sliding along the text.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Naive search/Algorithm}
+
+The naive search algorithm we just described can be more formally
+described as
+{\footnotesize
+\begin{codebox}
+\(\proc{Naive} (x, t)\)\\
+\li \(i \gets 1\); \(j \gets 1\)
+\li \While \(i \leqslant \len{x}\) \LogAnd \(j \leqslant \len{t}\)
+\li \Do \If \(t[j] = x[i]\)\>\>\>\>\>\>\>\>\Comment Compare a letter of \(x\) with a letter
+of \(t\).
+\li	  \Then \(j \gets j + 1\); \(i \gets i + 1\)\>\>\>\>\>\>\Comment Schedule comparison with next letter in \(x\).
+\li	  \Else \(j \gets j - i + 2\); \(i \gets 1\)\>\>\>\>\>\>\Comment Failed: we slide \(x\) on \(t\) and start again.\End \End
+\li \If \(i > \len{x}\) 
+\li \Then \(\ldots\)\>\>\>\>\>\>\>\>\Comment Occurrence of \(x\) in \(t\) at position \(j - \len{x}\).
+\li \Else \(\ldots\)\>\>\>\>\>\>\>\>\Comment No occurrences. \End
+\end{codebox}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Naive search/Analysis}
+
+How many comparisons does the naive algorithm performs in the worst
+case?
+
+\bigskip
+
+In the worst case, \(x\) is not in \(t\) and the test at line \(3\)
+always fails on the last letter of \(x\), leading to make \(x\)
+slide of one position at line \(5\) the latest as possible. 
+
+\bigskip
+
+An example of positive match in the worst case is \(t =
+\texttt{a}^{m-1}\texttt{b}\) and \(x = \texttt{a}^{n-1}\texttt{b}\).
+
+\bigskip
+
+There are \(n - m + 1\) positions in \(t\) to compare with the first
+letter of \(x\), and since there are \(m\) letters in \(x\), it makes
+a total of \((n - m + 1) m = nm - m^2 + m < \len{t} \times \len{x}\)
+positions.
+
+\end{frame}

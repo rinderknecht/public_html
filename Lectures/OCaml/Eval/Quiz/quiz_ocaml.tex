@@ -1,0 +1,54 @@
+%% -*-latex-*-
+
+\documentclass[a4paper]{article}
+ 
+\usepackage[francais]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amssymb}
+
+\input{trace}
+
+\title{Quiz de programmation fonctionnelle en Objective Caml}
+\author{Christian Rinderknecht}
+
+\begin{document}
+
+\maketitle
+
+\begin{itemize}
+
+\item \'{E}crire la fonction qui calcule $u_n$ en fonction de $u_0\in
+      \mathbb{N}$ et de $n$, la suite $(u_n)_{n\in N}$ étant définie par
+\[ \begin{array}{ll}
+   u_n = & \left\{ \begin{array}{ll}
+                  1 & \mbox{si $u_{n-1}$ vaut $1$} \\
+                  u_{n-1}/2 & \mbox{si $u_{n-1}$ est pair} \\
+                  3 u_{n-1}+1 & \mbox{si $u_{n-1}$ est impair}
+                 \end{array}
+        \right.
+   \end{array}
+\]
+
+\item Écrire une fonction qui calcule $v_n$ en fonction de $n$, où
+      $(v_n)_{n\in N}$ est la suite de Fibonacci.
+
+\item Si la fonction ci-dessus a été écrite de la façon suggérée par
+      la définition de la suite, quel est le nombre d'additions
+      effectuées pour calculer $v_{10}$? (On peut écrire une fonction
+      Caml pour réaliser ce calcul!) Cette méthode est-elle efficace?
+      Écrire une fonction qui, étant donné $n$, calcule $v_n$ et
+      $v_{n+1}$.
+
+\item Écrire une fonction qui, étant donnés deux entiers $x$ et $y$,
+      calcule leur PGCD par la méthode d'Euclide. On supposera dans un
+      premier temps $x \leq y$, puis on écrira une deuxième fonction
+      qui ne fait pas cette supposition.
+
+\item On représente une fraction $p \over q$ par le couple d'entiers
+      $(p, q)$. Ecrire une fonction qui réduit une fraction
+      donnée. Ecrire une fonction qui additionne deux fractions.
+
+\end{itemize}
+
+\end{document}

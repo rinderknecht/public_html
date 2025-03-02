@@ -1,0 +1,4 @@
+clean::
+	@rm -f *.beam ${DOC}.nav ${DOC}.out ${DOC}.snm
+	@rm -f article.${DOC}.log article.${DOC}.aux
+	@rm -f article.${DOC}.dvi0 article.${DOC}.dvi article.${DOC}.ps article.${DOC}.pdf

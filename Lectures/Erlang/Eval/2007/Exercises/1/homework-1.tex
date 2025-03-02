@@ -1,0 +1,58 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\input{trace}
+
+\usepackage{xspace}
+\newcommand\Erlang{\textsf{Erlang}\xspace}
+
+\title{Homework \#11 of Erlang}
+\author{Christian Rinderknecht}
+\date{18 April 2007} 
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\begin{enumerate}
+
+  \item Write a function \texttt{drop/2} such that \texttt{drop(L,N)}
+    is the list \texttt{L} without every \texttt{N}th elements (first
+    element is 1). For example
+{\small
+\begin{verbatim}
+1> homework:drop([1,2,3,4,5,6,7,8,9],3).
+[1,2,4,5,7,8]
+\end{verbatim}
+}
+
+  \item Write a function \texttt{rnd\_select/2} such that
+    \texttt{rnd\_select(L,N)} is a list of \texttt{N} items selected
+    pseudo-randomly from the list \texttt{L}. For instance
+{\small
+\begin{verbatim}
+1> homework:rnd_select([2,[],4,[[5],6],1,-2,[3,[]]],3).
+[-2,[[5],6],2]
+2> homework:rnd_select([2,[],4,[[5],6],1,-2,[3,[]]],3).
+[[],[[5],6],[3,[]]]
+3> homework:rnd_select([2,[],4,[[5],6],1,-2,[3,[]]],3).
+[[[5],6],[3,[]],1]
+4>
+\end{verbatim}
+}
+\textbf{Hint:} Use \texttt{random:uniform/1}, since
+\texttt{random:uniform(P)} is an integer chosen pseudo-randomly by the
+\Erlang runtime between \texttt{1} and \texttt{P}. (The distribution
+is uniform, i.e., all numbers in the interval have an equal chance to
+be chosen.)
+\end{enumerate}
+
+Try to make your functions as efficient as possible.
+
+\end{document}
+
+
+

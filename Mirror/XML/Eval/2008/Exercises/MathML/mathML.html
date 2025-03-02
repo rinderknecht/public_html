@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Pretty-printing Simple Mathematical Expressions (MathML)</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Pretty-printing Simple Mathematical Expressions (MathML)</h2>
+
+<p><strong>Background.</strong>
+<a href="http://www.w3.org/Math/">MathML</a> is a way to specify
+mathematics using XML. In other words, it is XML plus some constraints
+on the elements and attributes, which have a specific interpretation
+in terms of mathematics, like equations. The root element must
+be <tt>math</tt>. A numeric <em>constant</em> is an element
+named <tt>cn</tt> and containing a single text node representing the
+constant. (In the case of integer or decimal numbers, the constant
+must be positive.) For
+instance <tt>&lt;cn>3&lt;/cn></tt>. A <em>variable</em> is an
+element <tt>ci</tt> containing a unique text node. For
+example, <tt>&lt;ci>x&lt;/ci></tt>. An <em>operator</em> usage (it is
+a special case of a function call) is specified by an
+element <tt>apply</tt> whose first child is an empty element
+representing the operator (here, let us restrict ourselves
+to <tt>&lt;plus/></tt> (addition), <tt>&lt;minus/></tt>
+(subtraction), <tt>&lt;times/></tt> (multiplication)
+and <tt>&lt;power/></tt> (exponentiation)) and the following siblings
+are the arguments of the operator. An <em>equation</em> is represented
+as an operator <tt>&lt;eq/></tt> with two arguments, the left-hand
+side of the equation and the right-hand side.
+</p>
+
+<p><strong>Examples.</strong> Consider the equation <a
+href="math1.xml"><em>x<sup>2</sup> + 4x + 1 = 0</em></a>, <a
+href="./math2.xml"><em>(x<sup>2</sup> + 1)(4x<sup>3</sup> - 7) =
+0</em></a> and a variation on the previous one, <a
+href="./math3.xml"><em>(x<sup>2</sup> + 1)(-4x<sup>3</sup> - 7) =
+y</em></a>. The latter example shows how to encode an unary operator
+usage (i.e., an operator taking one argument), like unary minus: in
+this case, use <tt>&lt;minus/></tt> with only one sibling.</p>
+
+<hr/>
+
+<p><strong>Question 1 (Prefix notation, parallel processing).</strong>
+  The purpose of this exercise is to write an XSL transform which
+  takes as input some MathML and outputs its <em>prefix
+  form</em>. This notation consists in writing operator calls with the
+  operator first and the arguments next, between parentheses and
+  separated by commas, just like in a function call. For instance, the
+  input<br/>
+<tt>
+&lt;math><br/>
+&nbsp;&nbsp;&lt;apply><br/>
+&nbsp;&nbsp;&nbsp;&lt;power/><br/>
+&nbsp;&nbsp;&nbsp;&lt;cn>x&lt;/cn><br/>
+&nbsp;&nbsp;&nbsp;&lt;ci>2&lt;/ci><br/>
+&nbsp;&nbsp;&lt;/apply><br/>
+&lt;/math><br/>
+</tt>
+leads to the output <tt>power(x,2)</tt> and
+means <em>x<sup>2</sup></em>.
+</p>
+
+<p><strong>Examples.</strong> The previous three equations lead to
+<a href="./math1_pref1.txt">this</a>, <a
+href="./math2_pref1.txt">this</a> and to <a
+href="./math3_pref1.txt">this</a> prefix notation.
+</p>
+
+<strong>Hints.</strong>
+<ul>
+  <li>The output is text, so you need to set the
+    attribute <tt>method="text"</tt>.</li>
+
+  <li>Perhaps the simplest method is to use the built-in
+  functions <tt>position</tt> and <tt>last</tt> to test if the context
+  node (i.e., the one matched by the last template) is the last among
+  its siblings. This enables parallel processing by means
+  of <tt>xsl:apply-templates</tt>.</li>
+
+  <li>Compare the printing of the operator arguments with the exercise
+  on <a href="../CSV/csv.html">Comma-separated Values</a>.</li>
+
+  <li>In order to select the first child element of the context node
+  use <tt>element()[1]</tt>. To select the first text node,
+  use <tt>text()[1]</tt>.</li>
+
+  <li>In order to get the name of an element <tt>$e</tt>,
+  use <tt>name($e)</tt>.</li>
+
+  <li>In order to remove spurious blank lines or spaces, use the
+  following XSLT element <tt>&lt;xsl:strip-space elements="*"/></tt>
+  as a child of element <tt>xsl:transform</tt>.</li>
+
+</ul>
+
+<p><strong>Answer 1.</strong> <a href="./prefix1.xsl">Here</a> is a
+simple solution.</p>
+
+<hr/>
+
+<p><strong>Question 2 (Prefix notation, sequential
+processing).</strong> It is possible not to use the
+function <tt>last</tt>, leading to a sequential processing of the
+input by means of <tt>xsl:call-template</tt>. This idea is very
+similar to the sequential processing stylesheet of
+the <a href="../CSV/csv.html">Comma-separated Values</a> exercise. Use
+this sequential approach to solve the same problem.
+</p>
+
+<p><strong>Answer 2.</strong> <a href="./prefix2.xsl">Here</a> is one
+solution. The outputs are <a href="./math1_pref2.txt">this</a>, <a
+ href="./math2_pref2.txt">this</a> and to <a
+ href="./math3_pref2.txt">this</a> prefix notation (should be the same
+as before).</p>
+
+<hr/>
+
+<p><strong>Question 3 (Infix notation, parallel processing).</strong>
+The notation more familiar to mathematicians for writing operator
+calls is the <em>infix form</em>. For instance, the previous three
+equations lead
+to <a href="./math1_inf.txt">this</a>, <a href="./math2_inf.txt">this</a>
+and to <a href="./math3_inf.txt">this</a> infix notation.</p>
+
+<strong>Hints.</strong>
+<ul>
+
+  <li>Use the following <a href="./canvas.xsl">canvas</a>.</li>
+
+  <li>Be mindful of the fact that subtraction can either be unary
+  (i.e., have only one argument) or binary (two arguments).</li>
+
+  <li>Don't try to remove too many parentheses.</li>
+
+</ul> 
+
+<p><strong>Answer 3.</strong> <a href="./infix.xsl">This
+stylesheet</a> is a solution to the above problem.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+
+</html>

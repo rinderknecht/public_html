@@ -1,0 +1,63 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\input{trace}
+
+\title{Final examination on Introduction to the Internet}
+\author{Christian Rinderknecht}
+\date{June 2006}
+
+\begin{document}
+
+\maketitle
+
+\section{Review questions}
+
+\begin{enumerate}
+
+  \item What are the five layers in the Internet protocol stack? What
+    are the principal responsibilities of each of these layers?
+
+  \item What information is used by a process running on one host to
+    identify a process running on another host?
+
+  \item What is the difference between persistent \textsc{http}
+    with pipelining and persistent \textsc{http} without pipelining?
+
+  \item Describe briefly cookies in web browsers. Why are they useful?
+
+  \item What is the conditional \texttt{GET} \textsc{http} request
+    useful for?
+
+  \item How an organisation's web server and mail server can have
+    exactly the same alias for a hostname?
+
+  \item Describe shortly how a Domain Name Server performs load
+    balancing.
+
+\end{enumerate}
+
+\section{True or false?}
+
+  \begin{enumerate}
+
+    \item Suppose a user requests a Web page that consists of some text
+      and two images. For this page the client will send one request
+      and receive three response messages.
+
+    \item Two distinct Web pages can be sent over the same persistent
+      connection.
+
+    \item With non-persistent connections between browser and origin
+      ser\-ver, it is possible for a single TCP segment to carry two
+      distinct \textsc{http} request messages.
+
+    \item The \verb+Date:+ header in the \textsc{http} response
+      message indicates when the object in the response was last
+      modified.
+
+  \end{enumerate}
+
+
+\end{document}

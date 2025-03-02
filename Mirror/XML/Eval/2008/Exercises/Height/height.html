@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Heigth of a Table of Contents</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Height of a Table of Contents</h2>
+
+<p>The purpose of this exercise is to write an XSLT transform which
+takes as input a table of contents and outputs its <em>height</em>,
+which is, by definition, the maximum height of its chapters.
+</p>
+
+<ol>
+
+  <li>The height of a table of contents is the maximum height of its
+  chapters.</li>
+
+  <li>The height of a chapter (respectively, section) is 1 plus the
+  maximum height of its sections (respectively, subsections).</li>
+
+  <li>The height of an empty sequence is 0.</li>
+
+</ol>
+
+<p>For instance, a book with no chapters has height 0 (it is empty). A
+  book made only of chapters with no sections at all has height 1 (it
+  is flat).
+</p>
+
+<p><strong>Example.</strong>
+<a href="./toc.xml">This</a> is an example of input document and the
+corresponding output is <a href="./height1.txt">this</a>. You need to
+download this <a href="./book.dtd">DTD</a> to run this example.
+</p>
+
+<p><strong>Question 1.</strong> The above definition leads naturally
+to a parallel implementation, since the height of the chapters and
+sections can be computed separately. Write the transform <em>using
+matching templates only</em>.
+</p>
+
+<strong>Hints.</strong>
+<ul>
+
+  <li>The output is text, so you need to set the
+  attribute <tt>method="text"</tt>.</li>
+   
+  <li>Follow closely the definition above and reuse the template
+  named <a href="../Maximum/max1.xsl"><tt>max</tt></a> which computes
+  the maximum integer number in a sequence</li>
+
+  <li>When you have two sequences of items (i.e., nodes, integer,
+  strings, floats etc.), say <tt>$a</tt> and <tt>$b</tt>, the sequence
+  obtained by joining <tt>$b</tt> at the end of <tt>$a</tt> is
+  noted <tt>($a,$b)</tt>. The joining of two sequences is often
+  called <em>catenation</em> or <em>concatenation</em>.</li>
+
+  <li>Use <tt>xsl:sequence</tt> to denote the heights.</li>
+
+  <li>Supply the smaller type you can for all your variables and
+  parameters, e.g., <tt>as="xs:integer"</tt> for heights. The type of a
+  sequence of integers is <tt>xs:integer*</tt>.</li>
+
+</ul>
+
+<!-- <p><strong>Answer 1.</strong> -->
+<!-- <a href="./height1.xsl">This</a> is one solution. Note how -->
+<!-- the <tt>as</tt> attribute in <tt>&lt;xsl:with-param name="int" -->
+<!-- as="xs:integer*"></tt> is <em>mandatory</em> when the -->
+<!-- attribute <tt>select</tt> is not used. This way, the construction of -->
+<!-- an of a document root is avoided and there is no type mismatch. -->
+<!-- </p> -->
+
+<hr/>
+
+<p><strong>Question 2.</strong> Same question but this time, instead
+  of computing in parallel de heights of the children of a given node,
+  compute sequentially with a named template. The purpose is to avoid
+  computing a sequence of heights and then taking their maximum. Two
+  parameters are needed: a <tt>cur</tt> parameter which represents the
+  height of the sequence so far (initial value is&nbsp;0)
+  and <tt>seq</tt> holds the rest of the sequence whose height we want
+  to know. (1)&nbsp;we compute the height of the sequence of the
+  children of <tt>$seq[1]</tt>; (2)&nbsp;we add 1 to obtain the height
+  of <tt>$seq[1]</tt>; (3)&nbsp;the maximum of this value
+  and <tt>$cur</tt> is the value of <tt>cur</tt> in the recursive call
+  on <tt>$seq[position()>1]</tt>. If <tt>$seq</tt> is empty, the
+  maximum height of the nodes is <tt>$cur</tt>. (This scheme is
+  similar to Counting the Number of Sections.)
+</p>
+
+<p><strong>Example.</strong>
+<a href="./toc.xml">This</a> is an example of input document and the
+corresponding output is <a href="./height2.txt">this</a> (it should be
+the same value as before). You need to download
+this <a href="./book.dtd">DTD</a> to run this example.
+</p>
+
+<p><strong>Answer 2.</strong> <a href="./height2.xsl">This</a> is a
+simple solution to the problem.</p>
+
+<hr/>
+
+<p><strong>Question 3.</strong> In the previous question, the height
+  is computed <em>bottom-up</em>, that is, the increments on the
+  height are performed just before the recursive calls end and new
+  calls initialise the height parameter to 0. Propose a design where
+  the height is incremented <em>top-down</em>, that is, the height
+  parameter is added 1 in the recursive calls.</p>
+
+<p><strong>Answer 3.</strong> <a href="./height3.xsl">This</a> is a
+simple solution to the problem.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

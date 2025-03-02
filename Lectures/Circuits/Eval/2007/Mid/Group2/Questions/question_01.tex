@@ -1,0 +1,27 @@
+\paragraph{Question.} Write a C function
+  which converts an integer of type \texttt{int} into its balanced
+  ternary representation as an array of \texttt{int}. The prototype
+  is
+\begin{verbatim}
+int* from10to3b (int dec);
+\end{verbatim}
+The result of the function is an array of integers where the first
+  element is the size of the balanced ternary representation and the
+  remaining elements are the digits (also known as \emph{trits}), the
+  least significant being the last. For
+  example, \texttt{from10to3b(17)} returns an array
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\emph{\textbf{4}} & \(1\) & \(-1\) & \(0\) & \(-1\)\\
+\hline
+\end{tabular}
+\end{center}
+because \(17_{10} = 1\overline{1}0\overline{1}_{3b}\).
+
+\paragraph{Hint.} First, compute the length of the balanced ternary
+  representation by using the same algorithm used for the
+  conversion. Then allocate an array and finally run the conversion
+  algorithm as usual. Try some examples, like \(-17\). In C, the sign
+  of \texttt{x \% y} is the sign of \texttt{x}. You need to include
+  \texttt{stdio.h} and \texttt{stdlib.h} (for \texttt{malloc}).

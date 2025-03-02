@@ -1,0 +1,272 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{ae,aecompl}
+
+\input{trace}
+
+\title{Corrigé de l'examen de programmation fonctionnelle en Objective
+  Caml}
+\author{Christian Rinderknecht}
+\date{Mardi 22 avril 2003}
+
+\begin{document}
+
+\maketitle
+
+\noindent
+\textbf{Exercice A:}
+
+\begin{verbatim}
+# fun (x,y) -> (y+1, not x);;
+- : bool * int -> int * bool = <fun>
+# fun p -> (snd p, fst p);;
+- : 'a * 'b -> 'b * 'a = <fun>
+# fun f -> fun (x,y) -> f(x+1) + f y;;
+- : (int -> int) -> int * int -> int = <fun>
+# fun f -> fun (x,y) -> (f(x+1), f y);;
+- : (int -> 'a) -> int * int -> 'a * 'a = <fun>
+# fun f -> fun (x,y) -> (f x, f y);;
+- : ('a -> 'b) -> 'a * 'a -> 'b * 'b = <fun>
+# fun f -> fun (x,y) -> (f x + 1, f y);;
+- : ('a -> int) -> 'a * 'a -> int * int = <fun>
+\end{verbatim}
+%A.7: \verb"fun (f,g) -> fun x -> (f x, g x)"
+
+\bigskip
+
+\noindent
+{\bf  Exercice B:}
+
+\begin{verbatim}
+# fun n b -> if b then n+1 else n-1;;
+- : int -> bool -> int = <fun>
+# fun n -> (true, n+1);;
+- : int -> bool * int = <fun>
+# List.map (fun n -> if n mod 2 = 0 then true else false);;
+- : int list -> bool list = <fun>
+# fun l -> List.map fst l;;
+- : ('a * 'b) list -> 'a list = <fun>
+# fun l x -> List.assoc x (List.map (fun (x,y) -> (y,x)) l);;
+- : ('a * 'b) list -> 'b -> 'a = <fun>
+# List.combine;;
+- : 'a list -> 'b list -> ('a * 'b) list = <fun>
+\end{verbatim}
+%B.7: \verb"(int * int) -> bool"
+
+\bigskip
+
+\noindent
+\textbf{Exercice C:}
+
+\emph{Un arbre peut repr\'esenter une collection de mots de sorte qu'il soit
+tr\`es efficace de v\'erifier si une s\'equence donn\'ee de
+caract\`eres est un mot valide ou pas. Dans ce type d'arbre, appel\'e
+un {\em{trie}}, les arcs ont une lettre associ\'ee, chaque n{\oe}ud
+possède une indication si la lettre de l'arc entrant est une fin de
+mot et la suite des mots partageant le m\^eme d\'ebut. La figure
+suivante montre le \emph{trie} des mots «~le~», «~les~», «~la~» et
+«~son~», l'astérisque marquant la fin d'un mot:}
+\begin{center}
+\includegraphics[scale=0.8]{trie.eps}
+\end{center}
+\noindent
+\emph{On utilisera le type Caml suivant pour implanter les
+{\em{tries}}}:
+
+\begin{verbatim}
+type trie = 
+  { mot_complet : string option; suite : (char * trie) list }
+\end{verbatim}
+
+\emph{Le type prédéfini \texttt{type 'a option = None | Some of 'a}
+sert à représenter une valeur éventuellement absente. Chaque n{\oe}ud
+d'un \emph{trie} contient les informations suivantes:}
+
+\begin{itemize}
+  \item \emph{Si le n{\oe}ud marque la fin d'un mot {\tt s} (ce qui
+        correspond aux n{\oe}uds étoilés de la figure), alors le champ
+        {\tt mot\_complet} contient {\tt Some s}, sinon ce champ
+        contient {\tt None}.}
+
+  \item \emph{Le champ {\tt suite} contient une liste qui associe les
+        caractères aux n{\oe}uds.}
+\end{itemize}
+
+\medskip
+
+\noindent
+\textbf{C.1}: \emph{Écrire la valeur Caml de type \texttt{trie}
+correspondant à la figure ci-dessus.}
+
+\smallskip
+
+\begin{verbatim}
+{mot_complet=None;
+ suite=[('l',{mot_complet=None;
+              suite=[('e',{mot_complet=Some "le";
+                           suite=[('s',{mot_complet=Some "les"; 
+                                        suite=[]})]});
+                     ('a',{mot_complet=Some "la";
+                           suite=[]})]}); 
+        ('s',{mot_complet=None;
+              suite=[('o', {mot_complet=None;
+                            suite=[('n', {mot_complet=Some "son";
+                                           suite=[]})]})]})]}
+\end{verbatim}
+
+\noindent
+\textbf{C.2}: \emph{Écrire une fonction \texttt{compte\_mots} qui
+compte le nombre de mots dans un \emph{trie}}.
+
+\smallskip
+
+\begin{verbatim}
+let rec compte_mots {mot_complet=m; suite=l} =
+    (match m with Some _ -> 1 | None -> 0) 
+  + List.fold_left (fun n (_,t) -> n + compte_mots t) 0 l
+\end{verbatim}
+
+\smallskip
+
+\textbf{C.3}: \emph{Écrire une fonction \texttt{select} qui prend en
+argument un \emph{trie} et une lettre, et renvoie le \emph{trie}
+correspondant aux mots commençant par cette lettre. Si ce \emph{trie}
+n'existe pas (parce qu'aucun mot ne commence par cette lettre), la
+fonction devra lancer une exception {\tt Absent}, que l'on
+définira. On utilisera la fonction prédéfinie \texttt{List.assoc} pour
+effectuer la recherche dans la liste des sous-arbres \texttt{suite}.}
+
+\smallskip
+
+\begin{verbatim}
+exception Absent
+
+let select lettre trie =
+  try
+    List.assoc lettre trie.suite
+  with Not_found -> raise Absent
+\end{verbatim}
+
+\smallskip
+
+\noindent
+\textbf{C.4}: \emph{Écrire une fonction \texttt{recherche} qui
+v\'erifie si une cha\^{\i}ne de caract\`eres est un mot dans un {\em
+trie} donn\'e. La fonction devra prendre un argument supplémentaire
+{\tt i}, qui représente la position dans le mot associée au n{\oe}ud
+courant.  Le i\ieme{} caractère d'une chaîne {\tt s} s'obtient en
+écrivant {\tt s.[i]}, le premier caractère étant numéroté $0$. La
+longueur de la chaîne {\tt s} s'écrit {\tt String.length s}. On
+emploiera la fonction \texttt{select}.}
+
+\smallskip
+
+\begin{verbatim}
+let rec recherche chaine index trie =
+  if index = String.length chaine 
+  then match trie.mot_complet with
+         Some _ -> true
+       | None -> false
+  else try
+         let fils = select chaine.[index] trie 
+         in recherche chaine (index+1) fils
+       with Absent -> false
+\end{verbatim}
+
+\smallskip
+
+\noindent
+\textbf{Exercice D:}
+
+\noindent
+\emph{On s'int\'eresse aux expressions bool\'eennes \'ecrites \`a
+l'aide des connecteurs \texttt{or} («~ou~» bool\'een), \texttt{and}
+(«~et~» bool\'een), \texttt{not} (n\'egation bool\'eenne), des
+constantes \texttt{true} et \texttt{false}, et de variables.  Par
+exemple: $(x ~or~ y) ~and~ not(x ~and~ y)$.}
+
+\smallskip
+
+\noindent
+\textbf{D.1}: \emph{D\'efinir un type Caml \texttt{bool\_exp} pour ces
+expressions.}
+
+\smallskip
+
+\begin{verbatim}
+type bool_exp = 
+  Or  of bool_exp * bool_exp
+| And of bool_exp * bool_exp
+| Not of bool_exp
+| Var of string
+| True
+| False
+\end{verbatim}
+
+\smallskip
+
+\noindent
+\textbf{D.2}: \emph{Écrire une fonction \texttt{eval} permettant
+d'\'evaluer de telles expressions. Cette fonction devra prendre en
+param\`etre un environnement associant les noms de variables à leur
+valeur.}
+
+\smallskip
+
+\begin{verbatim}
+let rec eval env = function
+  Or (e1, e2)  -> eval env e1 || eval env e2
+| And (e1, e2) -> eval env e1 && eval env e2
+| Not (e)      -> not (eval env e)
+| Var (s)      -> List.assoc s env
+| x            -> x
+\end{verbatim}
+
+\smallskip
+
+\noindent
+\textbf{D.3}: \emph{Les connecteurs bool\'eens consid\'er\'es
+satisfont en particulier les identit\'es}
+
+\begin{align*}
+not(a ~or~ b)  & = not(a) ~and~ not(b)\\
+not(a~ and~ b) & = not(a)~ or~ not(b)\\
+not(not(a))    & = a\\
+not(true)      & = false\\
+not(false)     & = true
+\end{align*}
+
+\noindent
+\emph{Ces identit\'es permettent de transformer toute expression
+bool\'eenne en une expression \'equivalente o\`u les n\'egations ne
+sont appliqu\'ees qu'\`a des variables. Par exemple, l'expression
+$not(x ~and~ (y~ or~ not(z)))$ peut \^etre transform\'ee en $not(x)
+~or~ not(y ~or ~not(z)))$ puis en $not(x) ~or~ (not(y)~ and
+~not(not(z))))$ et enfin en $not(x) ~or~ (not(y) ~and~ z)$.}
+
+\noindent
+\emph{Écrire une fonction Caml \texttt{normalise} qui r\'ealise cette
+transformation.}
+
+\smallskip
+
+\begin{verbatim}
+let rec normalise = function
+  Or (e1, e2)        -> Or (normalise e1, normalise e2)
+| And (e1, e2)       -> And (normalise e1, normalise e2)
+| Not (Or (e1, e2))  -> normalise (And (Not e1, Not e2))
+| Not (And (e1, e2)) -> normalise (Or (Not e1, Not e2))
+| Not (Not (e))      -> normalise (e)
+| Not (True)         -> False
+| Not (False)        -> True
+| x                  -> x
+\end{verbatim}
+
+\end{document}

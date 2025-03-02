@@ -1,0 +1,470 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\input{trace}
+
+\title{Correction du rattrapage de programmation fonctionnelle en
+ Objective Caml}
+\author{Christian Rinderknecht}
+\date{19 Juin 2003}
+
+\begin{document}
+
+\maketitle
+
+\smallskip
+
+Les exercices peuvent \^etre trait\'es de fa\c{c}on
+ind\'ependante. \textbf{Les documents et les calculatrices ne sont pas
+autorisés.}
+
+\smallskip
+
+
+\section{Lexiques}
+
+\emph{Un arbre peut repr\'esenter une collection de mots de sorte qu'il soit
+tr\`es efficace de v\'erifier si une s\'equence donn\'ee de
+caract\`eres est un mot valide ou pas. Dans ce type d'arbre, appel\'e
+un {\em{trie}}, les arcs ont une lettre associ\'ee, chaque n{\oe}ud
+possède une indication si la lettre de l'arc entrant est une fin de
+mot et la suite des mots partageant le m\^eme d\'ebut. La figure
+suivante montre le \emph{trie} des mots «~le~», «~les~», «~la~» et
+«~son~», l'astérisque marquant la fin d'un mot:}
+
+\begin{center}
+\includegraphics[scale=0.8]{trie.eps}
+\end{center}
+
+\noindent
+\emph{On utilisera le type Caml suivant pour implanter les
+{\em{tries}}}:
+
+\begin{verbatim}
+type trie = 
+  { mot_complet : string option; suite : (char * trie) list }
+\end{verbatim}
+
+\emph{Le type prédéfini \texttt{type 'a option = None | Some of 'a}
+sert à représenter une valeur éventuellement absente. Chaque n{\oe}ud
+d'un \emph{trie} contient les informations suivantes:}
+
+\begin{itemize}
+  \item \emph{Si le n{\oe}ud marque la fin d'un mot {\tt s} (ce qui
+        correspond aux n{\oe}uds étoilés de la figure), alors le champ
+        {\tt mot\_complet} contient {\tt Some s}, sinon ce champ
+        contient {\tt None}.}
+
+  \item \emph{Le champ {\tt suite} contient une liste qui associe les
+        caractères aux n{\oe}uds.}
+\end{itemize}
+
+\medskip
+
+\begin{itemize}
+
+  \item[\textbf{A.1}] \emph{Écrire la valeur Caml de type
+       \texttt{trie} correspondant à la figure ci-dessus.}
+
+       \smallskip
+
+{\small
+       \begin{verbatim}
+{mot_complet=None;
+ suite=[('l',{mot_complet=None;
+              suite=[('e',{mot_complet=Some "le";
+                           suite=[('s',{mot_complet=Some "les"; 
+                                        suite=[]})]});
+                     ('a',{mot_complet=Some "la";
+                           suite=[]})]}); 
+        ('s',{mot_complet=None;
+              suite=[('o', {mot_complet=None;
+                            suite=[('n', {mot_complet=Some "son";
+                                           suite=[]})]})]})]}
+       \end{verbatim}
+}
+       \smallskip
+
+  \item[\textbf{A.2}] \emph{Écrire une fonction \texttt{compte\_mots}
+       qui compte le nombre de mots dans un \emph{trie}.}
+
+       \smallskip
+
+\begin{verbatim}
+let rec compte_mots trie =
+  (match trie.mot_complet with Some _ -> 1 | None -> 0) 
++ itérateur 0 trie.suite
+
+and itérateur compte_courant = function 
+  (_, trie)::reste -> 
+    itérateur (compte_courant + compte_mots trie) reste
+| [] -> compte_courant
+\end{verbatim}
+
+      \smallskip
+
+  \item[\textbf{A.3}] \emph{Écrire une fonction \texttt{select} qui
+       prend en argument une lettre et un \emph{trie}, et renvoie le
+       \emph{trie} correspondant aux mots commençant par cette
+       lettre. Si ce \emph{trie} n'existe pas (parce qu'aucun mot ne
+       commence par cette lettre), la fonction devra lancer une
+       exception {\tt Absent}, que l'on définira. On utilisera la
+       fonction prédéfinie \texttt{List.assoc} : $\forall \alpha,
+       \beta.\alpha \rightarrow (\alpha \times \beta) \, \textsf{list}
+       \rightarrow \beta$ pour effectuer la recherche dans la liste
+       des sous-arbres \texttt{suite}.}
+
+       \medskip
+
+       \begin{verbatim}
+exception Absent
+
+let select lettre trie =
+  try
+    List.assoc lettre trie.suite
+  with Not_found -> raise Absent
+       \end{verbatim}
+
+       \smallskip
+ 
+  \item[\textbf{A.4}] \emph{Écrire une fonction \texttt{appartient}
+       qui v\'erifie si une cha\^{\i}ne de caract\`eres est un mot
+       dans un {\em trie} donn\'e. La fonction devra prendre un
+       argument supplémentaire {\tt i}, qui représente la position
+       dans le mot associée au n{\oe}ud courant.  Le i\ieme{}
+       caractère d'une chaîne {\tt s} s'obtient en écrivant {\tt
+       s.[i]}, le premier caractère étant numéroté $0$. La longueur de
+       la chaîne {\tt s} s'écrit {\tt String.length s}. On emploiera
+       la fonction \texttt{select}.}
+
+       \smallskip
+
+       \begin{verbatim}
+let rec appartient chaine index trie =
+  if index = String.length chaine 
+  then match trie.mot_complet with
+         Some _ -> true
+       | None -> false
+  else try
+         let fils = select chaine.[index] trie 
+         in appartient chaine (index+1) fils
+       with Absent -> false
+       \end{verbatim}
+
+       \smallskip
+
+  \item[\textbf{A.5}] \emph{Application: vérificateur orthographique
+       élémentaire. Écrire une fonction \texttt{vérifie} qui prend une
+       liste de mots, un lexique et retourne la liste des mots du
+       texte n'apparaissant pas dans le lexique.}
+
+       \smallskip
+
+       \begin{verbatim}
+let rec vérifie lexique = function
+  [] -> []
+| mot::reste ->
+    if   recherche mot 0 lexique 
+    then vérifie lexique reste
+    else mot::(vérifie lexique reste)
+       \end{verbatim}
+
+      \smallskip
+
+  \item[\textbf{A.6}] \emph{On désire écrire une nouvelle fonction de
+       recherche qui donne une signification spéciale au caract\`ere
+       point (\texttt{.}). Ce caractère se comportera comme un
+       \emph{joker} pouvant remplacer n'importe quelle lettre. Écrire
+       une fonction qui prend en entr\'ee un lexique et un mot pouvant
+       contenir le \emph{joker}, et retourne la liste de tous les mots
+       correspondant.}
+ 
+       \medskip
+
+       \textbf{À FAIRE.}
+
+  \item[\textbf{A.7}] \emph{Écrire une fonction qui ajoute un mot à un
+       \emph{trie} (c'est-à-dire qu'elle renvoie un nouveau
+       \emph{trie} contenant en plus ce mot).}
+
+       \medskip
+
+       \textbf{À FAIRE.}
+
+\end{itemize}
+
+
+\section{Tri par fusion (\emph{Merge sort})}
+
+\emph{On se propose de programmer un algorithme de tri sur les listes,
+dit \emph{tri par fusion}. L'idée est de commencer par programmer
+l'opération de fusion, qui prend deux listes déjà triées et en fait
+une seule liste triée.}
+
+\emph{Ensuite, on transforme notre liste à trier, contenant $n$
+éléments, en $n$ listes à un élément. Puis on fusionne ces listes deux
+par deux, ce qui nous donne $n/2$ listes triées à deux éléments, plus
+éventuellement une liste à un élément (si $n$ est impair). On les
+fusionne à nouveau deux par deux, etc. jusqu'à ce qu'il ne reste plus
+qu'une seule liste, qui est alors triée.}
+
+\emph{Il est intéressant de noter que le type des éléments manipulés
+n'a pas d'importance, parce que la fonction de comparaison
+\texttt{ordre} sera polymorphe: elle aura le type
+$\forall\alpha.\alpha\rightarrow\alpha\rightarrow\textsf{bool}$.  Cela
+permet d'utiliser la même fonction \texttt{mergesort} pour trier des
+listes d'entiers, de flottants, de listes, etc. sans limitation. De
+plus, cela permettra de trier par ordre croissant ou décroissant,
+selon l'implantation de la fonction \texttt{ordre}.}
+
+\begin{itemize}
+
+  \item[\textbf{B.1}] \emph{\'{E}crire une fonction
+      \texttt{singletons} qui prend en argument une liste \texttt{[x1;
+      ...; xn]} et renvoie la liste des listes à un élément
+      \texttt{[[x1]; ...; [xn]]}. On pourra utiliser {\tt List.map}:
+      $\forall \alpha,\beta.(\alpha \rightarrow \beta) \rightarrow
+      \alpha \, \textsf{list} \rightarrow \beta \, \textsf{list}$ qui
+      calcule la liste des images par une fonction donnée d'une liste
+      d'antécédents donnés.}
+
+      \smallskip
+
+      \begin{verbatim}
+let singletons l = List.map (fun x -> [x]) l
+      \end{verbatim}
+
+      \smallskip
+
+  \item[\textbf{B.2}] \emph{\'{E}crire une fonction {\tt merge} qui
+      prend en argument la fonction de comparaison \texttt{ordre},
+      deux listes triées et les fusionne en une seule liste triée.}
+
+      \smallskip
+
+      \begin{verbatim}
+let rec merge ordre l1 l2 =
+  match (l1, l2) with
+    ([], _) -> l2
+  | (_, []) -> l1
+  | (x1 :: reste1, x2 :: reste2) ->
+      if ordre x1 x2 
+      then x1 :: (merge ordre reste1 l2)
+      else x2 :: (merge ordre l1 reste2)
+      \end{verbatim}
+
+      On réalise un filtrage sur la paire \verb+(l1, l2)+ (au lieu de
+      faire un filtrage sur {\tt l1} suivi d'un autre sur {\tt l2})
+      pour plus de concision. Notons que les deux premières branches
+      du {\tt match} se recouvrent dans le cas \verb+([], [])+, ce qui
+      n'est nullement gênant; la première s'appliquera
+      alors. Remarquons que dans le cas où {\tt x1} est inférieur à
+      {\tt x2}, il serait incorrect de renvoyer \texttt{x1} \verb+::+
+      \texttt{x2} \verb+::+ \texttt{(merge ordre reste1 reste2)}.  En
+      effet, {\tt reste1} peut très bien contenir d'autres éléments
+      compris entre {\tt x1} et {\tt x2}.
+
+      \smallskip
+
+  \item[\textbf{B.3}] \emph{\'{E}crire une fonction {\tt merge2à2} qui
+      prend en argument la fonction de comparaison \texttt{ordre}, une
+      liste de listes \texttt{[l1; l2; l3; l4; ...]}  et renvoie une
+      liste où les listes voisines ont été fusionnées, i.e.
+      \texttt{[merge ordre l1 l2; merge ordre l3 l4; ...]}. On prendra
+      garde à traiter correctement le cas où la liste d'entrée est de
+      longueur impaire.}
+
+      \smallskip
+
+\begin{verbatim}
+let rec merge2à2 ordre = function
+  l1 :: l2 :: reste -> 
+   (merge ordre l1 l2) :: (merge2à2 ordre reste)
+| ll -> ll
+\end{verbatim}
+
+      La première ligne du filtrage s'applique lorsque la liste passée
+      à \verb+merge2à2+ contient au moins deux éléments. La seconde
+      ligne s'applique dans tous les autres cas (parce que {\tt ll}
+      est un nom de variable), c'est-à-dire lorsque la liste contient
+      au plus $1$ élément.
+
+      \smallskip
+
+  \item[\textbf{B.4}] \emph{En combinant les fonctions précédentes,
+      écrire une fonction {\tt mergesort} qui prend en argument la
+      fonction de comparaison \texttt{ordre}, une liste et la
+      trie. Pour cela, on crée la liste des listes à un élément, puis
+      on lui applique {\tt merge2à2} itérativement jusqu'à obtenir une
+      liste de la forme \texttt{[l]}. On renvoie alors \texttt{l}.}
+
+      \smallskip
+
+      \begin{verbatim}
+let auplus1 = function
+  (_ :: _ :: _) -> false
+| _ -> true
+      \end{verbatim}
+
+      Cette fonction indique si la liste qu'on lui passe contient au
+      plus $1$ élément. Le principe est le même que pour
+      \verb+merge2à2+, mais comme on n'a pas besoin d'utiliser les
+      éléments, on utilise \verb+_+ au lieu de variables.
+
+      \smallskip
+
+{\small
+      \begin{verbatim}
+let rec répète fusion prédicat l =
+  if prédicat (l)
+  then l
+  else répète fusion prédicat (fusion l)
+
+let mergesort ordre l =
+  let résultat = répète (merge2à2 ordre) auplus1 (singletons l) 
+in match résultat with
+     [] -> []
+   | l :: _ -> l
+      \end{verbatim}
+}
+
+      \smallskip
+
+      On aurait pu aussi écrire (déconseillé aux âmes sensibles):
+
+      \smallskip
+
+{\small
+      \begin{verbatim}
+let compose f g x = f (g (x))
+
+let mergesort ordre = 
+  compose List.flatten 
+          (compose (répète (merge2à2 ordre) auplus1) singletons)
+      \end{verbatim}
+}
+
+      \smallskip
+
+      Ici, l'application partielle \verb+(merge2à2 ordre)+ donne une
+      fonction de type $\forall\alpha.\alpha \, \textsf{list list}
+      \rightarrow \alpha \, \textsf{list list}$, qui constitue une 
+      étape de fusion.  On utilise ensuite la fonction {\tt répète}
+      pour effectuer cette étape autant de fois que nécessaire. Plus
+      précisément, {\tt répète} attend trois arguments:
+
+      \begin{itemize}
+
+        \item l'action à répéter, ici \verb+(merge2à2 ordre)+;
+
+        \item la condition d'arrêt, ici le prédicat {\tt auplus1}, ce
+              qui signifie que l'on s'arrêtera lorsque la liste de
+              listes ne contiendra plus qu'un argument;
+
+        \item le point de départ, à savoir \verb+(singletons l)+, la
+              liste des listes à un élément.
+
+      \end{itemize}
+
+      Lorsque {\tt répète} s'arrête, le résultat qu'elle renvoie
+      vérifie nécessairement le prédicat {\tt auplus1}; il s'agit
+      d'une liste de $0$ ou $1$ listes triées. On utilise un dernier
+      {\tt match} pour traiter ces deux cas.  Dans la deuxième ligne,
+      on sait que la liste a exactement $1$ élément; le motif \verb+_+
+      filtrera en fait toujours une liste vide.
+
+     \smallskip
+
+  \item[\textbf{B.5}] \emph{Exprimer le nombre maximal de comparaisons
+      nécessité par chacune des fonctions ci-dessus, en fonction de la
+      taille de son argument. En déduire que le tri d'une liste de
+      taille $n$ demande un temps $O(n \cdot \log_2 n)$.}
+
+      \smallskip
+  
+      Nous pouvons maintenant compter le nombre d'opérations
+      effectuées par chacune des fonctions ci-dessus. Lorsque la
+      fonction {\tt merge} se rappelle récursivement, elle a effectué
+      une comparaison, et les listes passées à l'appel récursif
+      contiennent (au total) un élément de moins. Par ailleurs, {\tt
+      merge} s'arrête lorsque l'une des deux listes est vide. Par
+      conséquent, \texttt{merge ordre l1 l2} réalise au plus $n_1+n_2$
+      comparaisons, où $n_i$ est la taille de {\tt li}.
+
+      Ceci étant établi, on vérifie que
+      \texttt{merge2à2 ordre [l1; l2; ...]} effectue au plus $n_1 +
+      n_2 + \ldots$ comparaisons. C'est-à-dire au plus $n$
+      comparaisons, si $n$ est la taille de la liste que nous sommes
+      chargés de trier.
+
+      Pour savoir combien \texttt{mergesort ordre l} effectue de
+      comparaisons, il faut déterminer combien de fois \verb+merge2à2+
+      est appelée. Or, à chaque appel, elle divise par
+      deux\footnote{En fait, si {\tt ll} est de taille $n$, alors {\tt
+      merge2à2 ordre ll} est de taille $n/2+1$ au plus. Ceci ne change
+      pas le principe de la preuve.}  le nombre d'éléments de la liste
+      de listes. Si celle-ci est au départ de taille $n$, le nombre
+      d'étapes effectuées est donc au plus $\log_2 n$.
+
+      Des deux paragraphes précédents, on déduit que le temps
+      nécessaire à \texttt{merge\-sort} pour trier une liste de taille
+      $n$ est au pire de l'ordre de $n \cdot\log_2 n$, ce que l'on
+      écrit $O(n \cdot\log_2 n)$.
+
+\end{itemize}
+
+
+\section{Tri rapide (\emph{Quicksort})}
+
+\begin{itemize}
+
+  \item[\textbf{C.1}] \emph{\'{E}crire une fonction {\tt partage} qui
+     prend en argument un prédicat {\tt p} et une liste {\tt l} et
+     renvoie un couple formé de la liste des éléments de {\tt l} qui
+     vérifient {\tt p} et de la liste de ceux qui ne le vérifient
+     pas.}
+
+{\small
+\begin{verbatim}
+let rec partage p = function
+  [] -> ([], [])
+| x :: l ->
+    let (oui, non) = partage p l 
+    in if (p x) then (x :: oui, non)
+       else (oui, x :: non)
+\end{verbatim}
+}
+
+  \item[\textbf{C.2}] \emph{On choisit un élément {\tt p} de la liste,
+     appelé \emph{pivot}. On sépare ensuite la liste en trois parties:
+     le pivot {\tt p}, la liste {\tt l1} des éléments plus petits que
+     {\tt p}, et la liste {\tt l2} des éléments plus grands que, ou
+     égaux à {\tt p}. (On peut utiliser la fonction {\tt partage}
+     écrite précédemment.)  La liste triée est alors égale à la
+     concaténation de \texttt{l1} triée, {\tt p} et \texttt{l2}
+     triée.}
+
+
+
+{\small
+ \begin{verbatim}
+let rec quicksort = function
+  [] -> []
+| pivot::reste -> 
+    let (petits,grands) = partage (fun x -> x<pivot) reste 
+    in (quicksort petits) @ (pivot::(quicksort grands))
+ \end{verbatim}
+}
+
+
+\end{itemize}
+
+
+\end{document}

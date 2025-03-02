@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>R&eacute;sum&eacute; du cours</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h4>R&eacute;sum&eacute;</h4>
+
+<p>Nous proposons dans ce cours une introduction &agrave; la
+compilation des langages de programmation, en g&eacute;n&eacute;ral,
+et &agrave; l'interpr&eacute;tation des langages fonctionnels, en
+particulier. Ce choix est justifi&eacute;, croyons-nous, par le fait
+que l'&eacute;tude d'un tr&egrave;s petit noyau d'un langage
+fonctionnel (en l'occurrence Objective Caml) permet de comprendre les
+concepts en jeu dans l'interpr&eacute;tation de langages non
+fonctionnels tout en ayant la possibilit&eacute; de manipuler
+formellement (c'est-&agrave;-dire &agrave; l'aide de notions de
+logique formelle) les concepts fondamentaux. Un effet secondaire est
+que l'explication tr&egrave;s rigoureuse de ces concepts
+&eacute;claire r&eacute;troactivement le cours de programmation
+fonctionnelle en Objective Caml et illustre donc ironiquement (comment
+faire autrement?) le concept de <em>bootstrap</em>
+(auto-r&eacute;f&eacute;rence) en compilation.</p>
+
+<p>Au fur et &agrave; mesure, nous &eacute;tendons notre petit noyau
+purement fonctionnel par de nouvelles constructions dont la
+s&eacute;mantique s'appuie pr&eacute;cis&eacute;ment sur celle du
+noyau, dans le but de montrer que tr&egrave;s peu de concepts
+fondamentaux sont en r&eacute;alit&eacute; n&eacute;cessaires &agrave;
+la d&eacute;finition d'un langage de programmation.</p>
+
+<p>Plus ambitieusement, nous insistons sur la s&eacute;mantique
+formelle des langages de programmation dans l'espoir que l'on
+comprenne qu'elle est espace de libert&eacute; d'expression, &agrave;
+condition qu'on en ma&icirc;trise le langage (qui est donc un
+m&eacute;ta-langage car il sert &agrave; d&eacute;crire les langages
+de programmation) mais aussi qu'elle permet d'aborder en confiance de
+nouveaux langages avec des rep&egrave;res conceptuels durables (ce qui
+est un luxe de nos jours).</p>
+
+Les points que nous abordons sont les suivants:
+<ul>
+
+  <li> &Eacute;l&eacute;ments de th&eacute;orie des langages formels,
+  langages r&eacute;guliers, expressions r&eacute;guli&egrave;res,
+  automates finis et application &agrave; l'analyse lexicale et
+  &agrave; la production d'analyseurs lexicaux &agrave; l'aide de
+  <tt>ocamllex</tt>.</li>
+
+  <li> Grammaires alg&eacute;briques (dites BNF), grammaires
+  ambigu&euml;s, grammaires LL(1), syntaxe concr&egrave;te, syntaxe
+  abstraite et applications &agrave; l'analyse syntaxique descendante
+  ainsi qu'&agrave; la production d'analyseurs syntaxiques &agrave;
+  l'aide de JavaCC.</li>
+
+  <li> S&eacute;mantique op&eacute;rationnelle d'un noyau purement
+  fonctionnel de Objective Caml, variables libres d'une expression,
+  variables et m&eacute;ta-variables, s&eacute;mantique et traitement
+  des erreurs d'ex&eacute;cution, d&eacute;terminisme, ajout de la
+  notion impure de variable mutable (c'est-&agrave;-dire celle des
+  langages imp&eacute;ratifs) et sa s&eacute;mantique formelle
+  (<em>s'il y a le temps</em>), probl&egrave;mes
+  ind&eacute;cidables.</li>
+     
+  <li> Notions de typage, syst&egrave;mes de r&egrave;gles
+  d'inf&eacute;rence et application &agrave; la d&eacute;finition de
+  syst&egrave;mes de type, inf&eacute;rence de types pour notre noyau
+  purement fonctionnel. (<em>S'il y a le temps.</em>)</li>
+
+</ul>
+
+<p>Les travaux pratiques consistent essentiellement en la
+r&eacute;alisation pas &agrave; pas de l'&eacute;valuateur d'un
+interpr&egrave;te (c-&agrave;-d. une implantation de la
+s&eacute;mantique op&eacute;rationnelle d&eacute;finie en cours) pour
+ce noyau d'Objective Caml <em>en</em> Objective Caml
+(<em>bootstrap</em>), mais aussi, pour la partie consacr&eacute;e
+&agrave; l'analyse syntaxique, l'apprentissage et l'usage du
+g&eacute;n&eacute;rateur d'analyseurs lexico-syntaxiques Java
+nomm&eacute; JavaCC.</p>
+
+<h4>Bibliographie</h4>
+
+<p>Aho, Sethi, Ullman, <em>Compilers, principles, techniques and
+tools</em>, Addison-Wesley, 1985.<br/> Emmanuel Chailloux, Pascal
+Manoury, and Bruno Pagano, <em>D&eacute;veloppement d'applications
+avec Objective Caml</em>, O'Reilly & Associates Inc., Avril 2000.</p>
+
+<br/>
+
+<h4>&Eacute;valuation</h4>
+
+<p>Examen partiel &eacute;crit (1/3), examen final &eacute;crit
+(2/3).</p>
+
+<h4>Ressources en ligne</h4>
+
+<ul>
+  <li><a
+      href="http://www.pps.jussieu.fr/Livres/ora/DA-OCAML/index.html">D&eacute;veloppement
+      d'applications avec Objective Caml</a> (Emmanuel Chailloux,
+      Pascal Manoury, Bruno Pagano)</li>
+
+  <li><a href="http://caml.inria.fr/">Le langage Objective Caml</a></li>
+
+  <li>Le g&eacute;n&eacute;rateur d'analyseurs lexico-syntaxiques en
+      Java: <a href="https://javacc.dev.java.net/">JavaCC</a></li>
+
+</ul>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+
+</html>

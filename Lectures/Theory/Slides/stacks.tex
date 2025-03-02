@@ -1,0 +1,591 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks}
+
+Until now, we studied basic arithmetic and boolean expressions by
+means of rewrite systems, which provided the formal definition of their
+evaluation.
+
+\bigskip
+
+In order to check the expressive power of rewrite systems, let us show
+how we can use them to define precisely a \textbf{data structure}
+which is very useful in programming: the \textbf{stack}.
+
+\bigskip
+
+This approach allows us to define and understand the concept of stack
+without referring to features like \textbf{pointers}, which depend on
+specific \textbf{computer architectures} or \textbf{operating system
+ libraries} etc.
+
+\bigskip
+
+For instance, in the case of \C, it is not possible to study stacks
+without the notions of \textbf{memory}, \textbf{array} or
+\textbf{memory allocation and deallocation} (\texttt{malloc} and
+\texttt{free}), integer or \textbf{pointer arithmetic} etc.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/From the analogy to the formal notation}
+
+A stack is similar to a box which is open on the top and that contains
+a pile of paper sheets: we can only add a new sheet on its top (this
+is called \textbf{to push}) and remove one on its top (this is called
+\textbf{to pop}).
+
+\bigskip
+
+How do we model the fact that the stack has changed after a pop or a
+push? The simplest is to imagine that we rewrite the operation on a
+given stack into a (modified) stack.
+
+\bigskip
+
+Also, we do not want to specify actually the nature of the elements in
+the stack, in order to be general.
+
+\bigskip
+
+Items in stacks can be of any kind, so we do not define them:
+\emph{items are independent from the concept of stack.}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Examples}
+
+Let us define the ``stack values'':
+\begin{itemize}
+
+  \item let us note \proc{Empty} the empty stack;
+
+  \item let us note \(\proc{Push} (i, s)\) the stack resulting of
+    pushing item \(i\) onto the stack (value) \(s\).
+
+\end{itemize}
+
+\bigskip
+
+For example:
+\begin{itemize}
+
+  \item \proc{Empty} is the empty stack;
+
+  \item \(\proc{Push} (i, \proc{Empty})\) is the stack containing only
+    item \(i\);
+
+  \item \(\proc{Push} (i_1, \proc{Push} (i_2, \proc{Empty}))\) is the
+    stack which only contains item \(i_1\) on the top and item \(i_2\)
+    below (the bottom).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Stacks/Comparison with C}
+
+In \C, we need the standard library. Then we need to define the stack
+data structure using pointers. Since it is recursive, we need a trick
+to declare it:
+{\small
+\begin{verbatim}
+#include<stdlib.h>
+typedef struct stack_ stack;
+struct stack_ { int item; stack* next; };
+\end{verbatim}
+}
+Then, we need to take care of deallocating a stack:
+{\small
+\begin{verbatim}
+void free_stack (stack* s) {
+  if (s != NULL) { stack* sub_stack = (*s).next;
+                   free(s);
+                   free_stack(sub_stack);
+                 }
+}
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Stacks/Comparison with C (cont)}
+
+The definition of \proc{Push} in \C must take care of allocating
+memory and checking whether this implies a memory overflow. If so, we
+must exit but not forget to deallocate the previous stack, if not
+\proc{Empty}. Note the type of \verb+push+: parameter \verb|s| must be
+a pointer to a pointer because traditional \C does not include
+reference passing. Also, the type of the items must be given
+(\verb|int|).
+{\small
+\begin{verbatim}
+void push (stack** s, int item) {
+  stack* new_stack = malloc(sizeof(stack));
+  if (new_stack == NULL) { if (s != NULL) free_stack(*s);
+                           exit (2); }
+  (*new_stack).item = item;
+  (*new_stack).next = *s;
+  *s = new_stack;
+}
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Stacks/Comparison with C (cont)}
+
+On this simple example, it is easy to see how the concept of stack is
+buried in many important details in \C: memory management, address of
+pointers as arguments, tricky recursive type definition, fixed type
+for the items in the stack.
+
+\bigskip
+
+The approach with rewrite systems makes clear what the concept of
+stack is and what it is not necessary. In particular, our formalism
+does not make room for the concept of in-place modification: there is
+not even he concept of memory. Contrast this to the \C implementation
+of \verb|push|, which modifies the \emph{given} stack in memory.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Comparison with C (cont)}
+
+Also, in \C we must give the type of the elements in the stack, even
+if the function does not use them: this is because the pointer
+arithmetic needs to know the size of each cell.
+
+\bigskip
+
+Then, once we understand what it is, we can more safely
+translate our understanding into programs because we already have in
+mind what we want to implement, and we can focus on the specific
+features of the language.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Discussion}
+
+Until now, there are only stacks (or ``stack values'') but no
+\emph{computable} operation on them.
+
+\bigskip
+
+Operation \proc{Push} is not computable, i.e., there is no rewrite rule
+for it: \proc{Push} is only used to define what a new stack is, given
+another and an item to push on top of it.
+
+\bigskip
+
+This is different from the operator \(\times\) on integers, because
+there were rewrite rules like \(2 \times 5 \rightarrow 10\). There are
+no such rules for \proc{Push}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Discussion (cont)}
+
+In other words, \proc{Empty} and \proc{Push} define the concept of
+stack, they are \emph{values}.
+
+\bigskip
+
+But how about popping an item from the stack? This is should be part
+of the concept too, because an item can only be popped from the top of
+a stack. Should not this be part of the definition of the concept of
+stack?
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Popping}
+
+It is true that the way items are taken from a stack is part of the
+definition of the concept of stack, but in an operational way, not
+ontological. 
+
+\bigskip
+
+In other words, popping, while participating to the definition of what
+a stack is, actually de-structures a stack. Therefore, popping can be
+defined in terms of a sub-stack, i.e., it can be defined as a
+computable operation.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Popping (cont)}
+
+Actually, this is very easy: let us take \proc{Pop} as the exact
+inverse function of \proc{Push}:
+\begin{mathpar}
+\inferrule
+{}
+{\proc{Pop} (\proc{Push} (i, s)) \rightarrow s}
+\quad\rname{\TirName{Pop}}
+\end{mathpar}
+Note that there is no rewrite rule for expression \(\proc{Pop}
+(\proc{Empty})\) because there is no way to pop an item from an empty
+stack.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Stacks/Popping in \C}
+
+In contrast, in \C, the \proc{Pop} function would we implemented as
+follows. Again, the programmer must take care of passing the address
+of the pointer to the top of the stack, \verb|s|. In case of error, we
+return an error code, so the popped element, if any, must be an
+argument whose address is passed (\verb|top|). Some errors are
+improbable, like \verb|s| being \verb|NULL|, but mandatory in
+general.
+{\small
+\begin{verbatim}
+int pop (stack** s, int* top) {
+  if (s != NULL)
+    if (*s != NULL) { *top = (**s).item;
+                      *s = (**s).next;
+                      return 0; }
+    return 2;
+  return 1;
+}
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Stacks/Popping in \C (cont)}
+
+Again, the concept of popping is buried in too many low-level details,
+like handling three error cases, even if improbable. It is not obvious
+at all, just by looking at the code, that \proc{Pop} is actually
+exactly the inverse function of \proc{Push}.
+
+\bigskip
+
+Note also that the \C implementation \verb|pop| modifies the given
+stack, because it would be expensive to make a copy of it. On the
+other hand, modifying an argument, called \textbf{side-effect}, is
+always risky because the caller must be aware of it.
+
+\bigskip
+
+There is no such notion of side-effect in our rewrite systems: it is
+not necessary in order to understand what a stack actually is.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Stacks/Top}
+
+Now let us consider a operator which is similar to popping. The
+function \proc{Pop} returns the stack that remains when we ignore the
+top element. The function \proc{Top} instead returns this top element
+and ignores the remaining stack. This is fairly simple to define:
+\begin{mathpar}
+\inferrule
+{}
+{\proc{Top} (\proc{Push} (x, s)) \rightarrow x}
+\quad\rname{\TirName{Top}}
+\end{mathpar}
+Just like \proc{Pop}, it does not apply to empty stacks. In \C, we do
+not need a side-effect on the stack (only on the item):
+{\small
+\begin{verbatim}
+int top (stack* s, int* item) {
+  if (s == NULL) return 1;
+  *item=(*s).item;
+  return 0;}
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Appending}
+
+Let expression \(\proc{Append} (s_1, s_2)\) represent the
+stack made of stack \(s_1\) on top of stack \(s_2\).
+
+\bigskip
+
+Let us express exactly what we mean using a rewrite system defined by
+inference rules.
+\begin{align*}
+\proc{Append} (\proc{Empty}, \proc{Empty}) 
+  & \rightarrow \proc{Empty}\\
+\proc{Append} (\proc{Empty}, \proc{Push} (e, s)
+  & \rightarrow \proc{Push} (e, s)\\
+\proc{Append} (\proc{Push} (e, s), \proc{Empty}) 
+  & \rightarrow \proc{Push} (e, s)\\
+\proc{Append} (\proc{Push} (e_1, s_1), \proc{Push} (e_2, s_2))
+  & \rightarrow
+\end{align*}
+\(\proc{Push}(e_1,\proc{Append}(s_1,\proc{Push}(e_2,s_2)))\)
+
+Let us explain how we find theses rewrite rules.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Appending (cont)}
+
+The first step consists in understanding that we must find rules of
+the shape
+\[
+\proc{Append} (s_1, s_2) \rightarrow \cdots
+\]
+Second, we understand that \(s_1\) and \(s_2\) are stacks. We already
+know that stacks are built by \proc{Empty} or \proc{Push}. Thus, we
+replace each stack by all of its possible basic values: \proc{Empty}
+and \(\proc{Push} (\dots, \dots)\). This leads to four cases:
+\begin{align*}
+  \proc{Append} (\proc{Empty}, \proc{Empty})
+& \rightarrow \cdots\\
+  \proc{Append} (\proc{Empty}, \proc{Push} (e, s))
+& \rightarrow \cdots\\
+  \proc{Append} (\proc{Push} (e, s), \proc{Empty})
+& \rightarrow \cdots\\
+  \proc{Append} (\proc{Push} (e_1, s_1), \proc{Push} (e_2, s_2))
+& \rightarrow \cdots
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Appending (cont)}
+
+Now we need to think about the interpretation of each case. An analogy
+and a picture is helpful. In the first case, we want append two empty
+stacks. It is obvious that the resulting stack will be empty too:
+\[
+  \proc{Append} (\proc{Empty}, \proc{Empty}) \rightarrow \proc{Empty}
+\]
+In the second and third case, we append an empty stack and a non-empty
+one. The order in which we append them is irrelevant and the result is
+always the non-empty one:
+\begin{align*}
+  \proc{Append} (\proc{Empty}, \proc{Push} (e, s))
+& \rightarrow \proc{Push} (e, s)\\
+  \proc{Append} (\proc{Push} (e, s), \proc{Empty})
+& \rightarrow \proc{Push} (e, s)
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Appending (cont)}
+
+The last case is the more difficult one: we append two non-empty
+stacks. The top item of the stack to be appended on top of the other is
+\(e_1\). This item will also be on the top of the resulting
+stack. That is why we expect something like
+\[
+  \proc{Append} (\proc{Push} (e_1, s_1), \proc{Push} (e_2, s_2))
+ \rightarrow \proc{Push} (e_1, \dots)
+\]
+Now, the stack below \(e_1\) in the result can be computed by
+appending \(s_1\) to the second stack, \(\proc{Push} (e_2, s_2)\):
+\begin{multline*}
+\proc{Append} (\proc{Push} (e_1, s_1), \proc{Push} (e_2, s_2))
+\rightarrow\\ \proc{Push} 
+(e_1, \overline{\proc{Append} (s_1, \proc{Push} (e_2, s_2))})
+\end{multline*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Appending (cont)}
+
+By looking carefully to the rewrite rules, we can devise a simpler
+one.
+
+\bigskip
+
+Indeed, in the case of one of the stacks is empty, the result will
+always be the other stack. Thus, we only need to check if the first or
+the second stack is empty:
+\begin{align*}
+  \proc{Append} (\proc{Empty}, s) & \rightarrow s\\
+  \proc{Append} (s, \proc{Empty}) & \rightarrow s
+\end{align*}
+How can we check that this is correct? 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Appending (cont)}
+
+Remember that \(s\) can be replaced by any stack, so let us try with
+the two basic stacks:
+\begin{align*}
+  \proc{Append} (\proc{Empty}, \proc{Empty}) & \rightarrow s\\
+  \proc{Append} (\proc{Empty}, \proc{Push} (e, s)) & \rightarrow s\\
+  \proc{Append} (\proc{Empty}, \proc{Empty}) & \rightarrow s\\
+  \proc{Append} (\proc{Push} (e, s), \proc{Empty}) & \rightarrow s
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Appending (cont)}
+
+The third rule is redundant. If we remove it, we find the original
+system. Thus both systems are equivalent.
+
+\bigskip
+
+There is a different, though, but not with respect of the rewrites
+themselves (both systems are sound) but about the \emph{strategy}: the
+original system was deterministic while the second is
+non-deterministic: in the case when the two stacks are empty, two
+rules are possible.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Appending (cont)}
+
+We can simplify further. The last rule shows that during the rewrite,
+the sub-expression \(\proc{Push} (e_2, s_2)\) is invariant, i.e., that
+it is simply copied, without none of its sub-expressions (\(e_2\) and
+\(s_2\)) being used some place else in the result.
+
+This shows that the last rule does not care whether the second stack,
+i.e., the one that will be below the first one, is empty or not: it is
+just copied. Therefore we can simply write
+\[
+\proc{Append} (\proc{Push} (e_1, s_1), s) \rightarrow \proc{Push}
+(e_1, \proc{Append} (s_1, s))
+\]
+We can rename \(s\) into \(s_2\), to make it more regular:
+\[
+\proc{Append} (\proc{Push} (e_1, s_1), s_2) \rightarrow \proc{Push}
+(e_1, \proc{Append} (s_1, s_2))
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Appending (cont)}
+
+Finally:
+\begin{align*}
+  \proc{Append} (\proc{Empty}, s) 
+& \rightarrow s 
+& \rname{\TirName{Append}_1}\\
+  \proc{Append} (s, \proc{Empty})
+& \rightarrow s
+& \rname{\TirName{Append}_2}\\
+  \proc{Append} (\proc{Push} (e_1, s_1), s_2) 
+& \rightarrow \proc{Push} (e_1, \proc{Append} (s_1, s_2))
+& \rname{\TirName{Append}_3}
+\end{align*}
+The new last rule adds to the non-determinism. Let
+\(\sigma_1(s) = \proc{Push} (e_1, s_1)\) and \(\sigma_2(s_2) =
+\proc{Empty}\):
+\begin{align*}
+\proc{Append} (\underline{\proc{Push} (e_1, s_1)}, \proc{Empty}) 
+& \rightarrow \overline{\proc{Push} (e_1, s_1)}
+& \!\!\sigma_1\rname{\TirName{Append}_2}
+\end{align*}
+\begin{multline*}
+\proc{Append} (\proc{Push} (e_1, s_1), \underline{\proc{Empty}}) 
+ \rightarrow\\
+\proc{Push} (e_1, \underline{\proc{Append} (s_1,\overline{\proc{Empty}})}) 
+ \!\!\sigma_2\rname{\TirName{Append}_3}
+\end{multline*}
+%% & \rightarrow \proc{Push} (e_1, \overline{s_1})
+%% & \sigma_3\rname{\TirName{Append}_3}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Stacks/Appending (cont)}
+
+The only difference is the \textbf{complexity}, that is, in this
+framework of rewriting systems, the number of steps needed to reach
+the result. 
+
+\bigskip
+
+With rule \(\TirName{Append}_2\), if the second stack is empty,
+we can conclude in one step. 
+
+\bigskip
+
+If rule \(\TirName{Append}_3\) is successively preferred, we have to
+traverse all the elements of the first stack before terminating.
+
+\bigskip
+
+\textbf{Exercise.} Implement in \C the \proc{Append} function
+\begin{enumerate}
+
+  \item using loops;
+
+  \item without loops.
+
+\end{enumerate}
+
+\end{frame}

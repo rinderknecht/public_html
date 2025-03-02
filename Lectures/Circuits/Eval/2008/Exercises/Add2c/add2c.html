@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Adding two 2-complement binary numbers</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Adding two 2-complement binary numbers</h2>
+
+<p><strong>Question 1.</strong> The purpose of this exercise is to
+  write a C program which reads on the command-line two strings
+  representing two integers in 2-complement binary form and adds them,
+  then outputs the result. The two numbers must have equal number of
+  bits and overflows and underflows must be reported.
+</p>
+
+<strong>Hints.</strong>
+<ul>
+ 
+  <li>Take the addition of two binary numbers and stop one iteration
+  before the end, that is, the addition of the leftmost bits is done
+  after the loop. This way gives the possibility of tracking the last
+  two values of the carry, which are needed to detect overflows and
+  underflows.</li>
+
+  <li>The input must be checked in the <tt>main</tt> function, before
+  the computation takes place, in the <tt>add2</tt> function.</li>
+  
+  <li>The signature of <tt>add2c</tt> must be <tt>char* add2c(const
+  char p[], const char q[], unsigned int i)</tt>, where <tt>i</tt> is
+  the length of the bit strings <tt>p</tt> and <tt>q</tt>.</li>
+
+  <li>Only one carry is necessary: <tt>unsigned int carry =
+  0;</tt></li>
+
+</ul>
+
+<p><strong>Answer 1.</strong> <a href="./add2c.c">Here</a> is a
+possible answer.</p>
+
+<p><strong>Question 2.</strong> Same question but the numbers can now
+  be represented with different numbers of bits.
+</p>
+
+<strong>Hints.</strong>
+<ul>
+ 
+  <li>The signature of <tt>add2c_diff</tt> must be <tt>char*
+  add2c_diff(const char p[], const char q[], unsigned int i, unsigned
+  int j)</tt>, where <tt>i</tt> is the length of the bit
+  string <tt>p</tt> and <tt>j</tt> is the length of the bit
+  string <tt>q</tt>.</li>
+
+</ul>
+
+<p><strong>Answer 2.</strong> <a href="./add2c_diff.c">Here</a> is a
+possible answer.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+\paragraph{Question.} Define \texttt{enqueue/2} and
+\texttt{dequeue/1} in the following two cases.
+\begin{enumerate}
+
+  \item \textbf{A one-stack implementation.} A simple idea to
+    implement one queue is to use one stack. In this case,
+    \textsc{Enqueue} is simply \textsc{Push} and \textsc{Dequeue}
+    removes the item at the bottom of the stack.
+
+  \item \textbf{A two-stack implementation.} We can implement one
+    queue with two stacks instead of one: one for enqueuing, one for
+    dequeuing.
+    \[
+    \begin{array}{r@{\;}cc|c|c|c|c|c|c|cc@{\;}l}
+      \cline{3-6}\cline{8-10}
+      \textsc{Enqueue} & \rightarrow & & a & b & c & & d & e & &
+      \rightarrow & \textsc{Dequeue}\\
+      \cline{3-6}\cline{8-10}
+    \end{array}
+    \]
+    \noindent So \textsc{Enqueue} is \textsc{Push} on the first stack
+    and \textsc{Dequeue} is \textsc{Pop} on the second. If the second
+    stack is empty, we swap the stacks and reverse the (new) second:
+    \[
+    \begin{array}{lr@{\;}cc|c|c|c|c|cc@{\;}l}
+      \cline{4-7}\cline{9-9}
+      \text{If} & \textsc{Enqueue} & \rightarrow & & a & b & c & & &
+      \rightarrow & \textsc{Dequeue} \, \textbf{???}\\
+      \cline{4-7}\cline{9-9}\\
+      \cline{4-4}\cline{6-9}
+      \text{then} & \textsc{Enqueue} & \rightarrow & & & a & b & c & &
+      \rightarrow & \textsc{Dequeue}\\
+      \cline{4-4}\cline{6-9}
+    \end{array}
+    \]
+    \noindent Let the pair \texttt{\{S,T\}} denote the queue where
+    \texttt{S} is the stack for enqueuing and \texttt{T} the stack for
+    dequeuing.
+
+\end{enumerate}

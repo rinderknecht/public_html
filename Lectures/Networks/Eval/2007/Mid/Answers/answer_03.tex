@@ -1,0 +1,19 @@
+%% Do not remove following blank line
+
+\textbf{Answer.} Before any bit can be transmitted, all the bits in
+the same packet must be gathered first. This requires
+\[
+  \frac{48 \times 8}{64 \times 10^3} \; \text{sec}~ =~6 \;
+  \text{msec}
+\]
+The time required to transmit the packet is
+\[
+  \frac{48 \times 8}{1 \times 10^{6}} \; \text{sec}~=~0.384
+  \; \text{msec}
+\]
+The propagation delay is 2~msec.
+
+Therefore the delay between coding and decoding is
+\begin{center}
+  6~msec + 0.384~msec + 2~msec = 8.384~msec
+\end{center}

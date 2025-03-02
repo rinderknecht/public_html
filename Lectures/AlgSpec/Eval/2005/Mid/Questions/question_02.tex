@@ -1,0 +1,65 @@
+\paragraph{Question 2.} Consider the
+\(\proc{Stack}(\type{item})\) signature as follows:
+  \begin{itemize}
+
+    \item \textbf{Defined types}
+
+    \begin{itemize}
+
+      \item The type of the stacks is called \type{t}.
+
+      \item The type of the items is called \type{item}.
+ 
+    \end{itemize}
+
+    \item \textbf{Constructors}
+
+    \begin{itemize}
+ 
+      \item \(\proc{Empty} : \type{t}\)\\
+       Term \proc{Empty} denotes the empty stack.
+
+      \item \(\proc{Push} : \type{item} \times \type{t} \rightarrow
+        \type{t}\)\\
+      Term \(\proc{Push} (e, s)\) denotes stack \(s\) with
+      item \(e\) on the top.
+
+    \end{itemize}
+
+    \item \textbf{Functions}
+
+    \begin{itemize}
+
+      \item \(\proc{Pop} : \type{t} \rightarrow \type{item} \times
+        \type{t}\)\\
+      This is the projection of \proc{Push}.
+
+      \item \(\proc{Append} : \type{t} \times \type{t} \rightarrow
+        \type{t}\)\\
+      Term \(\proc{Append} (s_1, s_2)\) denotes the stack
+      made of \(s_2\) on the bottom and \(s_1\) on the top.
+
+      \item \(\proc{Nth} : \type{t} \times \type{int} \rightarrow
+        \type{item}\)\\
+      Term \(\proc{Nth} (s, n)\) denotes the \(n^{th}\) item
+      in stack \(s\). The item must exist.
+
+      \item \(\proc{Flatten} :
+        \proc{Stack}(\proc{Stack}(\type{item}).\type{t}).\type{t}
+        \rightarrow \proc{Stack}(\type{item})\)\\ Term
+        \(\proc{Flatten} (s)\), where \(s\) denotes a stack of
+        stack of items, represents the stack made by appending all the
+        stacks in \(s\), in the same order.
+
+     \item \(\proc{Exists} : (\type{item} \rightarrow \type{boolean})
+       \times \proc{Stack}(\type{item}).\type{t} \rightarrow
+       \type{boolean}\)\\ Term \(\proc{Exists} (f, s)\) is
+       \kw{true} if and only if there exists an item \(e\) in \(s\)
+       such that \(f(e)\) is \kw{true}. Otherwise it is
+       \kw{false}.
+
+    \end{itemize}
+    
+  \end{itemize}
+
+  Give equations defining \proc{Nth}, \proc{Flatten} and \proc{Exists}.

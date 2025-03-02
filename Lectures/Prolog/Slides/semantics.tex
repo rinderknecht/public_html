@@ -1,0 +1,447 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Declarative versus procedural meaning}
+
+There are two ways of understanding a \Prolog program.
+
+\bigskip
+
+For example, consider the abstract query
+
+\bigskip
+
+{\small \(\cal P\) \verb|:-| \(\cal Q\), \(\cal R\).}
+
+\bigskip
+
+where \(\cal P\), \(\cal Q\) and \(\cal R\) are objects.
+
+\bigskip
+
+This clause can be read in two ways:
+\begin{enumerate}
+
+  \item \(\cal P\) is true if \(\cal Q\) and \(\cal R\) are true.
+
+  \item To prove \(\cal P\), \emph{first} prove \(\cal Q\) and
+    \emph{next} prove \(\cal R\).
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Declarative versus procedural meanings (cont)}
+
+Note the difference in the wording and the ordering.
+
+\bigskip
+
+In the first case, we speak about \textbf{truth} and the order in
+which the truth values are obtained is actually not completely
+defined. For example, in this context, ``\(\cal Q\) and \(\cal R\) are
+true'' is equivalent to ``\(\cal Q\) and \(\cal R\) are true'',
+because \(\cal Q\) must be true and, separately, \(\cal R\) too.
+
+\bigskip
+
+In the second case, we speak about the \textbf{process} of obtaining
+the truth values in details. In this context, ``\(\cal P\) and \(\cal
+Q\) are true'' may \textbf{not} be equivalent to ``\(\cal Q\) and
+\(\cal P\) are true'' because one may be more efficient (e.g. if
+\(\cal P\) is false, there is no need to prove \(\cal Q\)) or one may
+not terminate (e.g. if \({\cal P} = {\cal Q}\)).
+
+\end{frame}
+
+%% % ------------------------------------------------------------------------
+%% %
+%% \begin{frame}
+%% \frametitle{Declarative versus procedural meanings / 
+%%        Conjunction and disjunction}
+
+%% A clause of the kind 
+%% {\small
+%% \begin{semiverbatim}
+%% \(\cal P\) :- \(\cal Q\), \(\cal R\).
+%% \end{semiverbatim}
+%% }
+%% is called a \textbf{conjunction}.
+
+%% Dually, there are clause which are a \textbf{disjunction}:
+%% {\small
+%% \begin{semiverbatim}
+%% \(\cal P\) :- \(\cal Q\); \(\cal R\).
+%% \end{semiverbatim}
+%% }
+%% read: ``\(\cal P\) is true if \(\cal Q\) is true \emph{or} \(\cal R\)
+%% is true'' and equivalent to
+%% {\small
+%% \begin{semiverbatim}
+%% \(\cal P\) :- \(\cal Q\).
+%% \(\cal P\) :- \(\cal R\).
+%% \end{semiverbatim}
+%% }
+
+%% \end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Declarative meaning}
+
+Informally, the declarative meaning of a \Prolog program is as
+follows.
+
+{\it
+\begin{quote}
+A goal \(\cal G\) is true (or logically follows from the program) if
+\begin{enumerate}
+
+  \item there is a clause \(C\) in the program
+
+  \item of which an instance \(I\) can be deduced such that
+    \begin{enumerate}
+
+      \item the head of \(I\) is identical to \(\cal G\),
+
+      \item all the goals of the body of \(I\) are true.
+
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{quote}
+}
+Note that it is not said how to find \(C\) and \(I\), and no ordering
+of the goals is imposed (they just all must be true).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Procedural meaning}
+
+{\it
+Given a list \(\cal G\) of goals, a list \(\cal C\) of clauses and
+the identity substitution \(\sigma\),
+\begin{enumerate}
+ 
+  \item if \(\cal G\) is empty, then end with \(\sigma\) and
+    \textbf{success};
+
+  \item if \(\cal C\) is empty then \textbf{fail}; let \(G_1\) be the
+    first goal and \(C_1\) the first clause;
+
+  \item let \(\overline{C}_1\) be an instance of \(C_1\) containing
+    no variable in common with \({\cal G}\);
+
+  \item if the head of \(\overline{C}_1\) does not match the head of
+    \(G_1\), restart with the remaining clauses;
+    
+  \item let \(\sigma'\) be the resulting substitution, \({\cal G}'\)
+    the remaining goals and \(\cal B\) the goals in the body of
+    \(\overline{C}_1\); restart with the list of goals made of
+    \(\sigma'({\cal G}')\) and \(\sigma'({\cal B})\) and substitution
+    \(\sigma' \circ \sigma\);
+
+  \item if it failed, restart with \(\cal G\) and the remaining
+    clauses in \(\cal C\) \textnormal{(backtracking)}.
+
+\end{enumerate}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Procedural meaning/Example}
+
+The declarative meaning can be seen as an \emph{abstraction} of the
+procedural meaning, i.e. it hides certain aspects of it. Consider
+
+\PrologIn{animal}
+
+{\small
+\begin{verbatim}
+?- dark(X), big(X).   % What is dark and big?
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Procedural meaning/Example}
+
+The list of goals is \({\cal G} = (G_1, G_2)\), where \(G_1 =
+\texttt{dark(X)}\) and \(G_2 = \texttt{big(X)}\).
+
+\bigskip
+
+There is no match between \(G_1\) and the facts, until clause 7.
+
+\bigskip
+
+Clause 7 has no variable in common with \(G_1\).
+
+\bigskip
+
+The matching between the head of clause 7, \texttt{dark(Z)}, and
+\(G_1\) succeeds with substitution \(\sigma' = \{\texttt{X = } \alpha,
+\texttt{Z = } \alpha\}\).
+
+\bigskip
+
+Let us start again with the list of goals
+\((\texttt{black(}\alpha\texttt{)}, \texttt{big(}\alpha\texttt{)})\),
+and the substitution \(\sigma'\). 
+
+\bigskip
+
+Actually, it is enough to restrict \(\sigma'\) to the variables in
+\(G_1\), so let us take instead \[\sigma' = \{\texttt{X = }
+\alpha\}\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Procedural meaning/Example (cont)}
+
+Now the list of goals is \({\cal G} = (G_1, G_2)\), where \(G_1 =
+\texttt{black(}\alpha\texttt{)}\) and \(G_2 =
+\texttt{big(}\alpha\texttt{)}\), and \(\sigma = \{\texttt{X = }
+\alpha\}\).
+
+\bigskip
+
+The first clause whose head matches
+\(\texttt{black(}\alpha\texttt{)}\) is clause 5, which contains no
+variable. The substitution resulting of the matching is \(\sigma' =
+\{\alpha \texttt{ = cat}\}\). 
+
+\bigskip
+
+Let us start again with the list of goals reduced to
+\(\texttt{big(cat)}\) (since clause 5 is a fact, so has no body) and
+substitution \(\sigma' \circ \sigma = \{\texttt{X = cat}\}\).
+
+\bigskip
+
+But no clause has a head matching \texttt{big(cat)}, so let us
+backtrack and try another match below clause 5. 
+
+\bigskip
+
+There is none. 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Procedural meaning/Example (cont)}
+
+So we must backtrack further and reconsider the list of
+goals is \({\cal G} = (G_1, G_2)\), where \(G_1 = \texttt{dark(X)}\)
+and \(G_2 = \texttt{big(X)}\), and the identity substitution \(\sigma\).
+
+\bigskip
+
+The clause after clause 7, whose head matches \(G_1\) is clause 8. It
+does not have common variables with \(G_1\). The resulting
+substitution is \(\sigma' = \{\texttt{X = } \beta\}\).
+
+\bigskip
+
+Let us start again with the list of goals
+\((\texttt{brown(}\beta\texttt{)}, \texttt{big(}\beta\texttt{)})\)
+and the substitution \[\sigma' \circ \sigma = \sigma'\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Procedural meaning/Example (cont)}
+
+Now the list of goals is \({\cal G} = (G_1, G_2)\), where \(G_1 =
+\texttt{brown(}\beta\texttt{)}\) and \(G_2 =
+\texttt{big(}\beta\texttt{)}\), and \(\sigma = \{\texttt{X = }
+\beta\}\).
+
+\bigskip
+
+The first clause whose head matches \(G_1\) is clause 4, which
+contains not variable (it is a fact). 
+
+\bigskip
+
+The matching leads to substitution \(\sigma' = \{\beta \texttt{ =
+  bear}\}\).
+
+\bigskip
+
+Let us start again with the list of goals
+\texttt{big(bear)} and the substitution 
+\[
+\sigma' \circ \sigma = \{\texttt{X = bear}\}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Procedural meaning/Example (cont)}
+
+Now the the list of goals is \({\cal G} = (G_1)\), where \(G_1 =
+\texttt{big(bear)}\), and the substitution \[\sigma = \{\texttt{X =
+  bear}\}\]
+
+\bigskip
+
+The first clause whose head matches \(G_1\) is clause 1. It has no
+variable. The resulting substitution is the identity. Since it is a
+fact, it is proven and there is no new (sub-)goals.
+
+\bigskip
+
+This means that the interpreters ends with the positive result
+{\small
+\begin{verbatim}
+?- dark(X), big(X).   % What is dark and big?
+X = bear
+Yes
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Procedural meaning/Example (cont)}
+
+\begin{center}
+\includegraphics[scale=0.95,bb=-2 550 287 721,clip=false]{trace_bear}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Procedural meaning/Example (cont)}
+
+The corresponding proof tree is
+\begin{mathpar}
+\inferrule
+{
+ \inferrule*[Left=\(\langle{8\textnormal{,}\{\texttt{Z = bear}\}}\rangle\)]
+ {
+  \inferrule*[lab=\(\langle{4}\rangle\)]{}{\texttt{brown(bear)}}
+ }
+ {\texttt{dark(bear)}}
+ \and
+ \inferrule*[lab=\(\langle{1}\rangle\)]{}{\texttt{big(bear)}}
+}
+{\texttt{dark(bear),big(bear)}}
+\end{mathpar}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Declarative versus procedural meaning (resumed)}
+
+Given a \Prolog program, it is possible to provide several
+programs which have the same declarative meaning but potentially
+different procedural meanings by playing on the order of the clauses
+and the order of the goals in the bodies. For example, consider again
+the relation \texttt{ancestor} page~\pageref{ancestor}:
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- parent(X,Y).                     % Version 1
+ancestor(X,Y) :- parent(X,Z), ancestor(Z,Y).
+\end{verbatim}
+}
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- parent(X,Z), ancestor(Z,Y).      % Version 2
+ancestor(X,Y) :- parent(X,Y).
+\end{verbatim}
+}
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- parent(X,Y).                     % Version 3
+ancestor(X,Y) :- ancestor(Z,Y), parent(X,Z).
+\end{verbatim}
+}
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- ancestor(Z,Y), parent(X,Z).      % Version 4
+ancestor(X,Y) :- parent(X,Y).
+\end{verbatim}
+}
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Declarative versus procedural meaning (resumed)}
+
+Let \(x\) and \(y\) be some data object. Given a query
+{\small
+\begin{semiverbatim}
+?- ancestor(\(x\), \(y\)).
+\end{semiverbatim}
+}
+The procedural behaviours of the different versions are as follows:
+\begin{itemize}
+
+  \item versions 1 and 2 always allow an answer to be found;
+
+  \item versions 3 and 4 always loop forever.
+\end{itemize}
+Consider the examples:
+{\small
+\begin{verbatim}
+?- ancestor(liz,jim).
+?- ancestor(tom,pat).
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Declarative versus procedural meaning (resumed)}
+
+What about the following variations?
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- parent(X,Y).                % Version 3bis
+ancestor(X,Y) :- ancestor(X,Z), parent(Z,Y).
+\end{verbatim}
+}
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- ancestor(X,Z), parent(Z,Y). % Version 4bis
+ancestor(X,Y) :- parent(X,Y).
+\end{verbatim}
+}
+
+\end{frame}

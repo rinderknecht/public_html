@@ -1,0 +1,934 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Abstract Neural Networks}
+
+In general, all the abstract neural networks (textbook, section 20.5,
+page 736.) share the following features:
+\begin{itemize}
+
+  \item a set of simple processing nodes (modeling neurons),
+
+  \item a pattern of connection (edges between abstract neurons),
+
+  \item a rule for propagating signals through the network (when and
+  which nodes),
+
+  \item a rule for combining input signals (entering a node),
+
+  \item a rule for calculating \emph{the} output signal (leaving a
+  node),
+
+  \item a learning rule to adapt the weights (a floating-point number
+  on an edge).
+
+\end{itemize}
+An abstract neural network can be considered as a real-valued
+oriented graph.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Abstract Neural Networks (cont)}
+
+Let us detail those features.
+\begin{itemize}
+
+  \item \textbf{Nodes} are of several kinds: \textbf{input nodes} and
+  \textbf{output nodes}. It may exist, depending on the connectivity,
+  \textbf{hidden nodes}, which are neither input nor output nodes.
+
+  \item \textbf{Patterns of connection} characterise the way nodes are
+  interconnected:
+
+  \begin{itemize}
+
+    \item each node can be connected to every other node; 
+
+    \item in some other type, nodes may be arranged into a
+    \textbf{hierarchy of layers} in which connections are allowed only
+    between nodes in immediately adjacent layers (\textbf{feed-forward
+    networks});
+
+    \item another kind allows \textbf{feedback connections} between
+    adjacent layers, or within a layer, or allow nodes to send a
+    signal back to themselves.
+  
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Abstract Neural Network/Example}
+
+\textbf{An example of a 4-layered network} Input signals $s_1$, $s_2$,
+$s_3$ enter the network at the input layer which is the left column
+(same color meaning same signal value). The first hidden layer is
+$\{A_1, A_2$\}, the second one is $\{B_1, B_2, B_3\}$ and the output
+layer is $\{O_1, O_2\}$. The output signals are going out of $O_1$ and
+$O_2$. Note the hierarchy of layers and the negative weights (in
+blue).
+\vfill
+\centering\includegraphics[scale=0.845,bb=66 600 260 740]{four_layers}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Abstract Neural Networks (cont)}
+
+\begin{itemize}
+
+  \item \textbf{Propagation rules} are rules stating \textbf{when
+    nodes are updated}, i.e. when to combine input signals and
+  calculate output signals, and \textbf{when they send a signal} to
+  another node. Also rules specify \textbf{which nodes are
+    updated}. For instance, a node is selected at random for updating,
+  whereas in another kind, some groups of nodes must be updated before
+  another one.
+
+  \item \textbf{Combination rules} consists in summing the
+  weighted values of incoming signals. If $s_1, s_2, \dots, s_n$ are
+  the signal values entering a node using edges weighted $w_1, w_2,
+  \dots, w_n$, then the global input signal $s$, called \textbf{net
+  input}, is \[s = \sum_{i=1}^{n}{w_i \cdot s_i}\] For
+  instance, net input of $A_1$, in previous example, is \(\text{\small
+  0.4} \times s_1 - s_2 - s_3\).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Abstract Neural Networks (cont)}
+
+\begin{itemize}
+
+  \item \textbf{Output calculation} is done by a function, called
+  \textbf{activation function}, which, given the net input, computes
+  the output signal, called \textbf{activation} --- which can be
+  either real-valued, e.g. belonging to \([-1,+1]\), or discrete,
+  e.g. in \(\{0,1\}\). Here are some activation functions whose domain is
+  \(\mathbb{R}\):
+  \begin{itemize}
+
+    \item \textbf{Identity.} It is simply $f(x) = x$.
+
+    \item \textbf{Binary threshold.} With threshold $\theta$, it is
+    \(
+      f_{\theta}(x) = \begin{cases}
+                        1 & \text{if } x \geqslant \theta\\
+                        0 & \text{if } x < \theta
+                      \end{cases}      
+    \)
+
+    \item \textbf{Sigmoid.} This function has a ``S'' shape (hence
+    its name) and its co-domain (i.e. images set) is the real interval
+    $]0,1[$: \[f(x) = \frac{1}{1 + e^{-x}}\]
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item \textbf{Abstract Neural Networks}
+
+  \begin{itemize}
+
+    \item Features
+
+    \item \textbf{Example of XOR}
+
+    \item Linearly separable functions
+
+    \item Non-linearity
+
+    \item XOR revisited
+
+    \item Multi-layer networks
+
+    \item Classification versus regression
+
+    \item Linear regression using least-squares fitting
+
+    \item Learning
+
+    \item Back-propagation algorithm
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Example of XOR}
+
+\textbf{XOR.} Here is an example of an extremely simple and useless
+abstract neural network: how to compute the boolean function XOR
+(exclusive disjunction), noted \(\oplus\). The definition is: \(x
+\oplus y \triangleq x \cdot \overline{y} + \overline{x} \cdot y\),
+where \(+\) is the disjunction (\emph{or}), \(\cdot\) is the
+conjunction (\emph{and}) and \(\overline{x}\) is the negation of
+\(x\).
+
+\bigskip
+
+\begin{columns}[c]
+  \column{0.5\textwidth} The input layer provides signals \(x\) and
+  \(y\) to the hidden layer, which is made of two nodes whose
+  activation functions are binary thresholds of 1.5 and 0.5. The
+  output layer is one state whose threshold is -0.5.
+ 
+  \column{0.5\textwidth}
+    \begin{center}
+      \includegraphics[bb=60 640 245 735,scale=0.86]{thresholds_xor}
+    \end{center}
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Example of XOR (cont)}
+\label{xor_graph}
+
+\begin{columns}[c]
+
+  \column{0.5\textwidth}
+    Before verifying the network behaviour, let us note that a node
+    with a binary \(\theta\)-threshold function is equivalent to the
+    same node with a 0-threshold plus an input signal of 1 with weight
+    \(-\theta\) (called \textbf{bias}). In other words, the previous
+    example can be rewritten as shown in the facing column (bias in
+    red).
+
+  \column{0.5\textwidth}
+    \begin{center}
+      \includegraphics[bb=60 610 230 730,scale=0.935]{xor}
+    \end{center}
+    
+\end{columns}
+
+\bigskip
+
+\textbf{Exercise.} Show that this network realises the boolean XOR
+relationship.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Example of XOR (cont)}
+
+\begin{columns}[c]
+
+  \column{0.5\textwidth} It is possible to define the bias and its
+  corresponding signal differently. We can take the bias to equal
+  \(\theta\) (instead of \(-\theta\)) and the signal to equal \(-1\)
+  (instead of 1) because the net input does not change: \((-\theta)
+  \times 1 = \theta \times (-1)\). Some textbooks take a bias equal to
+  \(\theta\).
+
+  \column{0.5\textwidth}
+    \begin{center}
+      \includegraphics[bb=60 610 230 730,scale=0.935]{xor_opp_biases}
+    \end{center}
+
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item \textbf{Abstract Neural Networks}
+
+  \begin{itemize}
+
+    \item Features
+
+    \item Example of XOR
+
+    \item \textbf{Linearly separable functions}
+
+    \item Non-linearity
+
+    \item XOR revisited
+
+    \item Multi-layer networks
+
+    \item Classification versus regression
+
+    \item Linear regression using least-squares fitting
+
+    \item Learning
+
+    \item Back-propagation algorithm
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Linearly separable functions}
+\label{linearity}
+
+\textbf{How does a single node work with a binary threshold and bias?}
+
+\bigskip
+
+\begin{columns}[c]
+
+  \column{0.5\textwidth} Consider this case in the facing column. The
+  switch of the output happens when the point \((x,y)\) crosses the
+  line \(w_0 + w_1 x + w_2 y = 0\). In other words, this single-node
+  network allows the \textbf{classification} of points in two
+  categories, corresponding to the half-plane it lies in. In general,
+  i.e. given more input signals, we say that this node realises a
+  \textbf{linear classification} of inputs.
+
+  \column{0.5\textwidth}
+  \begin{center}
+    \includegraphics[bb=132 590 230 675]{single-node}
+  \end{center}
+
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item \textbf{Abstract Neural Networks}
+
+  \begin{itemize}
+
+    \item Features
+
+    \item Example of XOR
+
+    \item Linearly separable functions
+
+    \item \textbf{Non-linearity}
+
+    \item XOR revisited
+
+    \item Multi-layer networks
+
+    \item Classification versus regression
+
+    \item Linear regression using least-squares fitting
+
+    \item Learning
+
+    \item Back-propagation algorithm
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Non-linearity}
+
+Now, imagine the reverse situation where we do not know the weights,
+but we are given a set of points \(\lbrace{(x_1,y_1)}, (x_2,y_2),
+\dots, (x_n,y_n)\rbrace\) whose category is known, i.e. we know the
+network output for each point. Is it possible to find the input
+weights accordingly?
+
+\bigskip
+
+\begin{columns}[c]
+  \column{0.5\textwidth} Since we assume here a binary threshold, it
+  is clearly not possible in all cases. Consider the previous XOR
+  example by drawing the four inputs as points (facing column) and
+  putting the XOR values (\textbf{0} or \textbf{1}) inside the
+  nodes. 
+
+  \column{0.5\textwidth} It is not possible to cut the figure with a
+  line such as there are only \textbf{0}'s on one side and only
+  \textbf{1}'s on the other: this is a \textbf{non-linear
+    classification problem}.
+  \begin{center}
+    \includegraphics[bb=48 660 160 730]{xor_conf}
+  \end{center}
+
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item \textbf{Abstract Neural Networks}
+
+  \begin{itemize}
+
+    \item Features
+
+    \item Example of XOR
+
+    \item Linearly separable functions
+
+    \item Non-linearity
+
+    \item \textbf{XOR revisited}
+
+    \item Multi-layer networks
+
+    \item Classification versus regression
+
+    \item Linear regression using least-squares fitting
+
+    \item Learning
+
+    \item Back-propagation algorithm
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XOR revisited}
+\label{xor}
+
+If we consider the XOR network (page~\pageref{xor_graph}), we realise
+that the hidden layer transforms the non-linear problem into a linear
+one, i.e. the set of input vectors (before we called them points
+because there are only two variables) is mapped into a set that can be
+separated by a line corresponding to the boolean XOR function. Each
+node, \(H_1\) and \(H_2\), cuts the set by a different line and
+assigns 0 or 1 to each point, depending on their side:
+
+\bigskip
+
+\begin{columns}[t]
+
+  \column{0.5\textwidth}
+    Node \(H_1\) mapping:
+    \begin{center}
+      \includegraphics[bb=45 660 155 730]{h1_mapping}
+    \end{center}
+
+  \column{0.5\textwidth}
+    Node \(H_2\) mapping:
+    \begin{center}
+      \includegraphics[bb=42 660 155 730]{h2_mapping}
+    \end{center}
+
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XOR revisited (cont)}
+
+The hidden layer transforms the four initial points in the following
+way.
+\begin{center}
+  \includegraphics[bb=40 660 390 732,scale=0.935]{hidden_layer_mapping}
+\end{center}
+\begin{columns}[c]
+
+  \column{0.5\textwidth} We put in the nodes the expected XOR values
+  and the new set of points can be partitioned by a line: it is now a
+  linear problem which can be solved by the single-node network
+  \(\lbrace{F}\rbrace\).
+
+  \column{0.5\textwidth}
+  \begin{center}
+    \includegraphics[bb=45 648 215 730,scale=0.935]{output_layer_mapping}
+  \end{center}
+
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XOR revisited/Exercise}
+
+\textbf{Exercise.} Given the following abstract neural network and the
+mappings at page \pageref{xor} for the hidden layer, find possible
+weights and bias.
+\begin{center}
+\includegraphics[bb=60 610 230 730]{incomplete_xor}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item \textbf{Abstract Neural Networks}
+
+  \begin{itemize}
+
+    \item Features
+
+    \item Example of XOR
+
+    \item Linearly separable functions
+
+    \item Non-linearity
+
+    \item XOR revisited
+
+    \item \textbf{Multi-layer networks}
+
+    \item Classification versus regression
+
+    \item Linear regression using least-squares fitting
+
+    \item Learning
+
+    \item Back-propagation algorithm
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Multi-layer networks}
+
+\begin{itemize}
+
+  \item With a single hidden layer, it is possible to represent any
+  \emph{continuous} function of the inputs with arbitrary accuracy.
+
+  \item With two hidden ayers, even \emph{discontinuous} functions
+  can be represented.
+
+  \item Unfortunately, given a network, it is very difficult to
+  determine exactly which functions it can represent (by changing the
+  weights) and which ones it can not.
+
+\end{itemize}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Multi-layer networks (cont)}
+
+\begin{itemize}
+
+  \item Even designing a single hidden layer is difficult: the number
+  of nodes (achieving the best classification) is hard to find.
+
+  \item It is possible to get a linearly separable version of a given
+  set of inputs by adding enough hidden layers, but this does not give
+  good results in general (\textbf{over-fitting} problem).
+
+\end{itemize}
+ 
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item \textbf{Abstract Neural Networks}
+
+  \begin{itemize}
+
+    \item Features
+
+    \item Example of XOR
+
+    \item Linearly separable functions
+
+    \item Non-linearity
+
+    \item XOR revisited
+
+    \item Multi-layer networks
+
+    \item \textbf{Classification versus regression}
+
+    \item Linear regression using least-squares fitting
+
+    \item Learning
+
+    \item Back-propagation algorithm
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Classification versus regression}
+
+The previous technique using lines to cut a set of points is used in
+linear problems (or which can be reduced to linear ones) for
+\textbf{classification}, i.e. assigning input data to one of a fixed
+number of possible classes (for instance, in character classification,
+a bit map representing the letter A is assigned the class A).
+
+\bigskip
+
+Another usage of abstract neural networks is \textbf{regression}
+problems, whose purpose is to predict the value of a \emph{continuous}
+output variable (as opposed to a fixed number of classes). 
+
+\bigskip
+
+The simplest regression is \textbf{linear regression}. In this case, a
+line is drawn in the set of points, such as it fits as much as
+possible all the points (in the classification problem, the line must
+separate the set, not try to pass through all the points).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item \textbf{Abstract Neural Networks}
+
+  \begin{itemize}
+
+    \item Features
+
+    \item Example of XOR
+
+    \item Linearly separable functions
+
+    \item Non-linearity
+
+    \item XOR revisited
+
+    \item Multi-layer networks
+
+    \item Classification versus regression
+
+    \item \textbf{Linear regression using least-squares fitting}
+
+    \item Learning
+
+    \item Back-propagation algorithm
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Linear regression using
+  least-squares fitting}
+
+One popular method for finding such fitting lines is the
+\textbf{least-squares method}.
+
+\bigskip
+
+It consists in defining a notion of \textbf{error} which is the
+difference between the ordinate of the given point and the ordinate of
+the point in the line with same abscissa. In other words, let \(y = a
++ b x\) be the line equation. The error between \((x_1,y_1)\) and the
+line is \(\mid{y_1} - (a + b x_1)\mid\).
+
+\bigskip
+
+The \textbf{total error} is the sum of the squares of all the
+individual errors:
+\[
+  \Pi(a,b) \triangleq \sum_{i=1}^{n}{(y_i - (a + b x_i))^2}
+\]
+The most suitable line is the line which minimises \(\Pi(a,b)\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Linear regression using
+  least-squares fitting (cont)}
+
+The minimum is reached when the partial derivatives equal zero:
+\[
+  \frac{\partial\Pi}{\partial{a}} =
+  \frac{\partial\Pi}{\partial{b}} = 0
+\]
+
+\bigskip
+
+These constraints on \(a\) and \(b\) allow their determination in
+terms of the \(x_i\) and \(y_i\).
+
+\bigskip
+
+\textbf{Exercise.} Give the exact formul{\ae} for \(a\) and \(b\).
+
+\bigskip
+
+So, following the statistics theory, networks for linear
+classification often implement the least-squares method. In case of a
+single-node network, this is straightforward since
+\[(w_0, w_1, w_2) \triangleq (a, b, -1)\]
+are possible weights for the network page~\pageref{linearity}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item \textbf{Abstract Neural Networks}
+
+  \begin{itemize}
+
+    \item Features
+
+    \item Example of XOR
+
+    \item Linearly separable functions
+
+    \item Non-linearity
+
+    \item XOR revisited
+
+    \item Multi-layer networks
+
+    \item Classification versus regression
+
+    \item Linear regression using least-squares fitting
+
+    \item \textbf{Learning}
+
+    \item Back-propagation algorithm
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Learning}
+
+It has been proved that any multi-layered network with linear
+activation functions is equivalent to a single-layer network with
+linear activation. Hence, in order to gain expressivity, non-linear
+functions, e.g. the sigmoid function, are necessary.
+
+\bigskip
+
+We showed a way to deduce the weights for the XOR network, but this
+was not a general method. 
+
+\bigskip
+
+In more general cases, 
+\begin{itemize}
+  
+  \item the network starts with \textbf{random weights} in a small
+  interval and 
+
+  \item then is presented with all the inputs, several times (each
+  sequence is called an \textbf{epoch})
+
+  \item and a special method adjusts the weights to \textbf{minimise
+  the error}.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Learning (cont)}
+
+Each epoch should shorten the distance between the expected output and
+the one obtained (for each input vector), i.e. minimize the errors,
+until a \textbf{tolerance interval} (around the expected output) is
+reached. 
+
+\bigskip
+
+The adaptative method must \textbf{converge}, i.e. that it exists a
+set of weights such as the errors for \emph{all} the inputs lie in a
+tolerance interval.
+
+\bigskip
+
+In this case, the whole process is called \textbf{learning} or
+\textbf{supervised training}.
+
+\bigskip
+
+As a side-note, networks with back-edges (i.e., from upper to lower
+layer) can \textbf{oscillate}, i.e. not converge.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item \textbf{Abstract Neural Networks}
+
+  \begin{itemize}
+
+    \item Features
+
+    \item Example of XOR
+
+    \item Linearly separable functions
+
+    \item Non-linearity
+
+    \item XOR revisited
+
+    \item Multi-layer networks
+
+    \item Classification versus regression
+
+    \item Linear regression using least-squares fitting
+
+    \item Learning
+
+    \item \textbf{Back-propagation algorithm}
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Back-propagation algorithm}
+
+One important learning is based on the \textbf{back-propagation
+algorithm}. The idea is as follows. 
+
+\bigskip
+
+For each input vector, weight modifications are computed and
+propagated from the input layer to the output layer.
+
+\bigskip
+
+Then errors between expected and output values are propagated
+\emph{back to the input layer}, modifying again the weights.
+
+\bigskip
+
+This algorithm is a bit involved and mathematically-oriented, so we
+shall skip it here.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Back-propagation algorithm/Applications}
+
+What about real applications of abstract neural networks?
+
+\bigskip
+
+Perhaps the most interesting feature of neural network is that, after
+the learning phase, they can induce an output for an unknown,
+real-valued, input vector, either in classification or regression
+problems.
+
+\bigskip
+
+For instance, it is possible to train some networks to recognise the
+decimal digits presented in a bit map. Then we can present a distorted
+(noisy) digit and the network will output the closest match, allowing
+thus \textbf{classification of unknown data}.
+
+\bigskip
+
+Another related application is \textbf{handwritten digit recognition}
+(see textbook section 20.7, page 752).
+
+\end{frame}

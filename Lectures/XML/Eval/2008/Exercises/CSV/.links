@@ -1,0 +1,11 @@
+#include "../.common_links"
+
+../common.mk.in
+
+csv.xml     csv1.xml
+csv_att.xml csv2.xml
+csv.xml     csv3.xml
+
+csv.dtd     csv1.dtd
+csv_att.dtd csv2.dtd
+csv.dtd     csv3.dtd

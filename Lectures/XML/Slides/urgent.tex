@@ -1,0 +1,48 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.8]{beramono}
+\usepackage{pst-tree,pst-eps}
+
+\newcommand{\myred}[1]{\textcolor[named]{BrickRed}{#1}}
+\newcommand\pcdata[1]{\Tr{\psframebox{\rule{0pt}{7pt}\texttt{#1}}}}
+\newcommand\element[1]{\Tr{#1}}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=1cm,nodesep=2pt,treesep=8pt,framearc=.4]{\element{mail}~[tnpos=r]{\textbf{-- priority=\texttt{"urgent"}}}}{
+  \pstree{\element{from}}{
+    \psset{nodesepB=0pt}
+    \pcdata{Me}
+  }
+  \pstree{\element{subject}}{
+    \psset{nodesepB=0pt}
+    \pcdata{Homeworks}
+  }
+  \pstree{\element{to}}{
+    \psset{nodesepB=0pt}
+    \pcdata{You}
+  }
+  \pstree{\element{body}}{
+    \psset{nodesepB=0pt}
+    \pcdata{\ \ A}
+    \pstree[nodesep=2pt]{\element{definition}}{
+    \psset{nodesepB=0pt}
+      \pcdata{deadline}
+    }
+    \psset{nodesepB=0pt}
+    \pcdata{is[...]}
+    \pstree[nodesep=2pt]{\element{emphasis}}{
+      \psset{nodesepB=0pt}
+      \pcdata{homework}
+    }
+    \psset{nodesepB=0pt}
+    \pcdata{.}
+  }
+}
+\endTeXtoEPS
+
+\end{document}

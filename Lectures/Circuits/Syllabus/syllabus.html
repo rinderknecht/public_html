@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Syllabus of the Logic Circuit Design course</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h3>Syllabus of the Logic Circuit Design course</h3>
+
+<h4>Summary</h4>
+
+<p>The goal of this course is to provide the students with the notions
+of encoding in the context of numeration, to convey the algorithms
+which operate efficiently on these encodings and how these algorithms
+can be represented by a combination of logic circuits (gates). It will
+be insisted upon the mathematical justification of all the algorithms
+and their correctness. This course relies heavily on programming
+homeworks (in C), which are checked during class every week.</p>
+
+<h4>Plan</h4>
+
+<ol>
+  <li>
+    <ul>
+      <li>Decimal encoding of numbers revisited</li>
+      <li>Binary encoding of numbers</li>
+      <li>Most Significant Bit (MSB), Least Significant Bit (LSB)</li>
+    </ul>
+  </li>
+
+  <li>
+    <ul>
+      <li>Conversion from binary to decimal encoding numbers (the
+        naive way and my means of H&ouml;rner factorisation)</li>
+      <li>Conversion from decimal to binary</li>
+      <li>Exercises</li>
+    </ul>
+  </li>
+
+  <li>
+    <ul>
+      <li>Octal representations of numbers</li>
+      <li>Conversion from octal to binary</li>
+      <li>Conversion from binary to octal</li>
+      <li>Conversion from decimal to octal (the direct way or by
+        means of the binary encoding)</li>
+      <li>Exercises</li>
+    </ul>
+  </li>
+
+  <li>
+    <ul>
+      <li>Hexadecimal encoding of numbers</li>
+      <li>Conversion from hexadecimal to octal</li>
+      <li>Conversion from octal to hexadecimal</li>
+      <li>Conversion from binary to hexadecimal</li>
+      <li>Conversion from hexadecimal to binary</li>
+      <li>Conversion from decimal to hexadecimal</li>
+      <li>Conversion from hexadecimal to decimal</li>
+      <li>Exercises</li>
+    </ul>
+  </li>
+
+  <li>
+    <ul>
+      <li>Addition on the decimal encoding of numbers revisited</li>
+      <li>Subtraction on decimals revisited</li>
+      <li>Addition and subtraction on binary encodings (notion of
+        carry and borrow)</li>
+      <li>Multiplication on binary encodings</li>
+      <li>Exercises</li>
+    </ul>
+  </li>
+
+  <li>
+    <ul>
+      <li>Two-complement binary encodings</li>
+      <li>The interval of values is asymmetric because of 0.</li>
+      <li>There is no sign bit, no MSB and no LSB</li>
+      <li>If the leftmost bit is 1, the number is negative.</li>
+      <li>If the leftmost bit is 0, the number is positive.</li>
+      <li>Exercises</li>
+    </ul>
+  </li>
+
+  <li>
+    <ul>
+      <li>Addition on two-complement encodings</li>
+      <li>How to detect underflow and overflow</li>
+      <li>Exercises</li>
+    </ul>
+  </li>
+
+  <li>Mid-term examination</li>
+
+  <li>
+    <ul>
+      <li>Negation of two-complement encodings</li>
+      <li>Relationship with one-complement</li>
+      <li>Depending on how the binary operations are done, an
+        intermediate overflow can or cannot occur.</li>
+      <li>Implementation in C of common arithmetic operations on
+        two-complement encodings</li>
+    </ul>
+  </li>
+
+  <li>
+    <ul>
+      <li>Gray codes</li>
+      <li>Binary-encoded decimals (BCD)</li>
+      <li>Addition of BCDs</li>
+      <li>Subtraction</li>
+      <li>Implementation in C of addition of BCDs</li>
+    </ul>
+  </li>
+
+  <li>
+    <ul>
+      <li>Ternary encoding</li>
+      <li>Balanced ternary encoding</li>
+      <li>Conversion from ternary to balanced ternary</li>
+      <li>Conversion from balanced ternary to ternary</li>
+      <li>Implementation in C</li>
+    </ul>
+  </li>
+
+  <li>
+    <ul>
+      <li>Conversion from decimal to balanced ternary</li>
+      <li>Conversion from balanced ternary to decimal</li>
+      <li>Implementation in C</li>
+    </ul>
+  </li>
+
+  <li>
+    <ul>
+      <li>Basics of Boolean algebra</li>
+      <li>Identities</li>
+      <li>Commutative and distributive laws</li>
+      <li>Absorption law, logic adjacency</li>
+      <li>De Morgan law</li>
+      <li>Truth table</li>
+      <li>Min-terms, max-terms of a boolean expression</li>
+      <li>Disjunctive Normal Form (DNF), Conjunctive Normal Form
+      (CNF)</li>
+      <li>Exercises</li>
+    </ul>
+  </li>
+
+  <li>
+    <ul>
+      <li>Karnaugh maps for simplifying boolean expressions (closed
+      and open)</li>
+      <li>Lots of exercises</li>
+    </ul>
+  </li>
+
+  <li>
+    <ul>
+      <li>Logic formulas as abstract syntax trees</li>
+      <li>Proving tautologies by means of the contradiction method</li>
+      <li>Exercises</li>
+    </ul>
+  </li>
+
+  <li>Final examination</li>
+</ol>
+
+<h4>Prerequisites</h4>
+
+<p>None.</p>
+
+<h4>Textbook</h4>
+
+<p>This course does not require any book in particular, as the focus
+is mainly in doing lots of short homeworks.</p>
+
+<h4>Evaluation</h4>
+
+<p>Two examinations as usual, plus homeworks twice a week. Exercises
+will be solved during class-time and answers posted on the web
+site. Attendance will be checked and taken into account for the final
+grade.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+
+</html>

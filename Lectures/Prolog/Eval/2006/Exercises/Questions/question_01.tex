@@ -1,0 +1,22 @@
+\paragraph{Question.} Define a relation \texttt{diff} with
+three arguments, the first being the function to be differentiated,
+the second the variable used for differentiation and the third is the
+derivative. For example \texttt{diff(F,var(x),DF)} means that
+\texttt{DF} is the derivative of \texttt{F} on variable \texttt{x}.
+
+\paragraph{Hint.} You will need the goal \verb|\+(X=Y)| which
+means ``\texttt{X} and \texttt{Y} do not match.''
+
+\paragraph{Example.} Now you can make queries like the following: 
+{\small
+\begin{verbatim}
+?- diff(plus(times(var(x),var(x)),var(y)), var(x), D).
+D = plus(plus(times(var(x),num(1)),times(var(x),num(1))),num(0));
+No
+\end{verbatim}
+}
+\noindent which proves that
+\[
+\frac{d}{dx}(x \times x + y) = (x \times 1) + (x \times 1) + 0
+\]
+

@@ -1,0 +1,692 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search algorithms}
+
+Algorithms are a constrained form of rewriting systems.
+
+\bigskip
+
+You may remember that, sometimes, several rewriting rules can be
+applied to the same term. This is a kind of \textbf{non-determinism},
+i.e., the process requires an arbitrary choice. Like
+{\footnotesize
+\begin{align*}
+  \proc{Not} (\proc{And} (\underline{\proc{Not} (\proc{True})},
+  \proc{Not} (\proc{False})))
+&\rightarrow_1 \proc{Not} (\proc{And} (\underline{\proc{False}},
+  \proc{Not} (\proc{False})))\\
+  \proc{Not} (\proc{And} (\proc{False}, \underline{\proc{Not}
+  (\proc{False})}))
+&\rightarrow_2 \proc{Not} (\proc{And} (\proc{False},
+  \underline{\proc{True}}))
+\end{align*}
+}
+or
+{\footnotesize
+\begin{align*}
+  \proc{Not} (\proc{And} (\proc{Not} (\proc{True}),
+  \underline{\proc{Not} (\proc{False})}))
+&\rightarrow_2 \proc{Not} (\proc{And} (\proc{Not} (\proc{True}),
+  \underline{\proc{True}}))\\
+  \proc{Not} (\proc{And} (\underline{\proc{Not} (\proc{True})},
+  \proc{True}))
+&\rightarrow_1 \proc{Not} (\proc{And} (\underline{\proc{False}},
+  \proc{True}))
+\end{align*}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search algorithms (cont)}
+
+It is possible to constrain the situation where the rules are
+applied. This is called a \textbf{strategy}. 
+
+\bigskip
+
+For instance, one common strategy, called \textbf{call by value},
+consists in rewriting the arguments of a function call into values
+before rewriting the function call itself. 
+
+\bigskip
+
+Some further constraints can impose an order on the rewritings of the
+arguments, like rewriting them from left to right or from right to
+left. Algorithms rely on rewriting systems with strategies, but use a
+different language, easier to read and write. The important thing is
+that algorithms can always be expressed in terms of rewriting systems,
+if we want.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search algorithms (cont)}
+
+The language we introduce now for expressing algorithms is different
+from a programming language, in the sense that it is less detailed. 
+
+\bigskip
+
+Since you already have a working knowledge of programming, you will
+understand the language itself through examples.
+
+\bigskip
+
+If we start from a rewriting system, the idea consists to gather all
+the rules that define the computation of a given function and create
+its algorithmic definition.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Booleans}
+
+Let us start with a very simple function of the \proc{Bool} specification:
+\begin{align*}
+\proc{Not} (\proc{True}) &\rightarrow \proc{False}\\
+\proc{Not} (\proc{False}) &\rightarrow \proc{True}
+\end{align*}
+Let us write the corresponding algorithm in the following way:
+\begin{columns}
+  \column{0.5\textwidth}
+    \begin{codebox}
+      \Procname{\(\proc{Not} (\id{b})\)}
+      \zi	\If \(\id{b} = \proc{True}\)
+      \zi	\Then \(\kw{result} \gets \proc{False}\)
+      \zi	\Else \(\kw{result} \gets \proc{True}\)
+      \zi	\End
+    \end{codebox}
+    The variable \id{b} is called a \textbf{parameter}.
+  \column{0.5\textwidth}
+    Writing \(\id{x} \gets A\) means that we \textbf{assign} the value
+    of expression \(A\) to the variable \id{x}. Then the value of
+    \id{x} is the value of \(A\). Keyword \kw{result} is a special
+    variable whose value becomes the result of the function when it
+    finishes.
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Booleans (cont)}
+
+You may ask: ``Since we are defining the booleans, what is the meaning
+of a conditional \(\If  \dots \Then \dots \kw{else} \dots\)?''
+
+\bigskip
+
+We assume built-in booleans \kw{true} and \kw{false} in our
+algorithmic language. So, the expression \(\id{b} = \proc{True}\) may
+have value \kw{true} or \kw{false}.
+
+\bigskip
+
+The \proc{Bool} specification is \emph{not} the built-in booleans.
+
+\bigskip
+
+Expression \(\id{b} = \proc{True}\) is not \(\id{b} = \kw{true}\) or
+even \id{b}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Booleans (cont)}
+
+Let us take the \proc{Bool}.\proc{And} function:
+
+\begin{columns}
+  \column{0.5\textwidth}
+    \begin{align*}
+      \proc{And} (\proc{True}, \proc{True}) &\rightarrow \proc{True}\\
+      \proc{And} (\id{x}, \proc{False}) &\rightarrow \proc{False}\\
+      \proc{And} (\proc{False}, \id{x}) &\rightarrow \proc{False}
+    \end{align*}
+  \column{0.5\textwidth}
+    \begin{codebox}
+      \Procname{\(\proc{And} (\id{b_1}, \id{b_2})\)}
+      \zi	\If \id{b_1} = \proc{False} \kw{or} \id{b_2} = \proc{False}
+      \zi	\Then \(\kw{result} \gets \proc{False}\)
+      \zi	\Else \(\kw{result} \gets \proc{True}\)
+      \zi	\End
+    \end{codebox}
+\end{columns}
+
+\medskip
+
+Because there is an \emph{order} on the operations, we have been able
+to gather the three rules into one conditional. Note that \kw{or} is
+\textbf{sequential}: if the first argument evaluates to \proc{True}
+the second argument is not computed (this can save time and
+memory). Hence this test is better than \(\If \,\, (\id{s_1},
+\id{s_2}) = (\proc{True}, \proc{True}) \dots\)
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Booleans (cont)}
+
+The \proc{Or} function, as we defined it is easy to write as an algorithm:
+\[
+\proc{Or} (\id{b_1}, \id{b_2}) \rightarrow \proc{Not} (\proc{And}
+(\proc{Not} (\id{b_1}), \proc{Not} (\id{b_2})))
+\]
+becomes simply
+\begin{codebox}
+\Procname{\(\proc{Or} (\id{b_1}, \id{b_2})\)}
+\zi	\(\kw{result} \gets \proc{Not} (\proc{And} (\proc{Not} (\id{b_1}),
+\proc{Not} (\id{b_2})))\)
+\end{codebox}
+Remember that \(\gets\) in an algorithm is not a rewriting step but an
+assignment. This function is defined in terms of other functions
+(\proc{Not} and \proc{Or}) which are called using an underlying
+\textbf{call-by-value strategy}, i.e., the \textbf{arguments} are
+computed first, then passed associated to the parameters in order to
+compute the \textbf{body} of the (called) function.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Stacks}
+
+\begin{columns}
+  \column{0.5\textwidth}
+    Let us consider again the stacks: \quad \(\proc{Pop} (\proc{Push}
+    (\id{x})) \rightarrow \id{x}\) \quad becomes
+    \begin{codebox}
+      \Procname{\(\proc{Pop} (\id{s})\)}
+      \zi	\If   \id{s} = \proc{Empty}
+      \zi	\Then \Error
+      \zi	\Else \(\kw{result} \gets \textbf{???}\)
+      \zi	\End
+    \end{codebox}
+    What is the problem here? 
+
+    \bigskip
+
+    We want to define a projection (here \proc{Pop}) without knowing
+    the definition of the corresponding constructor (\proc{Push}).
+  \column{0.5\textwidth}
+    The reason why we do not define constructors with an algorithm is
+    that we do not want to give too much details about the data
+    structure, and so leave these details to the implementation (i.e.,
+    the program).
+
+    \bigskip
+
+    Because a projection is, by definition, the inverse of a
+    constructor, we cannot define them explicitly with an algorithm.
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Stacks (cont)}
+
+With the example of this aborted algorithmic definition of projection
+\proc{Pop}, we realise that such definitions must be
+\textbf{complete}, i.e., they must handle all values satisfying the
+type of their arguments.
+
+\bigskip
+
+In the previous example, the type of the argument was
+\proc{Stack}(\type{node}).\type{t}, so the case \proc{Empty} had to be
+considered for parameter \id{s}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Stacks (cont)}
+
+
+In the rewriting rules, the erroneous cases are not represented
+because we don't want to give too much details at this stage. It is
+left to the algorithm to provide error detection and basic handling.
+
+\bigskip
+
+Note that in algorithms, we do not provide a sophisticated error
+handling: we just use a magic keyword \kw{error}. This is because we
+leave for the program to detail what to do and maybe use some
+specific features of its language, like exceptions.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Stacks (cont)}
+
+So let us consider the remaining function \proc{Append}:
+\begin{align*}
+   \proc{Append} (\proc{Empty}, \id{s}) 
+&\rightarrow_1 \id{s}\\
+   \proc{Append} (\proc{Push} (\id{e}, \id{s_1}), \id{s_2}) 
+&\rightarrow_2 \proc{Push} (\id{e}, \proc{Append} (\id{s_1},
+   \id{s_2}))
+\end{align*}
+We gather all the rules into one function and choose a proper order:
+{\small
+\begin{codebox}
+\(\proc{Append} (\id{s_3}, \id{s_2})\)\\
+\zi \If \id{s_3} = \proc{Empty}
+\zi \Then \(\kw{result} \gets \id{s_2}\) \RComment This is
+rule \(\rightarrow_1\)
+\zi	\Else   \((\id{e}, \id{s_1}) \gets \proc{Pop} (\id{s_3})\)
+                  \RComment This means \(\proc{Push} (\id{e},
+                  \id{s_1}) = \id{s_3}\)
+\zi		\(\kw{result} \gets \proc{Push} (\id{e},
+                   \proc{Append} (\id{s_1}, \id{s_2}))\) 
+                   \RComment This is rule \(\rightarrow_2\)
+\zi	\End
+\end{codebox}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Queues}
+
+Let us come back to the \proc{Queue} specification:
+\begin{align*}
+ \proc{Dequeue} (\proc{Enqueue} (\id{e}, \proc{Empty}))
+&\rightarrow_1 (\proc{Empty}, \id{e}) & \\
+  \proc{Dequeue} (\proc{Enqueue} (\id{e}, \id{q}))
+&\rightarrow_2 (\proc{Enqueue} (\id{e}, \id{q_1}), \id{e_1})
+\intertext{where \(\id{q} \neq \proc{Empty}\) and where}
+\proc{Dequeue} (\id{q}) &\rightarrow_3 (\id{q_1}, \id{e_1}) &
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Queues/Dequeuing}
+
+We can write the corresponding algorithmic function as
+\begin{codebox}
+\(\proc{Dequeue} (\textbf{\id{q_2}})\)\\
+\zi	\If \id{q_2} = \proc{Empty}
+\zi	\Then \Error
+\zi	\Else   \((\id{e}, \id{q}) \gets \proc{Enqueue}^{-1}(\id{q_2})\)
+\zi		\If \(\id{q} = \proc{Empty}\)
+\zi		\Then \(\kw{result} \gets (\id{q}, \id{e})\)
+\RComment Rule \(\rightarrow_1\)
+\zi		\Else \((\id{q_1}, \id{e_1}) \gets
+                         \proc{Dequeue} (\textbf{\id{q}})\) \RComment
+                         Rule \(\rightarrow_3\)
+\zi		      \(\kw{result} \gets (\proc{Enqueue}
+(\id{e},\id{q_1}), \id{e_1})\) \RComment Rrule \(\rightarrow_2\)
+\zi		\End
+\zi	\End
+\end{codebox}
+Termination is due to \((\id{e}, \id{q}) =
+\proc{Enqueue}^{-1}(\id{q_2}) \Rightarrow {\cal H} (\id{q_2}) = {\cal H}
+(\id{q}) + 1 > {\cal H} (\id{q})\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Binary trees/Left prefix}
+
+Let us come back to the \proc{Bin-tree} specification and the left
+prefix traversal:
+{\small
+\begin{align*}
+   \proc{Lpref} (\proc{Empty}) 
+&\rightarrow \proc{Stack}(\type{node}).\proc{Empty}\\
+   \proc{Lpref} (\proc{Make} (\id{e}, \id{t_1}, \id{t_2})) 
+&\rightarrow \proc{Push} (\id{e}, \proc{Append} (\proc{Lpref}
+   (\id{t_1}), \proc{Lpref} (\id{t_2})))
+\end{align*}
+}
+We get the corresponding algorithmic function
+\begin{codebox}
+\(\proc{Lpref} (\id{t})\)\\
+\zi	\If \id{t} = \proc{Empty}
+\zi	\Then \(\kw{result} \gets \proc{Stack}(\type{node}).\proc{Empty}\)
+\zi	\Else \((\id{e}, \id{t_1}, \id{t_2}) \gets
+                \proc{Make}^{-1}(\id{t})\)
+\zi	      \(\kw{result} \gets \proc{Push} (\id{e},
+                                                \proc{Append}
+                                                  (\proc{Lpref} (\id{t_1}), 
+                                                   \proc{Lpref}
+                                                   (\id{t_2})))\)
+\zi	\End
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Binary trees/Left infix}
+
+Similarly, we can consider again the left infix traversal:
+\begin{align*}
+   \proc{Linf} (\proc{Empty})
+&\rightarrow \proc{Stack}(\type{node}).\proc{Empty}\\
+   \proc{Linf} (\proc{Make} (\id{e}, \id{t_1}, \id{t_2})) 
+&\rightarrow \proc{Append} (\proc{Linf} (\id{t_1}), 
+   \proc{Push} (\id{e}, \proc{Linf} (\id{t_2})))
+\end{align*}
+Hence
+\begin{codebox}
+\(\proc{Linf} (\id{t})\)\\
+\zi	\If \id{t} = \proc{Empty}
+\zi	\Then \(\kw{result} \gets \proc{Stack}(\type{node}).\proc{Empty}\)
+\zi	\Else \((\id{e}, \id{t_1}, \id{t_2}) \gets
+                \proc{Make}^{-1}(\id{t})\)
+\zi	        \(\kw{result} \gets \proc{Append} (\proc{Linf} (\id{t_1}),
+                  \proc{Push} (\id{e}, \proc{Linf} (\id{t_2})))\)
+\zi	\End
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Binary trees/Left postfix}
+
+Similarly, we can consider again the left postfix traversal:
+{\small
+\begin{align*}
+   \proc{Lpost} (\proc{Empty}) 
+&\rightarrow \proc{Stack}(\type{node}).\proc{Empty}\\
+   \proc{Lpost} (\proc{Make} (\id{e}, \id{t_1}, \id{t_2})) 
+&\rightarrow
+\intertext{\(\proc{Append} (\proc{Lpost} (\id{t_1}),
+   \proc{Append} (\proc{Lpost} (\id{t_2}), \proc{Push} (\id{e},
+   \proc{Empty})))\)}
+\end{align*}
+}
+\begin{codebox}
+\Procname{\(\proc{Lpost} (\id{t})\)}
+\zi	\If \id{t} = \proc{Empty}
+\zi	\Then \(\kw{result} \gets \proc{Stack}(\type{node}).\proc{Empty}\)
+\zi	\Else \((\id{e}, \id{t_1}, \id{t_2}) \gets
+                \proc{Make}^{-1}(\id{t})\)
+\zi        \(n \gets                   \proc{Append} (\proc{Lpost} (\id{t_2}), 
+                                 \proc{Push} (\id{e}, \proc{Empty}))\)
+\zi	        \(\kw{result} \gets \proc{Append} (\proc{Lpost} (\id{t_1}), n)\)
+\zi	\End
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Binary trees/Breadth-first}
+
+Let us recall the rewrite system of \proc{Roots} (see page~\pageref{roots}):
+\begin{align*}
+   \proc{Roots} (\proc{Forest}(\type{node}).\proc{Empty}) 
+&\rightarrow_1 \proc{Stack} (\type{node}).\proc{Empty}\\
+   \proc{Roots} (\proc{Push} (\proc{Empty}, \,\id{f}))
+&\rightarrow_2 \proc{Roots} (\,\id{f})\\
+   \proc{Roots} (\proc{Push} (\proc{Make} (\id{r}, \id{t_1},
+   \id{t_2}), \,\id{f}))
+&\rightarrow_3 \proc{Push} (\id{r}, \proc{Roots} (\,\id{f}))
+\end{align*}
+Rule \(\rightarrow_2\) skips any empty tree in the forest.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Binary trees/Breadth-first (cont)}
+
+The corresponding algorithmic definition is
+{\small
+\begin{codebox}
+\Procname{\(\proc{Roots} (\,\id{f_1})\)}
+\zi	\If \,\id{f_1} = \proc{Forest}(\type{node}).\proc{Empty}
+\zi	\Then \(\kw{result} \gets
+                \proc{Stack}(\type{node}).\proc{Empty}\) 
+                \RComment Rule \(\rightarrow_1\)
+\zi	\Else \((\id{t}, \,\id{f}) \gets \proc{Pop} (\,\id{f_1})\)
+              \RComment \(\proc{Push} (\id{t}, \,\id{f}) =
+              \id{f_1}\)
+\zi		\If \id{t} = \proc{Empty}
+\zi		\Then \(\kw{result} \gets \proc{Roots} (\,\id{f})\)
+                        \RComment Rule \(\rightarrow_2\)
+\zi		\Else \(\kw{result} \gets \proc{Push} (\proc{Root}
+                        (\id{t}), \proc{Roots} (\,\id{f}))\)\!\!
+                        \RComment\!\!\!Rule \(\rightarrow_3\)
+\zi		\End
+\zi	\End
+\end{codebox}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Binary trees/Breadth-first (cont)}
+
+Let us recall the rewrite system of \proc{Next} (see
+page~\pageref{next_level}): 
+\begin{align*}
+   \proc{Next} (\proc{Forest}(\type{node}).\proc{Empty}) 
+&\rightarrow_1 \proc{Forest}
+   (\type{node}).\proc{Empty}\\
+   \proc{Next} (\proc{Push} (\proc{Empty}, \,\id{f}))
+&\rightarrow_2 \proc{Next} (\,\id{f})\\
+   \proc{Next} (\proc{Push} (\proc{Make} (\id{r}, \id{t_1},
+   \id{t_2}), \,\id{f}))
+&\rightarrow_3 \proc{Push} (\id{t_1}, \proc{Push} (\id{t_2},
+   \proc{Next} (\,\id{f})))
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Binary trees/Breadth-first (cont)}
+
+The corresponding algorithmic definition is
+{\small
+\begin{codebox}
+\Procname{\(\proc{Next} (\,\id{f_1})\)}
+\zi	\If \,\id{f_1} = \proc{Forest}(\type{node}).\proc{Empty}
+\zi	\Then \(\kw{result} \gets
+                \proc{Stack}(\type{node}).\proc{Empty}\) 
+                \RComment This is rule \(\rightarrow_1\)
+\zi	\Else \((\id{t}, \,\id{f}) \gets \proc{Pop} (\,\id{f_1})\)
+              \RComment This means \(\proc{Push} (\id{t}, \,\id{f}) =
+              \id{f_1}\)
+\zi		\If \id{t} = \proc{Empty}
+\zi		\Then \(\kw{result} \gets \proc{Next} (\,\id{f})\)
+                      \RComment This is rule \(\rightarrow_2\)
+\zi		\Else \RComment This is rule \(\rightarrow_3\)
+\zi		\(\kw{result} \gets \proc{Push} (\proc{Left}
+                  (\id{t}), (\proc{Push} (\proc{Right} (\id{t}),
+                   \proc{Next} (\,\id{f}))))\)
+\zi		\End
+\zi	\End
+\end{codebox}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Binary trees/Breadth-first (cont)}
+
+Let us recall finally the rules for function \({\cal B}\):
+\begin{eqnarray*}
+  {\cal B} (\proc{Forest}(\type{node}).\proc{Empty})
+\rightarrow
+\proc{Stack}(\type{node}).\proc{Empty}\\
+  {\cal B} (\,\id{f})
+\rightarrow \proc{Append} (\proc{Roots} (\,\id{f}), {\cal B}
+  (\proc{Next} (\,\id{f})))
+\end{eqnarray*}
+where \(\id{f} \neq \proc{Empty}\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Binary trees/Breadth-first (cont)}
+
+The corresponding algorithmic definition is
+\begin{codebox}
+\Procname{\({\cal B} (\,\id{f})\)}
+\zi	\If \,\id{f} = \proc{Empty}
+\zi	\Then \(\kw{result} \gets \proc{Stack}(\type{node}).\proc{Empty}\) 
+\zi	\Else \(\kw{result} \gets \proc{Append} (\proc{Roots}
+(\,\id{f}), {\cal B} (\proc{Next} (\,\id{f})))\)
+\zi	\End
+\end{codebox}
+And
+\begin{codebox}
+\Procname{\(\proc{BFS} (\id{t})\)}
+\(\kw{result} \gets {\cal B}
+     (\proc{Stack}(\type{node}).\proc{Push} (\id{t}, \proc{Empty}))\)
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Binary trees/Breadth-first (cont)}
+
+Let us imagine we want to realise a breadth-first search on tree
+\id{t} \emph{up to a given depth \id{d}} and return the encountered
+nodes. Let us reuse the name \proc{BFS} to call such a function whose
+signature is then
+\[
+\proc{BFS}: \proc{Bin-Tree}(\type{node}).\type{t}
+\times \textbf{\type{int}} \rightarrow
+\proc{Stack}(\type{node}).\type{t}
+\]
+where \type{int} denotes the positive integers. 
+
+\bigskip
+
+A possible defining equation can be:
+\[
+\proc{BFS}_{\id{d}} (\id{t}) = {\cal B}_{\id{d}}
+(\proc{Push} (\id{t}, \proc{Empty}))
+\quad \text{with} \; \id{d} \geqslant 0
+\]
+where \({\cal B}_{\id{d}} (\,\id{f})\) is the stack of
+traversed nodes in the forest \,\id{f} up to depth \(\id{d} \geqslant
+0\) in a left-to-right breadth-first way.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Binary trees/Breadth-first (cont)}
+
+Here are some possible equations defining \({\cal B}_{\id{d}}\):
+\begin{align*}
+   {\cal B}_{\id{d}} (\proc{Empty})
+&= \proc{Empty} 
+& \\
+   {\cal B}_{0} (\,\id{f})
+&= \proc{Roots} (\,\id{f}) 
+& \\
+   {\cal B}_{\id{d}} (\,\id{f})
+&= \proc{Append} (\proc{Roots} (\,\id{f}), {\cal B}_{\id{d}-1}
+   (\proc{Next} (\,\id{f})))
+& \text{if} \; \id{d} > 0
+\end{align*}
+The difference between \({\cal B}_{\id{d}}\) and \({\cal B}\) is
+the depth limit \id{d}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Binary trees/Breadth-first (cont)}
+
+In order to write the algorithm corresponding to \({\cal
+  B}_{\id{d}}\), it is good practice not to use subscripts, like
+\id{d}, and use a regular parameter instead:
+\begin{codebox}
+\Procname{\({\cal B} (\id{d}, \,\id{f})\)}
+\zi	\If \id{f} = \proc{Forest}(\type{node}).\proc{Empty}
+\zi	\Then \(\kw{result} \gets
+                \proc{Stack}(\type{node}).\proc{Empty}\)
+\zi	\ElseIf \id{d} = 0
+\zi		\Then \(\kw{result} \gets \proc{Roots} (\,\id{f})\)
+\zi		\ElseIf \(\id{d} > 0\)
+\zi			\Then \(\kw{result} \gets \proc{Append}
+                               (\proc{Roots} (\,\id{f}), {\cal B}
+                               (\id{d}-1, \proc{Next}
+                               (\,\id{f})))\)
+\zi			\Else \kw{error}
+\zi			\End
+\zi		\End
+\zi	\End
+\end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Search/Binary trees/Depth-first}
+
+We gave several algorithms for left-to-right depth-first traversals:
+prefix (\proc{Lpref}), postfix (\proc{Lpost}) and infix (\proc{Linf}).
+
+\bigskip
+
+What if we want to limit the depth of such traversals, like
+\proc{Lpref}?
+{\footnotesize
+\begin{align*}
+   \proc{Lpref}_{\id{d}} (\proc{Empty}) 
+&= \proc{Empty}\\
+   \proc{Lpref}_{0} (\proc{Make} (\id{e}, \id{t_1}, \id{t}_2))
+&= \proc{Push} (\id{e}, \proc{Empty})\\
+   \proc{Lpref}_{\id{d}} (\proc{Make} (\id{e}, \id{t_1}, \id{t_2})) 
+&= \proc{Push} (\id{e}, \proc{Append} (\proc{Lpref}_{\id{d}-1}
+   (\id{t_1}), \proc{Lpref}_{\id{d}-1} (\id{t_2})))
+\end{align*}
+}
+where \(\id{d} > 0\).
+
+\end{frame}

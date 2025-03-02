@@ -1,0 +1,3092 @@
+%-*-latex-*-
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique des programmes}
+
+La sémantique consiste à donner un sens aux programmes.
+
+\begin{itemize}
+
+  \item \textcolor{blue}{Sémantique informelle} Exemples: 
+   
+    \begin{itemize}
+
+      \item \emph{La conditionnelle est de la forme
+        \Xif \textsf{expr} \Xthen \textsf{instr$_1$}
+        \Xelse \textsf{instr$_2$}. Si l'expression \textsf{expr}
+        est vraie, alors l'instruction \textsf{instr$_1$} est
+        exécutée; sinon l'instruction \textsf{instr$_2$} est
+        exécutée.}
+
+      \item \emph{L'itération non bornée est de la forme
+        \Xwhile \textsf{(expression) instruction}. La
+        sous-instruction est exécutée de manière répétée tant que la
+        valeur de l'expression reste non nulle. On teste l'expression
+        avant d'exécuter la sous-instruction.}
+ 
+    \end{itemize}
+
+  \item \textcolor{blue}{Sémantique formelle} Elle consiste en
+    l'emploi de théories mathématiques ou de logique formelle pour
+    suppléer les imprécisions ou les ambiguïtés de la sémantique
+    informelle («~Si~», «~est vraie~», «~reste non nulle~» etc.).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique opérationnelle}
+
+\begin{itemize}
+
+  \item La sémantique opérationnelle est une sémantique
+  formelle.
+
+  \item Elle définit un ensemble de valeurs puis une
+  relation d'\emph{évaluation} entre les programmes et les valeurs
+  (c.-à-d. les résultats).
+
+  \item L'évaluation est définie inductivement sur la
+  syntaxe abstraite du langage, c.-à-d. que la valeur d'une
+  construction dépend de la forme de celle-ci de la valeur de ses
+  parties. En d'autres termes encore, la valeur d'un AST dépend de la
+  forme de sa racine et des valeurs de ses sous-arbres.
+
+  \item Formellement, un interprète est l'implantation
+  d'une sémantique opérationnelle (qui est alors, par construction,
+  définie en termes de la sémantique du langage d'implantation).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{La calculette est un interprète}
+
+\label{la_calculette_est_un_interprete}
+
+Les valeurs sont les entiers: {\small \Xtype \type{value} \equal
+\type{int}\semi{}}
+
+L'interprète, c.-à-d. la fonction d'évaluation, est:
+
+{\small
+ \begin{tabbing}
+ \Xlet \= \Xrec \= \ident{eval} \ident{e} = \Xmatch
+ \ident{e} \Xwith\\
+ \> \cst{Const} \ident{n} \(\rightarrow\) \ident{n}\\
+ \vbar \> \cst{BinOp}
+ \lpar\ident{op},\ident{e}\(\sb{1}\),\ident{e}\(\sb{2}\)\rpar{}
+ \(\rightarrow\) \comment{L'ordre d'évaluation de
+ \ident{e}\(\sb{1}\) et \ident{e}\(\sb{2}\) n'est pas
+ spécifié:}\\
+ \> \quad \= \Xlet \ident{v\(\sb{1}\)} = \ident{eval e\(\sb{1}\)}
+ \Xand  \ident{v\(\sb{2}\)} = \ident{eval e\(\sb{2}\)}\\
+ \> \> \Xin \= \Xbegin \Xmatch \ident{op} \Xwith\\
+ \> \> \> \quad \cst{Add} \(\rightarrow\)
+ \ident{v}\(\sb{1}\) \texttt{+} \ident{v}\(\sb{2}\) \vbar
+ \cst{Sub} \(\rightarrow\)
+ \ident{v}\(\sb{1}\) \texttt{-} \ident{v}\(\sb{2}\) \vbar \cst{Mult}
+ \(\rightarrow\) \ident{v}\(\sb{1}\) \texttt{*} \ident{v}\(\sb{2}\) \vbar
+ \cst{Div} \(\rightarrow\)
+ \ident{v}\(\sb{1}\) \texttt{/} \ident{v}\(\sb{2}\)\\
+ \> \> \> \Xend\semi{}
+ \end{tabbing}
+}
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Une interprétation simple}
+
+Reprenons l'exemple {\small \verb|"(1+2)*(5/1)"|}
+(cf. page~\pageref{exemple_expr_arith}). Soit $e$ l'AST.
+
+Son évaluation (cf. page~\pageref{la_calculette_est_un_interprete})
+est interprétée par «~\ident{eval $e$}~» et est représentée en
+couleur: les résultats (des appels récursifs) sont en rouge.
+
+{\small
+\begin{center}
+\pstree[nodesep=2pt,levelsep=20pt,treesep=10pt]{
+\mknode{\TR[name=root]{\cst{BinOp}}}
+       {}
+       {\raisebox{4pt}{\Rnode{fifteen}{\num{3*5\textbf{=}15}}}}}{
+  \TR{\cst{Mult}}
+  \pstree{\mknode{\TR{\cst{BinOp}}}
+                 {}
+                 {\raisebox{2pt}{\Rnode{three}{\num{1+2\textbf{=}3}}}}}{
+    \TR{\cst{Add}}
+    \pstree{\mknode{\TR{\cst{Const}}}
+                   {}
+                   {\Rnode{one}{\num{1}}}}{
+      \TR[name=leaf_one]{\num{1}}
+    }
+    \pstree{\mknode{\TR{\cst{Const}}}
+                   {}
+                   {\Rnode{two}{\num{2}}}}{
+      \TR[name=leaf_two]{\num{2}}
+    }
+  }
+  \pstree{\mknode{\TR{\cst{BinOp}}}
+                 {}
+                 {\raisebox{2pt}{\Rnode{div}{\num{5/1\textbf{=}5}}}}}{
+    \TR{\cst{Div}}
+    \pstree{\mknode{\TR{\cst{Const}}}
+                   {}
+                   {\Rnode{five}{\num{5}}}}{
+      \TR[name=leaf_five]{\num{5}}
+    }
+    \pstree{\mknode{\TR{\cst{Const}}}
+                   {}
+                   {
+                    \Rnode{app}{\num{1}}}}{
+      \TR[name=leaf_x]{\num{1}}
+    }
+  }
+}
+\ncline[linecolor=red,linestyle=dashed,nodesepA=1pt,nodesepB=1pt]{->}{leaf_one}{one}
+\ncline[linecolor=red,linestyle=dashed,nodesepA=1pt,nodesepB=1pt]{->}{leaf_two}{two}
+\ncline[linecolor=red,linestyle=dashed,nodesepA=1pt,nodesepB=1pt]{->}{leaf_five}{five}
+\ncline[linecolor=red,linestyle=dashed,nodesepA=1pt,nodesepB=1pt]{->}{leaf_x}{app}
+\ncarc[linecolor=red,nodesepA=1pt]{->}{one}{three}
+\nccurve[linecolor=red,angleA=130,angleB=340,nodesepA=1pt]{->}{two}{three}
+\ncarc[linecolor=red,nodesepA=1pt]{->}{five}{div}
+\ncline[linecolor=red,nodesepA=1pt]{->}{app}{div}
+\ncarc[linecolor=red,nodesepB=1pt]{->}{three}{fifteen}
+\ncarc[linecolor=red,arcangle=-5,nodesepA=1pt,nodesepB=1pt]{->}{div}{fifteen}
+\ncline[linecolor=blue,nodesepA=1pt,nodesepB=1pt]{->}{root_env}{B}
+\ncline[linecolor=blue,nodesepA=1pt,nodesepB=1pt]{->}{B}{BB}
+\ncline[linecolor=blue,nodesepA=1pt,nodesepB=1pt]{->}{B}{BC}
+\ncarc[linecolor=blue,arcangle=-8,nodesepA=1pt,nodesepB=1pt]{->}{root_env}{C}
+\ncline[linecolor=blue,nodesepA=1pt,nodesepB=1pt]{->}{C}{CB}
+\ncline[linecolor=blue,nodesepA=1pt,nodesepB=1pt]{->}{C}{CC}
+
+\ncarc[linecolor=blue,arcangle=-35,nodesepA=1pt,nodesepB=1pt]{->}{CC}{rho}
+
+\end{center}
+}
+Le flot de contrôle est descendant (la racine est examinée avant les
+sous-arbres) et le flot de données est ascendant (\ident{eval} ne prend
+aucun argument).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Les règles d'inférence}
+
+Une autre présentation, plus mathématique, consiste à définir une
+relation $\ceval{e}{v}$ (dite \emph{jugement}), qui se lit
+«~L'expression $e$ s'évalue en la valeur $v$~», par des \emph{règles
+  d'inférence}.
+
+Ce sont des implications logiques $P_1 \wedge P_2 \wedge \ldots
+\wedge P_n \Rightarrow C$ présentées sous la forme:
+\[
+\inferrule
+  {P_1 \\ P_2 \\ \ldots \\ P_n}
+  {C}
+\]
+
+Les propositions $P_i$ sont alors nommées \emph{prémisses}, et $C$ la
+\emph{conclusion}. Lorsqu'il n'y a pas de prémisses, alors $C$ est un
+\emph{axiome} et on le note simplement $C$.
+
+Lecture calculatoire: pour évaluer $C$, il faut d'abord évaluer les
+$P_i$ (l'ordre n'étant pas spécifié).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Les règles d'inférence (suite)}
+
+Les règles et axiomes peuvent contenir des variables non quantifiées
+(par $\forall$ ou $\exists$) explicitement. Dans ce cas elles sont
+implicitement quantifiées universellement en tête de règle. Par exemple
+l'axiome $A(x)$ signifie $\textcolor{blue}{\forall x.}A(x)$ et la règle
+\[
+\inferrule
+  {P_1(x) \\ P_2(y)}
+  {P(x,y)}
+\]
+signifie $\textcolor{blue}{\forall x,y.(}P_1(x) \, \wedge \, P_2(y) \Rightarrow
+P(x,y)\textcolor{blue}{)}$.
+
+Étant donné un ensemble de règles d'inférence portant sur une ou
+plusieurs relations, on définit alors celles-ci comme étant les
+\emph{plus petites relations} satisfaisant les règles. 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Plus petites relations}
+
+\label{pair_impair}
+
+Soient les règles suivantes, portant sur les prédicats
+$\ident{Pair}(n)$ et $\ident{Impair}(n)$:
+\begin{mathpar}
+\inferrule{}{\ident{Pair}(0)}
+\and
+\inferrule{\ident{Impair}(n)}{\ident{Pair}(n+1)}
+\and
+\inferrule{\ident{Pair}(n)}{\ident{Impair}(n+1)}
+\end{mathpar}
+Il faut les lire comme les conditions:
+\begin{gather*}
+\ident{Pair}(0)\\
+\forall n.(\ident{Impair}(n) \Rightarrow \ident{Pair}(n+1))\\
+\forall n.(\ident{Pair}(n) \Rightarrow \ident{Impair}(n+1))\\
+\end{gather*}
+De nombreux prédicats satisfont ces conditions, p.ex. $\ident{Pair}(n)$
+et $\ident{Impair}(n)$ vrais pour tout $n$. Mais les plus petits
+prédicats (ceux vrais le moins souvent) satisfaisant sont
+$\ident{Pair}(n) \triangleq (n \mod{2} = 0)$ et $\ident{Impair}(n)
+\triangleq (n \mod{2} = 1)$.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Arbres de preuve}
+
+Un \emph{arbre de preuve} est un arbre portant à chaque n{\oe}ud la
+conclusion d'une règle d'inférence dont les prémisses correspondent
+aux fils de ce n{\oe}ud. Les feuilles de l'arbre portent donc des
+axiomes. La conclusion de la preuve est la racine de l'arbre. Celle-ci
+est représentée en bas de la page. Par exemple, voici la preuve de
+$\ident{Impair}(3)$ avec le système page~\pageref{pair_impair}:
+
+\begin{mathpar}
+\inferrule
+  {\inferrule
+     {\inferrule
+        {\ident{Pair}(0)}
+        {\ident{Impair}(1)}
+     }
+     {\ident{Pair}(2)}
+  }
+  {\ident{Impair}(3)}
+\end{mathpar}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique opérationnelle de la calculette}
+
+\label{semantique_operationnelle}
+
+Une \emph{méta-variable} est une variable du langage de description,
+ici la logique formelle, et non pas une variable du langage décrit
+(ici le langage d'expressions de la calculette). Ainsi
+
+\begin{itemize}
+
+  \item les expressions, c.-à-d. les valeurs du type \type{expr},
+  sont notées $e$;
+
+  \item les valeurs sont notées $v$ ($v \in \mathbb{Z}$);
+
+  \item les entiers mathématiques associés à leur représentation
+  OCaml $n$ sont notés $\dot{n}$ ($\dot{n} \in \mathbb{Z}$).
+
+\end{itemize}
+
+Donc $e$, $v$, $n$ et $\dot{n}$ sont des méta-variables.
+
+\begin{itemize}
+
+  \item Les jugements sont de la forme $\ceval{e}{v}$
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique opérationnelle de la calculette (suite et fin)}
+
+\begin{mathpar}
+\inferrule
+  {\ceval{\cst{Const} \; n}{\dot{n}}}
+  {}\;\TirName{\quad const}
+\and
+\inferrule
+  {\ceval{e_1}{v_1}\\ \ceval{e_2}{v_2}}
+  {\ceval{\cst{BinOp} \, \lpar\cst{Add},e_1,e_2\rpar}{v_1 + v_2}}
+  \;\TirName{add}
+\and
+\inferrule*[right=sub]
+  {\ceval{e_1}{v_1}\\ \ceval{e_2}{v_2}}  
+  {\ceval{\cst{BinOp} \, \lpar\cst{Sub},e_1,e_2\rpar}{v_1 - v_2}}
+\and
+\inferrule*[right=mult]
+  {\ceval{e_1}{v_1}\\ \ceval{e_2}{v_2}}
+  {\ceval{\cst{BinOp} \, \lpar\cst{Mult},e_1,e_2\rpar}
+         {v_1 \times v_2}}
+\and
+\inferrule*[right=div]
+  {\ceval{e_1}{v_1}\\ \ceval{e_2}{v_2}}  
+  {\ceval{\cst{BinOp} \, \lpar\cst{Div},e_1,e_2\rpar}{v_1 / v_2}}
+\end{mathpar}
+
+ 
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Implantation des sémantiques opérationnelles}
+
+La façon systématique de programmer une sémantique opérationnelle en
+OCaml consiste à écrire un motif de filtre par règle d'inférence,
+comme le suggère
+\begin{mathpar}
+\inferrule*[right=sub]
+  {\ceval{e_1}{v_1}\\ \ceval{e_2}{v_2}}  
+  {\ceval{\cst{BinOp} \, \lpar\cst{Sub},e_1,e_2\rpar}{v_1 - v_2}}
+\end{mathpar}
+
+qui devient \quad
+{\small
+\vbar \cst{BinOp}
+\lpar\cst{Sub},\ident{e\(\sb{1}\)},\ident{e\(\sb{2}\)}\rpar{}
+\(\rightarrow\) \Xlet \ident{v\(\sb{1}\)} \equal \ident{eval}
+\ident{e\(\sb{1}\)} \Xand \ident{v\(\sb{2}\)} \equal \ident{eval}
+\ident{e\(\sb{2}\)} \Xin \ident{v\(\sb{1}\)} \texttt{-} \ident{v\(\sb{2}\)}
+}
+
+Note: page~\pageref{la_calculette_est_un_interprete} nous avons
+regroupé toutes les règles avec \cst{BinOp} en conclusion pour
+ne former qu'un seul motif.
+
+Il faut se souvenir que l'évaluation des filtres OCaml est spécifiée
+(c'est l'ordre d'écriture des motifs) alors qu'il n'y a pas de telle
+notion dans la sémantique opérationnelle: \emph{les règles ne sont pas
+ordonnées}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Déterminisme}
+
+Il est important que les mêmes données conduisent toujours au même
+résultat. Cette propriété s'appelle le
+\emph{déterminisme}. Formellement, une sémantique opérationnelle
+déterministe $\ceval{e}{v}$ vérifie la propriété
+
+\begin{center}
+\emph{Si $\ceval{e}{v}$ et $\ceval{e}{v'}$ alors $v=v'$.}
+\end{center}
+
+En d'autres termes, l'évaluation est alors une \emph{fonction
+partielle} (des expressions vers les valeurs). Autrement dit encore,
+les mêmes données conduisent toujours aux mêmes résultats.
+
+Pour démontrer cette propriété, on raisonne par récurrence
+structurelle sur les arbres de preuve de $\ceval{e}{v}$ et
+$\ceval{e}{v'}$, ainsi que par cas sur la forme de $e$.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Ajout des variables et de la liaison locale}
+
+Dans le but de simplifier l'écriture des expressions, on souhaite
+nommer des sous-expressions, comme dans l'extrait de syntaxe concrète
+\texttt{\small 
+\begin{center}
+let x = 1+2*7 in 9*x*x - x + 2
+\end{center}
+}
+
+Pour cela il faut ajouter 
+
+\begin{itemize}
+
+  \item les \emph{identificateurs} (\verb+x+) 
+  
+  \item et la \emph{liaison locale} (\verb+let ... in ...+)
+
+\end{itemize}
+
+à la syntaxe concrète des expressions.
+
+\remarque \quad On emploie le terme de \emph{variable} pour qualifier
+les identificateurs au niveau de la syntaxe abstraite pour des raisons
+historiques (car rien de varie ici), mais \emph{une variable est un
+nom}, pas un objet.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Ajout des variables et de la liaison locale (suite)}
+
+\label{let_in_et_var}
+
+\begin{itemize}
+
+  \item \textcolor{blue}{Syntaxe concrète}
+    {\small 
+     \begin{verbatim}
+Expression ::= ...  | ident              /* identifier */
+             | "let" ident "=" Expression "in" Expression
+     \end{verbatim}
+     }
+
+  \vspace*{-5pt}
+
+  Il faudrait définir l'ensemble de lexèmes dénoté par \texttt{ident}.
+
+  \medskip
+
+  \item \textcolor{blue}{Syntaxe abstraite}
+    {\small
+     \begin{tabbing}
+     \Xtype \type{expr} \equal \texttt{...} \= \vbar{} \= \cst{Var}
+     \Xof \type{string} \quad \comment{On parle plutôt de
+     \emph{variable} ici.}\\
+     \> \vbar \> \cst{Let} \Xof \type{string} \texttt{*} \type{expr}
+     \texttt{*} \type{expr}\semi{}
+     \end{tabbing}
+    }
+
+  \medskip
+
+  Les variables sont notées $x$. Il ne faut pas confondre $x$
+  (méta-variable dénotant n'importe quelle variable), \cst{Var} 
+  \str{x} (l'AST d'une variable particulière du langage décrit) et
+  \str{x} ou \texttt{x} (code source de la variable précédente).
+
+\end{itemize}
+
+\medskip
+
+\textbf{Quelle sémantique opérationnelle pour ces expressions avec
+  variables?}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Environnements}
+
+Un \emph{environnement} associe des variables à des valeurs (par
+construction, \emph{leur} valeur). Une telle association est une
+\emph{liaison}.
+
+\begin{itemize}
+
+  \item Une liaison est une paire $(x,v)$. Par abus de
+  langage on la notera $x \mapsto v$, comme un environnement au
+  domaine réduit à une seule variable.
+
+  \item Un environnement est une fonction partielle des
+  variables vers les valeurs. On peut implanter l'environnement vide
+  en OCaml par:
+
+  \centerline{\small \Xlet \ident{empty\_env} \equal \Xfun \ident{x}
+  $\rightarrow$ \ident{raise} \cst{Not\_found}}
+
+  \item L'ajout d'une liaison $x \mapsto v$ à un
+  environnement $\rho$ se note $\rho \oplus (x \mapsto v)$. Si $x$
+  était déjà liée dans $\rho$, c.-à-d. si $\rho (x)$ était définie,
+  alors cette nouvelle liaison cache l'ancienne, c.-à-d. $(\rho \oplus
+  x \mapsto v) (x) = v$ même si $\rho (x) \neq v$. Implantation:
+
+  \centerline{\small \Xlet \ident{extend} \ident{env}
+  \lpar\ident{x},\ident{v}\rpar{} \equal \Xfun \ident{y} $\rightarrow$
+  \Xif \ident{x} \equal \ident{y} \Xthen \ident{v} \Xelse \ident{env}
+  \ident{y}}
+
+  \item Les jugements sont maintenant de la forme
+  $\eval{\rho}{e}{v}$
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique opérationnelle étendue}
+
+\label{semantique_operationnelle_etendue}
+
+\begin{mathpar}
+\inferrule
+  {\eval{\rho}{\cst{Const} \; n}{\dot{n}}}
+  {}\;\TirName{\quad const}
+\and
+\inferrule
+  {x \in \dom{\rho}}
+  {\eval{\rho}{\cst{Var} \; x}{\rho (x)}}\;\TirName{var}
+\and
+\inferrule*[right=add]
+  {\eval{\rho}{e_1}{v_1}\\ \eval{\rho}{e_2}{v_2}}
+  {\eval{\rho}
+        {\cst{BinOp} \, \lpar\cst{Add},e_1,e_2\rpar}
+        {v_1 + v_2}}
+\and
+\inferrule*[right=sub]
+  {\eval{\rho}{e_1}{v_1}\\ \eval{\rho}{e_2}{v_2}}  
+  {\eval{\rho}
+        {\cst{BinOp} \, \lpar\cst{Sub},e_1,e_2\rpar}
+        {v_1 - v_2}}
+\end{mathpar}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique opérationnelle étendue}
+
+\begin{mathpar}
+\inferrule*[right=mult]
+  {\eval{\rho}{e_1}{v_1}\\ \eval{\rho}{e_2}{v_2}}  
+  {\eval{\rho}
+         {\cst{BinOp} \, \lpar\cst{Mult},e_1,e_2\rpar}
+        {v_1 \times v_2}} 
+\and
+\inferrule*[right=div]
+  {\eval{\rho}{e_1}{v_1}\\ \eval{\rho}{e_2}{v_2}}  
+  {\eval{\rho}
+        {\cst{BinOp} \, \lpar\cst{Div},e_1,e_2\rpar}
+        {v_1 / v_2}}
+\and
+\inferrule*[right=let]
+  {\eval{\rho}{e_1}{v_1}\\ 
+   \eval{\rho \oplus x \mapsto v_1}{e_2}{v_2}}
+  {\eval{\rho}
+        {\cst{Let} \, \lpar{x},e_1,e_2\rpar}
+        {v_2}}
+\end{mathpar}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Interprétation étendue}
+
+\label{interpretation_etendue}
+
+  {\small
+   \begin{tabbing}
+     \Xlet \= \Xrec \= \ident{eval} \textbf{\ident{env}} \ident{e}
+     \equal \Xmatch \ident{e} \Xwith\\
+     \> \cst{Const} \ident{n} \(\rightarrow\) \ident{n}\\
+     \vbar \> \cst{BinOp}
+     \lpar\ident{op},\ident{e}\(\sb{1}\),\ident{e}\(\sb{2}\)\rpar{}
+     \(\rightarrow\) \\
+     \> \quad \= \Xlet \ident{v\(\sb{1}\)} \equal \ident{eval}
+     \textbf{\ident{env}} \ident{e\(\sb{1}\)} 
+     \Xand  \ident{v\(\sb{2}\)} \equal \ident{eval} \textbf{\ident{env}}
+     \ident{e\(\sb{2}\)}\\
+     \> \> \Xin \= \Xbegin \Xmatch \ident{op} \Xwith\\
+     \> \> \> \quad \cst{Add} \(\rightarrow\)
+     \ident{v}\(\sb{1}\) \texttt{+} \ident{v}\(\sb{2}\) \vbar
+     \cst{Sub} \(\rightarrow\)
+     \ident{v}\(\sb{1}\) \texttt{-} \ident{v}\(\sb{2}\) \vbar \cst{Mult}
+     \(\rightarrow\) \ident{v}\(\sb{1}\) \texttt{*} \ident{v}\(\sb{2}\) \vbar
+     \cst{Div} \(\rightarrow\)
+     \ident{v}\(\sb{1}\) \texttt{/} \ident{v}\(\sb{2}\)\\
+     \> \> \> \Xend\\
+     \textbf{\vbar} \> \textbf{\cst{Var} \ident{x} \(\rightarrow\)
+     \ident{env} \ident{x}}\\
+     \textbf{\vbar} \> \textbf{\cst{Let}
+     \lpar\ident{x},\ident{e}\(\sb{1}\),\ident{e}\(\sb{2}\)\rpar{}
+     \(\rightarrow\) \Xlet \ident{v}\(\sb{1}\) \equal \ident{eval}
+     \ident{env} \ident{e}\(\sb{1}\) \Xin \ident{eval}
+     \lpar\ident{extend} \ident{env} \lpar\ident{x},\ident{v}\(\sb{1}\)\rpar\rpar{}
+     \ident{e}\(\sb{2}\)}\semi{}
+   \end{tabbing}
+  }
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Interprétation étendue (suite)}
+
+\begin{itemize}
+
+  \item Notez le codage de $\rho \oplus x \mapsto v_1$ par
+  {\small \ident{extend} \ident{env} \lpar\ident{x},\ident{v}\(\sb{1}\)\rpar}.
+
+  \item L'évaluation de l'expression initiale doit se faire
+  dans un environnement vide.
+
+  \item Les valeurs dans la sémantique sont dans $\mathbb{Z}$ alors
+  que dans l'interprète elles sont de type \type{int}, \emph{donc
+  peuvent déborder}. On n'abordera pas ce problème ici.
+
+\end{itemize}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Un exemple simple d'évaluation}
+
+\label{une_interpretation_moins_simple}
+
+Reprenons l'exemple page~\pageref{exemple_expr_arith}, en introduisant
+une variable qui lie l'expression: {\small
+  \verb|"let x = 1 in (1+2)*(5/x)"|}. Soit $e$ l'arbre de syntaxe
+abstraite associé. Son évaluation est interprétée par «~\ident{eval
+    empty\_env $e$}~». Dénotons \ident{empty\_env} par
+\textcolor{blue}{$\varnothing$} et {\small \ident{extend}
+  \ident{empty\_env} \lpar\str{x},\num{1}\rpar} par
+\textcolor{blue}{\ident{env}}.  Les résultats sont en rouge.
+          {\scriptsize
+\begin{center}
+\pstree[nodesep=2pt,levelsep=20pt,treesep=6pt]
+  {\mknode{\TR{\cst{Let}}}
+          {\raisebox{4pt}{\Rnode{empty_env}{$\varnothing$}}}
+          {\raisebox{4pt}{\Rnode{top_fifteen}{\num{15}}}}}{
+  \TR{\str{x}}
+  \pstree{\mknode{\TR{\cst{Const}}}
+                 {\raisebox{4pt}{\Rnode{empty_env_down}{$\varnothing$}}}
+                 {\raisebox{4pt}{\Rnode{x_val_up}{\num{1}}}}}{
+    \TR[name=x_val]{\num{1}}
+  }
+\pstree{
+\mknode{\TR[name=subexpr]{\cst{BinOp}}}
+       {\raisebox{4pt}{\Rnode{subexpr_env}{\ident{env}}}}
+       {\raisebox{4pt}{\Rnode{fifteen}{\num{3*5\textbf{=}15}}}}}{
+  \TR{\cst{Mult}}
+  \pstree{\mknode{\TR{\cst{BinOp}}}
+                 {\raisebox{2pt}{\Rnode{B}{\ident{env}}}}
+                 {\raisebox{2pt}{\Rnode{three}{\num{1+2\textbf{=}3}}}}}{
+    \TR{\cst{Add}}
+    \pstree{\mknode{\TR{\cst{Const}}}
+                   {\Rnode{BB}{\ident{env}}}
+                   {\Rnode{one}{\num{1}}}}{
+      \TR[name=leaf_one]{\num{1}}
+    }
+    \pstree{\mknode{\TR{\cst{Const}}}
+                   {\Rnode{BC}{\ident{env}}}
+                   {\Rnode{two}{\num{2}}}}{
+      \TR[name=leaf_two]{\num{2}}
+    }
+  }
+  \pstree{\mknode{\TR{\cst{BinOp}}}
+                 {\Rnode{C}{\ident{env}}}
+                 {\raisebox{2pt}{\Rnode{div}{\num{5/1\textbf{=}5}}}}}{
+    \TR{\cst{Div}}
+    \pstree{\mknode{\TR{\cst{Const}}}
+                   {\Rnode{CB}{\ident{env}}}
+                   {\Rnode{five}{\num{5}}}}{
+      \TR[name=leaf_five]{\num{5}}
+    }
+    \pstree{\mknode{\TR{\cst{Var}}}
+                   {\Rnode{CC}{\ident{env}}}
+                   {\Rnode{rho}{\ident{env}}
+                    \Rnode{app}{\textsf{\str{x} \textbf{=} 1}}}}{
+      \TR[name=leaf_x]{\str{x}}
+    }
+  }
+}
+}
+
+\ncarc[linecolor=blue,nodesepA=1pt,nodesepB=1pt,arcangle=20]{->}{x_val_up}{subexpr_env}
+\ncline[linecolor=blue,nodesepA=1pt,nodesepB=1pt]{->}{empty_env}{empty_env_down}
+\ncline[linecolor=red,nodesepA=1pt,nodesepB=1pt]{->}{fifteen}{top_fifteen}
+\ncline[linecolor=red,linestyle=dashed,nodesepA=1pt,nodesepB=1pt]{->}{x_val}{x_val_up}
+\ncline[linecolor=red,linestyle=dashed,nodesepA=1pt,nodesepB=1pt]{->}{leaf_one}{one}
+\ncline[linecolor=red,linestyle=dashed,nodesepA=1pt,nodesepB=1pt]{->}{leaf_two}{two}
+\ncline[linecolor=red,linestyle=dashed,nodesepA=1pt,nodesepB=1pt]{->}{leaf_five}{five}
+\ncline[linecolor=red,linestyle=dashed,nodesepA=1pt,nodesepB=1pt]{->}{leaf_x}{app}
+\ncarc[linecolor=red,nodesepA=1pt]{->}{one}{three}
+\nccurve[linecolor=red,angleA=130,angleB=340,nodesepA=1pt]{->}{two}{three}
+\ncarc[linecolor=red,nodesepA=1pt]{->}{five}{div}
+\ncline[linecolor=red,nodesepA=1pt]{->}{app}{div}
+\ncarc[linecolor=red,nodesepB=1pt]{->}{three}{fifteen}
+\ncarc[linecolor=red,arcangle=-5,nodesepA=1pt,nodesepB=1pt]{->}{div}{fifteen}
+\ncline[linecolor=blue,nodesepA=1pt,nodesepB=1pt]{->}{subexpr_env}{B}
+\ncline[linecolor=blue,nodesepA=1pt,nodesepB=1pt]{->}{B}{BB}
+\ncline[linecolor=blue,nodesepA=1pt,nodesepB=1pt]{->}{B}{BC}
+\ncarc[linecolor=blue,arcangle=-8,nodesepA=1pt,nodesepB=1pt]{->}{subexpr_env}{C}
+\ncline[linecolor=blue,nodesepA=1pt,nodesepB=1pt]{->}{C}{CB}
+\ncline[linecolor=blue,nodesepA=1pt,nodesepB=1pt]{->}{C}{CC}
+
+\ncarc[linecolor=blue,arcangle=-35,nodesepA=1pt,nodesepB=1pt]{->}{CC}{rho}
+\end{center}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Une notation plus lisible}
+
+Afin de simplifier la présentation des évaluations
+nous pouvons utiliser une fonction auxiliaire, des chaînes de
+caractères vers les expressions, qui correspond à la composition de
+l'analyse lexicale et syntaxique. Nous la noterons \mbox{$\src{\_}$:
+\type{string} $\rightarrow$ \type{expr}}, mais nous omettrons les
+guillemets de la chaîne:
+
+\(\src{\texttt{let x = 1 in let y = 2 in x + y}}\)
+\begin{align*}
+ &= \src{\text{\Xlet \ident{x} \equal{} \num{1} \Xin \Xlet
+  \ident{y} \equal{} \num{2} \Xin \ident{x} \texttt{+} \ident{y}}}\\
+  &= \text{\small 
+      \cst{Let} \lpar\str{x},
+         \cst{Const} \num{1}, 
+         \cst{Let} \lpar\str{y},
+            \cst{Const} \num{2},
+            \cst{BinOp} \lpar\cst{Add},
+              \cst{Var} \str{x},
+              \cst{Var}
+              \str{y}\rpar\!\rpar\!\rpar}
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Une notation plus lisible (suite)}
+
+Des méta-variables $\meta{e}$ peuvent apparaître dans la syntaxe
+concrète pour désigner des chaînes de caractères produites par la
+règle de grammaire \texttt{Expression}:
+
+\centerline{$\src{\Xlet \; \ident{x} \; \equal \; \num{2} \; \Xin
+\; \meta{e}} = \cst{Let} \; \lpar\str{x}, \cst{Const} \, \num{2},
+\src{\meta{e}}\!\rpar$}
+
+\bigskip
+
+Pour simplifier encore, on écrira $e$ au lieu de $\src{\meta{e}}$.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Une notation plus lisible (suite)}
+
+Nous pouvons en fait aisément donner une définition formelle de
+l'analyse lexico-syntaxique sur les programmes... dont la syntaxe est
+déjà correcte.
+\begin{align*}
+\src{\meta{n}} & = \cst{Const} \, \lpar\ident{int\_of\_string} \,
+\lpar\meta{n}\rpar\!\rpar = \cst{Const} \, \lpar{n}\rpar\\
+\src{\meta{e}_1 \, \texttt{+} \, \meta{e}_2} & = \cst{BinOp} \,
+\lpar\cst{Add}, \src{\meta{e}_1}, \src{\meta{e}_2}\!\rpar\\
+\src{\meta{e}_1 \, \texttt{-} \, \meta{e}_2} & = \cst{BinOp} \,
+\lpar\cst{Sub}, \src{\meta{e}_1}, \src{\meta{e}_2}\!\rpar\\
+\src{\meta{e}_1 \, \texttt{*} \, \meta{e}_2} & = \cst{BinOp} \,
+\lpar\cst{Mult}, \src{\meta{e}_1}, \src{\meta{e}_2}\!\rpar\\
+\src{\meta{e}_1 \, \texttt{/} \, \meta{e}_2} & = \cst{BinOp} \,
+\lpar\cst{Div}, \src{\meta{e}_1}, \src{\meta{e}_2}\!\rpar\\
+\src{x} & = \cst{Var} \, \lpar{x}\rpar\\
+\src{\Xlet \; x \; \equal \; \meta{e}_1 \; \Xin \;
+  \meta{e}_2} & = \cst{Let} \, \lpar{x}, \src{\meta{e}_1},
+\src{\meta{e}_2}\!\rpar\\
+\src{\lpar\meta{e}\rpar} & = \src{\meta{e}}
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Des règles plus lisibles}
+
+\label{semantique_operationnelle_etendue_lisible}
+
+\begin{mathpar}
+\inferrule
+  {\meval{\rho}{\meta{n}}{\dot{n}}}
+  {}\;\TirName{\quad const}
+\and
+\inferrule
+  {x \in \dom{\rho}}
+  {\meval{\rho}{x}{\rho (x)}}\;\TirName{var}
+\and
+\inferrule*[right=add]
+  {\eval{\rho}{e_1}{v_1}\\ 
+   \eval{\rho}{e_2}{v_2}}
+  {\meval{\rho}{\meta{e}_1 \, \texttt{+} \, \meta{e}_2}{v_1 + v_2}}
+\and\hspace*{-4pt}
+\inferrule*[right=sub]
+  {\eval{\rho}{e_1}{v_1}\\ 
+   \eval{\rho}{e_2}{v_2}}
+  {\meval{\rho}{\meta{e}_1 \, \texttt{-} \, \meta{e}_2}{v_1 - v_2}}
+\and
+\inferrule*[right=mult]
+  {\eval{\rho}{e_1}{v_1}\\ 
+   \eval{\rho}{e_2}{v_2}}
+  {\meval{\rho}{\meta{e}_1 \, \texttt{*} \, \meta{e}_2}{v_1 \times v_2}}
+\and\hspace*{-4pt}
+\inferrule*[right=div]
+  {\eval{\rho}{e_1}{v_1}\\ 
+   \eval{\rho}{e_2}{v_2}}
+  {\meval{\rho}{\meta{e}_1 \, \texttt{/} \, \meta{e}_2}{v_1 / v_2}}
+\and
+\inferrule*[right=let]
+  {\eval{\rho}{e_1}{v_1}\\ 
+   \eval{\rho \oplus x \mapsto v_1}{e_2}{v_2}}
+  {\meval{\rho}{\Xlet \; x \; \equal \; \meta{e}_1 \; \Xin
+  \; \meta{e}_2}{v_2}}
+\end{mathpar}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Un exemple complexe d'évaluation}
+
+\label{un_exemple_complexe}
+
+Soit l'extrait de syntaxe concrète {\small
+\verb|"let x = 1 in ((let x = 2 in x) + x)"|}.
+
+\bigskip
+
+L'arbre de syntaxe abstraite produit par l'analyseur lexico-syntaxique
+est:
+{\small
+\begin{center}
+\pstree[nodesep=2pt,levelsep=20pt]{\TR{\cst{Let}}}{
+  \TR{\str{x}}
+  \pstree{\TR{\cst{Const}}}{
+    \TR{\num{1}}
+  }
+  \pstree{\TR{\cst{BinOp}}}{
+    \TR{\cst{Add}}
+    \pstree{\TR{\cst{Let}}}{
+      \TR{\str{x}}
+      \pstree{\TR{\cst{Const}}}{
+        \TR{\num{2}}
+      }
+      \pstree{\TR{\cst{Var}}}{
+        \TR{\str{x}}
+      }      
+    }
+    \pstree{\TR{\cst{Var}}}{
+      \TR{\str{x}}
+    }
+  }
+}
+\end{center}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Arbre de preuve de l'évaluation}
+
+On combine les règles d'inférence pour évaluer l'expression: on
+obtient un \emph{arbre de preuve} (de l'évaluation de l'expression en
+la valeur~3), ou \emph{dérivation}.
+
+\bigskip
+
+{\footnotesize
+\begin{mathpar}
+\inferrule*
+  {\eval{\varnothing}{\src{\num{1}}}{1}\\
+   \inferrule*
+     {\inferrule*[leftskip=4em]
+      {\eval
+         {\str{\textcolor{red}{x}} \mapsto 1}
+         {\src{\textbf{\num{2}}}}
+         {2}\\
+       \eval
+         {\str{\textcolor{red}{x}} \mapsto 1 \oplus \str{\textbf{x}} \mapsto 2}
+         {\src{\ident{x}}}
+         {2}
+      }
+      {\eval
+         {\str{\textcolor{red}{x}} \mapsto 1}
+         {\src{\textbf{\Xlet \; \ident{x} \; \equal \; \num{2}
+             \; \Xin \;} \ident{x}}}
+         {2}
+      }\\
+      \inferrule*[leftskip=1em]
+        {}
+        {\eval
+           {\str{\textcolor{red}{x}} \mapsto 1}
+           {\src{\textcolor{blue}{\ident{x}}}}
+           {1}
+        }
+     }
+     {\eval
+        {\str{\textcolor{red}{x}} \mapsto 1}
+        {\src{\lpar\textbf{\Xlet \; \ident{x} \; \equal \; \num{2}
+         \; \Xin} \; \ident{x}\rpar{} \; \texttt{+} \;
+         \textcolor{blue}{\ident{x}}}} 
+        {2+1}
+     }
+  }
+  {\eval
+    {\varnothing}
+    {\src{\Xlet \; \textcolor{red}{\ident{x}} \; \equal \; \num{1} \; \Xin
+       \; \lpar\lpar\textbf{\Xlet \; \ident{x} \; \equal \;
+       \num{2} \; \Xin} \; \ident{x}\rpar{} \; \texttt{+} \;
+       \textcolor{blue}{\ident{x}}\rpar}}
+    {3}}
+\end{mathpar}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Construction de l'arbre de preuve}
+
+L'arbre de preuve se construit de bas en haut, c.-à-d. de la racine
+vers les feuilles, en fonction de la forme des conclusions et on en
+déduit à chaque étape des équations sur les méta-variables dénotant
+les valeurs.
+
+\bigskip
+
+Puis ces équations sont résolues et donnent la valeur recherchée,
+c.-à-d. le résultat de l'évaluation.
+
+\bigskip
+
+Soit $v$ la valeur du terme initial $\src{\text{\Xlet \ident{x} \equal
+\num{1} \Xin \lpar\lpar\Xlet \ident{x} \equal \num{2} \Xin \ident{x}\rpar{}
+\texttt{+} \ident{x}\rpar}}$
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Construction de l'arbre de preuve (suite)}
+
+La seule règle qui peut avoir une conclusion de cette forme est
+\RefTirName{let}
+(p.~\pageref{semantique_operationnelle_etendue_lisible}). Nous
+appliquons donc une instance de celle-ci (avec un environnement vide):
+\begin{mathpar}
+\inferrule
+  {\eval{\varnothing}{\src{\num{1}}}{1}\\
+     {\eval
+        {\str{\textcolor{red}{x}} \mapsto 1}
+        {\src{\textbf{\lpar\Xlet \; \ident{x} \; \equal \; 2
+         \; \Xin \; \ident{x}\rpar{}} \; \texttt{+} \;
+         \textcolor{blue}{\ident{x}}}} 
+        {v}}
+  }
+  {\eval
+    {\varnothing}
+    {\src{\Xlet \; \textcolor{red}{\ident{x}} \; \equal \; \num{1} \; \Xin \;
+       \lpar{}\textbf{\lpar\Xlet \; \ident{x} \; \equal \; 2 
+       \; \Xin \; \ident{x}\rpar{}} \; \texttt{+} \;
+       \textcolor{blue}{\ident{x}}\rpar}}
+    {v}}
+\end{mathpar}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Construction de l'arbre de preuve (suite et fin)}
+
+La seconde prémisse ne peut être qu'une conclusion de la règle
+\RefTirName{add} (p.~\pageref{semantique_operationnelle_etendue_lisible}):
+{\small
+ \begin{mathpar}
+    \inferrule*
+      {\eval
+         {\str{\textcolor{red}{x}} \mapsto 1}
+         {\src{\textbf{\Xlet \; \ident{x} \; \equal \; \num{2}
+             \; \Xin \;} \ident{x}}}
+         {v_1}\\
+        {\eval
+           {\str{\textcolor{red}{x}} \mapsto 1}
+           {\src{\textcolor{blue}{\ident{x}}}}
+           {1}
+        }
+     }
+     {\eval
+        {\str{\textcolor{red}{x}} \mapsto 1}
+        {\src{\lpar\textbf{\Xlet \; \ident{x} \; \equal \; \num{2}
+         \; \Xin} \; \ident{x}\rpar{} \; \texttt{+} \;
+         \textcolor{blue}{\ident{x}}}} 
+        {v_1+1}
+     }
+ \end{mathpar}
+}
+\noindent et l'équation que l'on déduit est alors simplement $v = v_1
++ 1$.
+
+La première prémisse ne peut être que la conclusion d'une règle
+\RefTirName{let} (p.~\pageref{semantique_operationnelle_etendue_lisible}):
+{\small
+\begin{mathpar}
+  \inferrule
+     {\eval
+        {\str{\textcolor{red}{x}} \mapsto 1}
+        {\src{\textbf{2}}}
+        {2}\\
+      \eval
+        {\str{\textcolor{red}{x}} \mapsto 1 \oplus \str{\textbf{x}} \mapsto 2}
+        {\src{\ident{x}}}
+        {2}
+     }
+     {\eval
+        {\str{\textcolor{red}{x}} \mapsto 1}
+        {\src{\textbf{\Xlet \; \ident{x} \; \equal \; \num{2}
+            \; \Xin \;} \ident{x}}}
+        {2}
+     }
+\end{mathpar}
+}
+d'où $v_1=2$. En substituant $v_1$ par sa valeur, il vient $v=2+1=3$. QED
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Formalisation des erreurs}
+
+\label{formalisation_des_erreurs}
+
+Lors de l'évaluation présentée à la
+page~\pageref{une_interpretation_moins_simple}, plusieurs problèmes
+auraient pu se présenter: \ident{x} aurait pu valoir 0 (division par
+zéro) ou $\str{x} \not\in \dom{\rho}$. Dans le premier cas, la règle
+est:
+\begin{mathpar}
+\inferrule*[right=div]
+  {\eval{\rho}{e_1}{v_1}\\ 
+   \eval{\rho}{e_2}{v_2}}
+  {\eval{\rho}{\src{\meta{e}_1 \, \texttt{/} \, \meta{e}_2}}{v_1 /
+    v_2}}
+\end{mathpar}
+
+On peut formaliser les cas corrects, et éventuellement les erreurs:
+\begin{mathpar}
+\inferrule
+  {\eval{\rho}{e_1}{v_1}\\
+   \eval{\rho}{e_2}{v_2}\\
+   \textcolor{blue}{v_2 \neq 0}}
+  {\eval{\rho}{\src{\meta{e}_1 \, \texttt{/} \, \meta{e}_2}}{v_1/v_2}}
+\and
+\inferrule
+  {\eval{\rho}{e_2}{0}}
+  {\eval{\rho}{\src{\meta{e}_1 \, \texttt{/} \, \meta{e}_2}}
+        {\text{\textcolor{red}{\emph{erreur}}}}}
+\end{mathpar}
+
+Pour formaliser \textcolor{red}{\emph{erreur}} on remplace la relation
+$\eval{\rho}{e}{v}$ par $\eval{\rho}{e}{r}$, où $r$ est une
+\emph{réponse}. Les réponses sont désormais des valeurs ou des
+\emph{erreurs}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Formalisation des erreurs (production des erreurs)}
+
+\label{production_des_erreurs}
+
+Nous allons considérer à partir de maintenant que les valeurs dans la
+sémantique sont de type \type{int} au lieu de l'ensemble mathématique
+$\mathbb{Z}$, car nous n'avons pas besoin de tant d'abstraction et
+cela nous rapprochera de l'implantation, c.-à-d. de l'interprète.
+
+\Xtype \type{value} \equal \type{int}\semi{}\\
+\Xtype \type{error} \equal \cst{DivByZero} \vbar \cst{FreeVar}
+\Xof \type{string}\semi{}\\ 
+\Xtype \type{result} \equal \cst{Val} \Xof \type{value}
+\vbar \cst{Err} \Xof \type{error}\semi{}
+
+Les règles qui peuvent produire des erreurs sont
+\begin{mathpar}
+\inferrule*[right=div-zero]
+  {\eval{\rho}{e_2}{\cst{Val} \, \lpar\num{0}\rpar}}
+  {\eval
+     {\rho}
+     {\src{\meta{e}_1 \, \texttt{/} \, \meta{e}_2}}
+     {\cst{Err} \, \lpar\cst{DivByZero}\rpar}}
+\and\hspace*{-4pt}
+\inferrule*[right=free-var]
+  {x \not\in \dom{\rho}}
+  {\eval{\rho}
+        {\src{x}}
+        {\cst{Err} \, \lpar\cst{FreeVar} \, x\rpar}}
+\end{mathpar}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Formalisation des erreurs (production des valeurs)}
+\begin{mathpar}
+\inferrule*[right=div]
+  {\eval{\rho}{e_1}{\cst{Val} \, \lpar{v_1}\rpar}\\ 
+   \eval{\rho}{e_2}{\cst{Val} \, \lpar{v_2}\rpar}}  
+  {\meval{\rho}
+         {\meta{e}_1 \, \texttt{/} \, \meta{e}_2}
+         {\cst{Val} \, \lpar v_1 \, \texttt{/} \, v_2\rpar}}
+\and
+\inferrule*[right=mult]
+  {\eval{\rho}{e_1}{\cst{Val} \, \lpar{v_1}\rpar}\\ 
+   \eval{\rho}{e_2}{\cst{Val} \, \lpar{v_2}\rpar}}
+  {\meval{\rho}
+        {\meta{e}_1 \, \texttt{*} \, \meta{e}_2}
+        {\cst{Val} \, \lpar{v_1 \, \texttt{*} \, v_2\rpar}}}
+\and
+\inferrule
+  {\eval{\rho}{e_1}{\cst{Val} \, \lpar{v_1}\rpar}\\ 
+   \eval{\rho}{e_2}{\cst{Val} \, \lpar{v_2}\rpar}}
+  {\meval{\rho}
+         {\meta{e}_1 \, \texttt{+} \, \meta{e}_2}
+         {\cst{Val} \, \lpar{v_1 \, \texttt{+} \, v_2}\rpar}}
+\;\TirName{add}
+\and
+\inferrule*[right=sub]
+  {\eval{\rho}{e_1}{\cst{Val} \, \lpar{v_1}\rpar}\\ 
+   \eval{\rho}{e_2}{\cst{Val} \, \lpar{v_2}\rpar}}  
+  {\meval{\rho}
+         {\meta{e}_1 \, \texttt{-} \, \meta{e}_2}
+         {\cst{Val} \, \lpar{v_1 \, \texttt{-} \, v_2}\rpar}}
+\end{mathpar}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Formalisation des erreurs (production des valeurs --- suite et fin)}
+
+\begin{mathpar}
+\inferrule
+  {\meval{\rho}
+         {\meta{n}}
+         {\cst{Val} \, \lpar{n}\rpar}}{}
+\;\TirName{\quad const}
+\and
+\inferrule
+  {x \in \dom{\rho}}
+  {\meval{\rho}{x}{\cst{Val} \, \lpar\rho (x)\rpar}}
+\;\TirName{var}
+\and
+\inferrule*[right=let]
+  {\eval{\rho}{e_1}{\cst{Val} \, \lpar{v_1}\rpar}\\ 
+   \eval{\rho \oplus x \mapsto v_1}{e_2}{\cst{Val} \,
+  \lpar{v_2}\rpar}}
+  {\meval{\rho}{\Xlet \; x \; \equal \; \meta{e}_1 \; \Xin
+  \; \meta{e}_2}{\cst{Val} \, \lpar{v_2}\rpar}}
+\end{mathpar}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Formalisation des erreurs (propagation des erreurs)}
+\begin{mathpar}
+\inferrule*[right=add-err$_1$]
+  {\eval{\rho}{e_1}{\cst{Err} \, \lpar{z}\rpar}\\
+   \eval{\rho}{e_2}{r}}
+  {\meval{\rho}
+         {\meta{e}_1 \, \texttt{*} \, \meta{e}_2}
+         {\cst{Err} \, \lpar{z}\rpar}}
+\and
+\inferrule*[right=add-err$_2$]
+  {\eval{\rho}{e_1}{r}\\
+   \eval{\rho}{e_2}{\cst{Err} \, \lpar{z}\rpar}}
+  {\meval{\rho}
+         {\meta{e}_1 \, \texttt{+} \, \meta{e}_2}
+         {\cst{Err} \, \lpar{z}\rpar}}
+\end{mathpar}
+\remarques
+\begin{itemize}
+
+  \item Il faut deux règles car deux prémisses peuvent
+  s'évaluer en des erreurs et la sémantique n'exprime pas la
+  commutativité de l'addition. Les autres cas sont similaires.
+
+  \item En cas d'erreurs multiples, seule une sera
+  propagée. L'ordre d'évaluation n'étant volontairement pas
+  complètement spécifié, on ne peut dire \emph{a priori} quelle erreur
+  sera propagée.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Implantation de la gestion d'erreur dans l'interprète}
+
+Pour simplifier, nous utilisons le système d'exception du langage
+d'implantation, s'il existe (et nous nous passons donc du type
+\type{result}). C'est le cas en OCaml: 
+{\small
+\begin{tabbing}
+\Xexception \cst{Err} \Xof \type{error}\semi\\
+\Xlet \= \Xrec \ident{eval} \ident{env} \ident{e} \equal \Xmatch
+\ident{e} \Xwith \texttt{...} \\
+\vbar \> \cst{Var} \ident{x} \(\rightarrow\) \textcolor{green}{\Xbegin
+  \Xtry} \ident{env} \ident{x} \textcolor{green}{\Xwith \cst{Not\_found}
+  \(\rightarrow\) \ident{raise} \lpar\cst{Err}\lpar\cst{FreeVar}
+  \ident{x}\rpar\rpar{} \Xend}\\
+\vbar \> \cst{BinOp}
+\lpar\textbf{\cst{Div}},\ident{e}\(\sb{1}\),\ident{e}\(\sb{2}\)\rpar{}
+\(\rightarrow\) \= \Xlet v\(\sb{1}\) \equal \ident{eval env}
+\ident{e}\(\sb{1}\) \Xand v\(\sb{2}\) \equal \ident{eval env}
+\ident{e}\(\sb{2}\)\\
+\> \> \Xin \textcolor{green}{\Xif v\(\sb{2}\) \equal \num{0} \Xthen
+\ident{raise} \lpar\cst{Err}\lpar\cst{DivByZero}\rpar\rpar{}
+\Xelse} v\(\sb{1}\)\textsf{/}v\(\sb{2}\) \\
+\texttt{| ...}
+\end{tabbing}
+} 
+\remarque Nous pourrions accélérer le traitement d'erreur en
+évaluant d'abord \ident{e}$_2$ puis \ident{e}$_1$ seulement si \ident{v}$_2$
+\nequal \num{0}. L'interprète fixe alors l'ordre d'évaluation des
+arguments de la division, mais officiellement l'usager de l'interprète
+ne doit s'en tenir qu'à la sémantique opérationnelle (qui ne fixe pas
+l'ordre).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{L'ordre d'évaluation des arguments}
+
+\begin{itemize}
+
+  \item Si l'ordre d'évaluation est spécifié par la
+  sémantique (p.ex. Java), alors celle-ci est dite non ambiguë.
+
+  \item Si non (p.ex. C et Caml), l'auteur du compilateur
+  peut optimiser.
+
+\end{itemize}
+
+La sémantique opérationnelle semble parfois ne rien dire, mais elle
+peut exprimer
+
+\begin{itemize}
+
+  \item les dépendances entre les évaluations (cf. règle
+  \RefTirName{let} p.~\pageref{semantique_operationnelle_etendue_lisible}),
+
+  \item les évaluations en présence d'erreurs: comparez
+  avec page~\pageref{production_des_erreurs} la règle
+
+\begin{mathpar}
+\inferrule*[right=div-zero]
+  {\eval{\rho}{e_1}{r_1}\\
+   \eval{\rho}{e_2}{\cst{Val} \, \lpar\num{0}\rpar}
+  }
+  {\meval
+     {\rho}
+     {\meta{e}_1 \, \texttt{/} \, \meta{e}_2}
+     {\cst{Err} \, \lpar\cst{DivByZero}\rpar}
+  }
+\end{mathpar}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Variables libres}
+
+\label{variables_libres}
+
+Il est possible de déterminer si des variables sont libres dans une
+expression \emph{avant d'évaluer celle-ci}, et donc d'éviter l'erreur
+\cst{FreeVar} à l'exécution. Ce type d'analyse est dite
+\emph{statique} car elle a lieu à la compilation.
+
+Soit ${\cal L}$ la fonction qui associe une expression à ses variables
+libres. On peut noter ${\cal L} \src{\_}$ au lieu de ${\cal L}
+(\src{\_})$. Elle est définie par les équations (la priorité de
+$\backslash$ est plus grande que celle de $\cup$):
+\begin{align*}
+{\cal L} \src{\meta{n}} & = \varnothing\\
+{\cal L} \src{x} & = \{x\}\\
+{\cal L} \src{\meta{e}_1 \; \meta{o} \;\, \meta{e}_2} & = {\cal
+  L} (e_1) \cup {\cal L} (e_2)\\
+{\cal L} \src{\Xlet \; x \; \equal \; \meta{e}_1 \; \Xin \;
+  \meta{e}_2} & = {\cal L} (e_1) \cup {\cal L} (e_2) \backslash \{x\}
+\end{align*}
+où $\meta{o}$ désigne une chaîne de caractère produite par la règle
+grammaticale \texttt{BinOp}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Expressions closes}
+
+Reprenons l'exemple page~\pageref{un_exemple_complexe}:
+\verb|"let x = 1 in ((let x = 2 in x) + x)"|.
+
+\medskip
+
+\({\cal L} \src{\Xlet \; \ident{x} \; \equal \; \num{1} \; \Xin \;
+  \lpar\lpar\Xlet \; \ident{x} \; \equal \; \num{2} \; \Xin \;
+  \ident{x}\rpar{} \; \texttt{+} \; \ident{x}\rpar}\)
+\begin{align*}
+&= {\cal L}
+  \src{\num{1}} \, \cup \, {\cal L} \src{\lpar\Xlet \; \ident{x} \;
+  \equal \; \num{2} \; \Xin \; \ident{x}\rpar{} \; \texttt{+}
+  \; \ident{x}} \backslash \{\str{x}\}\\ 
+ &= \varnothing
+     \, \cup \,
+     ({\cal L} \src{\Xlet \; \ident{x} \; \equal \; \num{2} \;
+     \Xin \; \ident{x}} \, \cup \, {\cal L} \src{\ident{x}})
+     \backslash \{\str{x}\} \\
+ &= ({\cal L} \src{\num{2}} \, \cup \, {\cal L} \src{\ident{x}} \backslash
+      \{\str{x}\} \, \cup \, \{\str{x}\}) \backslash \{\str{x}\}\\
+ &= (\varnothing
+      \, \cup \,
+      \{\str{x}\}
+     \backslash \{\str{x}\}
+     \, \cup \,
+     \{\str{x}\})
+     \backslash \{\str{x}\}\\
+ &= \varnothing
+\end{align*}
+L'expression ne contient donc aucune variable libre. Par définition,
+une telle expression est dite \emph{close}. De plus, l'expression ne
+contenant aucune division, nous avons prouvé qu'il n'y aura pas
+d'erreurs lors de l'évaluation.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Représentation graphique des liaisons dans une expression}
+\label{binding_sample}
+
+Pour le moment, le constructeur \cst{Let} est le seul à ajouter des
+liaisons dans l'environnement
+(p.~\pageref{semantique_operationnelle_etendue_lisible}): on le dit
+«~liant~». Reprenons l'AST de l'exemple
+page~\pageref{un_exemple_complexe}. À partir de chaque occurrence de
+variable (\cst{Var}), remontons vers la racine. Si nous trouvons un
+\cst{Let} liant cette variable, créons un arc entre celle-ci et le
+\cst{Let} liant. Si, à la racine, aucun \cst{Let} n'a été trouvé,
+la variable est libre dans l'expression.
+{\small
+\begin{center}
+\pstree[nodesep=2pt,levelsep=20pt]{\TR[name=outer-let]{\cst{Let}}}{
+  \TR{\str{x}}
+  \pstree{\TR{\cst{Const}}}{
+    \TR{\num{1}}
+  }
+  \pstree{\TR{\cst{BinOp}}}{
+    \TR{\cst{Add}}
+    \pstree{\TR[name=inner-let]{\cst{Let}}}{
+      \TR{\str{x}}
+      \pstree{\TR{\cst{Const}}}{
+        \TR{\num{2}}
+      }
+      \pstree{\TR[name=inner-var]{\cst{Var}}}{
+        \TR{\str{x}}
+      }      
+    }
+    \pstree{\TR[name=outer-var]{\cst{Var}}}{
+      \TR{\str{x}}
+    }
+  }
+}
+\ncarc[linecolor=blue,nodesepA=1pt,nodesepB=1pt,arcangle=-40]{->}{inner-var}{inner-let}
+\ncarc[linecolor=blue,nodesepA=1pt,nodesepB=1pt,arcangle=-40]{->}{outer-var}{outer-let}
+\end{center}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Une conditionnelle avec test à zéro}
+
+Revenons au système
+page~\pageref{semantique_operationnelle_etendue_lisible} et une
+conditionnelle avec test à zéro.
+
+\begin{itemize}
+
+  \item \textcolor{blue}{Syntaxe concrète}
+  {\small 
+   \begin{verbatim}
+Expression ::= 
+  ... | "ifz" Expression "then" Expression 
+                         "else" Expression
+   \end{verbatim}
+}
+  \vspace*{-12pt}
+
+  \item \textcolor{blue}{Syntaxe abstraite}\\
+  \Xtype \type{expr} \equal \texttt{...} \vbar \cst{Ifz}
+  \Xof \type{expr} \texttt{*} \type{expr} \texttt{*} \type{expr}\semi
+
+  \item \textcolor{blue}{Analyse syntaxique} \quad $\src{\kwd{ifz} \;
+     \meta{e}_1 \; \Xthen \; \meta{e}_2 \; \Xelse \;
+     \meta{e}_3} = \cst{Ifz} \, \lpar\!\src{\meta{e}_1},
+     \src{\meta{e}_2}, \src{\meta{e}_3}\!\rpar$ 
+
+ \item \textcolor{blue}{Variables libres} \quad ${\cal L} \src{\kwd{ifz} \;
+     \meta{e}_1 \; \Xthen \; \meta{e}_2 \; \Xelse \;
+     \meta{e}_3} = {\cal L} (e_1) \, \cup \, {\cal L} (e_2) \, \cup \,
+     {\cal L} (e_3)$
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Une conditionnelle avec test à zéro (suite)}
+
+\begin{itemize}
+
+  \item \textcolor{blue}{Sémantique opérationnelle}
+  \begin{mathpar}
+  \inferrule*[right=if-then]
+    {\eval{\rho}{e_1}{0}\\
+     \eval{\rho}{e_2}{v_2}}
+    {\meval{\rho}{\kwd{ifz} \; \meta{e}_1 \; \Xthen \;
+     \meta{e}_2 \; \Xelse \; \meta{e}_3}{v_2}}
+  \and
+  \inferrule*[right=if-else]
+    {\eval{\rho}{e_1}{\dot{n}}\\
+     \dot{n} \neq 0\\
+     \eval{\rho}{e_3}{v_3}}
+    {\meval{\rho}{\kwd{ifz} \; \meta{e}_1 \; \Xthen \;
+     \meta{e}_2 \; \Xelse \; \meta{e}_3}{v_3}}
+  \end{mathpar}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Calculette + fonctions = mini-ML}
+
+Ajoutons à la calculette des fonctions (\emph{abstractions}) et leur
+appel (\emph{application}).
+\begin{itemize}
+
+  \item \textcolor{blue}{Syntaxe concrète}
+    {\small
+     \begin{verbatim}
+Expression ::= ... 
+       | "fun" ident "->" Expression /* abstraction */
+       | Expression Expression       /* application */
+     \end{verbatim}
+    }
+ 
+  \vspace*{-12pt}
+
+  \item \textcolor{blue}{Syntaxe abstraite}\\ 
+  \Xtype \type{expr} \equal \texttt{...} \vbar \cst{Fun}
+  \Xof \type{string} \texttt{*} \type{expr} \vbar \cst{App}
+  \Xof \type{expr} \texttt{*} \type{expr}\semi{}
+
+  \medskip
+
+  \item \textcolor{blue}{Analyse syntaxique}\\
+  La priorité de l'abstraction (resp. l'application) est inférieure
+  (resp. supérieure) à celle des opérateurs.  
+  \begin{align*}
+    \src{\Xfun \; x \rightarrow \meta{e}} &= \cst{Fun} \,
+    \lpar{x}, \src{\meta{e}}\!\rpar\\
+    \src{\meta{e}_1 \; \meta{e}_2} &= \cst{App} \,
+    \lpar\!\src{\meta{e}_1}, \src{\meta{e}_2}\!\rpar
+  \end{align*}
+  
+\end{itemize}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Mini-ML et le \emph{bootstrap}}
+
+\begin{itemize}
+
+  \item \cst{Fun} \lpar$x$, $e$\rpar{} désigne une fonction qui à
+  la variable $x$ (le \emph{paramètre}) associe l'expression $e$ (le
+  \emph{corps}).
+
+  \item \cst{App} \lpar$e_1$, $e_2$\rpar{} désigne l'application
+  d'une expression $e_1$ (dont on attend qu'elle s'évalue en une
+  abstraction) à une expression $e_2$ (l'\emph{argument}).
+
+\end{itemize}
+Nous souhaitons en fait que le langage de notre calculette
+fonctionnelle aie la même sémantique opérationnelle que le
+sous-ensemble de OCaml, nommé mini-ML, avec lequel sa syntaxe se
+confond.
+
+\bigskip
+
+L'implantation d'un interprète ou d'un compilateur dans le même
+langage qu'il interprète ou compile se nomme un \emph{bootstrap} (une
+auto-génération). Par exemple, le compilateur OCaml est lui-même
+auto-généré, un premier compilateur étant écrit en langage C.
+
+\textcolor{blue}{Quelle sémantique opérationnelle pour l'abstraction et
+l'application?}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Variables libres d'une abstraction et d'une application}
+
+On peut étendre la définition p.~\ref{variables_libres} ainsi:
+\[
+\left\{
+\begin{aligned}
+{\cal L} \src{\Xfun \; x \rightarrow \meta{e}} &= 
+  {\cal L} (e) \backslash \{x\}\\
+{\cal L} \src{\meta{e}_1 \, \meta{e}_2} &= 
+  {\cal L} (e_1) \cup {\cal L} (e_2)
+\end{aligned}
+\right.
+\]
+
+\exemple \quad ${\cal L} \src{\Xfun \; \ident{y} \rightarrow 
+\textcolor{red}{\ident{x}} \; \texttt{+} \; \lpar\Xfun \; \ident{x}
+\rightarrow \ident{x}\rpar{} \; \ident{y}} =
+\{\textcolor{red}{\ident{x}}\}$. Graphiquement: 
+{\small
+\begin{center}
+\pstree[nodesep=2pt,levelsep=19pt]{\TR[name=outer-fun]{\cst{Fun}}}{
+  \TR{\str{y}}
+  \pstree{\TR{\cst{BinOp}}}{
+    \TR{\cst{Add}}
+    \textcolor{red}{\pstree[linecolor=red]{\TR{\cst{Var}}}{
+      \TR{\str{x}}
+    }}
+    \pstree{\TR{\cst{App}}}{
+      \pstree{\TR[name=inner-fun]{\cst{Fun}}}{
+        \TR{\str{x}}
+        \pstree{\TR[name=inner-var]{\cst{Var}}}{
+          \TR{\str{x}}
+        }
+      }
+      \pstree{\TR[name=outer-var]{\cst{Var}}}{
+        \TR{\str{y}}
+      }
+    }
+  }
+}
+
+\end{center}
+}
+\nccurve[linecolor=blue,nodesepA=1pt,nodesepB=1pt,angleA=45]{->}{inner-var}{inner-fun}
+\ncarc[linecolor=blue,nodesepA=1pt,nodesepB=1pt,arcangle=-40]{->}{outer-var}{outer-fun}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique opérationnelle de l'abstraction --- premier jet}
+
+Essayons
+\[
+\inferrule*[right=\quad abs-dyn]
+  {}
+  {\meval{\rho} 
+         {\Xfun \; x \rightarrow \meta{e}}
+         {\src{\Xfun \; x \rightarrow \meta{e}}}}
+\]
+Par ailleurs remplacer une variable $x$ par sa valeur laisse
+invariante la valeur de l'expression contenant $x$ (on parle de
+\emph{transparence référentielle}). C'est une propriété très
+désirable.
+
+\bigskip
+En conjonction avec \RefTirName{abs-dyn}, cela implique alors que
+les deux programmes suivants sont équivalents:
+\begin{columns}
+  \column{0.3\textwidth}
+{\small
+\begin{tabbing}
+\Xlet \ident{x} \equal \num{1} \Xin \\
+\quad \= \Xlet \ident{f} \equal \Xfun \ident{y} \(\rightarrow\)
+\ident{x} \texttt{+} \ident{y} \Xin \\
+\> \Xlet \ident{x} \equal \num{2} \\
+\Xin \textcolor{blue}{\ident{f}} \ident{x}
+\end{tabbing}
+}
+  \column{0.3\textwidth}
+{\small
+\begin{tabbing}
+\Xlet \ident{x} \equal \num{1} \Xin\\
+\quad \= \Xlet \ident{f} \equal \Xfun \ident{y} \(\rightarrow\)
+\ident{x} \texttt{+} \ident{y} \Xin\\ 
+\> \Xlet \ident{x} \equal \num{2}\\
+\Xin \textcolor{blue}{\lpar\Xfun \ident{y} \(\rightarrow\) \ident{x} \texttt{+}
+\ident{y}\rpar} \ident{x}
+\end{tabbing}
+}
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Arbre de syntaxe abstraite du premier programme}
+
+\label{AST_premier_prog}
+
+{\small
+\begin{center}
+\pstree[nodesep=2pt,levelsep=20pt]{\TR[name=outer-x-let]{\cst{Let}}}{
+  \TR{\str{x}}
+  \pstree{\TR{\cst{Const}}}{
+    \TR{\num{1}}
+  }
+  \pstree{\TR[name=f-let]{\cst{Let}}}{
+    \TR{\str{f}}
+    \pstree{\TR[name=fun]{\cst{Fun}}}{
+      \TR{\str{y}}
+      \pstree{\TR{\cst{BinOp}}}{
+        \TR{\cst{Add}}
+        \pstree{\TR[name=outer-x-occur]{\cst{Var}}}{
+          \TR{\str{x}}
+        }
+        \pstree{\TR[name=y]{\cst{Var}}}{
+          \TR{\str{y}}
+        }
+      }
+    }
+    \pstree{\TR[name=inner-x-let]{\cst{Let}}}{
+      \TR{\str{x}}
+      \pstree{\TR{\cst{Const}}}{
+        \TR{\num{2}}
+      }
+      \pstree{\TR{\cst{App}}}{
+        \pstree{\TR[name=f-occur]{\cst{Var}}}{
+          \TR{\str{f}}
+        }
+        \pstree{\TR[name=inner-x-occur]{\cst{Var}}}{
+          \TR{\str{x}}
+        }      
+      }
+    }
+  }
+}
+\end{center}
+}
+
+\ncarc[linecolor=blue,nodesepA=1pt,arcangle=-20]{->}{y}{fun}
+\ncarc[linecolor=blue,nodesepA=1pt,arcangle=-60]{->}{inner-x-occur}{inner-x-let}
+\nccurve[linecolor=blue,nodesepA=1pt,nodesepB=1pt,angleA=225,angleB=270]{->}{f-occur}{f-let}
+\nccurve[linecolor=blue,nodesepA=1pt,nodesepB=1pt,angleA=225,angleB=225,ncurv=1.2]{->}{outer-x-occur}{outer-x-let}
+
+\vspace*{-6pt}
+
+{\small
+\begin{tabbing}
+\Xlet \ident{x} \equal \num{1} \Xin\\
+\quad \= \Xlet \ident{f} \equal \Xfun \ident{y} \(\rightarrow\)
+\ident{x} \texttt{+} \ident{y} \Xin \quad \comment{Ce x est lié à 1.}\\
+\> \Xlet \ident{x} \equal \num{2}\\
+\Xin \ident{f} \ident{x} \quad \comment{Ce x est lié à 2.}
+\end{tabbing}
+}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Arbre de syntaxe du second programme}
+
+{\small
+\begin{center}
+\pstree[nodesep=2pt,levelsep=20pt]{\TR[name=outer-x-let]{\cst{Let}}}{
+  \TR{\str{x}}
+  \pstree{\TR{\cst{Const}}}{
+    \TR{\num{1}}
+  }
+  \pstree{\TR{\cst{Let}}}{
+    \TR{\str{f}}
+    \textcolor{green}{
+    \pstree[linecolor=green]{\TR[name=outer-fun]{\cst{Fun}}}{
+      \TR{\str{y}}
+      \pstree{\TR{\cst{BinOp}}}{
+        \TR{\cst{Add}}
+        \pstree{\TR[name=in-outer-fun-x]{\cst{Var}}}{
+          \TR{\str{x}}
+        }
+        \pstree{\TR[name=in-outer-fun-y]{\cst{Var}}}{
+          \TR{\str{y}}
+        }
+      }
+    }}
+    \pstree{\TR[name=inner-x-let]{\cst{Let}}}{
+      \TR{\str{x}}
+      \pstree{\TR{\cst{Const}}}{
+        \TR{\num{2}}
+      }
+      \pstree{\TR{\cst{App}}}{
+        \textcolor{green}{
+        \pstree[linecolor=green]{\TR[name=inner-fun]{\cst{Fun}}}{
+          \TR{\str{y}}
+          \pstree{\TR{\cst{BinOp}}}{
+            \TR{\cst{Add}}
+            \pstree{\TR[name=in-inner-fun-x]{\cst{Var}}}{
+              \TR{\str{x}}
+            }
+            \pstree{\TR[name=in-inner-fun-y]{\cst{Var}}}{
+              \TR{\str{y}}
+            }
+          }
+        }}
+        \pstree{\TR[name=inner-x-occur]{\cst{Var}}}{
+          \TR{\str{x}}
+        }      
+      }
+    }
+  }
+}
+\end{center}
+\vspace*{-40pt}
+}
+
+\nccurve[linecolor=red,linestyle=dashed,nodesepA=1pt,nodesepB=1pt,angleA=225,angleB=180,ncurv=1.25]{->}{in-inner-fun-x}{outer-x-let}
+
+\ncarc[linecolor=blue,nodesepA=1pt,arcangle=-60]{->}{inner-x-occur}{inner-x-let}
+
+\nccurve[linecolor=blue,nodesepA=1pt,nodesepB=1pt,angleA=225,angleB=225,ncurv=1.2]{->}{in-outer-fun-x}{outer-x-let}
+
+\ncarc[linecolor=blue,nodesepA=1pt,arcangle=-20]{->}{in-outer-fun-y}{outer-fun}
+\ncarc[linecolor=blue,nodesepA=1pt,arcangle=-20]{->}{in-inner-fun-y}{inner-fun}
+\nccurve[linecolor=red,nodesepA=1pt,nodesepB=1pt,angleA=225,angleB=210,ncurv=1.5]{->}{in-inner-fun-x}{inner-x-let}
+
+\vspace*{-60pt}
+{\small
+\begin{tabbing}
+\Xlet \ident{x} \equal \num{1} \Xin\\
+\quad \= \Xlet \ident{f} \equal \textcolor{green}{\Xfun \ident{y}
+  \(\rightarrow\) \ident{x} \texttt{+} \ident{y}} \Xin\\ 
+\> \Xlet \ident{x} \equal \num{2}\\
+\Xin \textcolor{green}{\lpar\Xfun \ident{y} \(\rightarrow\) \ident{x}
+ \texttt{+} \ident{y}\rpar} \ident{x} \quad \comment{Les deux \ident{x} sont
+  liés à \num{2}. }
+\end{tabbing}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Capture de variable, liaison statique et dynamique}
+
+On dit que la variable \ident{x} sous le {\small \Xfun} a été
+\emph{capturée} (par le troisième {\small \Xlet}). En d'autre termes,
+avec notre sémantique \RefTirName{abs-dyn}, la valeur d'une variable
+peut changer au cours de l'évaluation (selon l'environnement courant):
+c'est la \emph{liaison dynamique}.
+
+\bigskip
+
+Peu de langages l'emploient (Lisp, macros C), car les programmes sont
+alors plus difficiles à comprendre et à maintenir.
+
+\bigskip
+
+En général on préfère la \emph{liaison statique} (dite aussi
+\emph{lexicale}): la valeur des variables libres dans le corps des
+fonctions est figée au moment de la définition. Le premier programme
+s'évaluerait alors en 3 et le second en 4.
+
+\bigskip
+
+\emph{Nous devons donc trouver une sémantique de l'abstraction qui
+respecte la transparence référentielle et la liaison statique.}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique opérationnelle de l'application}
+
+Si les fonctions sont des valeurs, elles peuvent être retournées en
+résultat (c.-à-d. être la valeur d'une application). Par exemple:
+{\small
+ \begin{tabbing}
+ \Xlet \ident{add} \equal \Xfun \ident{x} \(\rightarrow\) \Xfun
+ \ident{y} \(\rightarrow\) \ident{x} \texttt{+} \ident{y} \Xin\\
+ \quad \Xlet \ident{incr} \equal \ident{add} \lpar\num{1}\rpar
+ \quad \comment{\ident{incr} est une fonction.}\\
+ \Xin \ident{incr} \lpar\num{5}\rpar
+ \end{tabbing}
+}
+
+On parle d'application \emph{partielle} (par opposition à application
+\emph{complète}, qui ne retourne pas de fonction, comme \ident{add}
+\num{1} \num{5}).
+
+\bigskip
+
+\emph{Nous devons donc trouver une sémantique de l'application qui
+permette l'application partielle.}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Fermetures, erreurs de typage}
+
+\label{erreurs_de_typage}
+
+La solution générale aux contraintes posées par l'abstraction et
+l'application consiste à évaluer les fonctions en des
+\emph{fermetures}.
+
+\bigskip
+
+Une fermeture $\clos{x}{e}{\rho}$ est formée à partir d'une expression
+fonctionnelle $\cst{Fun} \, \lpar{x},e\rpar$ et d'un environnement
+$\rho$. Il faut donc redéfinir le type des valeurs
+
+\bigskip
+
+\Xtype \type{value} \equal \cst{Int} \Xof \type{int} \vbar
+\cst{Clos} \Xof \type{string} \texttt{*} \type{expr} \texttt{*}
+\lpar\type{string} $\rightarrow$ \type{value}\rpar\semi{}
+
+\bigskip
+
+et aussi l'implantation de la fonction OCaml \ident{eval}. 
+
+\bigskip
+
+\remarque \quad Désormais, les expressions peuvent être incohérentes
+(on parle d'\emph{erreurs de typage}): il faut s'assurer qu'on
+n'opère que sur des entiers, et qu'on n'appelle que des fonctions.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique opérationnelle de l'abstraction et de l'application}
+\label{abs-app}
+\begin{mathpar}
+\inferrule*[right=\quad abs]
+  {\meval{\rho}
+         {\Xfun \; x \rightarrow \meta{e}}
+         {\clos{x}{e}{\rho}}}
+  {}
+\and
+\inferrule*[right=app]
+  {\eval{\rho}{e_1}{\clos{x_0}{e_0}{\rho_0}}\\
+   \eval{\rho}{e_2}{v_2}\\
+   \eval{\rho_0 \oplus x_0 \mapsto v_2}{e_0}{v_0}
+  }
+  {\meval{\rho}{\meta{e}_1 \; \meta{e}_2}{v_0}}
+\end{mathpar}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique opérationnelle de l'abstraction et de
+  l'application (suite)}
+
+\remarques
+\begin{itemize}
+
+  \item Dans une fermeture $\clos{x}{e}{\rho}$ on peut restreindre
+  l'environnement $\rho$ aux variables libres de la fonction
+  $\cst{Fun} \, \lpar{x},e\rpar$:
+
+  \centerline{$\inferrule*[right=\quad abs-opt]
+    {\eval{\rho}
+          {\src{\Xfun \; x \rightarrow \meta{e}} \, \Xas \, f}
+          {\clos{x}{e}{\rho\arrowvert{\cal L} (f)}}}
+    {}
+  $}
+
+  \item L'implantation devrait évaluer $e_1$ avant $e_2$ afin de
+  vérifier d'abord que $e_1$ s'évalue bien en une fermeture (si ce
+  n'est pas le cas, on gagne du temps en signalant l'erreur au plus
+  tôt).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Stratégies d'appel}
+
+Dans la règle de l'application (c.-à-d. appel de fonction), l'argument
+$e_2$ est d'abord évalué en $v_2$, et cette valeur est passée ensuite
+à la fermeture résultant de l'évaluation de $e_1$. C'est la stratégie
+d'\emph{appel par valeur}, employée dans des langages comme OCaml et
+Java. On parle aussi de \emph{stratégie stricte}.
+
+\bigskip
+
+D'autres langages, comme Haskell, emploient une stratégie dite
+d'\emph{appel par nom}, qui consiste à passer l'argument \emph{non
+évalué} à la fonction: il ne sera évalué que s'il est nécessaire au
+calcul du résultat de la fonction. On parle aussi de \emph{stratégie
+paresseuse}.
+
+\bigskip
+
+Une optimisation de l'appel par nom est l'\emph{appel par nécessité}
+qui ne recalcule pas deux fois le même appel (les résultats sont
+mémorisés). On parle aussi de \emph{stratégie pleinement paresseuse}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Non-terminaison}
+
+En théorie, nous pouvons d'ores et déjà calculer avec notre calculette
+tout ce qui est calculable avec l'ordinateur sous-jacent. Par exemple,
+nous avons déjà la récurrence, comme le montre le programme suivant
+qui ne termine pas:
+\centerline{\small
+\Xlet \ident{omega} \equal \Xfun \ident{f} $\rightarrow$ \ident{f}
+\ident{f} \Xin \ident{omega} \lpar\ident{omega}\rpar
+}
+Notre style de sémantique qui évalue directement une expression en sa
+valeur n'est pas pratique pour étudier la non-terminaison. Pour
+le programme précédent, cela se manifesterait par l'occurrence dans
+la dérivation de
+\begin{mathpar}
+\inferrule
+  {\meval{\rho}{\ident{f}\,}{v_1}\\
+   \eval{\rho \oplus \str{f} \mapsto v_1}
+        {\src{\ident{f} \; \ident{f}\,}}
+        {v}
+  }
+  {\eval{\rho}
+        {\src{\ident{f} \; \ident{f}\,}}
+        {v}
+  }
+\end{mathpar}
+Le première prémisse dit que $\rho(\str{f}) = v_1$, donc $\rho = \rho
+\oplus \str{f} \mapsto v_1$, donc \textcolor{blue}{la conclusion et la
+  seconde prémisse sont identiques, donc le calcul de $v$ boucle.}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Turing-complétude}
+
+\label{turing}
+
+Un langage muni de la conditionnelle et de la récurrence (ou seulement
+du branchement conditionnel) permet de spécifier tous les calculs qui
+sont possibles par l'ordinateur sous-jacent: on le dit
+\emph{Turing-complet}.
+
+\bigskip
+
+Cette propriété est très utile mais elle implique nécessairement
+l'existence de programmes qui ne terminent pas (pour certaines
+données) et l'inexistence de programmes permettant de les reconnaître
+tous (\emph{incomplétude de Gödel}). L'idée est la suivante.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Turing-complétude (suite)}
+
+Raisonnons par l'absurde.
+
+\bigskip
+
+Supposons donc l'existence d'un prédicat de
+terminaison. Soit $f$ la fonction telle que pour toute fonction $g$,
+si $g$ termine toujours (c.-à-d. $\forall x.g(x)$ est défini) alors
+$f(g)$ ne termine pas, sinon $f(g)$ termine. Dans ce cas, $f(f)$ ne
+termine pas si $f$ termine, et $f(f)$ termine si $f$ ne termine pas,
+ce qui est contradictoire. Donc un tel prédicat n'existe pas.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Problèmes indécidables}
+
+\label{indecidabilite}
+
+On dit que le problème de la terminaison (ou de l'\emph{arrêt de la
+machine de Turing}) est \emph{indécidable}.
+
+\bigskip
+
+La négation de tout problème indécidable est indécidable aussi.
+
+\bigskip
+
+Il est important de connaître quelques-uns de ces problèmes car ils
+n'ont \emph{théoriquement} pas de solution en général.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Problèmes indécidables (suite)}
+
+Pour les programmes des langages Turing-complets, sont indécidables
+\begin{itemize}
+
+  \item la terminaison;
+
+  \item la valeur d'une variable à un moment donné de l'exécution (en
+  particulier savoir si elle est initialisée ou non, si le problème se
+  pose dans le langage considéré --- comparez OCaml, C et Java);
+
+  \item l'appel d'une fonction (en particulier le problème du
+  \emph{code mort}).
+
+\end{itemize}
+\remarque \quad On peut parfois résoudre ces problèmes sur des cas
+particuliers.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Les termes non-clos revus}
+
+Nous avons présenté une analyse statique (p.~\ref{variables_libres})
+qui nous donne les variables libres d'une expression. Nous avons vu
+qu'une expression close ne peut échouer par absence de liaison. Tous
+les compilateurs (comme OCaml) rejettent les programmes non-clos,
+mais, du coup, rejettent d'innocents programmes, comme \Xif
+\Xtrue \Xthen \num{1} \Xelse \ident{x}.
+
+\bigskip
+
+Pour accepter ce type d'exemple (non-clos), il faudrait pouvoir
+prédire le flot de contrôle (ici, quelle branche de la conditionnelle
+est empruntée pour toutes les exécutions). Dans le cas ci-dessus cela
+est trivial, mais en général le problème est indécidable, et ce ne
+peut donc être une analyse statique (car la compilation doit toujours
+terminer).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Fonctions récursives}
+
+Pour mettre en évidence la puissance de mini-ML, voyons comment
+définir des fonctions récursives à l'aide de la fonction
+auto-applicative \ident{omega}.
+
+\bigskip
+
+Définissons d'abord une fonction \ident{fix}, traditionnellement appelée
+le \emph{combinateur Y de point fixe de Curry}:
+
+{\small
+\begin{tabbing}
+\Xlet \ident{omega} \equal \Xfun \ident{f} $\rightarrow$ \ident{f}
+\ident{f} \Xin\\
+\quad \Xlet \ident{fix} \equal \Xfun \ident{g} $\rightarrow$
+\ident{omega} \lpar\Xfun \ident{h} $\rightarrow$ \textcolor{blue}{\Xfun \ident{x}
+$\rightarrow$} \ident{g} \lpar\ident{h} \ident{h}\rpar{} \textcolor{blue}{\ident{x}}\rpar{}
+\Xin\\
+\quad \texttt{...}
+\end{tabbing}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Point fixe d'une fonction}
+
+On démontre (péniblement) que l'évaluation de \lpar\ident{fix}
+\ident{f} \ident{x}\rpar{} a la forme:
+
+\begin{mathpar}
+\inferrule
+  {\ldots\\
+   \inferrule*[vdots=1.5em]
+     {\ldots \\
+      \meval{\rho}
+            {\ident{f} \; \lpar\ident{fix} \; \ident{f}\rpar{} \; \ident{x}}
+            {v}}
+     {\ldots}}
+  {\meval{\rho}
+         {\lpar\ident{fix} \; \ident{f}\rpar{} \; \ident{x}}
+         {v}}
+\end{mathpar}
+
+En d'autre termes, pour tout \ident{x} on a \lpar\ident{fix}
+\ident{f}\rpar{} \ident{x} \equal \ident{f} \lpar\ident{fix}
+\ident{f}\rpar{} \ident{x}, soit \lpar\ident{fix} \ident{f}\rpar{}
+\equal \ident{f} \lpar\ident{fix} \ident{f}\rpar{}. D'autre part, par
+définition, le point fixe $p$ d'une fonction $f$ vérifie $p =
+f(p)$. 
+
+\bigskip
+
+Donc le point fixe d'une fonction \ident{f}, \emph{s'il existe}, est
+\lpar\ident{fix} \ident{f}\rpar{}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Factorielle et cas général}
+
+ Posons
+
+{\small 
+ \begin{tabbing}
+ \quad \Xlet \ident{pre\_fact} \equal \Xfun \ident{f} $\rightarrow$
+ \Xfun \ident{n} $\rightarrow$ \kwd{ifz} \ident{n} \Xthen \num{1}
+ \Xelse \ident{n} \texttt{*} \ident{f}
+ \lpar\ident{n}\texttt{-}\num{1}\rpar{} \Xin\\
+ \quad \Xlet \ident{fact} \equal \ident{fix} \lpar\ident{pre\_fact}\rpar{}
+ \Xin \texttt{...}
+ \end{tabbing}
+}
+
+Donc \ident{fact} est le point fixe de \ident{pre\_fact}, s'il existe,
+c'est-à-dire
+
+\bigskip
+
+\centerline{\small \ident{fact} \equal \ident{pre\_fact}
+ \lpar\ident{fact}\rpar{} \equal \Xfun \ident{n} $\rightarrow$ \kwd{ifz}
+ \ident{n} \Xthen \num{1} \Xelse \ident{n} \texttt{*} \ident{fact}
+ \lpar\ident{n}\texttt{-}\num{1}\rpar }
+
+\bigskip
+ 
+Donc \ident{fact} est la fonction factorielle (équation de récurrence).
+
+\bigskip
+
+On peut donc prédéfinir un opérateur de point fixe \ident{fix} (qui n'est
+pas forcément celui de Curry) et permettre au programmeur de s'en
+servir directement.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Liaison locale récursive}
+
+Pour plus de commodité, étendons la syntaxe avec une liaison locale
+récursive.
+\begin{itemize}
+
+  \item \textcolor{blue}{Syntaxe concrète}
+    {\small 
+     \begin{verbatim}
+Expression ::= ... | 
+  "let" "rec" ident "=" Expression "in" Expression
+     \end{verbatim}}
+
+  \vspace*{-6pt}
+
+  \item \textcolor{blue}{Syntaxe abstraite}\\ \Xtype
+  \type{expr} \equal \texttt{...} \vbar \cst{LetRec} \Xof
+  \type{string} \texttt{*} \type{expr} \texttt{*} \type{expr}\semi
+
+  \medskip 
+
+  \item \textcolor{blue}{Analyse syntaxique}\\ $\src{\Xlet \; \Xrec \;
+  x \; \equal \; \meta{e}_1 \; \Xin \; \meta{e}_2} =
+  \cst{LetRec} \, \lpar{x}, \src{\meta{e}_1}, \src{\meta{e}_2}\!\rpar$
+
+  \medskip 
+
+  \item \textcolor{blue}{Variables libres}\\ ${\cal L} \src{\Xlet \;
+  \Xrec \; x \; \equal \; \meta{e}_1 \; \Xin \; \meta{e}_2}
+  = ({\cal L} (e_1) \cup {\cal L} (e_2)) \backslash \{x\}$
+
+\end{itemize}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique opérationnelle de la liaison locale récursive}
+
+On peut définir la sémantique de cette construction de deux façons. 
+
+La première consiste à ne pas la considérer comme élémentaire (ou
+\emph{native}) et exprimer sa sémantique en fonction de celle d'une
+autre construction, en l'occurrence (en supposant que l'opérateur
+\ident{fix} est prédéfini dans l'interprète):
+\begin{mathpar}
+\inferrule*[right=let-rec]
+  {\meval
+     {\rho}
+     {\Xlet \; x \; \equal \; \ident{fix} \; \lpar\Xfun \; x \rightarrow
+      \meta{e}_1\rpar{} \; \Xin \; \meta{e}_2}
+     {v}
+  }
+  {\meval
+     {\rho}
+     {\Xlet \; \Xrec \; x \; \equal \; \meta{e}_1 \; \Xin \; \meta{e}_2}
+     {v}
+  }
+\end{mathpar}
+La seconde consiste à considérer cette construction comme différente
+des autres:
+  \begin{mathpar}
+  \inferrule*[right=let-rec]
+    {\eval{\rho \oplus x \mapsto v_1}{e_1}{v_1}\\
+     \eval{\rho \oplus x \mapsto v_1}{e_2}{v_2}}
+    {\meval{\rho}{\Xlet \; \Xrec \; x \; \equal \; \meta{e}_1
+     \; \Xin \; \meta{e}_2}{v_2}}
+  \end{mathpar}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Interprétation de la liaison locale récursive native}
+
+L'implantation immédiate des expressions récursives natives est
+
+{\small
+ \begin{tabbing}
+ \Xlet \= \Xrec \ident{eval} \ident{env} \ident{e} \equal
+ \Xmatch \ident{e} \Xwith \texttt{...} \\ 
+ \vbar \> \cst{LetRec} \lpar\ident{x},\ident{e}$_1$,\ident{e}$_2$\rpar{}
+ $\rightarrow$\\
+ \> \quad \Xlet \Xrec \ident{env'} \equal \ident{extend} \ident{env}
+ \lpar\ident{x},\ident{v}$_1$\rpar \qquad \comment{$\rho \oplus x \mapsto v_1$}\\
+ \> \quad \Xand \ident{v}$_1$ \equal \ident{eval} \ident{env'} \ident{e}$_1$
+ \qquad \comment{$\eval{\rho \oplus x \mapsto v_1}{e_1}{v_1}$}\\
+ \> \quad \Xin \ident{eval} \ident{env'} \ident{e}$_2$ \qquad
+ \comment{$\eval{\rho \oplus x \mapsto v_1}{e_2}{v_2}$}  
+ \end{tabbing}
+}
+
+Pour des raisons techniques liées au typage de OCaml, il faut écrire
+en fait
+
+{\small
+ \begin{tabbing}
+ \Xlet \= \Xrec \ident{eval} \ident{env} \ident{e} \equal
+ \Xmatch \ident{e} \Xwith \texttt{...} \\ 
+ \vbar \> \cst{LetRec}
+ \lpar\ident{x},\ident{e}$_1$,\ident{e}$_2$\rpar{} $\rightarrow$\\
+ \> \quad \Xlet \Xrec \ident{env'} \equal \textcolor{blue}{\Xfun
+ \ident{x} $\rightarrow$} \ident{extend} \ident{env}
+ \lpar\ident{x}, \ident{v}$_1$\textcolor{blue}{\lpar\rpar}\rpar{} \textcolor{blue}{\ident{x}}\\
+ \> \quad \Xand \ident{v}$_1$ \equal \textcolor{blue}{\Xfun \lpar\rpar{}
+ $\rightarrow$} \ident{eval} \ident{env'} \ident{e}$_1$\\
+ \> \quad \Xin \ident{eval} \ident{env'} \ident{e}$_2$
+ \end{tabbing}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Les expressions mutuellement récursives}
+\label{expressions_mutuellement_recursives}
+
+Le \Xlet \Xrec multiple (avec \Xand) peut toujours se
+ramener à un \Xlet \Xrec simple (avec \Xin) en paramétrant
+l'une des définitions par rapport à l'autre. Posons
+\centerline{\Xlet \Xrec $x$ \equal $\meta{e}_1$ \Xand $y$ \equal
+$\meta{e}_2$ \Xin $\meta{e}$}
+où $x \neq y$, est équivalent (par définition) à
+
+\centerline{\begin{minipage}{0.3\linewidth}
+\begin{tabbing}
+\Xlet \= \Xrec $x$ \equal \textcolor{blue}{\Xfun $y$
+  $\rightarrow$} $\meta{e}_1$ \Xin\\
+\> \Xlet \Xrec $y$ \equal \textcolor{blue}{\Xlet $x$ \equal $x$ \lpar$y$\rpar{}
+  \Xin} $\meta{e}_2$ \Xin\\
+\> \textcolor{blue}{\Xlet $x$ \equal $x$ \lpar$y$\rpar}\\
+\textcolor{blue}{\Xin} $\meta{e}$
+\end{tabbing}
+\end{minipage}}
+
+On peut ensuite coder les \Xlet \Xrec simples avec \ident{fix} ou les
+considérer natifs dans le langage interprété. Dans les deux cas, il
+n'y a pas besoin d'étendre la sémantique opérationnelle. Il faut
+néanmoins penser à généraliser notre équivalence syntaxique à $n$
+variables: \Xlet \Xrec $x_1$ \equal $\meta{e}_1$ \Xand $x_2$ \equal
+$\meta{e}_2$ \Xand~\ldots~\Xand $x_n$ \equal $\meta{e}_n$ \Xin
+$\meta{e}$
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Les expressions parallèles}
+
+\label{expressions_paralleles}
+
+Nous pouvons aussi ajouter à notre langage la construction
+
+\centerline{\Xlet $x$ \equal $\meta{e}_1$ \Xand $y$ \equal
+$\meta{e}_2$ \Xin $\meta{e}$ \ où $x \neq y$}
+Si $x \in {\cal L} (e_2)$, nous la définissons comme étant équivalente à
+
+\centerline{
+\begin{minipage}{0.3\linewidth}
+\begin{tabbing}
+\textcolor{blue}{\Xlet} \= \textcolor{blue}{$z$ \equal $x$ \Xin}\\
+\> \Xlet $x$ \equal $\meta{e}_1$ \Xin\\
+\> \Xlet $y$ \equal \textcolor{blue}{\Xlet $x$ \equal $z$ \Xin} $\meta{e}_2$\\
+\Xin $\meta{e}$
+\end{tabbing}
+\end{minipage}}
+\noindent où $z \not\in {\cal L} (e_1) \cup {\cal L} (e_2) \cup {\cal
+  L} (e)$, pour n'être capturé ni par $e_1$, ni par $e_2$, ni par $e$.
+
+Il n'y a donc pas besoin d'étendre la sémantique opérationnelle pour
+traiter cette construction: une équivalence entre arbres de syntaxe
+abstraite suffit pour donner le sens. Il faut néanmoins penser à 
+généraliser l'équivalence:\\ \Xlet $x_1$ \equal $\meta{e}_1$ \Xand
+$x_1$ \equal $\meta{e}_2$ \Xand~\ldots~\Xand $x_n$ \equal $\meta{e}_n$
+\Xin $\meta{e}$
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Plus loin avec le rasoir d'Occam}
+
+\label{occam}
+
+En observant les règles \RefTirName{let}, d'une part, et
+\RefTirName{abs} et \RefTirName{app} d'autre part, on peut se rendre
+compte que la règle \RefTirName{let} peut être supprimée sans
+conséquence sur l'expressivité du langage. Plus précisément, nous
+allons prouver que les constructions \kwd{let} $x$ \equal{}
+$\meta{e}_1$ \kwd{in} $\meta{e}_2$ et \lpar\kwd{fun} $x$ $\rightarrow$
+$\meta{e}_2$\rpar{} $\meta{e}_1$ sont équivalentes du point de vue de
+l'évaluation --- c'est-à-dire que l'une produit une valeur $v$ si et
+seulement si l'autre produit également $v$.
+
+La règle \RefTirName{app} (p.~\pageref{abs-app}) peut se réécrire en
+intervertissant $e_1$ et $e_2$:
+\begin{mathpar}
+\inferrule
+  {\eval{\rho}{e_2}{\clos{x_0}{e_0}{\rho_0}}\\
+   \eval{\rho}{e_1}{v_1}\\
+   \eval{\rho_0 \oplus x_0 \mapsto v_1}{e_0}{v_0}
+  }
+  {\meval{\rho}{\meta{e}_2 \; \meta{e}_1}{v_0}}
+\end{mathpar}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Une preuve d'équivalence (suite)}
+
+En substituant $\Xfun \; x \rightarrow \, \meta{e}_2$ à $\meta{e}_2$
+il vient
+\begin{mathpar}
+\inferrule
+  {\meval{\rho}{\Xfun \; x \rightarrow \, \meta{e}_2}
+        {\clos{x_0}{e_0}{\rho_0}}\\
+   \eval{\rho}{e_1}{v_1}\\
+   \eval{\rho_0 \oplus x_0 \mapsto v_1}{e_0}{v_0}
+  }
+  {\meval
+     {\rho}
+     {\lpar\Xfun \; x \rightarrow \, \meta{e}_2\rpar{} \; \meta{e}_1}
+     {v_0}
+  }
+\end{mathpar}
+Or l'axiome \RefTirName{abs} dit
+$\inferrule
+  {\meval{\rho}
+         {\Xfun \; x \rightarrow \meta{e}_2}
+         {\clos{x}{e_2}{\rho}}}
+  {}
+$
+donc $x = x_0$, $e_2 = e_0$ et $\rho = \rho_0$, d'où, en remplaçant
+dans la pénultième règle et en renommant $v_0$ en $v_2$:
+\begin{mathpar}
+\inferrule
+  {\meval{\rho}{\Xfun \; x \rightarrow \, \meta{e}_2}
+        {\clos{x}{e_2}{\rho}}\\
+   \eval{\rho}{e_1}{v_1}\\
+   \eval{\rho \oplus x \mapsto v_1}{e_2}{v_2}
+  }
+  {\meval
+     {\rho}
+     {\lpar\Xfun \; x \rightarrow \, \meta{e}_2\rpar{} \; \meta{e}_1}
+     {v_2}
+  }
+\end{mathpar}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Une preuve d'équivalence (suite et fin)}
+
+Un axiome étant par définition vrai, on peut le supprimer d'une
+prémisse:
+\begin{mathpar}
+\inferrule
+  {\eval{\rho}{e_1}{v_1}\\
+   \eval{\rho \oplus x \mapsto v_1}{e_2}{v_2}
+  }
+  {\meval
+     {\rho}
+     {\lpar\Xfun \; x \rightarrow \, \meta{e}_2\rpar{} \; \meta{e}_1}
+     {v_2}
+  }
+\end{mathpar}
+Or la règle~\RefTirName{let}
+(p.~\pageref{semantique_operationnelle_etendue_lisible}) est:
+\begin{mathpar}
+\inferrule*[right=let]
+  {\eval{\rho}{e_1}{v_1}\\ 
+   \eval{\rho \oplus x \mapsto v_1}{e_2}{v_2}}
+  {\meval{\rho}{\Xlet \; x \; \equal \; \meta{e}_1 \; \Xin
+  \; \meta{e}_2}{v_2}}
+\end{mathpar}
+Les prémisses sont les mêmes que dans la règle précédente, donc les
+conclusions sont identiquement vraies [QED]. Il est donc en théorie
+possible de se passer de la liaison locale dans notre langage, que ce
+soit au niveau de la sémantique, de la syntaxe abstraite ou concrète.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Discussion sur les constructions non-élémentaires}
+
+De façon générale, lorsqu'on découvre qu'une construction a la même
+sémantique qu'une combinaison d'autres constructions
+(pp.~\pageref{expressions_mutuellement_recursives},\pageref{expressions_paralleles},\pageref{occam}),
+il vaut mieux conserver cette construction dans la syntaxe abstraite
+car cela permet d'y adjoindre les positions des lexèmes correspondants
+dans le code source, pour l'éventualité d'un message d'erreur. En
+effet, l'autre solution, qui consiste à produire l'AST de la
+combinaison lors de l'analyse syntaxique, perd cette information.
+
+\bigskip
+
+Il est utile parfois de simplifier la sémantique. Par exemple, ici,
+définir:
+\begin{mathpar}
+\inferrule*[right=let]
+  {\meval
+     {\rho}
+     {\lpar\Xfun \; x \rightarrow \, \meta{e}_2\rpar{} \; \meta{e}_1}
+     {v_2}
+  }
+  {\meval{\rho}{\Xlet \; x \; \equal \; \meta{e}_1 \; \Xin
+  \; \meta{e}_2}{v_2}
+  }
+\end{mathpar}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Programmation impérative}
+
+Jusqu'à présent les variables méritaient mal leur nom pour des
+raisons historiques, car elles dénotaient des constantes ou des
+fonctions. Nous allons rendre les variables vraiment variables,
+c'est-à-dire \emph{mutables} dans le jargon de OCaml.
+
+\bigskip
+
+Le style de programmation qui fait usage de telles variables se nomme
+\emph{impératif}.
+
+\bigskip
+
+Bien que nous souhaitons rendre toutes les variables mutables (pour
+des raisons d'uniformité de présentation ici), nous souhaitons
+néanmoins distinguer par la syntaxe concrète leur modification
+impérative par le truchement d'\emph{affectations}.
+
+\exemple \quad \Xlet \ident{x} \equal \num{1} \Xin \Xlet \ident{y} \equal
+\lpar\ident{x} \assign \ident{x} \texttt{+} \num{2}\rpar{} \Xin \ident{x} \
+s'évalue en \cst{Int} \lpar\num{3}\rpar.
+
+L'affectation est ici \ \ident{x} \assign \ident{x} \texttt{+} \num{2}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Un modèle fonctionnel pour les variables mutables}
+
+Pour modéliser de façon fonctionnelle ce nouveau paradigme de
+programmation, nous devons introduire les notions d'\emph{adresse} et
+de \emph{mémoire}. Une adresse est un élément d'un ensemble infini
+dénombrable. Une mémoire $\sigma$ lie les adresses $a$ aux valeurs
+$v$. Un environnement $\rho$ lie maintenant une variable $x$ à son
+adresse $a$, \emph{et non plus à sa valeur directement}.
+
+\bigskip
+
+\emph{C'est ainsi que l'on peut cacher une liaison par une autre
+dans la mémoire sans changer l'environnement, ce qui modélise
+l'affectation de façon fonctionnelle}. Nous n'avons donc pas besoin d'une
+notion native pour l'affectation dans la sémantique. Quant à
+l'interprète, s'il est écrit dans un langage fonctionnel, ce langage
+n'est pas contraint de posséder non plus d'une notion d'affectation
+native.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Instructions \emph{versus} expressions}
+
+On peut ensuite soit introduire la notion d'\emph{instruction} (C,
+Java), soit rester avec celle d'expression (OCaml). Dans ce dernier
+cas, il nous faut ajouter une valeur spéciale qui est le résultat de
+l'évaluation d'une \emph{affectation}: la valeur \cst{Unit}.
+
+\bigskip
+
+\exemple \quad \ident{x} \assign \num{2} \ s'évalue en \cst{Unit}.
+
+\bigskip
+
+Par souci de généralité et de commodité, il est bon d'ajouter aussi
+une expression qui s'évalue immédiatement en \cst{Unit}. Nous
+suivrons la syntaxe de OCaml pour la noter \lpar\rpar.
+
+\bigskip
+
+\exemple \quad \Xlet \ident{f} \equal \Xfun \ident{x} $\rightarrow$ \num{1}
+\Xin \ident{f} \lpar\rpar
+
+\bigskip
+
+Attention, il faut distinguer la \emph{valeur} \cst{Unit} et
+l'\emph{expression} correspondante, que nous noterons \cst{U} dans
+la syntaxe abstraite.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Affectation et sémantique avec mutables}
+
+\begin{itemize}
+
+  \item \textcolor{blue}{Syntaxe concrète}
+
+    {\small \verb+Expression ::= ... | ident ":=" Expression | ()+}
+
+  \item \textcolor{blue}{Syntaxe abstraite}
+
+    {\small
+     \Xtype \type{expr} \equal \texttt{...} \vbar \cst{Assign} \Xof
+    \type{string} \texttt{*} \type{expr} \vbar \cst{U}\semi{} 
+    }
+
+  \item \textcolor{blue}{Analyse syntaxique}
+
+  $\src{x \; \assign \; \meta{e}} = \cst{Assign} \, \lpar{x},
+  \src{\meta{e}}\!\rpar$ \ et \ $\src{\unit} = \cst{U}$
+
+  \item \textcolor{blue}{Variables libres}
+
+  ${\cal L} \src{x \; \assign \; \meta{e}} = \{x\} \cup {\cal L} (e)$
+  \ et \ ${\cal L} \src{\lpar\rpar} = \varnothing$
+
+  \item \textcolor{blue}{Sémantique opérationnelle}
+
+  Il nous faut revoir notre jugement et nos règles d'inférence. Soit
+  maintenant $\ieval{\rho}{\sigma}{e}{v}{\sigma'}$, se lisant «~Dans
+  l'environnement $\rho$ et la mémoire $\sigma$, l'évaluation de $e$
+  produit une valeur $v$ et une nouvelle mémoire $\sigma'$.~»
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique avec mutables (unité et variables)}
+
+\label{invariant_ref}
+
+Voici d'abord les règles d'inférence les plus simples (comparez
+\RefTirName{var} avec
+p.~\pageref{semantique_operationnelle_etendue_lisible}):
+\begin{mathpar}
+\inferrule
+  {}
+  {\ieval{\rho}{\sigma}{\src{\lpar\rpar}}{\cst{Unit}}{\sigma}}
+  {}\;\TirName{\quad unit}
+\and
+\inferrule
+  {x \in \dom{\rho}\\
+   \rho(x) \in \dom{\sigma}}
+  {\ieval{\rho}{\sigma}{\src{x}}{\sigma \circ \rho (x)}{\sigma}}
+  {}\;\TirName{var}
+\end{mathpar}
+Pour accéder au contenu d'une variable il faut donc passer via
+l'environnement puis la mémoire, c'est pour cela qu'il faut s'assurer
+que $x \in \dom{\rho}$ et $\rho(x) \in \dom{\sigma}$.  Généralement,
+notre nouveau jugement $\ieval{\rho}{\sigma}{e}{v}{\sigma'}$ doit
+vérifier la propriété: \emph{si $\codom{\rho} \subseteq
+\dom{\sigma}$ alors $\dom{\sigma} \subseteq \dom{\sigma'}$},
+c.-à-d. que l'évaluation peut occulter une liaison par une autre en
+mémoire, ou en ajouter de nouvelles, mais pas en retirer. Autrement
+dit encore, lorsque l'évaluation termine, les variables ont toujours
+une valeur mais qui a pu changer.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Preuve par récurrence sur la longueur des dérivations}
+
+La sémantique opérationnelle permet un type de preuve dite par
+récurrence généralisée sur la longueur des dérivations (ou arbres de
+preuves).
+
+\bigskip
+
+On vérifie la propriété à démontrer sur les axiomes (dérivations de
+longueur~1), puis on suppose que la propriété est vraie pour toutes
+les dérivations de longueur $n-1$, puis on prouve finalement qu'elle
+est vraie pour toutes les dérivations de longueur $n$ en examinant
+toutes les règles et en imaginant qu'elles sont la racine d'une preuve
+de longueur $n$. Ainsi, les prémisses vérifient la propriété à
+démontrer par hypothèse de récurrence, car leur dérivation est de
+taille strictement inférieure à $n$.
+
+\bigskip
+
+Considérons ici la propriété suivante. \emph{Soit
+$\ieval{\rho}{\sigma}{e}{v}{\sigma'}$. Si $\codom{\rho} \subseteq
+\dom{\sigma}$ alors $\dom{\sigma} \subseteq \dom{\sigma'}$}. Elle est
+vraie sur tous les axiomes.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique avec mutables (affectation)}
+
+L'affectation masque la liaison de la variable concernée en mémoire:
+\begin{mathpar}
+\inferrule*[right=assign]
+  {\ieval{\rho}{\sigma}
+         {e}
+         {v}{\sigma'}\\
+   x \in \dom{\rho}\\
+   \rho(x) \in \dom{\sigma'}
+  }
+  {\ieval{\rho}{\sigma}
+         {\src{x \; \assign \; \meta{e}}}
+         {\cst{Unit}}{(\sigma' \oplus \rho(x) \mapsto v)}
+  }
+\end{mathpar}
+Cette règle vérifie la propriété de la page précédente. En effet, par
+hypothèse de récurrence (sur la taille de la dérivation), la première
+prémisse implique que si $\codom{\rho} \subseteq \dom{\sigma}$ alors
+$\dom{\sigma} \subseteq \dom{\sigma'}$. La troisième prémisse implique
+alors $\dom{\sigma' \oplus \rho(x) \mapsto v} = \dom{\sigma'}$, donc
+$\dom{\sigma} \subseteq \dom{\sigma' \oplus \rho(x) \mapsto v}$. 
+
+Nous avons besoin de $\sigma'$ car il se peut que l'évaluation de $e$
+masque des liaisons de $\sigma$ autres que $\rho(x) \mapsto v$ et il
+faut conserver ces occultations.
+
+\exemple \Xlet \ident{x} \equal \num{1} \Xin \Xlet \ident{y} \equal \num{2}
+\Xin \Xlet \ident{z} \equal \lpar\ident{x} \assign \lpar\ident{y} \assign
+\num{3}\rpar\!\rpar{} \Xin \ident{y} \ s'évalue en \cst{Int}
+\lpar\num{3}\rpar.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique avec mutables (liaison locale)}
+
+La règle \RefTirName{let} ajoute une nouvelle liaison dans
+l'environnement et la mémoire en respectant l'invariant cité
+p.~\pageref{invariant_ref}:
+\begin{mathpar}
+\inferrule*[right=let]
+  {\ieval{\rho}{\sigma}{e_1}{v_1}{\sigma_1}\\
+   a \not\in \dom{\sigma_1}\\\\
+   \ieval{(\rho \oplus x \mapsto a)}{(\sigma_1 \oplus a \mapsto v_1)}
+         {e_2}
+         {v_2}{\sigma_2}
+  }
+  {\ieval{\rho}{\sigma}{\src{\Xlet \,\ x \; \equal \; \meta{e}_1
+  \; \Xin \; \meta{e}_2}}{v_2}{\sigma_2}}
+\end{mathpar}
+En effet, si $\codom{\rho} \subseteq \dom{\sigma}$ alors, par
+hypothèse de récurrence (sur la longueur de la dérivation de la
+première prémisse), $\dom{\sigma} \subseteq \dom{\sigma_1}$, donc,
+transitivement, $\codom{\rho} \subseteq \dom{\sigma_1}$, d'où
+$\codom{\rho \oplus x \mapsto a} \subseteq \dom{\sigma_1 \oplus a
+\mapsto v_1}$. Par hypothèse de récurrence (troisième prémisse), cela
+implique alors que $\dom{\sigma_1 \oplus a \mapsto v_1} \subseteq
+\dom{\sigma_2}$. Or $a \not\in \dom{\sigma_1}$ implique
+$\dom{\sigma_1} \subset \dom{\sigma_1 \oplus a \mapsto v_1}$, donc
+finalement $\dom{\sigma} \subset \dom{\sigma_2}$. \emph{En particulier,
+il n'y a pas égalité.}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Glânage de cellules (\emph{Garbage Collection})}
+
+Lorsque nous avons introduit les environnements, nous avons vu que la
+liaison locale pouvait masquer des liaisons. L'introduction des
+mémoires nous montre que la liaison locale peut masquer et ajouter des
+liaisons en mémoire qui ne sont pas accessibles à partir de
+l'environnement. Dans les deux cas, des liaisons dans l'environnement
+ou la mémoire deviennent définitivement inaccessibles, donc l'espace
+mémoire qu'occupent les valeurs correspondantes est gâché pour le
+reste de l'exécution (ou interprétation).
+
+\bigskip
+
+C'est pourquoi les compilateurs de certains langages (OCaml, Java,
+Ada) produisent un code effectuant dynamiquement (selon diverses
+stratégies) une analyse d'accessibilité des données et restituant au
+processus sous-jacent la mémoire virtuelle correspondant aux cellules
+inatteignables: c'est le \emph{glâneur de cellules}, ou \emph{garbage
+collector}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique avec mutables (expressions arithmétiques)}
+
+On doit fixer l'ordre d'évaluation des arguments des opérateurs
+arithmétiques dans la sémantique pour conserver en mémoire les
+\emph{effets} des affectations qui ont éventuellement eu lieu lors de
+l'évaluation des arguments.
+\begin{mathpar}
+\inferrule
+  {\ieval{\rho}{\sigma}{\src{\meta{n}}}{\dot{n}}{\sigma}}
+  {}\;\TirName{\quad const}
+\and
+\inferrule
+  {\ieval{\rho}{\sigma}{e_1}{v_1}{\sigma_1}\\ 
+   \ieval{\rho}{\sigma_1}{e_2}{v_2}{\sigma_2}}
+  {\ieval{\rho}{\sigma}{\src{\meta{e}_1 \, \texttt{+} \, \meta{e}_2}}
+         {v_1 + v_2}{\sigma_2}}
+  {}\;\TirName{\quad add}
+\end{mathpar}
+Il est néanmoins toujours possible de nier officiellement,
+c'est-à-dire dans la documentation livrée avec l'interprète, que
+l'ordre n'est pas fixé, laissant ainsi le loisir de modifier l'ordre à
+des fins d'optimisation de l'interprète.
+
+\bigskip
+
+Les autres expressions arithmétiques suivent le même schéma.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique avec mutables (abstraction et application)}
+
+\begin{mathpar}
+\inferrule*[right=\quad abs]
+  {\ieval{\rho}{\sigma}
+         {\src{\Xfun \; x \rightarrow \meta{e}}}
+         {\clos{x}{e}{\rho}}{\sigma}}
+  {}
+\and
+\inferrule*[right=app]
+  {\ieval{\rho}{\sigma}{e_1}{\clos{x_0}{e_0}{\rho_0}}{\sigma_1}\\
+   \ieval{\rho}{\sigma_1}{e_2}{v_2}{\sigma_2}\\
+   a \not\in \dom{\sigma_2}\\
+   \ieval{(\rho_0 \oplus x_0 \mapsto a)}{(\sigma_2 \oplus a \mapsto v_2)}
+         {e_0}
+         {v_0}{\sigma_3}
+  }
+  {\ieval{\rho}{\sigma}{\src{\meta{e}_1 \; \meta{e}_2}}{v_0}{\sigma_3}}
+\end{mathpar}
+\remarques
+\begin{itemize}
+
+  \item Par rapport à la page~\pageref{abs-app}, l'ordre d'évaluation
+  est ici fixé dans la sémantique: $e_1$ avant $e_2$, afin de vérifier
+  d'abord que $e_1$ s'évalue bien en une fermeture (si ce n'est pas le
+  cas, on gagne du temps en signalant l'erreur au plus tôt).
+
+  \item Le fait que $a \not\in \codom{\rho}$ permet d'oublier les
+  affectations sur le paramètre, p.ex. \Xlet \ident{f} \equal \Xfun
+  \ident{x} $\rightarrow$ \ident{x} \assign \ident{x} \texttt{+} \num{1} \Xin
+  \ident{f} \num{3}.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique avec mutables (expressions récursives natives)}
+
+\begin{mathpar}
+\inferrule*[right=let-rec]
+  {a \not\in \dom{\sigma}\\\\
+   \ieval
+     {(\rho \oplus x \mapsto a)}
+     {(\sigma \oplus a \mapsto v_1)}
+     {e_1}{v_1}{\sigma_1}\\
+   \ieval
+     {(\rho \oplus x \mapsto a)}
+     {\sigma_1}
+     {e_2}{v_2}{\sigma_2}
+  }
+  {\ieval{\rho}{\sigma}{\src{\Xlet \; \Xrec \; x \; \equal \;
+     \meta{e}_1 \; \Xin \; \meta{e}_2}}{v_2}{\sigma_2}
+  }
+\end{mathpar}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{La séquence et l'itération générale}
+
+On peut maintenant trouver avantage à ajouter à notre langage la
+séquence et l'itération générale:
+
+\begin{itemize}
+
+  \item \textcolor{blue}{Syntaxe concrète}
+    {\small 
+     \begin{verbatim}
+Expression ::= ...
+           | Expression ";" Expression 
+           | "while" Expression "do" Expression "done"
+     \end{verbatim}
+    }
+   \vspace*{-10pt}
+
+  \item \textcolor{blue}{Syntaxe abstraite}
+
+    {\small
+     \Xtype \type{expr} \equal \texttt{...} \vbar{} \cst{Seq}
+     \Xof \type{expr} \texttt{*} \type{expr} 
+     \vbar{} \cst{While} \Xof \type{expr} \texttt{*}
+     \type{expr}\semi{}
+    }
+
+  \item \textcolor{blue}{Analyse syntaxique}
+
+    $\src{\meta{e}_1\!\texttt{;}
+    \meta{e}_2} = \cst{Seq} \,
+    \lpar\src{\meta{e}_1},\src{\meta{e}_2}\!\rpar$ et
+    $\src{\Xwhile \; \meta{e}_1 \; \Xdo \; \meta{e}_2 \; \Xdone} =
+    \cst{While} \, \lpar\!\src{\meta{e}_1},\src{\meta{e_2}}\!\rpar$
+
+  \item \textcolor{blue}{Variables libres}
+
+    ${\cal L} \src{\meta{e}_1\!\texttt{;}
+    \meta{e}_2} = {\cal L} (e_1) \cup {\cal L} (e_2)$ \ et \ ${\cal L}
+    \src{\Xwhile \; \meta{e}_1 \; \Xdo \; \meta{e}_2 \; \Xdone} =
+    {\cal L} (e_1) \cup {\cal L} (e_2)$
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Sémantique de la séquence et de l'itération générale}
+
+{\small
+\begin{mathpar}
+\inferrule*[right=seq]
+  {x \not\in {\cal L} (e_2)\\
+   \meval
+     {\rho}
+     {\Xlet \; x \; \equal \; \meta{e}_1 \; \Xin \; \meta{e}_2}
+     {v}
+  } 
+  {\meval{\rho}{\meta{e}_1\!\texttt{;} \meta{e}_2}{v}}
+\and
+\inferrule[while]
+  {f,p \not\in {\cal L} (e_2)\\
+   x \not\in {\cal L} (e_1)\\
+   \meval
+     {\rho} 
+     {\Xlet \; \Xrec \; f \; \equal \; \Xfun \; p \rightarrow \Xif \; p
+      \lpar\rpar \; \Xthen \; \meta{e}_2\!\texttt{;} f \, p \; \Xelse \;
+      \lpar\rpar \; \Xin \; f \lpar\Xfun \; x \rightarrow \meta{e}_1\rpar}
+     {v}
+  }
+  {\meval
+     {\rho}
+     {\Xwhile \; \meta{e}_1 \; \Xdo \; \meta{e}_2 \; \Xdone}
+     {v}
+  }
+\end{mathpar}
+}
+\remarque \quad La valeur $v$ est en fait toujours \lpar\rpar{} dans
+la règle \RefTirName{while}.
+
+\bigskip
+
+Si on ajoutait les opérateurs booléens de comparaison sur les entiers,
+on pourrait enfin écrire \mbox{\small \Xlet \ident{x} \equal \num{0} \Xin
+\lpar\Xwhile \ident{x} \texttt{<} \num{10} \Xdo \ident{x} \assign \ident{x}
+\texttt{+} \num{1} \Xdone\!\!\!\texttt{;}\ident{x}\rpar}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Implantation de la sémantique avec mutables}
+
+Le premier choix à faire est celui du type de donnée OCaml qui
+convient pour les adresses. Bien que les entiers OCaml peuvent
+déborder, on les utilisera ici comme implantation des adresses.
+
+Un autre point concerne les règles où il faut choisir une adresse qui
+est libre dans la mémoire, formellement $a \not\in \dom{\sigma}$. Une
+solution consiste à produire une adresse à chaque fois qui soit
+absolument unique à partir d'un incrément entier (les adresses étant
+implantées par des entiers). Il faudrait donc passer un argument
+supplémentaire à notre fonction d'évaluation \ident{eval}, qui est le
+compteur, et à chaque fois qu'on a besoin d'une nouvelle adresse on
+lui ajoute 1.
+
+Les fonctions polymorphes (\ident{extend} pour l'ajout d'une liaison et
+\ident{lookup} pour la recherche d'une liaison) qui opérent sur les
+environnements servent aussi pour les mémoires.
+
+\end{frame}

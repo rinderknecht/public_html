@@ -1,0 +1,374 @@
+%%-*-Latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Matching}
+
+Once we have objects, it is useful to compare them. The mechanism to
+do so is called \textbf{matching} in \Prolog, and is different from
+the equalities we find in other programming languages.
+\begin{itemize}
+
+  \item Two numbers match if they represent the same mathematical
+    number.
+
+  \item Two atoms match if they are made of the same characters.
+
+  \item A variable matches any object.
+
+  \item Two structures match if
+    \begin{itemize}
+
+    \item their functors match (as atoms),
+      
+    \item all their corresponding arguments match.
+      
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching (cont)}
+
+Matching and equality agree on \textbf{ground terms}, i.e. objects
+containing no variables. In this case, they both either return true
+(\texttt{Yes} in \Prolog) or false (\texttt{No}).
+
+\bigskip
+
+The difference between matching and equality concerns
+\textbf{non-ground terms}, i.e. objects containing variables.
+
+\bigskip
+
+Consider the following fragment of a C program:
+{\small
+\begin{verbatim}
+if (x == 5) x++;
+\end{verbatim}
+} 
+Here, the run-time has to compare \emph{the value of} \texttt{x} with
+\texttt{5}, i.e. it looks up the value to which \texttt{x} is bound
+and then matches it against \texttt{5} (remember that equality and
+matching agree on ground terms).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching (cont)}
+
+In \Prolog, the closest clause, as far as comparison is concerned, is
+the query
+{\small
+\begin{verbatim}
+?- X = 5.
+\end{verbatim}
+}
+But the scoping rules of \Prolog say that this occurrence of variable
+\texttt{X} is visible only in this clause. Therefore it is unbound,
+i.e., it is not associated to any ``previous'' value.
+
+\bigskip
+
+Instead, because \texttt{X} is a variable, it must match \texttt{5},
+so the interpreter answers
+{\small
+\begin{verbatim}
+X = 5
+Yes
+\end{verbatim}
+} 
+Here, the successful matching returns a \textbf{binding} for
+\texttt{X}, before answering \texttt{Yes}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching (cont)}
+
+Imagine now a matching involving a structure, like
+{\small
+\begin{verbatim}
+?- date(D,july,2006) = date(9,M,2006).
+\end{verbatim}
+}
+The interpreter first checks whether the functors match (are equal),
+which is true. Next, it matches the corresponding arguments against
+each other: \texttt{D} against \texttt{9}, \texttt{july} against
+\texttt{M} and \texttt{2006} against \texttt{2006}. 
+
+\bigskip
+
+The first matching involves a variable and a number, so the
+interpreter chooses the binding \texttt{D = 9}.
+
+\bigskip
+
+The second matching involves an atom and a variable, so the
+interpreter chooses the binding \texttt{M = july}.
+
+\bigskip
+
+The last matching is trivial, \texttt{2006 = 2006}, and does not
+require any binding.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching (cont)}
+
+So the answer is
+{\small
+\begin{verbatim}
+D = 9
+M = july
+Yes
+\end{verbatim}
+}
+In other words, a successful matching returns bindings for all
+variables in the terms being matched, such as the corresponding
+\textbf{instantiation} leads to equal ground terms:
+{\small
+\begin{verbatim}
+date(9,july,2006) = date(9,july,2006)
+\end{verbatim}
+}
+Instantiation means to replace all the variables by the object
+to which they are bound.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching/Failure}
+
+A failed matching consists of only \texttt{No}. For example
+{\small
+\begin{verbatim}
+?- 1 = 2.
+No
+?- date(9,july,2006) = date(9,july,2007).
+No
+?- date(X,july,2006) = date(9,july,X).
+No
+\end{verbatim}
+}
+In the last case, the interpreter finds two bindings for \texttt{X}
+which are different: \texttt{X=9} and \texttt{X=2006}, which leads to
+failure.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching/Most general substitution}
+
+In general, a successful matching returns several bindings. A set of
+bindings is called a \textbf{substitution}. So, an instantiation
+consists in applying a substitution to a clause.
+
+\bigskip
+
+Sometimes there can be several possible substitutions that make the
+matching a success. For example the matching
+{\small
+\begin{verbatim}
+?- X = Y.
+\end{verbatim}
+}
+can be satisfied by
+{\small \verb|X = -3, Y = -3|} or {\small \verb|X = 7, Y = 7|}
+and so on.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching/Most general substitution (cont)}
+
+In such cases, \Prolog ensures that the most general substitution will
+be retained. In our example, \texttt{X = Y} is the most general,
+because all the instances can be obtained from it by replacing
+\texttt{X} and \texttt{Y} by the same arbitrary object.
+
+\bigskip
+
+In other words, when matching a variable \texttt{A} against another
+variable \texttt{B}, the matching succeeds with the most general
+substitution \texttt{A = B}, or
+{\small
+\begin{verbatim}
+A = _G187
+B = _G187
+\end{verbatim}
+}
+where \texttt{\_G187} is a variable generated by the interpreter. In
+these slides we prefer to write
+{\small
+\begin{semiverbatim}
+A = \(\alpha\)
+B = \(\alpha\)
+\end{semiverbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching/Most general substitution (cont)}
+
+Consider the special case
+{\small
+\begin{semiverbatim}
+?- X = X.
+X = \(\alpha\)
+Yes
+\end{semiverbatim}
+}
+The danger here is that \Prolog uses the same syntactical convention,
+the \texttt{=} character, to denote both variable bindings and
+matchings: \texttt{A = 2} can be a matching or a binding, same for
+\texttt{A = B}. 
+
+\bigskip
+
+But \texttt{2 = A} is a matching but \textbf{not} a variable
+binding. Same for 
+{\small
+\begin{verbatim}
+date(9,july,2006) = date(9,july,2006)
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching/Tree representation}
+
+It is useful to use the tree representation of \Prolog terms
+(page~\pageref{structures_as_trees}) to understand how a matching is
+performed.
+
+\bigskip
+
+Consider the two terms 
+{\small
+\begin{verbatim}
+triangle(point(1,1),A,point(2,3))
+triangle(X,point(4,Y),point(2,Z))
+\end{verbatim}
+}
+These terms are represented by the trees
+\begin{center}
+\includegraphics[bb=72 657 177 721]{triangle_tree1}
+\hspace{1cm}
+\includegraphics[bb=71 657 180 721]{triangle_tree2}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Matching/Tree representation (cont)}
+
+The interpreter traverse the two trees from the root to the leaves,
+following the same order when visiting the sub-trees. Let us assume
+that order between siblings is from left to right.
+
+\bigskip
+
+It matches first the two roots: if one of them is a variable, it stops
+and declares success, otherwise it matches the subtrees. Here,
+\texttt{triangle = triangle}, so, next, it matches the first subtree
+of the first tree with the first subtree of the second tree,
+i.e. \texttt{?- point(1,1) = X.} This is a success with the
+substitution \texttt{X = point(1,1)}.
+
+\bigskip
+
+Then, the second subtrees are matched, i.e.,
+{\small
+\begin{semiverbatim}
+?- A = point(4,Y).
+A = point(4,\(\alpha\))
+Y = \(\alpha\)
+\end{semiverbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching/Tree representation (cont)}
+
+Next, the last subtrees are matched, i.e. the interpreter tries to
+answer the query 
+{\small
+\begin{verbatim}
+?- point(2,3) = point(2,Z).
+\end{verbatim}
+}
+The roots are the same: \texttt{point = point}. So, it then matches the
+subtrees, i.e. answers now the queries
+{\small
+\begin{verbatim}
+?- 2 = 2.    ?- 3 = Z.
+\end{verbatim}
+}
+successfully with substitution \texttt{Z = 3}. Finally the answer is
+the substitution which is the union of all the others:
+{\small
+\begin{semiverbatim}
+X = point(1,1)
+A = point(4,\(\alpha\))
+Y = \(\alpha\)
+Z = 3
+\end{semiverbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching/Tree representation (cont)}
+
+The proof of the matching can be displayed by means of a proof tree:
+\begin{mathpar}
+\inferrule
+{\texttt{\small point(1,1) = X} 
+ \and
+ \texttt{\small A = point(4,Y)}
+  \and
+  \inferrule*
+  {\texttt{\small 2 = 2}
+   \and
+   \texttt{\small 3 = Z}
+  }
+  {\texttt{\small point(2,3) = point(2,Z)}}
+}
+{\small
+ \texttt{triangle(point(1,1),A,point(2,3))}\\
+\texttt{= triangle(X,point(4,Y),point(2,Z))}
+}
+\end{mathpar}
+
+\end{frame}

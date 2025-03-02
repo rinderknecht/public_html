@@ -1,0 +1,93 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Recursive rules}
+
+Let us add another relation to our family program, the
+\texttt{ancestor} relation. 
+
+\bigskip
+
+If we consider again the family tree page~\pageref{family_tree}, we
+model the \texttt{ancestor} binary relation by saying that \texttt{X}
+is an ancestor of \texttt{Y} if there is a chain of parenthood
+relationships from \texttt{X} to \texttt{Y}. For example, Pam is an
+ancestor of Jim and Tom is an ancestor of Liz.
+
+\bigskip
+
+The latter example actually illustrates a special case of the
+\texttt{ancestor} relation, when \texttt{X} is a parent of
+\texttt{Y}. This case is very easy to specify in \Prolog:
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- parent(X,Y).
+\end{verbatim}
+}
+But what if the chain of parents is longer? We could try to add
+another rule
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- parent(X,Z), parent(Z,Y).
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Recursive rules (cont)}
+
+But what if the chain of ancestors is strictly longer than two
+parent relationships? We could try to add
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- parent(X,Z1), parent(Z1,Z2), parent(Z2,Y).
+\end{verbatim}
+}
+but we can never attain the general case, when the chain is
+arbitrarily long... The solution consists in designing a
+\textbf{recursive rule}. For example:
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- parent(X,Z), ancestor(Z,Y).
+\end{verbatim}
+}
+which translates ``\texttt{X} is an ancestor of \texttt{Y} if
+\texttt{X} is the parent of some \texttt{Z} which is in turn the
+ancestor of \texttt{Y}.''
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Recursive rules (cont)}
+
+\label{ancestor}
+
+We also must keep the special case when ancestorship is parenthood, so
+all together we have
+{\small
+\begin{verbatim}
+ancestor(X,Y) :- parent(X,Y).
+ancestor(X,Y) :- parent(X,Z), ancestor(Z,Y).
+\end{verbatim}
+} 
+This pattern is typical of recursive rules: there is at least one rule
+which is not recursive, to cover base cases, and some others which are
+recursive. Let us query for example
+{\small
+\begin{verbatim}
+?- ancestor(pam,X).
+X = bob;
+X = ann;
+X = pat;
+X = jim
+\end{verbatim}
+}
+
+\end{frame}

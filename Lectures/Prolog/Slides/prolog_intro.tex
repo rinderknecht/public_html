@@ -1,0 +1,527 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Defining relations with facts}
+
+\Prolog is a programming language for symbolic (non-numeric)
+computation. Its name means \textbf{programming in logic}.
+
+\bigskip
+
+Let us approach it as if it were a \textbf{deductive database}. First,
+a database is populated by \textbf{relations}. A relation is what
+links two or more objects. This way we learn something about their
+relative meaning. For example, in ``Tom is the parent of Bob,'' is a
+statement, the relation is parenthood and relates Tom and Bob.
+
+\bigskip
+
+In \Prolog, the simplest way of defining a relation is by enumerating
+\textbf{facts} (statements). For example
+{\small 
+\begin{verbatim}
+parent(tom,bob).
+\end{verbatim}
+}
+is a fact.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Defining relations with facts (cont)}
+\label{family_tree}
+
+
+\begin{columns}
+  \column{0.5\textwidth}
+    \textbf{A family tree encoded in \Prolog}
+    \begin{center}
+       \includegraphics[bb=60 608 185 732,scale=0.9]{parenthood}
+    \end{center}
+  \column{0.5\textwidth}
+    \PrologIn{parent}
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Queries}
+
+This program is composed of six \textbf{clauses}, each declaring a
+fact about the \texttt{parent} relation. As we shall see later,
+a clause may not be a fact.
+
+\bigskip
+
+We say that, for example, \texttt{parent(tom,bob)} is an
+\textbf{instance} of the \texttt{parent} relation.
+
+\bigskip
+
+In general, a relation is defined as the set of all its instances.
+
+\bigskip
+
+After loading this relation, the \Prolog interpreter allows the user
+to ask some questions about it. For example, the query ``Is Bob a
+parent of Pat?'' is written 
+{\small
+\begin{verbatim}
+?- parent(bob,pat).
+\end{verbatim}
+}
+Having found that this a fact, the interpreter answers
+{\small
+\begin{verbatim}
+Yes
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Ground queries}
+
+Another query can be
+{\small
+\begin{verbatim}
+?- parent(liz,pat).
+\end{verbatim}
+}
+The interpreter answers
+{\small
+\begin{verbatim}
+No
+\end{verbatim}
+}
+The same answers is given to query
+{\small
+\begin{verbatim}
+?- parent(tom,ben).
+\end{verbatim}
+}
+because the interpreter never heard of \texttt{ben}.
+
+\bigskip
+
+A \textbf{query} starts with `\verb+?-+', is followed by a
+\textbf{goal} and ended by a period.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Existential queries}
+
+More interesting is asking ``Who are the parents of Liz?'' In this
+case what we do not know is a set of persons. The usual way of
+speaking about an unknown person is to name it with an arbitrary
+\textbf{variable}, e.g. \texttt{X}. The corresponding \Prolog query is
+then
+{\small
+\begin{verbatim}
+?- parent(X,liz).
+\end{verbatim}
+}
+In this case, we expect \emph{all} the parents of Liz to be found --- or
+none if no instance were defined. The interpreter answers
+{\small
+\begin{verbatim}
+X = tom
+Yes
+\end{verbatim}
+}
+A \textbf{ground query} is a query with no variables.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Existential queries on one variable}
+
+If asked who are Bob's children:
+{\small
+\begin{verbatim}
+?- parent(bob,X).
+\end{verbatim}
+}
+we expect several answers. The interpreter gives one and wait for the
+user to either type in a semi-colon for more answers or the return
+key to stop:
+{\small
+\begin{verbatim}
+X = ann ;
+X = pat 
+Yes
+\end{verbatim}
+}
+If we had exhausted all the solutions, the interpreter would print
+{\small
+\begin{verbatim}
+No
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Existential queries on two variables}
+
+We can also query on two variables, like asking for all \texttt{X} and
+\texttt{Y} such that \texttt{X} is a parent of \texttt{Y}. In other
+words, find all the instances of the \texttt{parent} relation. This is
+formally written as
+{\small
+\begin{verbatim}
+?- parent(X,Y).
+\end{verbatim}
+}
+The answer starts as
+{\small
+\begin{verbatim}
+X = pam
+Y = bob ;
+X = tom
+Y = bob ;
+X = tom
+Y = liz ;
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Conjunctive queries and shared variables}
+
+We could ask: ``Who is the grand-parent of Jim?'' But, since, we did
+not define the \texttt{grandparent} relation, we have to break this
+question in two parts:
+\begin{enumerate}
+
+  \item Who is a parent of Jim? Assume that (s)he is named \texttt{Y}.
+
+  \item Who is a parent of \texttt{Y}? Assume that (s)he is named
+    \texttt{X}.
+
+\end{enumerate}
+The answer to the original question is \texttt{X}. Formally, this is
+written
+{\small
+\begin{verbatim}
+?- parent(Y,jim), parent(X,Y).
+\end{verbatim}
+}
+The answer is (final \texttt{Yes} omitted):
+{\small
+\begin{verbatim}
+X = bob
+Y = pat
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Conjunctive queries and shared variables (cont)}
+
+Note that the \Prolog interpreter returns the values for all the
+variables involved in the query (here \texttt{X} and \texttt{Y}), even
+if we are only interested in some of them (here \texttt{X}).
+
+\bigskip
+
+The previous query is made by tying two queries sharing a common
+variable, \texttt{Y}. It is a \textbf{conjunctive query}.
+
+\bigskip
+
+If we change the order of composition of the two queries, the logical
+meaning remains the same:
+{\small
+\begin{verbatim}
+?- parent(X,Y), parent(Y,jim).
+\end{verbatim}
+}
+\noindent produces the same result. Similarly, we ask: ``Who are Tom's
+grand-children?'' by
+{\small
+\begin{verbatim}
+?- parent(tom,X), parent(X,Y).
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Conjunctive queries and shared variables (cont)}
+
+Let us ask: ``Do Ann and Pat have a common parent?'' Again, the
+question can be broken down in two sub-questions:
+\begin{enumerate}
+
+  \item Who is a parent \texttt{X} of Ann?
+
+  \item Is (the same) \texttt{X} a parent of Pat?
+
+\end{enumerate}
+In \Prolog, this conjunctive query is written
+{\small
+\begin{verbatim}
+?- parent(X,ann), parent(X,pat).
+\end{verbatim}
+}
+The \Prolog queries are usually called \textbf{goals}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Defining relations by rules}
+
+We can extend our example in many interesting ways. Let us first add
+the information about the sex of the people. This can be easily done
+by simply adding the following facts to our program:
+
+\PrologIn{sex}
+
+The relations introduced are \texttt{male} and \texttt{female}. These
+relations only have one argument, and are called \textbf{predicates}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Defining relations by rules (cont)}
+
+Another way consists in defining a \textbf{binary relation} for the
+sex, i.e. a relation between two objects, like the \texttt{parent}
+relation. For example:
+{\small
+\begin{verbatim}
+sex(pam,feminine).
+sex(tom,masculine).
+sex(bob,masculine).
+...
+\end{verbatim}
+}
+Now let us introduce the \textbf{inverse relation} of \texttt{parent},
+we call \texttt{offspring}. We can add new facts again. For example
+{\small
+\begin{verbatim}
+offspring(liz,tom).
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Defining relations by rules (cont)}
+
+However, the \Prolog language offers a more compact and elegant way to
+define the relation \texttt{offspring} in terms of the already defined
+relation \texttt{parent}.
+
+\bigskip
+
+Indeed, what we want to say is: 
+\begin{quote}
+For all \texttt{X} and \texttt{Y},
+\texttt{Y} is an offspring of \texttt{X} if \texttt{X} is a parent of
+\texttt{Y}.
+\end{quote}
+In \Prolog this is expressed by means of a clause
+{\small
+\begin{verbatim}
+offspring(Y,X) :- parent(X,Y).
+\end{verbatim}
+}
+Such clauses are called \textbf{rules}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Defining relations by rules (cont)}
+
+There is an important difference between facts and rules. A fact like
+{\small
+\begin{verbatim}
+parent(tom,liz).
+\end{verbatim}
+} 
+is something that is unconditionally true. On the other hand, rules
+specify things that are true \textbf{if} some condition is satisfied.
+
+Rules have a \emph{condition} part (right-part of the rule) and a
+\emph{conclusion} (left-hand side). The conclusion is also called the
+\textbf{head} and the condition the \textbf{body}. For example
+\[
+\underbrace{\texttt{\small offspring(Y,X)}}_{\textrm{\normalsize head}} \;
+\texttt{:-} \; \underbrace{\texttt{\small
+    parent(X,Y)}}_{\textrm{\normalsize body}}\texttt{.}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Defining relations by rules (cont)}
+
+Let us ask now whether Liz is an offspring of Tom:
+{\small
+\begin{verbatim}
+?- offspring(liz,tom).
+\end{verbatim}
+} 
+Since there are no facts about offsprings in the program and there
+is a rule whose head is an instance of \texttt{offspring}, the
+\Prolog interpreter tries to use the latter.
+
+The head of this rule is \texttt{offspring(Y,X)}, implicitly
+for all \texttt{X} and \texttt{Y}. So \texttt{X}
+can be replaced by \texttt{tom} and \texttt{Y} by
+\texttt{liz}. This process is called \textbf{instantiation}. We
+get a special case of the rule:
+{\small
+\begin{verbatim}
+offspring(liz,tom) :- parent(tom,liz).
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Defining relations by rules (cont)}
+
+Now the \Prolog interpreter tries to prove the body
+\texttt{parent(tom,liz)}. This is actually a fact, so it answers
+\texttt{Yes}.
+
+\bigskip
+
+It does not give any variable information, like \texttt{X =
+  tom}, because the original goal contained no variable.
+
+\bigskip
+
+Let us add more twists to our program by considering a
+\texttt{mother} relation. It could be informally defined by
+\begin{quote}
+For all \texttt{X} and \texttt{Y}, \texttt{X} is the mother of
+\texttt{Y} if \texttt{X} is a parent of \texttt{Y} and \texttt{X} is a
+female.
+\end{quote}
+This is written in \Prolog
+{\small
+\begin{verbatim}
+mother(X,Y) :- parent(X,Y), female(X).
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Defining relations by rules (cont)}
+
+The grand-parent relation can be defined as
+{\small
+\begin{verbatim}
+grandparent(X,Y) :- parent(X,Z), parent(Z,Y).
+\end{verbatim}
+}
+The interesting point here is that there is a variable, \texttt{Z},
+that is shared between the two sub-goals in the body and that does not
+appear in the head.
+
+\bigskip
+
+The interpreter, when asked a question about two persons, on one being
+the grand-parent of the other, tries to find another person
+(\texttt{Z}) who is the child of the first and the parent of the
+second.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Defining relations by rules (cont)}
+
+The sister-hood relation can be defined as
+{\small
+\begin{verbatim}
+sister(X,Y) :- parent(Z,X), parent(Z,Y), female(X).
+\end{verbatim}
+}
+This definition seems right but something strange happens if we query
+{\small
+\begin{verbatim}
+?- sister(X,pat).
+\end{verbatim}
+}
+which corresponds to the question: "Who are the sisters of Pat?" The
+answers are:
+{\small
+\begin{verbatim}
+X = ann;
+X = pat
+\end{verbatim}
+}
+Pat is her own sister!
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Defining relations by rules (cont)}
+
+To fix this, we need a binary relation \texttt{different} and use it
+in the rule defining the relation \texttt{sister}:
+{\small
+\begin{verbatim}
+sister(X,Y) :- parent(Z,X), parent(Z,Y),
+               female(X), different(X,Y).
+\end{verbatim}
+}
+The relation \texttt{different} can be defined by listing all the
+pairs of different persons:
+{\small 
+\begin{verbatim}
+different(bob,pat).
+different(bob,ann).
+...
+\end{verbatim}
+}
+This approach does not scale. We will see later how to define a
+general \texttt{different}, based on equality.
+
+\end{frame}

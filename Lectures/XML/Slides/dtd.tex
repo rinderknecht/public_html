@@ -1,0 +1,227 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DTD}
+
+We saw at page~\pageref{xml_intro:DOCTYPE} that the \textbf{Document
+  Type Declaration} may contain markup which constrains the \XML
+document it belongs to (elements, attributes etc.).
+
+\bigskip
+
+The content of a Document Type Declaration is made of a
+\textbf{Document Type Definition}, abbreviated \DTD. So the
+former is the container of the latter.
+
+\bigskip
+
+It is possible to have all or part of the \DTD in a separate file,
+usually with the extension ``\texttt{.dtd}''.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{DTD/Attribute lists}
+
+We already saw \textbf{attribute lists} at
+page~\pageref{xml_intro:ATTLIST} when setting up internal linking.
+
+\bigskip
+
+In general, the \texttt{ATTLIST} can be used to specify any kind of
+attributes of an element, not just label and references. 
+
+\bigskip
+
+Consider the attribute declarations for element \texttt{memo}:
+{\small
+\begin{verbatim}
+<!ATTLIST memo
+          ident      CDATA          #REQUIRED
+          security   (high | low)   "high"
+          keyword    NMTOKEN        #IMPLIED>
+\end{verbatim}
+}
+\texttt{CDATA} stands for \textbf{character data} and represents any
+string. A \textbf{named token} (\texttt{NMTOKEN}) is a string starting
+with a letter and which may contain letters, numbers and certain
+punctuation.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DTD/Element declarations}
+
+In order for a document to be validated, which requires more
+constraints than to be merely well-formed, all the elements used
+must be declared in the \DTD.
+
+\bigskip
+
+The name of each element must be associated a \textbf{content model},
+i.e., a description of what it is allowed to contain, in terms of
+textual data and sub-elements (mark-up).
+
+\bigskip
+
+This is achieved by means of the \DTD \texttt{ELEMENT}
+declarations. There are five kinds of content models.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{DTD/Element declarations (cont)}
+
+The first kind is the \textbf{empty element}:
+\begin{verbatim}
+<!ELEMENT padding EMPTY>
+\end{verbatim}
+The second is elements with \textbf{no content restriction}:
+\begin{verbatim}
+<!ELEMENT open ALL>
+\end{verbatim}
+The third is elements containing \textbf{only text}:
+\begin{verbatim}
+<!ELEMENT emphasis (#PCDATA)>
+\end{verbatim}
+which means \textbf{parsed-character data}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{DTD/Element declarations (cont)}
+
+The fourth is elements containing \textbf{only elements}:
+{\small
+\begin{verbatim}
+<!ELEMENT section (title, para+)>
+<!ELEMENT chapter (title, section+)>
+<!ELEMENT report (title, subtitle?, (section+ | chapter+))>
+\end{verbatim}
+}
+where \texttt{title}, \texttt{subtitle} and \texttt{para} are
+elements.
+
+\bigskip
+
+The last is elements containing \textbf{both text and elements}:
+{\small
+\begin{verbatim}
+<!ELEMENT para (#PCDATA | emphasis | ref)+>
+\end{verbatim}
+}
+where \texttt{emphasis} and \texttt{ref} are element names.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DTD/Element declarations (cont)}
+
+The technique to define the content model is similar to
+\textbf{regular expressions}. Such an expression can be made up by
+combining the following:
+\begin{itemize}
+
+  \item \texttt{(\(e_1\), \(e_2\), \dots , \(e_n\))} represents the
+    elements represented by \(e_1\), followed by the elements
+    represented by \(e_2\) etc. until \(e_n\);
+
+  \item \texttt{\(e_1\) | \(e_2\)} represents the elements represented
+    by \(e_1\) or \(e_2\);
+
+  \item \texttt{(\(e\))} represents the elements represented by \(e\);
+
+  \item \texttt{\(e\)?} represents the elements represented by \(e\)
+    or none;
+
+  \item \texttt{\(e\)+} represents the non-empty repetition of
+    the elements represented by \(e\);
+
+  \item \texttt{\(e\)*} represents the repetition of the elements
+    represented by \(e\).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{DTD/Element declarations (cont)}
+
+\textbf{Warning.} When mixing text and elements, the only possible
+regular expression is either
+\begin{verbatim}
+(#PCDATA)
+\end{verbatim}
+or
+\begin{verbatim}
+(#PCDATA | ...)*
+\end{verbatim}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{DTD/Internal and external subsets}
+
+The part of a \DTD which is included in the same file as the \XML
+document it applies to is called the \textbf{internal subset}. See
+again the example page~\pageref{xml_intro:id_idref}.
+
+\bigskip
+
+The part of a \DTD which is in an independent file (\texttt{.dtd}) is
+called the \textbf{external subset}.
+
+\bigskip
+
+If there is no internal subset and everything is in the external
+subset we have a declaration like
+\begin{verbatim}
+<!DOCTYPE some_root_element SYSTEM "some.dtd">
+\end{verbatim}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{DTD/Validating parsers}
+
+In order to validate an \XML document, its \DTD must completely
+describe the elements and attributes used.
+
+\bigskip
+
+This is not mandatory when well-formedness is required.
+
+\bigskip
+
+Therefore, the example page~\pageref{xml_intro:id_idref} is
+well-formed but not valid in the sense above, because the elements
+\texttt{map} and \texttt{country} are not declared.
+
+\bigskip
+
+For example: 
+\begin{verbatim}
+<!ELEMENT map     (country+)>
+<!ELEMENT country EMPTY>
+\end{verbatim}
+would be sufficient to validate the document.
+
+\end{frame}

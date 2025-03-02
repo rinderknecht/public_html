@@ -1,0 +1,15 @@
+\paragraph{Answer.} By definition
+\begin{align*}
+N &= b_{n-1} 2^{n-1} + b_{n-2} 2^{n-2} + \dots + b_1 2 + b_0\\
+  &= 2 (b_{n-1} 2^{n-2} + b_{n-2} 2^{n-3} + \dots + b_1) + b_0\\
+\lfloor{}N/2\rfloor 
+  &= b_{n-1} 2^{n-2} + b_{n-2} 2^{n-3} + \dots + b_1\\
+  &= 0 \times 2^{n-1} + b_{n-1} 2^{n-2} + b_{n-2} 2^{n-3} + \dots + b_1\\
+  &= 0 b_{n-1} b_{n-2} \dots b_1\\
+\intertext{And}
+2N &= 2(b_{n-1} 2^{n-1} + b_{n-2} 2^{n-2} + \dots + b_1 2 + b_0)\\
+   &= b_{n-1} 2^{n} + b_{n-2} 2^{n-1} + \dots + b_1 2^2 + b_0 2^1 
+      + 0 \times 2^0\\
+   &= b_{n-1} b_{n-2} \dots b_1 b_0 0
+\end{align*}
+

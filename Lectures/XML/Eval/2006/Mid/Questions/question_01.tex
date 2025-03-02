@@ -1,0 +1,50 @@
+A \emph{queue} is a stack where the items are popped at the
+\textbf{bottom}, not at the top. Pushing an item in a queue is called
+\emph{enqueuing}, whereas the special pop is called \emph{dequeuing}.
+\[
+\begin{array}{r@{\;}cc|c|c|c|c|c|cc@{\;}l}
+\cline{3-9}
+\proc{Enqueue} & \rightarrow & & a & b & c & d & e & & \rightarrow &
+\proc{Dequeue}\\
+\cline{3-9}\\
+\cline{3-8}
+\proc{Push}, \proc{Pop} & \leftrightarrow & & a & b & c & d & e &&&\\ 
+\cline{3-8}
+\end{array}
+\]
+\noindent We want to implement queues with two stacks:
+\[
+\begin{array}{r@{\;}cc|c|c|c|c|c|c|cc@{\;}l}
+\cline{3-6}\cline{8-10}
+\proc{Enqueue} & \rightarrow & & a & b & c & & d & e & & \rightarrow &
+\proc{Dequeue}\\
+\cline{3-6}\cline{8-10}
+\end{array}
+\]
+\noindent So \proc{Enqueue} is \proc{Push} on the first stack and
+\proc{Dequeue} is \proc{Pop} on the second. If the second stack is
+empty, we swap the stacks and reverse the (new) second:
+\[
+\begin{array}{r@{\;}cc|c|c|c|c|cc@{\;}l}
+\cline{3-6}\cline{8-8}
+\proc{Enqueue} & \rightarrow & & a & b & c & & & \rightarrow &
+\proc{Dequeue} \, \textbf{???}\\
+\cline{3-6}\cline{8-8}\\
+\cline{3-3}\cline{5-8}
+\proc{Enqueue} & \rightarrow & & & a & b & c & & \rightarrow &
+\proc{Dequeue}\\
+\cline{3-3}\cline{5-8}\\
+\end{array}
+\]
+\paragraph{Data.} \noindent Let \(\proc{Queue}(S,T)\) be the
+queue made of the stacks \(S\) and \(T\); let \(\proc{Push}(e,S)\) be
+the stack \(S\) with item \(e\) on top; let \proc{Empty} be the empty
+stack.
+
+\paragraph{Functions.} Let \(\proc{Enqueue}(e,Q)\) rewrite to
+the queue \(Q\) where item \(e\) is added; let \(\proc{Dequeue}(Q)\)
+rewrite to the pair \((e, Q')\) where \(e\) is the item on the head of
+queue \(Q\) and \(Q'\) is the remaining queue.
+
+\paragraph{Question.} Define \(\proc{Enqueue}(e,Q)\) and
+\(\proc{Dequeue}(Q)\), where \(Q\) is a queue.

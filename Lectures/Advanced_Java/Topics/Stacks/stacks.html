@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Stacks</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Stacks</h2>
+
+<p>Stacks are perhaps the simplest data structures featuring dynamic
+memory allocation. During the first class on the subject, we saw two
+designs for <em>imperative programming</em>, where data are updated
+destructively (from the point of view of the data structure, they are
+called <em>ephemeral</em>). An advantage of this style is a reduced
+memory footprint, a disadvantage is that great care must be paid to
+the order of the updates to avoid conflicting read-write and
+write-write operations. This is of particular importance when such
+data structures are shared between threads.</p>
+
+<p>We also discussed partial and total functions and two ways to
+implement the former: either by using exceptions, or declaring
+dedicated classes to provide the interpretations "result available"
+and "result not available", sometimes called and <em>optional
+value</em> or a <em>Maybe</em>. The technique based on exceptions
+allows the function to retain its natural return type, but
+requires <tt>try/catch</tt> blocks at the call sites; the second one
+requires a new return type and testing the return value (and the use
+of generics).</p>
+
+<p>We started hinting at the uses and misuses of the <tt>null</tt>
+reference. Here are some publications and a talk to broaden your
+mind.</p>
+<ul>
+  <li>A good presentation of the issues involved but the presence
+  of <tt>null</tt> in Java and optional values is found in the first
+  30 pages of the following
+  PhD: <a href="much_ado_about_nothing__Putting_Java_s_null_in_its_place--2008.pdf">Much
+  Ado about Nothing: Putting Java's null in its place (2008)</a>.</li>
+
+ <li>The
+ paper <a href="non-null_references_by_default_in_Java--2006.pdf">Non-null
+ references by default in Java (2006)</a> is a proposal based
+ on <em>annotations</em>.</li>
+
+ <li>The talk
+ entitled <a href="http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare">Null
+ references: The Billion Dollar Mistake (2009)</a> by the famous
+ British scholar Tony Hoare is worth watching.
+ </li>
+</ul>
+
+<h3>Persistent Stacks (<em>functional style</em>)</h3>
+
+<p>One solution to avoid <tt>null</tt> dereferencing is to
+use <em>persistence</em>, which is the property of a value to remain
+constant. In particular, it enables to compose methods
+safely. Persistence enables <em>version control</em> (historical
+recording) by simply storing all versions of the data structure and
+ensuring maximum sharing between two successive versions. This sharing
+is always safe because values are constants. This property is
+naturally also very useful in the context of concurrent programming,
+where sharing is performed between different threads of execution. It
+is also pervasive within <em>functional programming languages</em>,
+for example Erlang. Here is our design pattern, which is similar to
+the one proposed in the
+article <a href="teaching_linked_lists_and_recursion_without_conditionals_or_null--2003.pdf">Teaching
+linked lists and recursion without conditionals or null
+(2003)</a>.</p>
+<ol>
+  <li><a href="Persistent/Stack.java">Abstract class for
+  stacks</a>;</li>
+  <li><a href="Persistent/EStack.java">Empty stacks</a>;</li>
+  <li><a href="Persistent/NStack.java">Non-empty stacks</a>;</li>
+  <li><a href="Persistent/FunObj.java">Main class</a>.</li>
+</ol>
+
+
+<h3>Ephemeral Stacks (<em>imperative style</em>)</h3>
+
+<p>When thread safety is not an issue, when memory usage is a concern,
+when it is not important to keep a history of a data structure, the
+implementation of the stack had better be <em>ephemeral</em> and rely
+on side-effects, which is the mainstay of imperative programming
+languages. Our design consists in publishing a class <tt>Stack</tt>,
+which relies for on a class <tt>Cell</tt> which serves as the
+container of the keys in the stack (if any). The reason for this
+two-tiered design appears when we try the design commonly used in the
+C programming language, that is, if we try to encode the empty stack
+with the (infamous) <tt>null</tt> reference and a non-empty stack with
+an instance of <tt>Stack</tt>: not only this usage of <tt>null</tt>
+has been shown above as dangerous, but it is not possible to modify
+the <tt>this</tt> reference in Java (it is implicitly final),
+preventing the tranformation of a non-empty stack into an empty
+one. Furthermore, for the sake of contrasting as much as possible
+ephemeral and persistent stacks, we do not use recursion and rely
+exclusively on loops. Here are the Java files:
+</p>
+<ol>
+  <li><a href="Ephemeral/Stack.java">Class for stacks</a>;</li>
+  <li><a href="Ephemeral/Cell.java">Container for a key</a>;</li>
+  <li><a href="Ephemeral/EphObj.java">Main class</a>.</li>
+</ol>
+<p>Note the use of <em>sentinels</em>, in this case dummy nodes, which
+make the code shorter by eliminating redundancy.</p>
+
+<p>As far as <tt>merge</tt> is concerned, note the similarities
+with <tt>isort</tt>, revealing that merging consists in the insertion
+of increasing values into an increasingly sorted stack, without
+restarting the search for the insertion position at the head each
+time. Moreover, <tt>merge_opt</tt> is an optimisation where the
+longest prefix of one stack is inserted: the code is actually a bit
+shorter then that of <tt>merge</tt> because we simply exchange the
+role of the two stacks! Merge sort relies on <tt>merge</tt>
+and <tt>split</tt>, which splits a stack in two halves, without
+knowing in advance its length. This is achieved by a trick consisting
+in moving a reference one at a time in the stack and another two cells
+at a time in the same stack: when the latter cannot move further, the
+former has reached the middle (more precisely, the insertion point is
+after the current it refers to). This is more efficient than counting
+the number of cells and then revisiting the first half, and also it is
+safer, as no arithmetic overflow can occur. Merge sort is a typical
+example of the <em>divide and conquer</em> strategy: the input is
+split, each non-trivial part is recursively processed and the partial
+solutions are finally combined to form the complete solution.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

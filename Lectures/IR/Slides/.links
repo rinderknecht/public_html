@@ -1,0 +1,31 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/LaTeX/TeX/beamer_cfg.tex
+$HOME/LaTeX/TeX/trace.tex
+
+$HOME/Lectures/Compilers/Slides/dfa_01.tex
+$HOME/Lectures/Compilers/Slides/dfa_from_nfa_simple1.tex
+$HOME/Lectures/Compilers/Slides/dfa_from_nfa_simple.tex
+$HOME/Lectures/Compilers/Slides/nfa_subset.tex
+$HOME/Lectures/Compilers/Slides/dfa_bad_case.tex
+$HOME/Lectures/Compilers/Slides/nfa_01_suffix.tex
+$HOME/Lectures/Compilers/Slides/subset_bad_case.tex
+$HOME/Lectures/Compilers/Slides/dfa_bad_case_complete.tex
+$HOME/Lectures/Compilers/Slides/nfa_01_suffix_trace.tex
+$HOME/Lectures/Compilers/Slides/trie_kwd.tex
+$HOME/Lectures/Compilers/Slides/dfa_even01.tex
+$HOME/Lectures/Compilers/Slides/dfa_even01.tex
+$HOME/Lectures/Compilers/Slides/nfa_edges.tex
+$HOME/Lectures/Compilers/Slides/dfa_from_nfa.tex
+$HOME/Lectures/Compilers/Slides/trie_kwd_search.tex
+$HOME/Lectures/Compilers/Slides/nfa_kwd.tex
+$HOME/Lectures/Compilers/Slides/token.tex
+$HOME/Lectures/Compilers/Slides/grammar.tex
+$HOME/Lectures/Compilers/Slides/enfa_num.tex
+$HOME/Lectures/Compilers/Slides/enfa_kwd_id.tex
+$HOME/Lectures/Compilers/Slides/enfa_eg.tex
+$HOME/Lectures/Compilers/Slides/enfa_closure.tex
+$HOME/Lectures/Compilers/Slides/dfa_from_enfa_num.tex
+
+../../article_mode.tex article.ir.tex
+../../slide_mode.tex ir.tex

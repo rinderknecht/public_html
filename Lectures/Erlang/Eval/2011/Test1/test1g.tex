@@ -1,0 +1,63 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amssymb}
+
+\usepackage{array}
+\usepackage{multirow}
+
+\title{Test 1g of \textsf{Erlang}}
+\author{Christian Rinderknecht}
+\date{7 October 2011}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+
+\begin{enumerate}
+
+  \item Write a function \fun{flen} (\emph{flat length}) such that, if
+    \[\fun{flen}(P) \xrightarrow{+} N,\]
+    then \(N\) is the number of non-list items in list \(P\). For
+    instance,
+    \begin{align*}
+    \fun{flen}([\fun{a},[\,],[0,[[\fun{b}]],[\,],1]])
+    &\xrightarrow{+} 4,\\
+    \fun{flen}([[\,],[[\,],[[\,]],[\,]]]) &\xrightarrow{+} 0,\\
+    \fun{flen}([\,]) &\xrightarrow{+} 0.
+    \end{align*}
+
+  \item Write a function \fun{enc/1} (\emph{encode}) such that, if
+    \[\fun{enc}(P) \xrightarrow{+} Q,\] then \(Q\) is the list of
+    pairs made of each item of \(P\) and their number of consecutively
+    repeated items. For instance,
+    \begin{align*}
+      \fun{enc}([\fun{a}, \fun{a}, \fun{b}, \fun{c}, \fun{c}, \fun{c},
+        \fun{a}]) &\xrightarrow{+} [\{\fun{a},2\}, \{\fun{b},1\},
+        \{\fun{c},3\}, \{\fun{a},1\}],\\
+      \fun{enc}([\fun{a},\fun{b}]) &\xrightarrow{+} [\{\fun{a},1\},
+        \{\fun{b},1\}].
+    \end{align*}
+
+  \item Improve upon \fun{enc/1} in such a way that item not repeated
+    appear in the result as themselves. For instance,
+    \begin{align*}
+      \fun{enc}([\fun{a}, \fun{a}, \fun{b}, \fun{c}, \fun{c}, \fun{c},
+        \fun{a}]) &\xrightarrow{+} [\{\fun{a},2\}, \fun{b},
+        \{\fun{c},3\}, \fun{a}],\\
+      \fun{enc}([\fun{a},\fun{b}]) &\xrightarrow{+} [\fun{a},
+        \fun{b}].
+    \end{align*}
+
+\end{enumerate}
+
+\end{document}

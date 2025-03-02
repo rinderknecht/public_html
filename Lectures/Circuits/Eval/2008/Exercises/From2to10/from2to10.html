@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Converting from binary to decimal</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Converting from binary to decimal</h2>
+
+<p><strong>Question.</strong> The purpose of this exercise is to write
+  a C program which reads on the command-line a string representing an
+  integer in binary form and outputs its corresponding decimal
+  representation.
+</p>
+
+<strong>Constraints.</strong>
+<ul>
+
+  <li>The input must be checked in the <tt>main</tt> function, before
+  the computation takes place, in the <tt>from2to10</tt> function. In
+  particular, be aware of invalid characters. (The empty string is not
+  possible since the input is given on the command line.)
+
+  <li>The signature of <tt>from2to10</tt> must be <tt>unsigned int
+  from2to10(const char bin[])</tt>.</li>
+
+</ul>
+
+<strong>Answers.</strong> 
+<ol>
+
+  <li> <a href="./from2to10_a.c">This</a> is a solution using a
+  <tt>while</tt> loop where the parameter <tt>bin</tt> is modified
+  directly (since the original value is not needed later).</li>
+
+  <li> <a href="./from2to10_d.c">This</a> is a solution using a
+  <tt>for</tt> loop. Note how the initialisation part of the loop is
+  empty. If we write instead <tt>for (unsigned int dec = 0; *bin ;
+  bin++)</tt>, it does not work because this way <tt>dec</tt> is only
+  visible inside the loop and <tt>return dec;</tt> does not see it
+  after.</li>
+
+  <li> <a href="./from2to10_c.c">This</a> is a solution using a
+  <tt>while</tt> loop where an integer index <tt>idx</tt> is used (so
+  <tt>bin</tt> is unmodified).</li>
+
+  <li> <a href="./from2to10_b.c">This</a> is a solution using recursion
+  (that is, a function calling itself) instead of a syntactic
+  loop. The construct <tt>... ? ... : ...;</tt> is a conditional: if
+  the first "<tt>...</tt>" is true (i.e., is not <tt>0</tt>), then the
+  second "<tt>...</tt>" is executed, otherwise the third
+  "<tt>...</tt>" is. It is the same as <tt>if (...) {...} else
+  {...};</tt>.</li>
+
+  <li><a href="./from2to10_e.c">A variation</a> using a <tt>do { ... }
+  while (...)</tt> loop.</li>
+
+</ol>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

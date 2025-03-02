@@ -1,0 +1,16 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-tree,pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=20pt]{\Tcircle{\(r\)}}{
+  \Tr[ref=t]{\pstribox{\(t_1\)}}
+  \Tr[ref=t]{\pstribox{\(t_2\)}}
+}
+\endTeXtoEPS
+
+\end{document}

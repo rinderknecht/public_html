@@ -1,0 +1,24 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-tree,pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=1cm,nodesep=2pt]{\TR{\texttt{triangle}}}{
+  \TR{\texttt{X}}
+  \pstree{\TR{\texttt{point}}}{
+    \TR{\texttt{4}}
+    \TR{\texttt{Y}}
+  }
+  \pstree{\TR{\texttt{point}}}{
+    \TR{\texttt{2}}
+    \TR{\texttt{Z}}
+  }
+}
+\endTeXtoEPS
+
+\end{document}
+

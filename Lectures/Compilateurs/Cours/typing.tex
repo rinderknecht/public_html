@@ -1,0 +1,847 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Typage statique}
+
+Le but du \emph{typage statique} est de détecter et de rejeter dès la
+compilation (jusqu'ici les erreurs étaient détectées à l'exécution) un
+certain nombre de programmes absurdes, comme \num{1} \num{2} ou
+$\cst{BinOp} \, \lpar\cst{Add}, \lpar\Xfun \, \ident{x} \rightarrow
+\ident{x}\rpar, \num{1}\rpar$.% --- cf. remarque
+                              % page~\ref{erreurs_de_typage}.
+Pour cela un \emph{type} est attribué à
+chaque sous-expression du programme (p.ex. \type{int} pour une
+expression arithmétique, ou $\type{int} \rightarrow \type{int}$ pour
+une fonction des entiers vers les entiers) et la \emph{cohérence} de
+ces types est vérifiée.
+
+\bigskip
+
+Déterminer toutes les erreurs d'exécution pour tous les programmes est
+un problème indécidable. Or les systèmes de types sont souvent
+décidables car on souhaite que le compilateur termine pour tous les
+programmes. \emph{Il est donc impossible de ne rejeter que les
+programmes erronés}. Tout système de types rejette des programmes
+innocents, c'est pourquoi la quête de meilleurs systèmes est sans fin.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Définition formelle des types de la calculette}
+
+\begin{itemize}
+
+  \item \textcolor{blue}{Syntaxe concrète}
+     {\small
+      \begin{verbatim}
+Type ::= "int" | Type -> Type | "(" Type ")"
+       | "'a" | "'b" | ...
+      \end{verbatim}
+    }
+    \vspace*{-8pt}
+    On dénote les variables de type avec les méta-variables
+    $\meta{\alpha}$, $\meta{\beta}$ etc.
+
+  \item \textcolor{blue}{Syntaxe abstraite}
+
+    {\small
+     \Xtype \type{type\_expr} \equal \cst{TEint}
+     \vbar{} \cst{TEfun} \Xof \type{type\_expr} \texttt{*}
+     \type{type\_expr} \vbar{} \cst{TEvar} \Xof \type{string}\semi{}
+    }
+
+    On dénote les types avec la méta-variable $\tau$.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Définition formelle des types de la calculette (suite)}
+
+\begin{itemize}
+
+  \item \textcolor{blue}{Analyse syntaxique} 
+
+  La flèche est associative à droite.
+
+  $\src{\type{int}} =
+  \cst{TEint}$ \ et \ $\src{\meta{\tau}_1 \rightarrow \meta{\tau}_2}
+  = \cst{TEfun} \, \lpar\!\src{\meta{\tau}_1},
+  \src{\meta{\tau}_2}\!\rpar$ \ et \ $\src{\texttt{'a}} = \cst{TEvar} \;
+  \str{a}$ etc.
+
+  On note $\tau$ au lieu de $\src{\meta{\tau}}$.
+  On note les variables de type $\alpha$, $\beta$, $\gamma$ etc. au
+  lieu de \cst{TEvar} \str{a}, \cst{TEvar} \str{b}, \cst{TEvar}
+  \str{c} etc.
+
+  \smallskip
+
+  \item \textcolor{blue}{Variables libres} ${\cal L} \src{\type{int}} =
+  \varnothing$ et ${\cal L} \src{\meta{\tau}_1 \rightarrow
+  \meta{\tau}_2} = {\cal L} (\tau_1) \cup {\cal L} (\tau_2)$ et ${\cal
+    L} \src{\meta{\alpha}} = \{\alpha\}$.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Système de types --- typage monomorphe}
+
+Un jugement de typage est de la forme $\trel{\Gamma}{e}{\tau}$ et se
+lit «~Dans l'environnement de typage $\Gamma$, l'expression $e$ a pour
+type $\tau$.~» Un environnement de typage $\Gamma$ lie des variables
+$x$ à leur type $\Gamma(x)$. Un liaison de typage se note $x :
+\tau$. Soit
+\begin{mathpar}
+\inferrule
+  {\trel{\Gamma}{\src{\meta{n}}}{\src{\type{int}}}}
+  {}\;\TirName{\quad Tconst}
+\and
+\inferrule
+  {\trel{\Gamma}{e_1}{\src{\type{int}}}\\
+   \trel{\Gamma}{e_2}{\src{\type{int}}}
+  }
+  {\trel{\Gamma}
+        {\src{\meta{e}_1 \; \meta{o} \;\, \meta{e}_2}}
+        {\src{\type{int}}}
+  }
+  \;\TirName{Tbin}
+\and
+\inferrule
+  {\trel{\Gamma}{\src{x}}{\Gamma(x)}}
+  {}\;\TirName{\quad Tvar}
+\and
+\inferrule
+  {\trel{\Gamma}{e_1}{\tau_1}\\
+   \trel{\Gamma \oplus x : \tau_1}{e_2}{\tau_2}
+  }
+  {\trel{\Gamma}
+        {\src{\Xlet \; x \; \equal \; \meta{e}_1 \; \Xin \;
+         \meta{e}_2}} 
+        {\tau_2}} 
+  \;\TirName{Tlet}
+\end{mathpar}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Système de types --- typage monomorphe (suite)}
+
+\begin{mathpar}
+\inferrule*[right=Tfun]
+  {\trel{\Gamma \oplus x : \tau_1}{e}{\tau_2}}
+  {\trel{\Gamma}
+        {\src{\Xfun \; x \rightarrow \meta{e}}}
+        {\src{\meta{\tau}_1 \rightarrow \meta{\tau}_2}}}
+\and
+\inferrule*[right=Tapp]
+  {\trel{\Gamma}
+        {e_1}
+        {\src{\meta{\tau}' \rightarrow \meta{\tau}}}\\
+   \trel{\Gamma}{e_2}{\tau'}
+  }
+  {\trel{\Gamma}{\src{\meta{e}_1 \,\ \meta{e}_2}}{\tau}}
+\end{mathpar}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Exemple de preuve de typage (ou dérivation de typage)}
+
+{\small
+\begin{mathpar}
+\inferrule*
+  {\inferrule*[leftskip=1em]
+     {\inferrule*
+        {\trel
+           {\ident{x} : \src{\type{int}}}
+           {\src{\ident{x}}}
+           {\src{\type{int}}}\\
+         \trel
+           {\ident{x} : \src{\type{int}}}
+           {\src{\num{1}}}
+           {\src{\type{int}}}
+        }
+        {\trel
+           {\ident{x} : \src{\type{int}}}
+           {\src{\ident{x} \; \texttt{+} \; \num{1}}}
+           {\src{\type{int}}}}
+     }
+     {\trel
+        {\varnothing}
+        {\src{\Xfun \; \ident{x} \rightarrow \ident{x} \; \texttt{+} \; \num{1}}}
+        {\src{\type{int} \rightarrow \type{int}}}
+     }\\
+     \inferrule*[rightskip=1em]
+       {\trel
+          {\ident{f} : \src{\type{int} \rightarrow \type{int}}}
+          {\src{\ident{f}\,}}
+          {\src{\type{int} \rightarrow \type{int}}}\\\\
+        \trel
+          {\ident{f} : \src{\type{int} \rightarrow \type{int}}}
+          {\src{\num{2}}}
+          {\src{\type{int}}}
+       }
+       {\trel 
+         {\ident{f} : \src{\type{int} \rightarrow \type{int}}}
+         {\src{\ident{f} \; \num{2}}}
+         {\src{\type{int}}}
+       }
+  }
+  {\trel
+        {\varnothing}
+        {\src{\Xlet \; \ident{f} \; \equal \; \Xfun \; \ident{x}
+           \rightarrow \ident{x} \; \texttt{+} \; \num{1} \; \Xin \;
+           \ident{f} \; \num{2}}}
+        {\src{\type{int}}}
+  }
+\end{mathpar}
+}
+
+Voici d'autres jugements de typage dérivables:
+
+$\trel
+   {\varnothing}
+   {\src{\Xfun \; \ident{x} \rightarrow \ident{x}}}
+   {\src{\meta{\alpha} \rightarrow \meta{\alpha}}}$ 
+\ et \ 
+$\trel
+  {\varnothing}
+  {\src{\Xfun \; \ident{x} \rightarrow \ident{x}}}
+  {\src{\type{int} \rightarrow \type{int}}}$
+
+Voici des jugements non dérivables:
+
+$\trel
+  {\varnothing}
+  {\src{\Xfun \; \ident{x} \rightarrow \ident{x} \; \texttt{+} \; \num{1}}}
+  {\src{\type{int}}}$
+\ et \
+$\trel
+  {\varnothing}
+  {\src{\Xfun \; \ident{x} \rightarrow \ident{x} \; \texttt{+} \; \num{1}}}
+  {\src{\meta{\alpha} \rightarrow \type{int}}}
+$
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Quid de l'auto-application?}
+
+Pour typer $\Xfun \; \ident{f} \rightarrow \ident{f} \;\; \ident{f}$ il
+faudrait construire une dérivation de la forme suivante:
+\begin{mathpar}
+\inferrule*
+  {
+   \inferrule*
+     {
+      \trel
+        {\Gamma \oplus \ident{f}: \tau_1}
+        {\ident{f}}
+        {\src{\meta{\tau}_1 \rightarrow \meta{\tau}_2}}\\
+      \trel
+        {\Gamma \oplus \ident{f}: \tau_1}
+        {\ident{f}}
+        {\tau_2}    
+     }
+     {\trel
+        {\Gamma \oplus \ident{f}:\tau_1}
+        {\src{\ident{f} \; \ident{f}\,}}
+        {\tau_2}
+     }
+  }
+  {
+   \trel
+     {\Gamma}
+     {\src{\Xfun \; \ident{f} \rightarrow \ident{f} \;\; \ident{f}\,}}
+     {\src{\meta{\tau}_1 \rightarrow \meta{\tau}_2}}
+  }
+\end{mathpar}
+
+Pour que les feuilles de la dérivation soient justifiée par l'axiome
+\RefTirName{Tvar}, il faudrait que $\tau_1 = \src{\meta{\tau}_1
+\rightarrow \meta{\tau}_2}$ et $\tau_1 = \tau_2$. La première de ces
+égalités est impossible, car $\tau_1$ serait un sous-terme strict de
+lui-même, ce qui est impossible pour tout terme $\tau_1$ fini.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Quelques propriétés du typage}
+
+\begin{itemize}
+
+  \item \textcolor{blue}{Expressions bien typées ou typables}\\ Une
+    expression $e$ est typable s'il existe un environnement de typage
+    $\Gamma$ et un type $\tau$ tels que $\trel{\Gamma}{e}{\tau}$
+
+  \item \textcolor{blue}{Typage} \quad Un typage est une paire
+  $(\Gamma,\tau)$ ou une dérivation de typage.
+
+  \item \textcolor{blue}{Stabilité par substitution de variables de types}\\
+  Si on peut dériver un jugement non clos, c.-à-d. contenant des
+  variables de types libres, p.ex. $\trel{\ident{f}:\src{\meta{\alpha}
+  \rightarrow \meta{\alpha}} \oplus \ident{x}:\alpha}{\ident{f} \,
+  \lpar\ident{x}\rpar}{\alpha}$, alors on peut aussi dériver tous les
+  jugements obtenus en remplaçant ces variables par des types
+  arbitraires, p.ex. $\trel{\ident{f}:\src{\type{int} \rightarrow
+  \type{int}} \oplus \ident{x}:\type{int}}{\ident{f} \,
+  \lpar\ident{x}\rpar}{\type{int}}$
+  
+  \item \textcolor{blue}{Sûreté du typage}\\ Si $\trel{\Gamma}{e}{\tau}$ et
+  $\eval{\rho}{e}{r}$ alors $r \neq \cst{Err} \, \lpar\ldots\rpar$
+
+  \textbf{Cette propriété est la motivation même du typage statique.}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Normalisation forte}
+
+Le système de typage monomorphe présenté ici est \emph{fortement
+normalisant}, c.-à-d. que les programmes bien typés terminent
+toujours.
+
+\bigskip
+
+Ces systèmes de types ne sont donc pas intéressants en
+programmation car on souhaite que le langage soit Turing-complet
+(p.~\pageref{turing}), c.-à-d. qu'il accepte \emph{tous} les
+programmes qui terminent. Si le système de types rejetait de plus tous
+les programmes qui ne terminent pas, on aurait résolu le problème de
+l'arrêt de la machine de Turing, qui est connu pour être indécidable
+(p.~\pageref{indecidabilite}).
+
+\bigskip
+
+\emph{Tout langage Turing-complet muni d'un système de types décidable
+  contient donc des programmes qui ne terminent pas.}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Normalisation faible et opérateur de point fixe}
+
+C'est pourquoi on considère habituellement des systèmes de types qui
+ne garantissent pas que les programmes typables terminent (on parle de
+normalisation faible). Un bon exemple est le système de types
+monomorphe de mini-ML muni d'un opérateur de point fixe \ident{fix} ou
+d'un \Xlet \Xrec natif:
+\begin{mathpar}
+\inferrule*[right=Tlet-rec]
+  {\trel{\Gamma \textcolor{blue}{\, \oplus \, x : \tau_1}}{e_1}{\tau_1}\\
+   \trel{\Gamma \oplus x : \tau_1}{e_2}{\tau_2}
+  }
+  {\trel{\Gamma}
+        {\src{\Xlet \; \Xrec \; x \; \equal \; \meta{e}_1 \; \Xin \;
+         \meta{e}_2}} 
+        {\tau_2}} 
+\end{mathpar}
+Il n'y a ici aucune difficulté par rapport à \RefTirName{Tlet}, il
+faut juste ajouter la liaison $x : \tau_1$ dans l'environnement de
+typage de la première prémisse.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{De la vérification pure à l'inférence complète}
+
+Pour un langage statiquement typé, un \emph{typeur} est un algorithme
+qui, étant donné un programme, détermine si celui-ci est typable et,
+si oui, en produit un type. Si le programme admet plusieurs types, un
+typeur devra produire un \emph{type principal}, c.-à-d. un type «~plus
+  général~» que tous les autres types possibles (cette notion dépend
+du système de type considéré).
+
+\bigskip
+
+\exemple En mini-ML, le programme \Xfun \ident{x} $\rightarrow$
+\ident{x} a les types $\tau \rightarrow \tau$ pour n'importe quel type
+$\tau$, mais le type $\alpha \rightarrow \alpha$ est principal,
+puisque tous les autres types s'en déduisent par substitution (de la
+variable $\alpha$).
+
+\bigskip
+
+Selon la nature et la quantité d'informations, sous forme
+d'\emph{annotations} de types, que le langage exige, la tâche du
+typeur est plus ou moins complexe. Il existe de nombreuses
+configurations.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Vérification pure}
+
+Dans le cas de la pure vérification de types, toutes les
+sous-expressions du programme, ainsi que tous les identificateurs,
+doivent être annotés par leur type.
+
+\exemple
+{\small
+\begin{tabbing}
+\Xfun \= \lpar\ident{x}~:~\type{int}\rpar $\rightarrow$ \lpar\\
+\> \Xlet \ident{y}~:~\type{int} \equal \lpar\texttt{+}~:~\type{int}
+\texttt{*} \type{int} $\rightarrow$ \type{int}\rpar{}
+\lpar\ident{x}~:~\type{int}\rpar{} \lpar\num{1}~:~\type{int}\rpar\\
+\> \Xin \ident{y}~:~\type{int}\\
+\rpar{}~:~\type{int}
+\end{tabbing}
+}
+Le typeur est alors très simple, puisque le programmeur n'écrit en
+fait plus uniquement une expression, mais une dérivation de typage
+complète.
+
+\bigskip
+
+Bien sûr, un tel langage est inutilisable en pratique; aucun langage
+réaliste n'adopte cette approche extrême.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Déclaration des types des variables et propagation des types}
+
+Le programmeur doit déclarer les types des paramètres de fonction et
+des variables locales. Le typeur infère alors le type de chaque
+expression à partir des types de ses sous-expressions. Autrement dit,
+l'information de typage est propagée à travers l'expression des
+feuilles vers la racine.
+
+\exemple \quad Sachant que \ident{x} est de type \type{int}, le typeur
+peut non seulement vérifier que l'expression \ident{x} \texttt{+} \num{1}
+est bien typée, mais aussi inférer qu'elle a le type \type{int}. Ainsi
+l'exemple précédent devient:
+
+\centerline {\small \Xfun \lpar\ident{x}~:~\type{int}\rpar{}
+$\rightarrow$ \Xlet \ident{y}~:~\type{int} \equal \ident{x} \texttt{+}
+\num{1} \Xin \ident{y}}
+
+Le typeur infère le type \type{int} $\rightarrow$ \type{int} pour
+cette expression.
+
+Une approche similaire à celle-ci est adoptée par la plupart des
+langages impératifs, tels Pascal, C, Java etc.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Déclaration des types des paramètres et propagation des types}
+
+Le programmeur doit déclarer uniquement les types des paramètres. La
+différence par rapport au cas précédent est donc que les variables
+locales (liées par \Xlet) ne sont plus obligatoirement annotées
+lorsqu'elles sont introduites.
+
+\bigskip
+
+Le typeur en détermine alors le type en se fondant sur le type de
+l'expression à laquelle elles sont associées.
+
+\bigskip
+
+\exemple \quad Notre exemple devient
+
+\centerline{\small \Xfun \lpar\ident{x}~:~\type{int}\rpar{} $\rightarrow$
+\Xlet \ident{y} \equal \ident{x} \texttt{+} \num{1} \Xin \ident{y}}
+
+\bigskip
+
+Ayant déterminé que \ident{x} \texttt{+} \num{1} est de type \type{int},
+le typeur associe le type \type{int} à \ident{y}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Inférence complète des types}
+
+Plus aucune annotation de types n'est exigée. Le typeur détermine le
+type des paramètres d'après l'utilisation qui en est faite par la
+fonction.
+
+\bigskip
+
+\exemple \quad Notre exemple devient
+
+\centerline{\small \Xfun \ident{x} $\rightarrow$ \Xlet \ident{y} \equal
+\ident{x} \texttt{+} \num{1} \Xin \ident{y}}
+
+\bigskip
+
+Puisque l'addition \texttt{+} n'opère que sur des entiers, \ident{x} est
+nécessairement de type \type{int}. Cet intéressant processus de
+déduction, ou \emph{inférence}, est celui utilisé par les langages de
+la famille ML (dont OCaml).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Inférence de types pour mini-ML avec typage monomorphe}
+
+Pour réaliser l'inférence de types pour mini-ML avec typage
+monomorphe, on procède en trois temps:
+\begin{enumerate}
+
+  \item on annote l'arbre de syntaxe abstraite par des variables de
+  types;
+
+  \item à partir de cet arbre décoré on construit un système
+  d'équations entre types, qui caractérise tous les typages possibles
+  pour le programme;
+
+  \item on résout ce système d'équations sachant que s'il n'a pas de
+  solution le programme est alors mal typé, sinon on détermine une
+  solution \emph{principale} qui nous permet de déduire un typage
+  principal du programme.
+
+\end{enumerate}
+En combinant ces phases nous obtenons un algorithme qui détermine si
+un programme est typable, et, si oui, en fournit un typage principal.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Substitution}
+
+Nous avons besoin d'un nouveau concept pour décrire l'inférence de
+types: la \emph{substitution}. C'est une fonction dont l'application a
+la forme générale $\subst{\tau}{\alpha}{\tau'}$, qu'on lit «~La
+substitution de la variable de type $\alpha$ par le type $\tau'$ dans
+le type $\tau$.~» Elle se définit par induction sur la structure des
+types:
+{\small
+\begin{alignat*}{2}
+\subst{\src{\type{int}}}{\alpha}{\tau'} &= \src{\type{int}}\\
+\subst{\alpha}{\alpha}{\tau'} &= \tau'\\
+\subst{\beta}{\alpha}{\tau'} &= \beta  && \quad \text{si} \; \beta \neq
+  \alpha\\
+\subst{\src{\meta{\tau}_1 \rightarrow \meta{\tau}_2}}{\alpha}{\tau'}
+&= \src{\meta{\tau}'_1 \rightarrow \meta{\tau}'_2}
+&& \quad \text{où} \; \tau'_1 = \subst{\tau_1}{\alpha}{\tau'} \;
+\text{et} \; \tau'_2 = \subst{\tau_2}{\alpha}{\tau'}
+\end{alignat*}
+}
+La notion de substitution peut s'étendre à d'autres objets, comme les
+expressions. On notera $\varphi$, $\psi$ ou $\theta$ une
+substitution.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Décoration de l'arbre de syntaxe abstraite par des variables de
+types}
+
+Reprenons l'arbre de syntaxe abstraite page~\pageref{binding_sample}
+et décorons-le avec des variables de type uniques respectant les
+liaisons, c'est-à-dire qu'une variable liée est annotée par la même
+variable de type que celle de son lieur et les autres expressions sont
+annotées par des variables uniques:
+
+{\small
+\begin{center}
+\pstree[nodesep=2pt,levelsep=20pt]
+  {\mknode{\TR[name=outer-let]{\cst{Let}}}
+          {}
+          {\raisebox{4pt}{\Rnode{alpha}{$\alpha$}}}
+  }
+  {\mknode{\TR{\str{x}}}
+          {}
+          {\raisebox{1pt}{\Rnode{beta}{$\beta$}}}
+   \pstree
+     {\mknode{\TR{\cst{Const}}}
+             {}
+             {\raisebox{3pt}{\Rnode{gamma}{$\gamma$}}}
+     }
+     {\TR[name=outer-var]{\num{1}}
+     }
+   \pstree
+     {\mknode{\TR{\cst{BinOp}}}
+             {}
+             {\raisebox{2pt}{\Rnode{delta}{$\delta$}}}
+     }
+     {\TR{\cst{Add}}
+      \pstree
+        {\mknode{\TR[name=inner-let]{\cst{Let}}}
+                {}
+                {\raisebox{3pt}{\Rnode{eta}{$\eta$}}}
+        }
+        {\mknode{\TR{\str{x}}}
+                {}
+                {\raisebox{3pt}{\Rnode{zeta}{$\zeta$}}}
+         \pstree
+           {\mknode{\TR{\cst{Const}}}
+                   {}
+                   {\raisebox{2pt}{\Rnode{nu}{$\nu$}}}
+           }
+           {\TR{\num{2}}
+           }
+         \pstree
+           {\mknode{\TR[name=inner-var]{\cst{Var}}}
+                   {}
+                   {\raisebox{3pt}{\Rnode{zeta}{$\zeta$}}}
+           }
+           {\TR{\str{x}}
+           }
+        }
+      \pstree
+        {\mknode{\TR[name=outer-var]{\cst{Var}}}
+                {}
+                {\raisebox{2pt}{\Rnode{beta}{$\beta$}}}
+        }
+        {\TR{\str{x}}
+        }
+     }
+  }
+\ncarc[linecolor=blue,nodesepA=1pt,nodesepB=1pt,arcangle=-40]{->}{inner-var}{inner-let}
+\ncarc[linecolor=blue,nodesepA=1pt,nodesepB=1pt,arcangle=-40]{->}{outer-var}{outer-let}
+\end{center}
+}
+
+Notons en exposant d'une expression la variable de type qui l'annote,
+par exemple $\te{\cst{Let}}{\alpha}(\te{x}{\beta}, \te{e_1}{\gamma},
+\te{e_2}{\delta})$.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Construction du système d'équations (collection de contraintes)}
+
+À partir d'une expression annotée $\te{e}{\alpha}$ nous construisons
+un système d'équations $C(\te{e}{\alpha})$ capturant les contraintes
+de typage entre les sous-expressions de $e$. Ce système est défini
+inductivement sur la structure de $e$:
+\begin{align*}
+   C(\te{\cst{Var}}{\alpha} \, x)
+&= \varnothing\\
+   C(\te{\cst{Const}}{\alpha} \, n)
+&= \{\alpha = \src{\type{int}}\}\\
+   C(\te{\cst{BinOp}}{\alpha}(\textrm{\Large \_}, \te{e_1}{\beta},
+   \te{e_2}{\gamma}))
+&= \{\alpha = \src{\type{int}}; \beta = \alpha; \gamma = \alpha\}\\
+&\phantom{==} \cup C(\te{e_1}{\beta}) \cup C(\te{e_2}{\gamma})\\
+C(\te{\cst{Let}}{\alpha}(\te{x}{\beta}, \te{e_1}{\gamma},
+  \te{e_2}{\delta}) &= 
+  \{\beta = \gamma; \alpha = \delta\} \cup C(\te{e_1}{\gamma}) \cup
+  C(\te{e_2}{\delta})\\
+C(\te{\cst{Fun}}{\alpha} (\te{x}{\beta},\te{e}{\gamma})) &=
+  \{\alpha = \src{\meta{\beta} \rightarrow \meta{\gamma}}\} \cup
+  C(\te{e}{\gamma})\\
+C(\te{\cst{App}}{\alpha} (\te{e_1}{\beta},\te{e_2}{\gamma})) &=
+  \{\beta = \src{\meta{\gamma} \rightarrow \meta{\alpha}}\} \cup
+  C(\te{e_1}{\beta}) \cup C(\te{e_2}{\gamma})
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Construction du système d'équations (exemple)}
+
+Poursuivons avec l'exemple précédent. Nous avons alors:
+\[
+\begin{array}{rrl}
+  C(\te{e}{\alpha}) = & \{ & \beta = \gamma; \alpha = \delta; \\
+                      & & \gamma = \src{\type{int}}; \\
+                      & & \delta = \src{\type{int}}; \eta = \delta;
+                          \beta = \delta; \\
+                      & & \zeta = \nu; \eta = \zeta;\\
+                      & & \nu = \src{\type{int}}\}
+\end{array}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Lien entre jugements de typage et solutions des équations}
+
+Une \emph{solution} de l'ensemble d'équations $C(\te{e}{\alpha})$ est
+une substitution $\varphi$ telle que pour toute équation $\tau_1 =
+\tau_2 \in C(\te{e}{\alpha})$ on a $\varphi(\tau_1) =
+\varphi(\tau_2)$. Autrement dit, une solution est un
+\emph{unificateur} du système d'équations. Les propositions suivantes
+établissent que les solutions de $C(\te{e}{\alpha})$ caractérisent
+exactement les typages de $e$.
+
+\begin{Prop}[Correction des équations]
+Si $\varphi$ est une solution de $C(\te{e}{\alpha})$ alors
+$\trel{\Gamma}{\te{e}{\alpha}}{\varphi(\alpha)}$, où $\Gamma$ est
+l'environnement de typage $\{\te{x}{\beta}:\varphi(\beta) \mid
+\te{x}{\beta} \in {\cal L} (e)\}$.
+\end{Prop}
+
+\begin{Prop}[Complétude des équations]
+Soit $e$ une expression. S'il existe un environnement de typage
+$\Gamma$ et un type $\tau$ tels que $\trel{\Gamma}{e}{\tau}$, alors le
+système d'équations $C(\te{e}{\alpha})$ admet une solution $\varphi$
+telle que $\varphi(\alpha) = \tau$ et $\Gamma =
+\{\te{x}{\beta}:\varphi(\beta) \mid \te{x}{\beta} \in {\cal L} (e)\}$.
+\end{Prop}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Résolution des équations (l'unificateur de Robinson)}
+
+\begin{itemize}
+
+  \item Définissons $\varphi \leqslant \psi$ s'il existe une
+  substitution $\theta$ telle que $\psi = \theta \circ
+  \varphi$. 
+
+  \item Par définition, une solution $\varphi$ de $C(\te{e}{\alpha})$
+  est dite \emph{principale} si toute solution $\psi$ de
+  $C(\te{e}{\alpha})$ vérifie $\varphi \leqslant \psi$.
+
+  \item Il existe un algorithme \mgu qui, étant donné un système
+  d'équations $C$, soit échoue soit produit une solution principale de
+  $C$:
+  \begin{align*}
+    \mgu(\varnothing) &=_1 \forall x.x \mapsto x\\
+    \mgu(\{\tau = \tau\} \cup C') &=_2 \mgu(C')\\
+    \mgu(\{\alpha = \tau\} \cup C') &=_3 \mgu(C'[\alpha
+    \leftarrow \tau]) \circ [\alpha \leftarrow \tau] \ \textnormal{si
+    $\alpha \not\in {\cal L} (\tau)$}\\
+    \mgu(\{\tau = \alpha\} \cup C') &=_4 \mgu(\{\alpha = \tau\} \cup
+    C')\\
+    \mgu(C \cup C') &=_5
+    \mgu(\{\tau_1 = \tau'_1; \tau_2 = \tau'_2\} \cup C')
+    \intertext{where \(C = \{\src{\meta{\tau_1} \rightarrow
+        \meta{\tau_2}} = \src{\meta{\tau_1}' \rightarrow
+        \meta{\tau_2}'}\}\)}
+  \end{align*}
+  Dans tous les autres cas, \mgu échoue (pas de solutions).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Résolution des équations (exemple)}
+
+$\mgu(C(\te{e}{\alpha})) =_3 \varphi_0 \circ [\beta \leftarrow
+\gamma]$
+{\small
+\begin{align*}
+  \varphi_0 &= \mgu(\{\alpha = \delta; \gamma = \src{\type{int}};
+  \delta = \src{\type{int}}; \eta = \delta;\\
+            &\phantom{=\mgu(\{)} \gamma = \delta; \zeta =
+  \nu; \eta = \zeta; \nu = \src{\type{int}}\})\\
+            &=_3 \varphi_1 \circ [\alpha \leftarrow \delta]\\
+  \varphi_1 &= \mgu(\{\gamma = \src{\type{int}};
+  \delta = \src{\type{int}}; \eta = \delta; \gamma = \delta; \zeta =
+  \nu; \eta = \zeta; \nu = \src{\type{int}}\})\\
+            &=_3 \varphi_2 \circ [\gamma \leftarrow \src{\type{int}}]\\
+  \varphi_3 &= \mgu(\{\delta = \src{\type{int}}; \eta = \delta;
+  \src{\type{int}} = \delta; \zeta = \nu; \eta = \zeta; \nu =
+  \src{\type{int}}\})\\
+            &=_3 \varphi_4 \circ [\delta \leftarrow \src{\type{int}}]\\
+  \varphi_4 &= \mgu(\{\eta = \src{\type{int}}; \src{\type{int}} =
+  \src{\type{int}}; \zeta = \nu; \eta = \zeta; \nu =
+  \src{\type{int}}\})\\
+            &=_3 \varphi_5 \circ [\eta \leftarrow \src{\type{int}}]\\
+  \varphi_5 &= \mgu(\{\src{\type{int}} = \src{\type{int}}; \zeta =
+  \nu; \src{\type{int}} = \zeta; \nu = \src{\type{int}}\})
+\end{align*}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Résolution des équations (fin de l'exemple)}
+
+\[\small
+\begin{array}{rll}
+  \varphi_5 &=_2& \mgu(\{\zeta = \nu; \src{\type{int}} = \zeta; \nu =
+  \src{\type{int}}\})\\
+            &=_3& \varphi_6 \circ [\zeta \leftarrow \nu]\\
+  \varphi_6 &=& \mgu(\{\src{\type{int}} = \nu; \nu =
+  \src{\type{int}}\})\\
+            &=_4& \varphi_5 \circ [\nu \leftarrow \src{\type{int}}]\\
+  \varphi_5 &=& \mgu(\{\src{\type{int}} = \src{\type{int}};
+  \src{\type{int}} = \src{\type{int}}\})\\
+            &=& \mgu(\{\src{\type{int}} = \src{\type{int}}\})\\
+            &=_2& \mgu(\varnothing) \ =_1 \ \forall x.x \mapsto x\\
+\mgu(C(\te{e}{\alpha})) &=& [\nu \leftarrow \src{\type{int}}] \circ
+[\zeta \leftarrow \nu] \circ [\eta \leftarrow \src{\type{int}}] \circ
+[\delta \leftarrow \src{\type{int}}]\\ 
+&& \circ \; [\gamma \leftarrow \src{\type{int}}] \circ [\alpha
+  \leftarrow \delta] \circ [\beta \leftarrow \gamma]\\
+\mgu(C(\te{e}{\alpha})) (\alpha) &=& \alpha ([\delta \leftarrow
+  \src{\type{int}}] \circ [\alpha \leftarrow \delta]) = \delta [\delta
+  \leftarrow \src{\type{int}}] = \src{\type{int}}
+\end{array}
+\]
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{L'algorithme d'inférence et ses propriétés}
+
+\begin{Prop}[Correction de \mgu]
+Si $\mgu(C) = \varphi$ alors $\varphi$ est une solution de $C$.
+\end{Prop}
+
+\bigskip
+
+\begin{Prop}[Complétude de \mgu]
+Si $C$ admet une solution $\psi$ alors $\mgu(C)$ réussit et produit
+une solution $\varphi$ telle que $\varphi \leqslant \psi$.
+\end{Prop}
+
+\end{frame}

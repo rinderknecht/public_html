@@ -1,0 +1,32 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-tree,pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=1cm,nodesep=2pt]{\TR{terms}}{
+  \pstree{\TR{simple}}{
+    \pstree{\TR{constants}}{
+      \pstree{\TR{atoms}}{
+        \TR{simple}
+        \TR{quoted}
+      }
+      \pstree{\TR{numbers}}{
+        \TR{integers}
+        \TR{floats}
+      }
+    }
+    \TR{variables}
+  }
+  \pstree{\TR{structured}}{
+    \TR{tuples}
+    \TR{lists}
+  }
+}
+\endTeXtoEPS
+
+\end{document}
+

@@ -1,0 +1,606 @@
+%% -*- latex -*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Comparing expressions}
+
+\Erlang offers two different mechanisms to compare expressions:
+\textbf{matching} and numeric comparisons. The former is found in
+functional and logic programming, but not in mainstream programming
+languages. The latter is ubiquitous.
+
+\bigskip
+
+Numeric comparisons involve a comparison operator and two
+operands. For instance, consider the following equality in both \Java
+and \Erlang:
+\begin{center}
+\tt
+fact(5) == 119 + 1
+\end{center}
+Note that
+\begin{enumerate}
+
+  \item The two sides are expressions
+
+  \item which are separately evaluated, 
+
+  \item then the values are compared and the result is either true or
+    false.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Java variable definitions}
+
+Consider a \Java variable definition like
+\begin{verbatim}
+int N = 3;
+\end{verbatim}
+This actually means three different things:
+\begin{enumerate}
+
+  \item define the variable \texttt{N}
+
+  \item whose type is \texttt{int}
+
+  \item and initial value is \texttt{3}.
+
+\end{enumerate}
+Initialisation is a separate concept since the above is equivalent to
+\begin{verbatim}
+int N;
+N = 3;
+\end{verbatim}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching in Erlang}
+
+In \Erlang, the programmer does not specify the types, as the compiler
+does not check most of them, so the above is simply written in \Erlang
+\begin{verbatim}
+N = 3
+\end{verbatim}
+\Erlang provides an extension of the \Java-like variable definition:
+\emph{matching}.
+\begin{enumerate}
+
+  \item The left-hand side must be a \textbf{term} (not an
+    expression),
+
+  \item the right-hand side is an expression
+
+  \item which is evaluated before the matching;
+
+  \item the matching is itself an expression whose
+    value (in case of success) is the value of the right-hand side (as
+    in \cpp{} ``\texttt{a = (b = 1);}'').
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Matching (cont)}
+
+What if \texttt{N} does not occur for the first time in the matching?
+Consider
+\ErlangIn{match}
+In this case, \texttt{N} in the matching is replaced first by its
+value, which is the argument of the function \texttt{f} when it is
+called. 
+
+\bigskip
+
+So \texttt{match:f(3)} succeeds but, for example, \texttt{match:f(2)}
+fails.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Matching (cont)}
+
+Therefore, the rule for evaluating the matching 
+\[
+t \, \texttt{=} \, e
+\]
+is actually better expressed as follows:
+\begin{enumerate}
+
+  \item replace all occurrences of variables in the term \(t\) which
+    are already bound by their value: the new term is \(t'\);
+
+  \item evaluate expression \(e\) into \(v\);
+
+  \item match \(v\) against \(t'\);
+
+  \item in case of success, the value of the matching is \(v\).
+
+\end{enumerate}
+The left-hand side of a matching (here noted \(t\)) is called a
+\textbf{pattern}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching (cont)}
+
+Assume that \texttt{N} appears for the first time in the matching
+\begin{verbatim}
+N = 3
+\end{verbatim}
+Then, it is a simple case of matching since
+\begin{enumerate}
+
+  \item the left-hand side, \texttt{N}, being a variable, is a term;
+
+  \item the right-hand side, \texttt{3}, is an expression (actually a
+    value);
+
+  \item the evaluation of the right-hand side is itself, \texttt{3},
+    since it is a value already;
+
+  \item the matching of numbers is the same as the numeric equality;
+
+  \item the value of the matching is \texttt{3}.
+
+\end{enumerate}
+Importantly, the matching leads to bind variable \texttt{N} to
+\texttt{3}, noted \texttt{N} \(\mapsto\) \texttt{3}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching (cont)}
+
+What is the difference, in \Erlang, between
+\verb|N = 3| and \verb|N == 3|?
+
+\bigskip
+
+The first case is a matching and the second is a numeric
+comparison. 
+
+\bigskip
+
+In the latter, \texttt{N} must already be defined (bound) so it
+can be evaluated before the comparison takes place. The result if
+either the atom \texttt{true} or \texttt{false}.
+
+\bigskip
+
+In the former, if \texttt{N} is already bound, the matching either
+fails or succeeds and its value is \texttt{3}. 
+
+\bigskip
+
+If \texttt{N} is not already bound, then the matching succeeds with
+the value \texttt{3} and the binding of \texttt{N} to \texttt{3},
+noted \texttt{N} \(\mapsto\) \texttt{3}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Matching (cont)}
+
+You may wonder now why bother? What is the need of matching when we
+have equality and other comparisons?
+
+\bigskip
+
+Actually the fist difference is the possible
+\textbf{failure}. Consider
+\begin{columns}
+  \column{0.5\textwidth}
+    \ErlangIn{match}
+  \column{0.5\textwidth}
+    \ErlangIn{eq}
+\end{columns}
+
+\bigskip
+
+The calls to \texttt{match:f} either fail, therefore stop the whole
+program, or return the integer \texttt{3}. The calls to
+\texttt{eq:f} return either \texttt{true} or \texttt{false}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching (cont)}
+
+The main difference between matching and equality appears when
+matching complex terms, involving lists and tuples. We will explain
+this from page~\pageref{tuple_matching} on.
+
+\bigskip
+
+Remember also that if \texttt{N} is not bound, then 
+\begin{verbatim}
+N = 3
+\end{verbatim}
+acts as a variable definition.
+
+\bigskip
+
+This way, we can think of the matching as a way to combine both
+definition and comparison.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching/Basic examples}
+
+Here is another example:
+\begin{verbatim}
+N = 3 + 1
+\end{verbatim}
+Here, the right-hand side is not a term, it is evaluated into
+\texttt{4} before the matching takes place.
+
+\bigskip
+
+Another one:
+\begin{verbatim}
+N = 2 * f(3)
+\end{verbatim}
+Here, the function \texttt{f} must be in the scope, i.e. must be
+bound at this point.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Scope and multiple clauses}
+
+\label{scope}
+
+How are variables defined (i.e. bound) by matching used latter? In
+other words: what is the scope? In \cpp, the scope is the definition
+point until the end of the current bloc. For example 
+\begin{verbatim}
+...
+{ 
+  ...
+  int n = 3;
+  ...  // `n' is bound here.
+}
+... // `n' is unbound here.
+\end{verbatim}
+In \Erlang, function bodies can be made of series of expressions
+separated by commas. For example \verb|f(X) -> X=3, X+1.|
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Scope and multiple clauses (cont)}
+
+The expressions are evaluated from left to right and, as exemplified
+in
+\begin{verbatim}
+f(X) -> X=3, X+1.
+\end{verbatim}
+the bindings created by matches (a match is a successful matching) are
+accessible for the following expressions. This is why \texttt{X} is
+bound to the value \texttt{3} in the expression \texttt{X + 1}.
+
+\bigskip
+
+Note that only the value of the last expression becomes the return
+value of the function. Thus, for example, the value of \texttt{X=3},
+which is \texttt{3}, is discarded, \textbf{but not the binding of
+  \texttt{X}!} Remember that evaluating a match yields to
+\begin{enumerate}
+
+  \item a value
+
+  \item \emph{and}, if variables are present on the left-hand side,
+    bindings for these variables.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Matching/Constants}
+
+Two numbers match if they represent the same mathematical number, e.g.
+\begin{center}
+\tt
+37 = 37
+\end{center}
+Two atoms match if they are made of the same characters, e.g.
+\begin{center}
+\tt
+abc = abc\\
+'hello world' = 'hello world'
+\end{center}
+A variable matches any term that can be evaluated, e.g.
+\begin{center}
+\tt
+X = 37\\
+X = Y
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Matching/Tuples}
+
+\label{tuple_matching}
+
+A tuple \(t\) matches an expression \(e\), that is
+\[
+t \, \texttt{=} \, e
+\]
+if and only if
+\begin{enumerate}
+
+  \item the replacement of the variables of \(t\) that are bound
+    yields the (term) tuple \(t'\);
+
+  \item the evaluation of \(e\) yields the tuple \(v\);
+
+  \item both \(t'\) and \(v\) have the same arity;
+
+  \item the \(n\)-th component of \(t\) matches the \(n\)-th component
+    of \(v\).
+  
+\end{enumerate}
+In case of success, the resulting bindings of all sub-matches are
+joined.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching/Tuples (cont)}
+
+The matching of tuples is very useful, because it allows to
+destructure the return values of functions in a single expression.
+
+\bigskip
+
+For example
+\begin{verbatim}
+go(Job) ->
+  {Status,NewJob,Priority} = launch(Job),
+  forward(Message),
+  schedule(NewJob,Priority).
+\end{verbatim}
+The tuples can be arbitrarily nested:
+\begin{verbatim}
+go(Job) ->
+  {{status,{Answer,Log}},Version} = 
+    {run(Job),version(Job)}.
+\end{verbatim}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Matching/Lists}
+
+A list \(l\) matches an expression \(e\), that is
+\[
+l \, \texttt{=} \, e
+\]
+if and only if
+\begin{enumerate}
+
+  \item the replacement of the variables in \(l\) which are bound
+    yields the (term) list \(l'\);
+
+  \item the evaluation of \(e\) yields the list \(v\);
+
+  \item both \(e\) and \(v\) are the empty list \texttt{[]} or
+
+  \item the head of \(l'\) matches the head of \(v\) and
+
+  \item the tail of \(l'\) matches the tail of \(v\).
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching/Lists/Examples}
+
+Consider for instance
+\begin{verbatim}
+[Head | Tail] = [1,a,2,b,c]
+\end{verbatim}
+This match yields the value \texttt{[1,a,2,b,c]} because of the matches
+\begin{verbatim}
+Head = 1
+Tail = [a,2,b,c]
+\end{verbatim}
+The bindings are thus \texttt{Head} \(\mapsto\) \texttt{1} and
+\texttt{Tail} \(\mapsto\) \texttt{[a,2,b,c]}.
+
+Consider also the two matchings
+\begin{verbatim}
+{X,Y} = {a,b}, [A,X|B] = [Y,a]
+\end{verbatim}
+which succeed, yielding the bindings \texttt{X} \(\mapsto\)
+\texttt{a}, \texttt{Y} \(\mapsto\) \texttt{b}, \texttt{A}
+\(\mapsto\) \texttt{b} and \texttt{B} \(\mapsto\) \texttt{[]}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching/Mixed examples}
+
+The matching
+\begin{verbatim}
+{C, [Head | Tail]} = {{222, man}, [a,b,c]}
+\end{verbatim}
+succeeds with the bindings \{\texttt{C} \(\mapsto\) \texttt{\{222,
+  man\}}, \texttt{Head} \(\mapsto\) \texttt{a}, \texttt{Tail}
+\(\mapsto\) \texttt{[b,c]}\}.
+
+The matching
+\begin{verbatim}
+[{person,Name,Age,_}|T] = [{person,fred,22,male}]
+\end{verbatim}
+succeeds with bindings \{\texttt{Name} \(\mapsto\) \texttt{fred},
+\texttt{Age} \(\mapsto\) \texttt{22}, \texttt{T} \(\mapsto\)
+\texttt{[]}\}. Note the pattern ``\texttt{\huge \_}'' which stands for
+an unknown but unique variable.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching/Non-linear patterns}
+
+Remember that a matching consists in comparing structurally the value
+of an expression to a term, called a pattern.
+
+\bigskip
+
+It is possible in \Erlang to repeat a variable in a pattern, in order
+to save another match later. For example
+\begin{verbatim}
+{X,X} = {a,f()}
+\end{verbatim}
+is equivalent to
+\begin{verbatim}
+{X,Y} = {a,f()}, X = Y
+\end{verbatim}
+The matching
+\begin{verbatim}
+{A, foo, A} = {123, foo, abc}
+\end{verbatim}
+fails.
+
+\end{frame}
+ 
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Matching/Calling functions}
+
+The \Erlang functions are called using pattern matching too. At
+page~\pageref{fact} we defined the factorial function as
+\begin{columns}
+  \column{0.5\textwidth} \ErlangIn{math1} There are two cases. When
+  evaluating a call, the \Erlang virtual machine (called \BEAM) needs
+  to determine which case has to be chosen.
+
+  \column{0.5\textwidth} This is decided by matching the call against
+  the heads of the cases in turn, here \texttt{fact(0)} first then
+  \texttt{fact(N)}, considered as patterns --- assuming that a
+  function name only matches the same name.
+
+  \medskip
+
+  The first match selects the function body to be executed.
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Matching/Calling functions (cont)}
+
+The procedure can be summarised as follows:
+\begin{enumerate}
+
+  \item evaluate the arguments of the function call;
+
+  \item find the cases defining the called function;
+
+  \item try to match the head of the first case against the function
+    call;
+
+  \item in case of success, the body of the case is evaluated with the
+    bindings of the match;
+
+  \item otherwise the next case is tried;
+
+  \item if no case matches, an error is issued.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Matching/Calling functions (cont)}
+
+Consider a more complex case:
+\begin{verbatim}
+X=2, fact(X)
+\end{verbatim}
+\begin{enumerate}
+
+  \item the argument \texttt{X} of \texttt{fact(X)} is evaluated with
+    the bindings \{\texttt{X} \(\mapsto\) \texttt{2}\}, so the call is
+    now \texttt{fact(2)};
+
+  \item the matching \texttt{fact(0) = fact(2)} fails, 
+
+  \item so \texttt{fact(N) = fact(2)} is tried, and succeeds;
+
+  \item the expression \texttt{N * fact(N-1)} is evaluated with the
+    bindings \{\texttt{N} \(\mapsto\) \texttt{2}\}.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Matching/Calling functions (cont)}
+
+Consider a function definition relying on the matching of a list:
+\ErlangIn{list1}
+This function takes a list as argument and return the number of items
+in it.
+
+\bigskip
+
+There are two cases: one for the empty list and another for the
+non-empty list.
+
+\end{frame}

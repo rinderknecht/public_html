@@ -1,0 +1,89 @@
+%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Listes}
+
+Les listes peuvent être définies comme un type variant polymorphe
+récursif:
+{\small
+\begin{verbatim}
+type 'a liste = Nil | Cons of 'a * 'a liste
+\end{verbatim}
+}
+Les noms de ces constructeurs sont traditionnels dans la communauté
+des langages fonctionnels. Le premier, \texttt{\small Nil}, dénote la
+liste vide; le second, \texttt{\small Cons}, dénote la liste non
+vide. Une liste non vide est alors modélisée par une paire dont la
+première projection est un élément de la liste (de type \texttt{\small
+'a}) et la seconde la sous-liste restante (donc de type \texttt{\small
+'a liste}). Par exemple:
+{\small
+\begin{verbatim}
+let liste_vide= Nil
+let liste_singleton = Cons ('a', Nil)
+let liste_singleton_bis = Cons (7, Nil)
+let liste_longue = Cons (1, Cons (2, Cons (3, Cons (4, Nil))))
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Les listes prédéfinies et la biliothèque List}
+
+Par défaut, le système prédéfinit un type \texttt{\small 'a list},
+dont le constructeur de liste vide est \verb+[]+, et celui de liste
+non vide est \verb+::+ (utilisé en position infixe). La fonction de
+concaténation de deux listes est notée \verb+@+ (\textbf{Ce n'est pas
+un constructeur.}).
+
+\bigskip
+
+Exemples de formes équivalentes:
+{\small
+\begin{verbatim}
+let l = 1 :: (2 :: 3 :: (4 :: []))
+let l = 1 :: 2 :: 3 :: 4 :: []
+let l = [1;2;3;4]
+\end{verbatim}
+}
+
+\bigskip
+
+La biliothèque \textsf{List} fournit des fonctions sur les listes.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Les listes prédéfinies}
+
+\textcolor{blue}{Exemple} Une  fonction qui retourne une liste.
+
+{\small
+\begin{verbatim}
+let rec reverse = function
+  [] -> []
+| h::l -> (reverse l) @ [h]
+\end{verbatim}
+}
+
+\bigskip
+
+ou, plus efficacement:
+{\small
+\begin{verbatim}
+let reverse l = 
+  let rec reverse_aux acc = function
+    [] -> acc
+  | h::t -> reverse_aux (h::acc) t
+in reverse_aux [] l
+\end{verbatim}
+}
+
+\end{frame}

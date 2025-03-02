@@ -1,0 +1,47 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{verbatim}
+\usepackage{graphicx}
+
+\input{trace}
+\input{prolog}
+
+\input{title}
+\author{Christian Rinderknecht}
+\date{12 October 2006}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\noindent The following equations define the formal differentiation of
+a function:
+\begin{gather*}
+\dfrac{dx}{dx}    = 1 \qquad
+\dfrac{dy}{dx}    = 0 \quad \text{where} \;y \neq x\; \text{or}\;
+                            y \in\mathbb{N}\\
+\dfrac{d}{dx}(f + g) = \dfrac{df}{dx} + \dfrac{dg}{dx}
+\qquad
+\dfrac{d}{dx}(f - g) = \dfrac{df}{dx} - \dfrac{dg}{dx}\\
+\dfrac{d(-f)}{dx} = -{\dfrac{df}{dx}}
+\qquad
+\dfrac{d}{dx}(f \times g) = f \times {\dfrac{dg}{dx}} +
+g \times {\dfrac{df}{dx}} 
+\end{gather*}
+
+\noindent Let us call \texttt{plus}, \texttt{minus} and \texttt{times}
+the relations for, respectively, addition (\(+\)), subtraction
+(\(-\)) and multiplication (\(\times\)). Variables are defined by the
+predicate \texttt{var} and numbers by \texttt{num}. For instance,
+\texttt{minus(var(x),var(y))} denotes \(x-y\); \texttt{minus(var(x))}
+denotes \(-x\) (note that subtraction can have one or two arguments);
+\texttt{times(num(3),plus(var(x),var(x)))} means \(3(x + x)\), etc.
+
+\input{question_01}
+\input{question_02}
+
+\end{document}

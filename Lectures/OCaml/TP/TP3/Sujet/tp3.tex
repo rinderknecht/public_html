@@ -1,0 +1,214 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\input{trace}
+
+\title{TP 3 de programmation fonctionnelle en Objective Caml}
+\author{Christian Rinderknecht}
+
+\begin{document}
+
+\maketitle
+
+L'objectif est de présenter un usage fréquent en pratique des
+exceptions, à travers la fonction prédéfinie \texttt{failwith}. La
+seconde partie illustre l'utilité des types polymorphes récursifs
+grâce au type prédéfini \texttt{list}. Il s'agit de comprendre aussi
+que ce type est seulement un cas particulier, dédié à un usage précis,
+malgré la syntaxe spéciale de ses constructeurs.
+
+\section{{\tt failwith}}
+
+Jusqu'ici, les fonctions que nous avons écrites renvoyaient toujours
+un résultat. Entre autres conséquences, toute construction {\tt if}
+devait comporter un {\tt else}, de façon à ce que le résultat soit
+défini, indépendamment de la valeur de la condition.
+
+Cela était parfois gênant. Par exemple, lorsque nous avons écrit une
+fonction qui renvoie les deux racines d'un polynôme du second degré,
+vérifier que le discriminant était positif ne servait à rien, puisque
+dans le cas contraire, nous devions quand même renvoyer un
+résultat---nous n'avions aucun moyen de signaler l'erreur.
+
+Pour remédier à cette situation, il existe une fonction prédéfinie en
+Caml, nommée {\tt failwith}, définie par \texttt{let failwith x =
+raise (Failure x)} et a donc le type
+$\forall\alpha.\text{string}\rightarrow\alpha$. Elle prend en argument
+une chaîne de caractères. Son effet est d'arrêter immédiatement
+l'exécution du programme et d'afficher la chaîne de caractères qu'elle
+a reçue. {\tt failwith} ne renvoie pas de résultat, puisqu'elle arrête
+le programme; du point de vue du typage, son résultat peut donc
+prendre n'importe quel type. C'est pourquoi on donne à celui-ci le
+type $\alpha$, sans spécifier la valeur de $\alpha$.
+
+Par exemple, considérons l'expression
+
+\begin{verbatim}
+if delta >= 0.0
+then ((-.b +. sqrt(delta)) /. (2. *. a), 
+      (-.b -. sqrt(delta)) /. (2. *. a))
+else failwith "Erreur: discriminant négatif"
+\end{verbatim}
+
+La première clause du {\tt if} a le type $\text{\tt
+float}\times\text{\tt float}$. La seconde a le type $\alpha$, comme
+expliqué ci-dessus. Rappelons que les deux clauses d'un {\tt if}
+doivent avoir le même type. Il en découle que $\alpha=\text{\tt
+float}\times\text{\tt float}$, et que l'expression complète est bien
+typée.
+
+Pour conclure, on peut utiliser {\tt failwith} lorsqu'on écrit une
+fonction dont le résultat n'est pas défini dans certains cas. Nous
+allons en voir quelques exemples ci-dessous.
+
+
+\section{Listes}
+
+\textbf{Syntaxe:} La liste vide s'écrit \verb+[]+. On peut construire
+une liste en donnant tous ses éléments entre crochets, séparés par des
+points-virgules, par exemple: \verb+[ 1; 5; x ]+. La tête de liste est
+l'élément le plus à gauche. Pour ajouter un élément {\tt x} en tête
+d'une liste {\tt l}, on écrit \verb+x :: l+. On remarque que
+\verb+[ 1; 5; x ]+ n'est en fait qu'une abréviation pour
+\verb+1 :: 5 :: x :: []+.
+
+Les motifs servant à filtrer des listes ont la même syntaxe. \verb+[]+
+filtre la liste vide, \verb+x :: l+ filtre une liste à au moins un
+élément, et \verb+[ m1; ... ; mn ]+ filtre une liste à exactement $n$
+éléments.
+
+\def\alist{\alpha\text{\tt\ list}} L'ensemble $\alist$ des listes
+d'éléments de type $\alpha$ peut être décrit par l'équation
+$$\alist = \{ \verb+[]+ \} \cup (\alpha \quad\verb+::+\quad \alist)$$
+\def\Nat{\mathbb{N}} Pour comprendre cette équation, rappelons qu'on
+peut définir l'ensemble $\Nat$ des entiers par
+$$\Nat = \{ 0 \} \cup (1 + \Nat)$$ L'analogie entre ces deux équations
+signifie que l'on peut raisonner par récurrence sur les listes, de
+façon similaire à ce que l'on fait sur les entiers.  Un raisonnement
+(ou une fonction) par récurrence sur les entiers doit traiter deux
+cas: le cas de base (en général $n=0$) et le cas général (passage de
+$n$ à $n+1$). Dans le cas général, on utilise une hypothèse de
+récurrence (s'il s'agit d'une preuve) ou un appel récursif (s'il
+s'agit d'une fonction). De même, un raisonnement (ou une fonction) par
+récurrence sur les listes traitera le cas de base (la liste vide
+\verb+[]+) et le cas général (passage de \verb+l+ à
+\verb+x :: l+). Dans le cas général, on utilisera aussi un appel
+récursif pour traiter la sous-liste \verb+l+.
+
+Nous allons écrire quelques fonctions classiques de manipulation de listes.
+
+\begin{itemize}
+\item \'{E}crire une fonction {\tt appartient}, qui prend en
+      argument un élément {\tt x} et une liste {\tt l}, et renvoie un
+      booléen indiquant si {\tt x} figure ou non dans {\tt l}.
+\item Plus généralement, écrire une fonction {\tt existe}, qui prend
+      en argument un prédicat {\tt p} et une liste {\tt l}, et renvoie
+      un booléen indiquant si il existe un élément de {\tt l} qui
+      vérifie {\tt p}.  Application: réécrire {\tt appartient} en
+      utilisant {\tt existe}.
+\item Ecrire une fonction {\tt associé} définie comme suit. {\tt
+      associé} prend en argument un élément {\tt x} et une liste de
+      paires {\tt l}. Elle renvoie la deuxième composante du premier
+      élément de la liste dont la première composante est {\tt x}. Par
+      exemple, \verb+associé "y" [("x", 1); ("y", 2); ("z", -4)]+
+      renvoie $2$. (Si aucune paire dans {\tt l} ne commence par {\tt
+      x}, on utilisera {\tt failwith} pour signaler l'erreur.)
+\item \'{E}crire une fonction {\tt map} qui prend en argument une
+      fonction {\tt f} et une liste {\tt l}, et renvoie la liste des
+      images des éléments de {\tt l} par {\tt f}, i.e. \texttt{map f [
+      x1; ...; xn ]} doit être égal à \texttt{[ f(x1); ...; f(xn) ]}.
+\item \'{E}crire une fonction {\tt split} qui prend en argument une liste
+      de couples et les sépare pour renvoyer un couple de listes.
+\item \'{E}crire une fonction {\tt partage} qui prend en argument un
+      prédicat {\tt p} et une liste {\tt l} et renvoie un couple formé
+      de la liste des éléments de {\tt l} qui vérifient {\tt p} et de
+      la liste de ceux qui ne le vérifient pas.
+\item \'{E}crire une fonction {\tt append}, qui prend deux listes en
+      argument et les concatène.
+\item On veut écrire une fonction \verb+fold_right+ qui prend en argument
+      une fonction {\tt f}, une liste \verb+[ a1; ...; an ]+ et une
+      valeur {\tt x} et calcule $$f \, a_1 \, (f \, a_2 \, ( \ldots (f
+      \, a_{n-1} \, (f \, a_n \, x)) \ldots ))$$ Quel sera le type de
+      \verb+fold_right+? Exprimer \verb+fold_right f (a1 :: l) x+ en
+      fonction de \verb+fold_right f l x+. En déduire comment écrire la
+      fonction.
+\item Mêmes questions pour une fonction \verb+fold_left+ qui prend en
+      argument une fonction {\tt f}, une valeur {\tt x} et une liste
+      \verb+[ a1; ...; an ]+ et calcule $$f \, (f \, (\ldots (f \, (f
+      \, x \, a_1) \, a_2) \ldots ) \, a_{n-1}) \, a_n$$
+\item Réécrire la fonction {\tt append} en utilisant \verb+fold_right+.
+\end{itemize}
+
+\section{Tri par fusion (\emph{Merge sort})}
+
+Dans cette section, on se propose de programmer un algorithme de tri
+sur les listes, dit \emph{tri par fusion}.
+
+L'idée est de commencer par programmer l'opération de fusion, qui
+prend deux listes déjà triées et en fait une seule liste triée.
+
+Ensuite, on transforme notre liste à trier, contenant $n$ éléments, en
+$n$ listes à un élément. Puis on fusionne ces listes deux par deux, ce
+qui nous donne $n/2$ listes triées à deux éléments, plus
+éventuellement une liste à un élément (si $n$ est impair). On les
+fusionne à nouveau deux par deux, etc. jusqu'à ce qu'il ne reste plus
+qu'une seule liste, qui est alors triée.
+
+Il est intéressant de noter que le type des éléments manipulés n'a pas
+d'importance, parce que la fonction de comparaison \verb+<+ est
+polymorphe: elle a le type
+$\forall\alpha.\alpha\rightarrow\alpha\rightarrow\verb+bool+$.  Cela
+permet d'utiliser la même fonction \verb+mergesort+ pour trier des
+listes d'entiers, de flottants, de listes, etc. sans limitation.
+
+\begin{itemize}
+\item \'{E}crire une fonction qui prend en argument une liste
+      \verb+[ x1; ...; xn ]+ et renvoie la liste des listes à un
+      élément \verb+[ [x1]; ...; [xn] ]+. On utilisera {\tt map}.
+\item \'{E}crire une fonction {\tt merge} qui prend en argument deux
+      listes triées par ordre croissant et les fusionne en une seule
+      liste triée.
+\item \'{E}crire une fonction {\tt merge2à2} qui prend en argument une
+      liste de listes \verb+[ l1; l2; l3; l4; ... ]+ et renvoie une
+      liste où les listes voisines ont été fusionnées, i.e.
+      \verb+[ merge l1 l2; merge l3 l4; ... ]+. On prendra garde à
+      traiter correctement le cas où la liste d'entrée est de longueur
+      impaire.
+\item En combinant les fonctions précédentes, écrire une fonction {\tt
+      mergesort} qui prend une liste en argument et la trie. Pour
+      cela, on crée la liste des listes à un élément, puis on lui
+      applique {\tt merge2à2} itérativement, jusqu'à obtenir une liste
+      de la forme \verb+[ l ]+. On renvoie alors \verb+l+.
+\item Exprimer le nombre maximal de comparaisons nécessité par chacune
+      des fonctions ci-dessus, en fonction de la taille de son
+      argument. En déduire que le tri d'une liste de taille $n$
+      demande un temps $O(n \cdot \log_2 n)$.
+\end{itemize}
+
+Les questions précédentes ont été réalisées en utilisant la fonction
+de comparaison générique \verb+<+. Les réécrire en utilisant une
+fonction d'ordre {\tt ordre} que l'on passera en argument partout où
+c'est nécessaire.  Utiliser ces nouvelles fonctions pour trier une
+liste par ordre décroissant.
+
+\section{Tri rapide (\emph{Quicksort})}
+
+Voici maintenant un autre algorithme de tri. L'algorithme procède
+comme suit.
+
+On choisit un élément {\tt p} de la liste, appelé \emph{pivot}. On
+sépare ensuite la liste en trois parties: le pivot {\tt p}, la liste
+{\tt l1} des éléments plus petits que {\tt p}, et la liste {\tt l2}
+des éléments plus grands que, ou égaux à {\tt p}. (On peut utiliser la
+fonction {\tt partage} écrite précédemment.) La liste triée est alors
+égale à la concaténation de \verb+l1+ triée, {\tt p} et \verb+l2+
+triée.
+
+\end{document}

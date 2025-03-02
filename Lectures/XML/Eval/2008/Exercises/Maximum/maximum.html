@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Maximum Number in a Sequence</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Maximum Number in a Sequence</h2>
+
+<p><strong>Question.</strong> The aim of this exercise is to write and
+XSLT transform which takes as input a sequence of integers and outputs
+the maximum of these numbers as plain text. If an item is not castable
+to <tt>xs:integer</tt>, a dynamic type error is raised and the
+execution is stopped. If an item is an empty text node,
+e.g., <tt>&lt;num/></tt>, it is skipped. If the sequence contains no
+integer, an empty file is outputted, because the maximum is
+undefined. The root element is <tt>numbers</tt> and the elements
+containing the numbers are named <tt>num</tt>. If any other element is
+present in the sequence of <tt>num</tt> elements, they are ignored.
+</p>
+
+<p><strong>Example.</strong> <a href="./numbers.xml">This</a> is an
+example of input document and the corresponding output is <a
+href="./max1.txt">this file</a>. You need to download
+  this <a href="./numbers.dtd">DTD</a> to run this example.
+</p>
+
+<strong>Hints.</strong>
+<ul>
+  <li>The output is text, so you need to set the
+    attribute <tt>method="text"</tt>.</li>
+   
+  <li>You need to type some of your parameters and variables as
+    <tt>xs:integer</tt> and <tt>item()*</tt>. Therefore, you need to
+     define the <tt>xs</tt> namespace as <tt>&lt;xsl:transform ...
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"></tt>.</li>
+
+  <li>Casting to <tt>xs:integer</tt> is simply done by the
+     element <tt>&lt;xsl:param ... as="xs:integer"...></tt>. This way,
+     there is no need for calling explicitly the
+     function <tt>xs:integer</tt> to perform the cast.</li>
+
+  <li>Casting an empty text node to <tt>xs:integer</tt> raises no
+     error and results in an empty sequence. Make sure that, if this
+     happens, it is the behaviour you expect.</li>
+
+  <li>Use <tt>&lt;xsl:template match="numbers"
+    as="xs:integer?"></tt>. The question mark means "optional", in
+    other words, here, the result of the template is either the empty
+    sequence or an integer.</li>
+</ul>
+
+<p><strong>Answers.</strong> <a href="./max1.xsl">This</a> solution
+  needs little additional memory to work. Contrast with <a
+   href="./max2.xsl">this version</a> featuring two
+  choices. Surprisingly, it contains less code duplication and is more
+  logically structured, but it is longer! <a href="./max3.xsl">This
+  last transform</a> is shorter than the others but requires more
+  memory. Notice how there is no need for a test case <tt>&lt;xsl:when
+  test="empty($int)"/></tt> because the following case
+  <tt>&lt;xsl:when test="empty($int[position()>1])"></tt> will result
+  in the expected empty sequence.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+
+</html>

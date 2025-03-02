@@ -1,0 +1,49 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage[dvips]{graphicx}
+
+% Automata (Must be loaded BEFORE pstricks packages)
+%
+\usepackage{vaucanson-g}
+
+\begin{document}
+
+% Settings
+%
+%\ShowGrid
+\SetEdgeLabelColor{blue}
+\SetEdgeLabelScale{1.4}
+
+% Automaton
+%
+\VCDraw{%
+\begin{VCPicture}{(0,0)(3,4)}
+
+%% Input layer and bias
+%
+\VSState{(0,4)}{Bias}
+\nput{180}{Bias}{\Large \(1\)}
+
+\VSState{(0,2)}{x}
+\nput{180}{x}{\huge \(x\)}
+
+\VSState{(0,0)}{y}
+\nput{180}{y}{\huge \(y\)}
+
+%% Output layer
+%
+\State{(3,2)}{Out}
+\Final{Out}
+
+%% From input and bias to output
+%
+\EdgeL{Bias}{Out}{w_0}
+\EdgeL{x}{Out}{w_1}
+\EdgeL{y}{Out}{w_2}
+
+\end{VCPicture}
+}
+
+\end{document}

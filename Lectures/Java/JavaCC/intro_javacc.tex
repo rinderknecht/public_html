@@ -1,0 +1,1069 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{ae,aecompl}
+%\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xspace}
+\usepackage{url}
+\usepackage{pstricks,pst-node,pst-tree}
+
+\newcommand{\R}{{\cal R}}
+\newcommand{\T}{{\cal T}}
+\newcommand{\N}{{\cal N}}
+\newcommand{\Prod}{{\cal P}}
+\newcommand{\assign}{\mbox{\texttt{::=}}\xspace}
+\newcommand{\Java}{\textsf{Java}\xspace}
+\newcommand{\JavaCC}{\textsf{JavaCC}\xspace}
+\newcommand{\str}[1]{\texttt{"{#1}"}}
+\newcommand{\eof}{\textsf{\textbf{eof}}\xspace}
+\newcommand{\expand}[1]{\stackrel{#1}{\Longrightarrow}}
+
+\newcommand{\bitem}{\item[$\bullet$]}
+
+\input{trace}
+
+\title{Introduction à JavaCC}
+\author{Christian Rinderknecht}
+\date{Mardi 18 mars 2003}
+
+\begin{document}
+
+\maketitle
+
+\section{Expressions régulières et analyse lexicale}
+
+\noindent
+\textsc{Caractère, alphabet, mot, langage}
+
+Un \emph{alphabet} est un ensemble fini non vide de
+\emph{caractères}. On note souvent les alphabets $\Sigma$ et les
+caractères $a$, $b$, $c$ etc.
+
+Un \emph{mot} sur $\Sigma$ est une suite, éventuellement vide, de
+caractères de $\Sigma$. Le mot vide est noté $\varepsilon$. Un mot non
+vide est noté par ses caractères séparés par un point (centré), par
+exemple $a \cdot b \cdot c$ avec $a, b, c \in \Sigma$. Le point dénote
+un opérateur dit de \emph{concaténation}, que l'on peut généraliser
+simplement aux mots eux-mêmes: $x \cdot y$, où $x$ et $y$ sont des
+mots sur $\Sigma$. Remarques: (a) le mot vide $\varepsilon$ est un
+élément neutre pour la concaténation des mots: $x \cdot \varepsilon =
+\varepsilon \cdot x = x$ pour tout mot $x$ (b) la concaténation est
+une opération associative: $x \cdot (y \cdot z) = (x \cdot y) \cdot z$
+(c) on écrira simplement $xy$ au lieu de $x \cdot y$
+
+Un \emph{langage} $L$ sur $\Sigma$ est un ensemble de mots sur
+$\Sigma$. La concaténation peut s'étendre aux langages: $L_1 L_2
+= \{xy \mid x \in L_1, y \in L_2\}$. Nous pouvons ainsi définir
+inductivement l'ensemble $\Sigma^{n}$ des mots de longueur $n$ sur
+l'alphabet $\Sigma$:
+
+\[
+\left\{
+  \begin{array}{l}
+    \Sigma^{0} = \{\varepsilon\}\\
+    \Sigma^{n+1} = \Sigma \cdot \Sigma^{n}
+  \end{array}
+\right.
+\]
+
+L'ensemble de tous les mots sur $\Sigma$ est alors $\Sigma^{*} =
+\bigcup_{n \geq 0}{\Sigma^{n}}$ et l'ensemble de tous les mots
+\emph{non vides} sur $\Sigma$ est $\Sigma^{+} = \bigcup_{n \geq
+1}{\Sigma^{n}}$.
+
+\noindent
+\textsc{Préfixes, suffixes et sous-mots}
+
+\begin{itemize}
+
+  \item Soient $x$, $y$ et $w$ trois mots de $\Sigma^{*}$ tels que $w
+        = xy$. Alors $x$ est un \emph{préfixe} de $w$ et $y$ est un
+        \emph{suffixe} de $w$. Si $x, y \in \Sigma^{+}$, alors $x$ est
+        un \emph{préfixe propre} de $w$, et $y$ est un \emph{suffixe
+        propre} de $w$.
+
+  \item Soient $x$, $y$, $z$ et $w$ quatre mots de $\Sigma^{*}$ tels
+        que $w = xyz$. Alors $y$ est un \emph{facteur} de $w$.
+
+\end{itemize}
+
+\noindent
+\textsc{Langages réguliers}
+
+L'ensemble $\R$ des \emph{langages réguliers} sur $\Sigma^{*}$ est
+défini inductivement comme étant la plus petite famille de parties de
+$\Sigma^{*}$ vérifiant les propriétés
+
+\begin{itemize}
+
+  \item $\varnothing \in \R$
+
+  \item $\{\varepsilon\} \in \R$
+
+  \item $\forall a \in \Sigma.\{a\} \in \R$
+
+  \item $\forall R_1, R_2 \in \R.R_1 \cup R_2 \in \R$
+
+  \item $\forall R_1, R_2 \in \R.R_1 \cdot R_2 \in \R$
+
+  \item $\forall R \in \R.R^{*} \in \R$
+
+\end{itemize}
+
+\noindent
+\textsc{Expressions régulières}
+
+Une expression régulière est une notation compacte et simplifiée pour
+représenter des langages réguliers:
+
+\begin{center}
+\begin{tabular}{lll}
+    Expression régulière
+  & Langage régulier
+  & Mots du langage\\
+    $a \mid b$
+  & $\{a, b\}$
+  & $a$, $b$\\
+    $ab^{*}a$
+  & $\{a\}\{b\}^{*}\{a\}$
+  & $aa$, $aba$, $abba$ etc.\\
+    $(ab)^{*}$
+  & $\{ab\}^{*}$
+  & $\varepsilon$, $ab$, $abab$ etc.\\
+    $abba$
+  & $\{abba\}$
+  & $abba$
+\end{tabular}
+\end{center}
+
+\noindent
+\textsc{Analyse lexicale}
+
+Un analyseur lexical\footnote{\emph{lexer} en anglais.} est un
+programme qui lit un fichier contenant un texte et qui vérifie que son
+contenu peut s'interpréter comme une suite d'unités lexicales (ou
+\emph{lexèmes}\footnote{\emph{token} en anglais}) appartenant à un
+lexique défini au préalable. C'est à peu près l'équivalent d'un
+vérificateur orthographique pour la langue française. Les expressions
+régulières servent à définir ce lexique.
+
+Les analyseurs lexicaux constituent la première phase d'un
+compilateur. Souvent, le lexique d'un langage de programmation se
+divise ainsi:
+
+\begin{itemize}
+
+  \item les espaces, tabulations et sauts de pages et de lignes;
+
+  \item les commentaires;
+
+  \item les identificateurs;
+
+  \item les mots-clés (un sous-ensemble des identificateurs);
+
+  \item les constantes entières, flottantes, caractères, chaînes de
+        caractères;
+
+  \item les symboles (par exemple d'opérateurs arithmétiques, mais
+        aussi de ponctuation);
+
+\end{itemize}
+
+Généralement, les espaces et autre marques invisibles servent à
+séparer d'au\-tres éléments (comme deux identificateurs successifs)
+mais ne sont pas considérées comme des lexèmes. Il en est de même des
+commentaires. Si l'analyseur lexical peut découper tout le texte en
+lexèmes valides (par rapport au lexique), alors il renvoie la suite de
+lexèmes (donc sans les espaces et les commentaires) pour la phase
+suivante de compilation, dite \emph{analyse syntaxique}, sinon il y a
+une erreur lexicale et il s'arrête.
+
+\noindent
+\textsc{JavaCC et les expressions régulières}
+
+Les expressions régulières sont utilisées dans de nombreux outils de
+recherche d'occurrences dans du texte, tels les éditeurs de texte
+(\textsf{Emacs}, \textsf{vi}) et la commande Unix \textsf{grep}, mais
+aussi dans \JavaCC. Ce dernier est un constructeur
+d'analyseurs lexico-syntaxiques (analyseur lexical et analyseur
+syntaxique). Les expressions régulières sont notées de façon
+particulière en \JavaCC:
+
+\begin{center}
+\begin{tabular}{cc}
+    Expression régulière mathématique
+  & Expression régulière \JavaCC\\
+    $a \mid b$
+  & \verb+a | b+\\
+    $ab$
+  & \verb+ab+\\
+    $a^{*}$
+  & \verb+(a)*+\\
+    $a^{+}$
+  & \verb|(a)+|\\
+    $a \mid \varepsilon$
+  & \verb+(a)?+\\
+    $"a" \mid "b" \mid \ldots \mid "z"$
+  & \verb+["a"-"z"]+\\
+    $"a" \mid \ldots \mid "z" \mid "A" \mid \ldots \mid "Z"$
+  & \verb+["a"-"z","A"-"Z"]+
+\end{tabular}
+\end{center}
+
+Par exemple, en \JavaCC, on peut définir des identificateurs
+commençant par une lettre ou un souligné, et suivi d'une suite
+(éventuellement vide) de lettres ou chiffres ou souligné par:
+
+\begin{verbatim}
+["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","_","0"-"9"])*
+\end{verbatim}
+
+Cette expression régulière reconnaît les identificateurs \str{a},
+\str{\_ab}, \str{a\_\_b01}, mais pas \str{1}, \str{1a}.
+
+\section{Grammaires BNF et analyse syntaxique\label{BNF}}
+
+La seconde phase de compilation est l'analyse syntaxique. L'analyseur
+syntaxique prend une suite de lexèmes, fournis par l'analyseur
+lexical, et vérifie si ces lexèmes satisfont une grammaire définie à
+l'avance. Grosso modo, cela correspond à un correcteur grammatical de
+la langue française. Une façon courante de définir une grammaire pour
+des langages (par exemple de programmation) est d'employer la
+\emph{Backus-Naur Form}. On défini formellement une grammaire $G$ par
+le quadruplet $(\T, \N, \Prod, Z, \eof)$, où
+
+\begin{itemize}
+
+  \item $\T$ est un ensemble de symboles dits \emph{terminaux} (qui
+        correspondent aux lexèmes); on représente les terminaux avec
+        des lettre minuscules ou des chiffres, ou encore entre
+        guillemets;
+
+  \item $\N$ est un ensemble de symboles dits \emph{non-terminaux}
+        ($\N \cap \T = \varnothing$); on représente les non-terminaux
+        avec des lettres majuscules;
+
+  \item $\Prod$ est un ensemble de paires de la forme $\N \times (\N
+        \cup \T)^{*}$, appelées \emph{productions}; par commodité
+        d'écriture, on sépare la première composante d'une production
+        (appelée \emph{partie gauche}) et la seconde (appelée
+        \emph{partie droite}) par le symbole \mbox{::=}, par exemple
+        $N \ \assign \ a \, B \, C$;
+
+  \item $Z$ est un non-terminal particulier ($Z \in \N$), appelé
+        \emph{point d'entrée};
+  
+  \item \eof est un terminal particulier, appelé \emph{fin de
+        fichier} mais qui n'appartient pas à $\T$ par convention.
+
+\end{itemize}
+
+Par exemple, une grammaire pour les expressions arithmétiques est:
+
+\[
+\begin{array}{lcl}
+  Z & \assign & E \ \eof \\
+  E & \assign & E \ \str{+} \ E\\
+  E & \assign & E \ \str{-} \ E\\
+  E & \assign & E \ \str{*} \ E\\
+  E & \assign & E \ \str{/} \ E \\
+  E & \assign & \str{(} \ E \ \str{)}\\
+  E & \assign & \textsf{digit}
+\end{array}
+\]
+
+\noindent
+où \textsf{digit} est le nom d'une expression régulière:
+$\textsf{digit} = 0 \mid 1 \mid 2 \mid 3 \mid 4 \mid 5 \mid 6 \mid 7
+\mid 8 \mid 9$, dont la définition fait partie du lexique (donc pas de
+la grammaire proprement dite).
+
+On simplifie l'écriture des productions du même non-terminal (en
+partie gauche) à l'aide d'un opérateur de disjonction \verb+|+. Ainsi,
+l'exemple précédent s'écrit plus simplement:
+
+\[
+\begin{array}{lcrl}
+  Z & \assign &      & E \ \eof\\
+  E & \assign &      & E \ \str{+} \ E\\
+    &         & \mid & E \ \str{-} \ E\\
+    &         & \mid & E \ \str{*} \ E\\
+    &         & \mid & E \ \str{/} \ E\\
+    &         & \mid & \str{(} \ E \ \str{)}\\
+    &         & \mid & \textsf{digit}
+\end{array}
+\]
+
+Ainsi les textes \textsf{((2*(1+3))-5)} et \textsf{7} sont conformes à
+cette grammaire.
+
+\section{BNF étendue}\label{EBNF}
+
+La notation habituelle pour les grammaire est la BNF. On l'étend
+souvent par des opérateurs inspirés des expressions régulières et
+définis ainsi:
+
+\begin{itemize}
+
+  \bitem A$^{+}$ est la concaténation d'au moins une fois de tous le
+  mots de A et est donc équivalent à A A$^{*}$.
+
+  \bitem A$^{*}$ est la concaténation, éventuellement vide, de tous
+  les mots de A et est donc équivalent à $\varepsilon$ $\mid$ A$^{+}$.
+
+  \bitem (A) est équivalent à A.
+
+  \bitem [A] est une abréviation pour $\varepsilon$ $\mid$ A.
+
+\end{itemize}
+
+\medskip
+
+\noindent
+Soit la grammaire G définie en EBNF de la façon suivante:
+
+\begin{center}
+\begin{tabular}{rcl}
+    S
+  & \assign 
+  & P \eof\\
+    P
+  & \assign
+  & \textsf{"("} [P] \textsf{")"}
+\end{tabular}
+\end{center}
+
+\noindent Cette grammaire décrit le langage dont les mots sont
+constitués d'une suite de parenthèses ouvrantes suivie d'autant de
+parenthèses fermantes, c'est-à-dire le langage L(G) =
+$\{\textsf{"("}^{n} \, \textsf{")"}^{n} \mid \forall n \geq 1\}$. Par
+exemple ce langage contient les mots \verb+()+, \verb+(())+ etc. mais
+pas \verb+(()())+, \verb+(+, \verb+(()+ etc. \emph{Ce langage n'est
+pas régulier}, c'est-à-dire qu'il n'existe pas d'expression régulière
+décrivant tous les mots. Il faut donc nécessairement un analyseur
+syntaxique (pour les grammaires algébriques).
+
+\section{Un langage simple}
+
+\JavaCC est un programme qui prend une spécification sous forme d'une
+grammaire et d'un lexique écrite dans un fichier avec l'extension
+\texttt{.jj}, et produit des fichiers \Java qui constituent
+l'analyseur lexico-syntaxique correspondant. Donc \JavaCC combine la
+production de l'analyseur lexical et de l'analyseur syntaxique. En
+\JavaCC la grammaire G se transcrit ainsi:
+
+{\small
+\begin{verbatim}
+void S() : {} { P() <EOF> }
+void P() : {} { "(" [P()] ")" }
+\end{verbatim}
+}
+
+\noindent En \JavaCC, le non-terminal en partie gauche d'une
+production est écrit comme une déclaration de méthode, par exemple
+\texttt{void S()}, suivi d'un deux-points, puis d'un bloc entre
+accolades de déclarations de variables locales \Java (ici vide), puis
+d'un bloc contenant la partie droite de la production. Les
+non-terminaux dans cette partie droite sont notés comme des appels de
+méthodes statiques, par exemple \texttt{P()}. Le terminal \eof est
+noté \verb+<EOF>+.
+
+\subsection{Par1.jj}
+
+\noindent
+Si nous voulons spécifier pour \JavaCC le petit exemple ci-dessus, il
+nous faut le compléter et le placer dans un fichier nommé par exemple
+\textsf{Par1.jj}:
+
+{\small
+\begin{verbatim}
+PARSER_BEGIN(Par1)
+public class Par1 {
+  public static void main(String args[]) throws ParseException {
+    Par1 parser = new Par1(System.in);
+    parser.S();
+  }
+}
+PARSER_END(Par1)
+
+void S() : {} { P() ("\n" | "\r")* <EOF> }
+void P() : {} { "(" [P()] ")" }
+\end{verbatim}
+}
+
+\noindent Les caractéristiques générales d'une spécification sont ici
+illustrées:
+
+\begin{itemize}
+
+  \bitem La spécification débute par une section encadrée par
+  \texttt{PARSER\_BEGIN} et \texttt{PARSER\_END}, qui contient du code
+  source \Java, donc en particulier une classe publique de même nom
+  que le fichier (ici \texttt{Par1}).
+
+  \bitem Comme toujours en \Java, la classe publique doit définir une
+  méthode \texttt{main} standard, sauf qu'il faut déclarer qu'elle
+  peut lancer une exception \texttt{ParseException} (ce sera toujours
+  ce nom-là), en cas d'erreur de syntaxe dans le fichier analysé.
+
+  \bitem Le paramètre de \texttt{PARSER\_BEGIN} et
+  \texttt{PARSER\_END} doit être le nom de la classe publique.
+
+  \bitem Le point d'entrée de la grammaire est donné par l'appel
+  \texttt{parser.S()}. 
+
+\end{itemize}
+
+\noindent \textbf{Remarque} Nous avons écrit
+\verb+("\n" | "\r")* <EOF>+ au lieu de \verb+<EOF>+. Cela est rendu
+nécessaire par la façon dont est gérée la fin de ligne et la fin de
+fichier sous Unix, à la fois dans \textsf{stdin} et dans un fichier
+proprement dit.
+
+\noindent Quand on donne ce fichier \textsf{Par1.jj} à \JavaCC:
+
+{\small
+\begin{verbatim}
+$ javacc Par1.jj
+Java Compiler Compiler Version 3.2 (Parser Generator)
+(type "javacc" with no arguments for help)
+Reading from file Par1.jj . . .
+File "TokenMgrError.java" does not exist.  Will create one.
+File "ParseException.java" does not exist.  Will create one.
+File "Token.java" does not exist.  Will create one.
+File "SimpleCharStream.java" does not exist.  Will create one.
+Parser generated successfully.
+\end{verbatim}
+}
+
+\noindent
+On comprend que \JavaCC produit un fichier \textsf{Par1.java},
+ainsi que d'autres fichiers \Java auxiliaires. Il est maintenant
+possible de compiler ce fichier (et ceux produits en support):
+
+\noindent \verb+$ javac Par1.java+
+
+\noindent L'analyseur lexico-syntaxique est prêt à l'emploi maintenant:
+
+\noindent \verb+$ java Par1+
+
+\noindent On saisit alors une expression suivie de
+\textsf{\textsc{Enter}} (qui correspond à \str{\symbol{92}n}) et
+\textsf{\textsc{Ctrl-D}} (qui correspond à \texttt{<EOF>} pour
+\textsf{stdin}). S'il n'y a rien d'affiché, alors tout va bien: la
+syntaxe était correcte. Mais si on avait saisit par exemple \verb+(+,
+alors on aurait lu le message suivant:
+
+{\small
+\begin{verbatim}
+Exception in thread "main" TokenMgrError: Lexical error at line 1,
+column 1. Encountered: "(" (40), after : ""
+        at Par1TokenManager.getNextToken(Par1TokenManager.java:148)
+        at Par1.jj_consume_token(Par1.java:141)
+        at Par1.P(Par1.java:38)
+        at Par1.S(Par1.java:9)
+        at Par1.main(Par1.java:5)
+\end{verbatim}
+}
+
+\noindent Il est possible aussi de mettre les parenthèses dans un
+fichier, par exemple \textsf{a.txt}:
+
+\noindent \verb+$ java Par1 < a.txt+
+
+\subsection{Par2.jj}
+
+\noindent
+Voici une extension de l'exemple précédent, dans le fichier
+\textsf{Par2.jj}:
+
+{\small
+\begin{verbatim}
+PARSER_BEGIN(Par2)
+public class Par2 {
+  public static void main(String args[]) throws ParseException {
+    Par2 parser = new Par2(System.in);
+    parser.S();
+  }
+}
+PARSER_END(Par2)
+
+SKIP : { " " | "\t" | "\n" | "\r" }
+
+void S() : {} { P() <EOF> }
+void P() : {} { "(" [P()] ")" }
+\end{verbatim}
+}
+
+\noindent Il est maintenant possible d'appuyer sur
+\textsf{\textsc{Enter}} parmi les parenthèses. En effet, cette
+nouvelle spécification précise l'analyse lexicale par un bloc
+\texttt{SKIP}. Dans ce bloc il y a quatre expressions régulières:
+espace, tabulation, fin de ligne et retour à la ligne. Cela signifie
+que lorsque ces caractères sont reconnus, ils sont écartés de
+l'analyse syntaxique.
+
+\subsection{Par3.jj}
+
+\noindent
+Le fichier \textsf{Par3.jj} est la dernière amélioration de notre
+analyseur:
+
+{\small
+\begin{verbatim}
+PARSER_BEGIN(Par3)
+public class Par3 {
+  public static void main(String args[]) throws ParseException {
+    Par3 parser = new Par3(System.in);
+    int count = parser.S();
+    System.out.println("Nesting level is " + count);
+  }
+}
+PARSER_END(Par3)
+
+SKIP : {" " | "\t" | "\n" | "\r"}
+TOKEN : { <LPAR: "("> | <RPAR: ")"> }
+
+int S() :
+{int nesting;}
+{
+  nesting=P() <EOF> { return nesting; }
+}
+
+int P() :
+{int nesting=0;}
+{
+  <LPAR> [nesting=P()] <RPAR>  {return ++nesting;}
+}
+\end{verbatim}
+}
+
+\noindent Cet exemple illustre l'emploi d'un bloc lexical (comme l'est
+\texttt{SKIP}) pour spécifier des noms de lexèmes: il s'agit d'un bloc
+\texttt{TOKEN}. Dans notre cas, on l'utilise pour donner le nom
+\textsf{LPAR} (respectivement \textsf{RPAR}) à l'expression régulière
+\verb+"("+ (respectivement \verb+")"+). Ces noms peuvent alors être
+employés entre chevrons, en référence à leur expression
+régulière. Typiquement de telles spécifications de lexèmes sont
+utilisées pour des lexèmes complexes tels que des identificateurs et
+des constantes. Les lexèmes qui sont de simples chaînes étaient
+laissés tels quels dans l'exemple précédent. Pourquoi donc compliquer
+les choses? La raison est liée à la façon dont sont compilées les
+spécifications par \JavaCC: dans le cas général, le fait de partager
+la définition des lexèmes à l'aide de clauses \texttt{TOKEN} conduit à
+un code \Java plus efficace.
+
+Cet exemple illustre aussi l'usage d'\emph{actions} dans les
+productions grammaticales. Les actions sont un bloc contenant du code
+\Java, et sont insérées dans la partie droite des productions. Elle
+sont exécutées lorsque la partie de la production juste avant a été
+reconnue. Dans notre exemple, les actions comptent le niveau
+d'imbrication des parenthèses. Notez aussi l'usage du bloc de
+déclaration (auparavant vide) pour déclarer les variables
+\textsf{nesting}. Notez aussi comment le non-terminal \texttt{P}
+retourne sa valeur comme une méthode, c'est-à-dire à l'aide de
+l'instruction \Java \textsf{return} --- il y a donc un type de retour
+\textsf{int} pour chaque non-terminal.
+
+\subsection{Liste d'identificateurs}
+
+\noindent
+Voici à quoi ressemble la description d'une suite d'identificateurs.
+
+{\small
+\begin{verbatim}
+PARSER_BEGIN(IdList)
+public class IdList {
+  public static void main(String args[]) throws ParseException {
+    IdList parser = new IdList(System.in);
+    parser.Ids();
+  }
+}
+PARSER_END(IdList)
+
+SKIP : {" " | "\t" | "\n" | "\r"}
+TOKEN : { <ID: ["a"-"z"] (["_","a"-"z","A"-"Z","0"-"9"])*> }
+
+void Ids() : {} { (<ID>)+ <EOF> }
+\end{verbatim}
+}
+
+\section{Calculatrice}
+
+Nous souhaitons trouver une spécification \JavaCC qui reconnaisse ou
+rejette une expression arithmétique sans identificateurs. Comme
+toujours, il nous faut d'abord trouver une grammaire qui décrive le
+langage que nous voulons, puis s'assurer qu'elle possède les
+propriétés requises par \JavaCC. Considérons d'abord la grammaire
+qui décrit directement le langage d'expressions voulu:
+
+\[
+\begin{array}{llcrl}
+  (1) & \textrm{S} & \assign &      & \textrm{E} \ \eof\\
+  (2) & \textrm{E} & \assign &      & 
+    \textrm{E} \ \str{+} \ \textrm{E}\\
+  (3) &   &         & \mid & \textrm{E} \ \str{-} \ \textrm{E}\\
+  (4) &   &         & \mid & \textrm{E} \ \str{*} \ \textrm{E}\\
+  (5) &   &         & \mid & \textrm{E} \ \str{/} \ \textrm{E}\\
+  (6) &   &         & \mid & \str{(} \ \textrm{E} \ \str{)}\\
+  (7) &   &         & \mid & \textsf{int}
+\end{array}
+\]
+
+\noindent Il y a une raison majeure de rejeter cette grammaire pour
+l'implantation avec \JavaCC (et l'immense majorité des générateurs
+d'analyseurs syntaxiques): elle est \emph{ambiguë}. Une grammaire
+est dite ambiguë lorsqu'elle autorise la reconnaissance d'un même
+texte d'au moins deux façons différentes (en d'autres termes, il y a
+plus d'un arbre de syntaxe concrète pour le même mot des feuilles). Si
+on note $\expand{i}$ l'usage de la production $(i)$, alors on a par
+exemple deux façons d'interpréter le texte \texttt{7-5-2} avec cette
+grammaire:
+
+\[
+\begin{array}{rcl}
+  \textrm{E} & \expand{3} & \textrm{E} \ \str{-} \ \textrm{E}\\
+             & \expand{3} & 
+    (\textrm{E} \ \str{-} \ \textrm{E}) \ \str{-} \, \textrm{E}\\
+             & \expand{7} & 
+    (\textsf{int}\ \str{-} \ \textsf{int}) \ \str{-} \, \textsf{int}\\
+  \textrm{E} & \stackrel{*}{\Longrightarrow} & \str{7-5-2}
+\end{array}
+\]
+
+\noindent mais aussi:
+
+\[
+\begin{array}{rcl}
+  \textrm{E} & \expand{3} & \textrm{E} \ \str{-} \ \textrm{E}\\
+             & \expand{3} & 
+    \textrm{E} \ \str{-} \ (\textrm{E} \ \str{-} \, \textrm{E})\\
+             & \expand{7} & 
+    \textsf{int}\ \str{-} \ (\textsf{int} \ \str{-} \, \textsf{int})\\
+  \textrm{E} & \stackrel{*}{\Longrightarrow} & \str{7-5-2}
+\end{array}
+\]
+
+\noindent En l'absence de construction d'arbre de syntaxe abstraite,
+le premier cas aboutira à l'évaluation de l'expression $(7 - 5) - 2 =
+0$ et dans le second cas $7 - (5 - 2) = 4$. Malheureusement, \emph{le
+problème consistant à déterminer si une grammaire BNF donnée est
+ambiguë ou non est indécidable}. Pour chaque grammaire particulière,
+il faut donc s'assurer soi-même qu'elle n'est pas ambiguë, en général
+en prouvant qu'elle appartient à une classe restreinte de grammaires.
+
+Comme nous l'avons dit, il n'y a pas de solution générale au problème
+de trouver une grammaire équivalente\footnote{Par définition, deux
+grammaires sont équivalentes si les langages qu'elles engendrent sont
+les mêmes.} non-ambiguë\footnote{Il existe même des langages simples
+qui ne peuvent être engendrés que par des grammaires ambiguës.}. Dans
+le cas qui nous occupe ici, il est possible de trouver une grammaire
+de telle sorte que les opérateurs de plus faible priorité apparaissent
+uniquement en haut de l'arbre de syntaxe concrète et ceux de plus
+haute priorité en bas --- sauf si un opérateur apparaît entre
+parenthèses, car il n'y a alors pas d'ambiguïté. Par exemple
+
+\label{left_rec}
+
+\[
+\begin{array}{llcrl}
+  (1) & \textrm{S} & \assign &      & \textrm{E} \ \eof\\
+  (2) & \textrm{E} & \assign &      & \textrm{E} \ \str{+} \ \textrm{F}\\
+  (3) &   &         & \mid & \textrm{E} \ \str{-} \ \textrm{F}\\
+  (4) &   &         & \mid & \textrm{F}\\
+  (5) & \textrm{F} & \assign &      & \textrm{F} \ \str{*} \ \textrm{G}\\
+  (6) &   &         & \mid & \textrm{F} \ \str{/} \ \textrm{G}\\
+  (7) &   &         & \mid & \textrm{G}\\
+  (8) & \textrm{G} & \assign &      & \str{(} \ \textrm{E} \ \str{)}\\
+  (9) &   &         & \mid & \textsf{int}
+\end{array}
+\]
+
+\noindent n'est pas une grammaire ambiguë et elle engendre le même
+langage que la précédente. (Attention: il n'est pas possible de
+déduire une grammaire non-ambiguë équivalente à une grammaire ambiguë
+donnée seulement en jouant sur les opérateurs algébriques. Il faut en
+trouver une autre par l'intuition et prouver leur équivalence. Ce
+dernier problème étant indécidable, la preuve devra se faire au cas
+par cas.) Le problème est que si l'analyseur syntaxique est
+\emph{descendant}, c'est-à-dire qu'il applique les productions
+syntaxiques aux non-terminaux pour parvenir aux terminaux (lexèmes) à
+partir du terminal initial, alors la récursivité à gauche d'une
+production le fera boucler. Or notre nouvelle grammaire est récursive
+à gauche, donc \JavaCC, qui implante une analyse descendante, la
+refuserait (pour que le code produit ne boucle pas). Heureusement, il
+nous est ici possible de construire une grammaire équivalente qui ne
+soit pas récursive à gauche. En effet, elle est équivalente à
+
+\[
+\begin{array}{rcl}
+  \textrm{S} & \assign & \textrm{E} \ \eof\\
+  \textrm{E} & \assign & \textrm{E} \ ((\str{+} \mid
+  \str{-}) \, \textrm{F}) \; \mid \; \textrm{F}\\
+  \textrm{F} & \assign & \textrm{F} \ ((\str{*} \mid
+  \str{/}) \, \textrm{G}) \; \mid \; \textrm{G}\\
+  \textrm{G} & \assign & \str{(} \ \textrm{E} \ \str{)}
+  \; \mid \; \textsf{int}
+\end{array}
+\]
+
+\noindent et donc, en utilisant l'opérateur étoile, elle équivaut à
+
+\[
+\begin{array}{rcl}
+  \textrm{S} & \assign & \textrm{E} \ \eof\\
+  \textrm{E} & \assign & \textrm{F} \ ((\str{+} \mid
+  \str{-}) \, \textrm{F})^{*}\\
+  \textrm{F} & \assign & \textrm{G} \ ((\str{*} \mid
+  \str{/}) \, \textrm{G})^{*}\\
+  \textrm{G} & \assign & \str{(} \ \textrm{E} \ \str{)}
+  \; \mid \; \textsf{int}
+\end{array}
+\]
+
+\noindent Cette grammaire est acceptée par \JavaCC. La classe des
+grammaires acceptées par \JavaCC est celle des grammaires analysables
+de façon descendante sans rebroussement, c'est-à-dire que l'analyseur
+ne s'engage pas dans une production pour en essayer une autre si la
+première n'aboutit pas. C'est pour cela que d'autres propriétés
+que la non-récursivité à gauche doivent être vérifiées par les
+grammaires soumises à \JavaCC. La classe acceptée est nommée
+LL($k$). Le $k$ indique le nombre de lexèmes de prévision que
+s'autorise l'analyseur pour progresser. Par défaut, \JavaCC suppose
+que l'analyseur ne choisit une production à appliquer à chaque étape
+de la reconnaissance que sur la base de la connaissance du seul lexème
+courant --- pas les suivants. Parfois, augmenter la prévision permet
+d'accepter des grammaires plus compliquées, mais parfois non, car la
+grammaire peut ne pas être LL($k$) pour aucun $k$ (par exemple si elle
+est ambiguë). Ici, donc, notre grammaire est LL(1). La première étape
+consiste toujours à écrire une spécification \JavaCC sans actions,
+pour vérifier justement que la grammaire est LL(1). Ainsi nous avons:
+
+{\small
+\begin{verbatim}
+PARSER_BEGIN(Calc1)
+public class Calc1 {
+  public static void main(String args[]) throws ParseException {
+    Calc1 parser = new Calc1(System.in);
+    while (true) {
+      System.out.print("Entrez une expression: ");
+      System.out.flush();
+      try {
+        parser.S();
+      } catch (ParseException x) {
+          System.out.println("Exiting.");
+          throw x;
+        }
+    }
+  }
+}
+PARSER_END(Calc1)
+
+SKIP  : { " " | "\t" | "\r" }
+TOKEN : { <EOL: "\n"> }
+TOKEN : { <PLUS: "+"> | <MINUS: "-"> | <TIMES: "*"> | <SLASH: "/"> }
+TOKEN : { < INT: (<DIGIT>)+ > | <#DIGIT: ["0"-"9"]> }
+
+void S() : {} { E() <EOL> }
+void E() : {} { F() ((<PLUS> | <MINUS>) F())* }
+void F() : {} { G() ((<TIMES> | <SLASH>) G())* }
+void G() : {} { <INT> | "(" E() ")" }
+\end{verbatim}
+}
+
+\noindent On souhaite ici afficher un message invitant à la saisie
+d'une expression arithmétique (\textsf{Enter Expression:}), et aussi
+en cas d'erreur de syntaxe (\textsf{Exiting.}). On veut une boucle
+interactive (\textsf{while (true)}) pour saisir de façon répétée des
+expressions. S'il n'y a pas d'erreur de syntaxe, on invite l'usager à
+saisir une autre expression, sinon un message d'erreur est imprimé et
+le programme termine. Une des nouveautés ici est qu'on ne saute pas
+les fins de ligne (cf. bloc \texttt{SKIP}) et qu'on définit un lexème
+pour la fin de fichier (cf. \texttt{<EOF>}). La raison est que l'on
+s'attend à ce que l'expression soit saisie sur une seule ligne, donc
+il ne faut pas sauter ce caractère de contrôle (cf. la production
+\texttt{S}). On utilise aussi, dans un bloc \texttt{TOKEN} (définition
+de lexèmes), une nouvelle construction: \texttt{<\#DIGIT:
+  ["0"-"9"]>}. La présence du signe dièse indique qu'il ne s'agit pas
+d'un lexème proprement dit, mais d'une définition auxiliaire: ce
+pseudo-lexème sert en effet à définir le lexème
+\texttt{INT}. Autrement dit, \texttt{DIGIT} est le nom d'une
+expression régulière qui sert à définir d'autres expressions
+régulières, mais pas un lexème directement. Attention, la syntaxe
+(\verb+#+ et \verb+|+) est plutôt trompeuse ici. L'étape suivante est
+l'ajout de l'évaluation des expressions arithmétiques.
+
+Pour cela, il nous faut nous poser la question des paramètres des
+méthodes associées aux non-terminaux et de leur valeur de retour. Dans
+le premier cas on parle, en termes grammaticaux, d'\emph{attributs
+  hérités}, et dans le second on parle d'\emph{attributs
+  synthétisés}. Dans un premier temps nous n'avons indiqué aucun
+paramètre et aucune valeur de retour, comme on le voit sur l'extrait
+{\small \verb+void S()+}. Une première contrainte provient néanmoins
+des productions {\small \verb+E+} et {\small \verb+F+}. En effet, la
+façon de lier un attribut synthétisé est la syntaxe \Java
+habituelle. Par exemple, dans l'extrait de spécification {\small
+  \verb+void S() : {} { e=E() <EOL> }+}, la variable \verb+e+ désigne
+l'attribut synthétisé par le non-terminal E, ou, en termes
+équivalents, la valeur de retour de la méthode \verb+E+ à cet endroit
+précis. Or, si nous considérons la production E: {\small
+  \verb+void E() : {} { F() ((<PLUS> | <MINUS>) F())* }+}, nous
+constatons que nous ne pouvons lier (nommer) d'un coup toutes les
+occurrences de {\small \verb+F+}, pour en faire la somme, à cause de
+l'opérateur étoile (répétition éventuellement nulle). Une solution de
+contournement consiste alors à ne pas employer d'attributs, mais à
+employer une variable globale, précisément une pile, qui stocke les
+arguments des opérateurs arithmétiques. Lorsqu'une opération est
+complètement reconnue (c'est-à-dire l'opérateur et ses arguments),
+nous dépilons le nombre d'arguments nécessaire, nous effectuons
+l'opération correspondante en \Java et nous replaçons le résultat dans
+cette pile. À la fin de l'analyse syntaxique nous aurons alors
+directement le résultat de l'évaluation dans la pile globale.
+
+{\small
+\begin{verbatim}
+PARSER_BEGIN(Calc2)
+public class Calc2 {
+    static int total;
+    static java.util.Stack argStack = new java.util.Stack();
+
+    public static void main(String args[]) throws ParseException{
+      Calc2 parser = new Calc2(System.in);
+      while (true) {
+        System.out.print("Enter Expression: ");
+        System.out.flush();
+        try {
+          parser.S();
+          System.out.println("Result: " + argStack.pop());
+        } catch (ParseException x) {
+            System.out.println("Exiting.");
+            throw x;
+          }
+      }
+    }
+}
+PARSER_END(Calc2)
+
+SKIP  : { " " | "\t" | "\r" }
+TOKEN : { <EOL: "\n"> }
+TOKEN : { <PLUS: "+"> | <MINUS: "-"> | <TIMES: "*"> | <SLASH: "/"> }
+TOKEN : { < INT: (<DIGIT>)+ > | <#DIGIT: ["0"-"9"]> }
+
+void S() : {} { E() <EOL> }
+
+void E() :
+{Token x;}
+{
+ F() 
+ ((x=<PLUS> | x=<MINUS>) F()
+  {
+   int a = ((Integer) argStack.pop()).intValue();
+   int b = ((Integer) argStack.pop()).intValue();
+   if (x.kind == PLUS)
+     argStack.push(new Integer(b + a));
+   else
+     argStack.push(new Integer(b - a));
+  }
+ )*
+}
+
+void F() :
+{Token x;}
+{
+ G() 
+ ((x=<TIMES> | x=<SLASH>) G()
+  {
+   int a = ((Integer) argStack.pop()).intValue();
+   int b = ((Integer) argStack.pop()).intValue();
+   if (x.kind == TIMES)
+     argStack.push(new Integer(b * a));
+   else
+     argStack.push(new Integer(b / a));
+  }
+ )*
+}
+
+void G() :
+{}
+{
+ <INT>
+ {
+  try {
+    int x = Integer.parseInt(token.image);
+    argStack.push(new Integer(x));
+  } catch (NumberFormatException ee) {
+      argStack.push(new Integer(0));
+    }
+ }
+| "(" E() ")"
+}
+\end{verbatim}
+}
+
+\noindent Le calcul repose sur une pile d'opérandes. Celle-ci, nommée
+\texttt{\small argStack}, est vide initialement. À chaque fois qu'un
+entier est reconnu, il est empilé. Dès qu'un opérateur est reconnu,
+les arguments (un ou deux, en fonction de l'arité de l'opérateur) sont
+dépilés et l'opération arithmétique \Java correspondante est effectuée
+et le résultat est à nouveau empilé. Si la syntaxe de l'expression est
+correcte, la pile contiendra alors à la fin la valeur de
+l'expression. Notons encore que la valeur d'un lexème est obtenue par
+\texttt{\small x=<PLUS>}, où \texttt{x} est de type \texttt{\small
+Token} (produit par \JavaCC à partir des blocs lexicaux \texttt{\small
+TOKEN}). La classe \texttt{\small Token} possède un champ
+\texttt{\small kind} pour lire le type de lexème dont il est question,
+par exemple: \texttt{\small x.kind == TIMES}. Cette classe possède
+aussi un champ \texttt{\small image} qui permet d'obtenir la chaîne de
+caractères reconnue pour le lexème en question, par exemple:
+\texttt{\small int x = Integer.parseInt(token.image)}.
+
+Quels sont les inconvénients de cette approche? Le principal problème
+provient, comme souvent en programation, des variables globales.
+En effet, \texttt{\small argStack} pouvant être modifiée par tout le
+programme, les risques d'erreurs sont fortement augmentés (en
+général). Malheureusement, la forme de la grammaire EBNF choisie pour la
+spécification \JavaCC implique l'usage d'une variable globale, il faut
+donc trouver une autre grammaire équivalente. Par exemple une variante
+récursive à droite de la grammaire initiale:
+
+\[
+\begin{array}{lcrl}
+  \textrm{S} & \assign &      & \textrm{E} \ \eof\\
+  \textrm{E} & \assign &      & \textrm{F} \ \str{+} \ \textrm{E}\\
+             &         & \mid & \textrm{F} \ \str{-} \ \textrm{E}\\
+             &         & \mid & \textrm{F}\\
+  \textrm{F} & \assign &      & \textrm{G} \ \str{*} \ \textrm{F}\\
+             &         & \mid & \textrm{G} \ \str{/} \ \textrm{F}\\
+             &         & \mid & \textrm{G}\\
+  \textrm{G} & \assign &      & \str{(} \ \textrm{E} \ \str{)}\\
+             &         & \mid & \textsf{int}
+\end{array}
+\]
+
+\noindent Tout d'abord, le fait qu'elle soit récursive à droite
+convient bien à l'analyse descendante implantée par \JavaCC. Prouvons
+alors son équivalence avec la grammaire récursive à gauche présentée
+page~\pageref{left_rec}. Puisque nous avons établi que cette dernière
+était équivalente à
+
+\[
+\begin{array}{rcl}
+  \textrm{S} & \assign & \textrm{E} \ \eof\\
+  \textrm{E} & \assign & \textrm{F} \ ((\str{+} \mid
+  \str{-}) \, \textrm{F})^{*}\\
+  \textrm{F} & \assign & \textrm{G} \ ((\str{*} \mid
+  \str{/}) \, \textrm{G})^{*}\\
+  \textrm{G} & \assign & \str{(} \ \textrm{E} \ \str{)}
+  \; \mid \; \textsf{int}
+\end{array}
+\]
+
+\noindent nous allons prouver que la nouvelle grammaire récursive à
+gauche est équivalente à cette grammaire-là. Considérons la production
+E, pour simplifier. Nous avons les sous-grammaires équivalentes:
+
+\[
+\begin{array}{rcl}
+  \textrm{E}  & \assign & \textrm{F} (\str{+} \mid \str{-}) \,
+                         \textrm{E} \; \mid \textrm{F}\\
+  \hline
+  \textrm{E}  & \assign & \textrm{F} [(\str{+} \mid \str{-}) \,
+                         \textrm{E}]\\
+  \hline
+  \textrm{E}  & \assign & \textrm{F} \, \textrm{E'}\\
+  \textrm{E'} & \assign & (\str{+} \mid \str{-}) \, \textrm{E} \; \mid
+                         \; \varepsilon\\
+  \hline
+  \textrm{E}  & \assign & \textrm{F} \, \textrm{E'}\\
+  \textrm{E'} & \assign & (\str{+} \mid \str{-}) \, \textrm{F} \,
+                         \textrm{E'} \; \mid \; \varepsilon\\
+  \hline
+  \textrm{E}  & \assign & \textrm{F} \, \textrm{E'}\\
+  \textrm{E'} & \assign & ((\str{+} \mid \str{-}) \, \textrm{F})^{*}\\
+  \hline
+  \textrm{E}  & \assign & \textrm{F} \, ((\str{+} \mid \str{-}) \, \textrm{F})^{*}
+\end{array}
+\]
+
+\noindent ce qui était à démontrer. Il suffit de faire de même avec F
+pour terminer le travail. Nous pouvons donc repartir avec notre
+grammaire récursive à droite, écrite sous une forme compacte:
+
+\[
+\begin{array}{rcl}
+  \textrm{S} & \assign & \textrm{E} \ \eof\\
+  \textrm{E} & \assign & \textrm{F} \ [(\str{+} \mid \str{-}) \, \textrm{E}]\\
+  \textrm{F} & \assign & \textrm{G} \ [(\str{*} \mid  \str{/}) \, \textrm{F}]\\
+  \textrm{G} & \assign & \str{(} \ \textrm{E} \ \str{)} \; \mid \; \textsf{int}
+\end{array}
+\]
+
+\noindent Puisque nous ne souhaitons pas ici construire d'arbre de
+syntaxe abstraite, nous devons appuyer la sémantique sur les arbres de
+syntaxe concrète. Or, puisque notre grammaire est récursive à droite,
+la soustraction sera de fait parenthésée à droite:
+\begin{center}
+\begin{minipage}{.3\linewidth}
+\pstree[nodesep=2pt,levelsep=20pt]{\TR{E}}{
+  \pstree{\TR{F}}{
+    \pstree{\TR{G}}{
+      \TR{\texttt{7}}
+    }
+  }
+  \TR{\texttt{-}}
+  \pstree{\TR{E}}{
+    \pstree{\TR{F}}{
+      \pstree{\TR{G}}{
+        \TR{\texttt{5}}
+      }
+    }
+    \TR{\texttt{-}}
+    \pstree{\TR{F}}{
+      \pstree{\TR{G}}{
+        \TR{\texttt{2}}
+      }
+    }
+  }
+}
+\end{minipage}
+au lieu de
+\hspace*{10pt}
+\begin{minipage}{.3\linewidth}
+\pstree[nodesep=2pt,levelsep=20pt]{\TR{E}}{
+  \pstree{\TR{E}}{
+    \pstree{\TR{F}}{
+      \pstree{\TR{G}}{
+        \TR{\texttt{7}}
+      }
+    }
+    \TR{\texttt{-}}
+    \pstree{\TR{F}}{
+      \pstree{\TR{G}}{
+        \TR{\texttt{5}}
+      }
+    }
+  }
+  \TR{\texttt{-}}
+  \pstree{\TR{F}}{
+    \pstree{\TR{G}}{
+      \TR{\texttt{2}}
+    }
+  }
+}
+\end{minipage}
+\end{center}
+
+\noindent avec la grammaire récursive à gauche. Si la sémantique se
+base uniquement sur des attributs synthétisés (c'est-à-dire pas de
+paramètres pour les méthodes associées aux non-terminaux, seulement
+une valeur de retour), alors la soustraction devient associative à
+droite, ce qui est contraire aux conventions mathématiques. Comment
+donc implanter la sémantique en \JavaCC avec cette grammaire récursive
+à droite?
+
+\end{document}

@@ -1,0 +1,12 @@
+\paragraph{Answer.}
+
+The trap here is the empty tree. The sum of the nodes of an empty tree
+ought to be undefined. But, when following recursively the
+branches of tree, if we encounter the empty tree, then it can be an
+acceptable situation, since it means that the parent is actually a
+leaf of the original tree. One way to handle the empty tree in these
+two different contexts consists in writing no clause for the empty
+tree and use an auxiliary function, \emph{which is not exported} and
+which handles the empty tree in the recursion. Another technique
+consists in never accepting the empty tree and stop at the leaves.
+\smallErlangIn{sum}

@@ -1,0 +1,387 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Prérequis et sources}
+
+Ce cours suppose que vous ayez compris les cours
+\begin{itemize}
+
+  \item algorithmique et programmation,
+
+  \item programmation fonctionnelle en Objective Caml.
+
+\end{itemize}
+Ce cours s'inspire de ceux de 
+\begin{itemize}
+
+  \item Martin Odersky (École Polytechnique Fédérale de
+  Lausanne),
+
+  \item Luc Maranget, Didier Rémy (INRIA, École Polytechnique),
+
+  \item François Pottier, Xavier Leroy et Michel Mauny (INRIA).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Pourquoi étudier les compilateurs?}
+
+Très peu de professionnels écrivent des compilateurs.
+
+\bigskip
+
+Alors pourquoi apprendre à construire des compilateurs?
+\begin{itemize}
+
+  \item Un bon informaticien comprend les langages de haut
+    niveau ainsi que le matériel.
+
+  \item Un compilateur relie ces deux aspects.
+
+  \item C'est pourquoi comprendre les techniques de
+    compilation c'est comprendre l'interaction entre les langages de
+    programmation et les ordinateurs.
+
+  \item Beaucoup d'applications contiennent de petits
+    langages pour leur configuration ou rendre souple leur contrôle
+    (macros Word, scripts pour le graphisme et l'animation, les
+    descriptions des structures de données etc.)
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Pourquoi étudier les compilateurs? (suite)}
+
+\begin{itemize}
+
+  \item Les techniques de compilation sont nécessaires pour
+    l'implantation de tels langages.
+
+  \item Les formats de données sont aussi des langages
+    formels (langages de spécification de données), tels que HTML,
+    XML, ASN.1 etc.
+
+  \item Les techniques de compilation sont nécessaires pour
+    lire, traiter et écrire des données, mais aussi pour migrer des
+    applications (réingénierie).
+
+  \item À part cela, les compilateurs sont d'excellents
+    exemples de grands systèmes complexes
+
+    \begin{itemize}
+
+      \item qui peuvent être spécifiés rigoureusement,
+
+      \item qui ne peuvent être réalisés qu'en combinant
+        théorie et pratique.
+
+    \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Le rôle d'un compilateur}
+
+\begin{itemize}
+
+  \item Le rôle d'un compilateur est de traduire des textes
+    d'un langage \emph{source} en un langage \emph{cible}.
+
+  \item Souvent le langage source est plus abstrait
+    (p.ex. langage de programmation) que le langage cible
+    (p.ex. assembleur).
+
+  \item Néanmoins, on nomme parfois les compilateurs des
+    \emph{traducteurs} lorsqu'ils traduisent des programmes entre
+    langages de même niveau d'abstraction.
+
+  \item Une partie du travail d'un compilateur est de
+    vérifier la validité du programme source.
+
+  \item La spécification d'un compilateur est constituée par
+
+    \begin{itemize}
+
+      \item une spécification des langages source et cible,
+
+      \item une spécification de la traduction des
+        programmes de l'un vers l'autre.
+
+    \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Langages}
+
+\begin{itemize}
+
+  \item Formellement, un langage est un ensemble de
+    \emph{phrases}. Une phrase est une suite de \emph{mots}. Un mot
+    est une suite de \emph{caractères} appartenant à un
+    \emph{alphabet} (ensemble de symboles fini non vide).
+
+  \item Chaque phrase possède une structure qui peut être
+    décrite par un arbre.
+
+  \item Les règles de construction d'une phrase s'expriment
+    à l'aide d'une \emph{grammaire}.
+
+\end{itemize}
+Ainsi,
+\begin{itemize}
+
+  \item les phrases d'un langage de programmation sont des
+    programmes;
+
+  \item les mots d'un programmes sont appelés
+  \emph{lexèmes};
+
+  \item les lexèmes suivent aussi des règles qui peuvent
+    être données par une grammaire.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Structure simplifiée d'un compilateur}
+
+\begin{enumerate}
+
+  \item Analyse lexicale: texte source $\mapsto$ suite de
+    lexèmes;
+
+  \item Analyse syntaxique: suite de lexèmes $\mapsto$
+    arbre de syntaxe abstraite;
+
+  \item Analyses sémantiques sur l'arbre de syntaxe
+  abstraite:
+
+    \begin{enumerate}
+
+       \item Vérification de la portée des identificateurs
+         (gestion des environnements);
+
+       \item Vérification ou inférence des types
+         (optionel): arbre $\mapsto$ arbre décoré.
+
+    \end{enumerate}
+
+  \item Production de code intermédiaire: arbre [décoré?]
+    $\mapsto$ code intermédiaire;
+
+  \item Optimisations intrinsèques du code intermédiaire;
+
+  \item Production de code cible (objet), p.ex. assembleur;
+
+  \item Optimisations du code cible (dépendantes de la
+  machine cible);
+
+  \item Édition de liens (statique): code cible +
+    bibliothèques $\mapsto$ code exécutable.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Remarques}
+
+\begin{itemize}
+
+  \item L'analyseur lexical (\emph{lexer}) reconnaît les
+  espaces, les caractères de contrôle et les commentaires mais n'en
+  fait pas des lexèmes (\emph{tokens}).
+
+  \item L'arbre de syntaxe abstraite est appelé
+  \emph{Abstract Syntax Tree} (AST).
+
+  \item Les trois premières étapes constituent la
+  \emph{phase d'analyse}. Les restantes constituent la \emph{phase de
+  synthèse} (de code). On parle aussi de \emph{phase frontale} pour
+  les étapes jusqu'à la production de code intermédiaire incluse, et
+  de \emph{phase finale} pour les suivantes.
+
+  \item L'association d'un type aux constructions du
+  langage s'appelle le \emph{typage}. Il garanti que les programmes ne
+  provoqueront pas d'erreurs à l'exécution pour cause d'incohérence
+  sur leurs données (néanmoins, une division par zéro restera
+  possible). Selon la finesse du typage, plus ou moins de programmes
+  valides sont rejetés.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Interprétation}
+
+Un \emph{interprète} transforme un fichier source en une donnée,
+par exemple un arbre de syntaxe abstraite ou du code intermédiaire,
+que l'on passe ensuite à un programme, dit \emph{machine virtuelle},
+qui l'exécutera en mimant (donc abstraitement) une machine réelle
+(physique).
+
+\bigskip
+
+\remarques
+
+\begin{itemize}
+
+  \item Non à l'horrible anglicisme «~interpréteur~»!
+
+  \item Le code intermédiaire est parfois appelé \emph{byte-code}.
+
+  \item L'arbre de syntaxe abstraite n'est pas toujours
+  construit, ou pas complètement, selon les langages ou les stratégies
+  d'implantation.
+
+  \item Un interprète contient donc les premières phases
+  d'un compilateur.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Lexique et syntaxe}
+
+\begin{itemize}
+
+  \item L'ensemble des lexèmes d'un langage est appelé
+  \emph{lexique}.
+
+  \item La \emph{syntaxe concrète} décrit comment assembler les
+  lexèmes en phrases pour constituer des programmes. En particulier,
+
+    \begin{itemize}
+
+      \item elle ne donne pas de sens aux phrases;
+
+      \item plusieurs notations sont possibles pour signifier la même
+      chose, p.ex. en OCaml: \mbox{\small \textsf{'a'}} et
+      \mbox{\small \textsf{'\symbol{92}{}097'}}, ou {\small
+      \lpar{} \ldots \rpar} et {\small \Xbegin \ldots{} \Xend}.
+
+      \item ce qu'elle décrit est \textbf{linéaire} (le code source est du
+      texte) et utilise généralement des parenthèses.
+
+    \end{itemize}
+
+  \item La \emph{syntaxe abstraite} décrit des \textbf{arbres} qui
+  capturent la structure des programmes (p.ex. les imbrications
+  correspondent à des sous-arbres).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Étude d'une calculette}
+
+\begin{itemize}
+
+  \item \textbf{Syntaxe concrète} (dans le style
+    \emph{Backus-Naur Form} (BNF))
+     {\small
+   \begin{verbatim}
+Expression ::= integer
+             | Expression BinOp Expression
+             | "(" Expression ")"
+BinOp ::= "+" | "-" | "*" | "/"
+    \end{verbatim}
+    }%
+    Pour l'analyse syntaxique, les priorités des opérateurs est celle
+    habituelle.
+
+  \item \textbf{Syntaxe abstraite} (en OCaml)
+    {\small
+     \begin{tabbing}
+     \Xtype \type{expr} \= \equal \= \cst{Const} \Xof
+     \type{int}\\
+     \> \vbar \> \cst{BinOp} \Xof \type{bin\_op} \texttt{*}
+     \type{expr} \texttt{*} \type{expr}\\
+     \Xand \type{bin\_op} \equal \cst{Add} \vbar \cst{Sub}
+     \vbar \cst{Mult} \vbar \cst{Div}\semi{}
+     \end{tabbing}
+    }
+\end{itemize}
+
+\remarque \quad On utilisera parfois la police des arbres de syntaxe
+abstraite pour le code source. Par exemple
+\lpar\num{1}\texttt{+}\num{7}\rpar\texttt{*}\num{9} (polices mêlées)
+au lieu de \texttt{(1+7)*9}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Un exemple d'expression arithmétique}
+
+\label{exemple_expr_arith}
+
+\begin{itemize}
+
+  \item Il faudrait définir l'ensemble de lexèmes
+  dénoté par \texttt{integer} dans la grammaire.
+
+  \item L'analyse lexico-syntaxique transforme l'extrait
+    \texttt{\small "(1+2)*(5/1)"} en syntaxe concrète ou
+    \texttt{\small "(1 +2)*(5 / 1)"} en le \emph{terme} (c.-à-d. la
+    valeur OCaml)
+    \begin{center}
+      \textsf{\small BinOp (Mult, BinOp (Add, Const 1, Const 2), BinOp
+      (Div, Const 5, Const 1))}
+    \end{center}
+    qui est le parcours préfixe gauche de l'arbre de syntaxe abstraite
+    {\small
+    \begin{center}
+      \pstree[nodesep=2pt,levelsep=20pt]{\TR{\cst{BinOp}}}{
+        \TR{\cst{Mult}}
+        \pstree{\TR{\cst{BinOp}}}{
+          \TR{\cst{Add}}
+          \pstree{\TR{\cst{Const}}}{\TR{\num{1}}}
+          \pstree{\TR{\cst{Const}}}{\TR{\num{2}}}
+      }
+        \pstree{\TR{\cst{BinOp}}}{
+          \TR{\cst{Div}}
+          \pstree{\TR{\cst{Const}}}{\TR{\num{5}}}
+          \pstree{\TR{\cst{Const}}}{\TR{\num{1}}}
+          }
+      }
+    \end{center}
+    }
+
+\end{itemize}
+
+\end{frame}

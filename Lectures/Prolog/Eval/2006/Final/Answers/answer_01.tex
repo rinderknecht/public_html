@@ -1,0 +1,43 @@
+\noindent \textbf{Answer.} Consider the all the possible cases:
+\begin{itemize}
+ 
+  \item If the new rule is first (i.e. number 1), then the relation is
+    not what we want since, for instance
+{\small
+\begin{verbatim}
+?- delete(a,[a],[a]).
+Yes
+\end{verbatim}
+}
+\noindent instead of \texttt{No}.
+
+  \item If the new rule is second (i.e. number 3), then the relation
+    is broken too since, for example
+{\small
+\begin{verbatim}
+?- delete(a,[b,a],[b,a]).
+Yes
+\end{verbatim}
+}
+\noindent instead of \texttt{No}.
+
+  \item If the new rule is last (i.e. number 5), then the relation is
+    correct. Rule 2 handles the case when \texttt{X} is found on the
+    top of \texttt{S}; rule 4 handles the case when \texttt{X} is not
+    found on the top of \texttt{S} \emph{but} is below (i.e. in
+    \texttt{A}). Therefore, the new rule in last position will handle
+    the case where \texttt{S}, perhaps empty, does not contain
+    \texttt{X}. Since the heads of rules 2 and 4 match a non empty
+    \texttt{S}, \texttt{X} must only match \verb|[]| in the new rule
+    5, which can then be further simplified as 
+{\small
+\begin{verbatim}
+delete(_,[],[]).                            % Rule 5
+\end{verbatim}
+}
+\noindent Then this rule can be moved at any position, since rules 2
+and 4 do not match an empty \texttt{S}. For example:
+%%\PrologIn{delete_bis}
+{\small\verbatiminput{delete_bis.pl}}
+
+\end{itemize}

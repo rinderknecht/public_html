@@ -1,0 +1,32 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{xspace}
+\usepackage{times,mathptmx}
+\usepackage{vaucanson-g}
+\usepackage{pst-eps}
+
+%\ShowGrid
+ 
+%\input{token}
+%\input{grammar}
+
+\begin{document}
+
+\TeXtoEPS
+\VCDraw{%
+\begin{VCPicture}{(0,0)(4,0)}
+% States
+\State[1]{(0,0)}{A}
+\FinalState[2]{(4,0)}{B}
+% Initial and final states
+\Initial{A}
+% Edges
+\EdgeL{A}{B}{\small \texttt{[ \textbackslash{}n\textbackslash{}t]}}
+\LoopE[0.5]{B}{\small \texttt{[ \textbackslash{}n\textbackslash{}t]}}
+\end{VCPicture}
+}
+\endTeXtoEPS
+
+\end{document}

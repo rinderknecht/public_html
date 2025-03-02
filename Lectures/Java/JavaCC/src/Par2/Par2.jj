@@ -1,0 +1,13 @@
+PARSER_BEGIN(Par2)
+public class Par2 {
+  public static void main(String args[]) throws ParseException {
+    Par2 parser = new Par2(System.in);
+    parser.S();
+  }
+}
+PARSER_END(Par2)
+
+SKIP : { " " | "\t" | "\n" | "\r" }
+
+void S() : {} { P() <EOF> }
+void P() : {} { "(" [P()] ")" }

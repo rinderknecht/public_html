@@ -1,0 +1,97 @@
+%%-*-latex-*-
+
+\documentclass[12pt,a4paper]{article}
+
+\input{trace}
+
+\title{Final examination on Introduction to the Internet}
+\author{Christian Rinderknecht}
+\date{\today}
+
+\usepackage{nath}
+
+\begin{document}
+
+\maketitle
+
+\section{Problems}
+
+\begin{enumerate}
+
+  \item Consider the queuing delay in a router buffer. Suppose all the
+    packets are \(L\) bits long, the transmission rate is \(R\)
+    bit/sec and that \(N\) packets arrive simultaneously at the buffer
+    every \(\frac{LN}{R}\) seconds.
+
+    Find the \textbf{average} queuing delay of a packet.
+
+    (\emph{Hint}: The queuing delay for the first packet is 0; for the
+    second packet it is \(\frac{L}{R}\); for the third packet it is
+    \(2{\frac{L}{R}}\) etc. The last packet (number \(N\)) has already
+    been transmitted when the second batch (i.e. group) of packets
+    arrives.)
+
+  \item Consider the queuing delay in a router buffer. Let \(I\)
+    denote the traffic intensity, that is: \(I =
+    \frac{La}{R}\). Suppose that the queuing delay takes the form
+    \(\frac{IL}{R(1-I)}\) for \(I < 1\).
+    \begin{enumerate}
+
+      \item Provide a formula for the total delay, that is, the
+        queuing delay plus the transmission delay.
+
+      \item Express the total delay as a function of \(\frac{L}{R}\).    
+
+    \end{enumerate}
+
+  \item We consider sending voice from host A to host B over a
+    packet-switched network (for example, Internet phone). Host A
+    converts analog voice to a digital \textbf{64~Kbps} bit stream on
+    the fly. Host A then groups the bits into a \textbf{48-byte}
+    packets. There is one link between host A and B; its transmission
+    rate is \textbf{1~Mbps} and its propagation delay is
+    \textbf{2~msec}. 
+
+    As soon as host A gathers a packet, it sends it to host B. As soon
+    as host B receives an \emph{entire} packet, it converts the
+    packet's bits into an analog signal.
+
+    How much time elapses from the time a bit is created (from the
+    original analog signal at host A) until the bit is decoded (as
+    part of the analog signal at host B)?
+
+\end{enumerate}
+
+
+\section{Review questions}
+
+\begin{enumerate}
+
+  \item For a communication session between two hosts, which host is
+    the client and which is the server?
+
+  \item List at least two user agents you personally use.
+
+  \item Why do \textsc{http}, \textsc{ftp}, \textsc{smtp},
+    \textsc{pop3} and \textsc{imap} run on top of \textsc{tcp} rather
+    than \textsc{udp}?
+
+  \item Consider an e-commerce site that wants to keep a purchase
+    record for each of its customers. 
+  \begin{enumerate}
+
+    \item Describe (briefly) how this can be done with \textsc{http}
+      authentication. 
+
+    \item Describe (briefly) how this can be done with cookies.
+
+  \end{enumerate}
+
+  \item Is it possible that an organisation's web server and mail
+    server have exactly the same alias for a hostname? What would be
+    the type for the RR that contains the hostname of the mail server?
+
+\end{enumerate}
+
+
+\end{document}

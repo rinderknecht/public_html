@@ -1,0 +1,15 @@
+\paragraph{Question.} Given a predicate \texttt{edge/2} encoding
+a general tree containing information at all of its nodes, write a
+predicate \texttt{depth\_first/2} such that
+\texttt{depth\_first(Tree,Nodes)} is provable if and only if
+\texttt{Nodes} is the list of all the nodes of the tree \texttt{Tree}
+in depth-first order (in general, several are possible). For example,
+given
+\begin{verbatim}
+edge(1,3).
+edge(2,4).
+edge(1,2).
+edge(2,5).
+edge(1,6).
+\end{verbatim}
+then \texttt{Nodes = [1,3,2,4,5,6]}.

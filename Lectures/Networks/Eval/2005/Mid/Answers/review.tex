@@ -1,0 +1,115 @@
+\section{Review questions}
+
+\begin{enumerate}
+
+  \item \emph{What advantage does a circuit-switched network have over
+    a packet-switched network? What advantage does TDM have over FDM
+    in a circuit-switched network?}
+
+  A circuit-switched network can guarantee a certain amount of
+  end-to-end bandwidth for the duration of the call. Most
+  packet-switched networks today (including the internet) cannot make
+  any end-to-end guarantees for bandwidth. In a circuit-switched
+  network using TDM, an application can use the full bandwidth at
+  periodical moments.
+
+  \item \emph{Why is it that packet switching is said to employ
+    statistical multiplexing? Contrast statistical multiplexing with
+    the multiplexing that takes place in TDM.}
+
+  In a packet-switched network, the packets from different sources
+  flowing into a link do not follow any fixed pattern, or route. This
+  is why packet switching is said to employ statistical
+  multiplexing. In case of TDM circuit switching, each host gets the
+  same slot in a revolving TDM frame: this is completely predictable.
+
+  \item \emph{What is meant by connection state information in a
+    virtual circuit network?}
+
+  In a virtual circuit network, each packet switch keeps in memory
+  some information (like a table translating interface numbers to
+  virtual circuit numbers) about the virtual circuits passing through
+  them.
+
+  \item \emph{Suppose you are developing a standard for a new type of
+    network. You need to decide whether your network will use VCs or
+    datagram routing. What are the pros and cons for using VCs?}
+
+   The cons of VC's include
+   \begin{itemize}
+
+     \item the need to have a signaling protocol to set up and
+       teardown the VCs;
+  
+     \item the need to maintain connection state in the packet
+       switches.
+
+   \end{itemize}
+   The main advantage of VC networks is that they allow to guarantee
+   an end-to-end delay.
+
+  \item \emph{What are the advantages of message segmentation in
+    packet-switched networks? What are the disadvantages?}
+
+  One advantage of message segmentation is that it allows for
+  pipelined transmission over a series of links. Another advantage is
+  that, without it, small messages would be stuck behind much bigger
+  ones in routers.
+
+  \item \emph{What is the key distinguishing difference between a
+    tier-1 ISP (backbone) and a tier-2 ISP?}
+
+  A tier-1 ISP connects to all other tier-1 ISPs; a tier-2 ISP
+  connects to only a few tier-1 ISPs. Also, a tier-2 ISP is a customer
+  of one or more tier-1 ISPs.
+
+  \item \emph{Is HFC bandwidth dedicated or shared among users? Are
+    collisions possible in a downstream HFC channel?}
+
+  HFC bandwidth is shared among the users. On the downstream channel
+  all the packets emanate from a single source, called the head end,
+  so there are no collisions on this channel.
+
+  \item \emph{Consider sending a series of packets from a sending host
+    to a receiving host over a fixed route. List the delay components
+    in the end-to-end delay for a single packet. Which of these delays
+    are constant and which are variable?}
+
+  The delay components are nodal processing delays, transmission
+  delays, propagation delays and queuing delays. Over a fixed route,
+  all these delays are fixed, except the queuing delay, which is
+  unpredictable.
+
+  \item \emph{List five tasks that a protocol layer can perform. Is it
+    possible that one (or more) of these tasks could be performed by
+    two (or more) layers?}
+   
+  Five generic tasks are error control, flow control, segmentation and
+  reassembly, multiplexing and connections set-up. These tasks can be
+  duplicated at different levels. For example, error control is often
+  provided at more than one layer.
+  
+  \item \emph{What are the five layers in the Internet protocol stack?
+    What are the principal responsibilities of each of these layers?}
+
+  The five layers of the Internet are, from top to bottom -- the
+  application layer, the transport layer, the network layer, the link
+  layer and the physical layer.
+
+  \item \emph{What information is used by a process running on one
+    host to identify a process running on another host?}
+
+  The IP address of the destination host and the port number of the
+  destination socket.
+
+  \item \emph{What is the difference between persistent \textsc{http}
+    with pipelining and persistent \textsc{http} without pipelining?}
+
+  In persistent \textsc{http} without pipelining, the browser first
+  waits to receive a \textsc{http} response from the server before
+  issuing a new request. In persistent \textsc{http} with pipelining,
+  the browser issues requests as soon as it has the need to do so,
+  without waiting for response messages from the server.
+
+\end{enumerate}
+

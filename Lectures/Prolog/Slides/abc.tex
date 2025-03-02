@@ -1,0 +1,18 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-tree,pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=7mm,nodesep=2pt]{\TR{\(\cdot\)}}{
+  \TR{\texttt{a}}
+  \TR{\texttt{b}}
+  \TR{\texttt{c}}
+}
+\endTeXtoEPS
+
+\end{document}
+

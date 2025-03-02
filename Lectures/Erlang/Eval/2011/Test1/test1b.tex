@@ -1,0 +1,40 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amssymb}
+
+\title{Test 1b of \textsf{Erlang}}
+\author{Christian Rinderknecht}
+\date{7 October 2011}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\begin{enumerate}
+
+  \item Write a function \fun{uniq/1} such that, if \[\fun{uniq}(P)
+    \xrightarrow{+} Q,\] then \(Q\)~is the list of unique items of
+    list \(P\), in the same original order. For example,
+    \[\fun{uniq}([\fun{a},\fun{b},\fun{b},\fun{c},\fun{d},\fun{c}])
+    \xrightarrow{+} [\fun{a},\fun{d}].\] If all items in \(P\) are
+    unique or \(P\) is empty, then \(Q\) is~\(P\).
+
+  \item Write a function \fun{dup/1} such that, if \[\fun{dup}(P)
+    \xrightarrow{+} Q,\] then \(Q\)~is the list of duplicated items of
+    list \(P\), in the same original order. For example,
+    \[\fun{dup}([\fun{a},\fun{b},\fun{b},\fun{c},\fun{d},\fun{c}])
+    \xrightarrow{+} [\fun{b},\fun{c}].\] If all items in \(P\) are
+    unique or \(P\) is empty, then \(Q\) is~\([\,]\).
+
+\end{enumerate}
+
+\end{document}

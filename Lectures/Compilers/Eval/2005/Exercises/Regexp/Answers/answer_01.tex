@@ -1,0 +1,55 @@
+\paragraph{Answer 1.} The token may be different for different
+languages. Even if we do not know exactly their names for the C
+language, we still can find meaningful names based on what they
+denote. Also we may decide or not to make a token for each
+keyword. This is a creative work!  Therefore several solutions may be
+acceptable as long as they enable a meaningful
+implementation. However, it is usual to call the identifiers
+``identifiers''. One answer to the question is therefore
+
+\begin{multicols}{2}
+\begin{center}
+\begin{tabular}{l|>{\tt}l}
+\hline\hline
+  \multicolumn{1}{c|}{\textsc{Token}}
+& \multicolumn{1}{c}{\textsc{Lexeme}}\\
+\hline
+  keyword & int\\
+  identifier & max\\
+  symbol & (\\
+  keyword & int\\
+  identifier & i\\
+  symbol & ,\\
+  keyword & int\\
+  identifier & j\\
+  symbol & )\\
+  symbol & \{\\
+  \hline
+\end{tabular}
+\end{center}
+\par \vfill\columnbreak
+\begin{center}
+\begin{tabular}{l|>{\tt}l}
+\hline\hline
+  \multicolumn{1}{c|}{\textsc{Token}}
+& \multicolumn{1}{c}{\textsc{Lexeme}}\\
+\hline
+  keyword & return\\
+  identifier & i\\
+  relation & >\\
+  identifier & j\\
+  symbol & ?\\
+  identifier & i\\
+  symbol & :\\
+  identifier & j\\
+  terminator & ;\\
+  symbol & \}\\
+  \hline
+\end{tabular}
+\end{center}
+\end{multicols}
+
+Note that the comments are recognised by the lexer and then discarded,
+i.e., they are not transmitted to the parser. The same happens to
+spaces, i.e., blanks and tabulations, which are used for separating
+lexemes in the source but are not meaningful by themselves.

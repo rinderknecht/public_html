@@ -1,0 +1,58 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage[british]{babel}
+\usepackage{hhline}
+\usepackage{graphicx}
+
+\input{trace}
+
+\title{Quiz of Information Retrieval}
+\author{Christian Rinderknecht}
+\date{1st December 2005}
+
+\begin{document}
+
+\maketitle
+
+\begin{enumerate}
+
+  \item Give a version of the naive search algorithm where the
+    word slides from left to right and the comparisons between the
+    word letters and the text letters are made from right to left.
+
+ \item 
+ \begin{enumerate}
+
+   \item Give an algorithm such that the input is a deterministic
+     finite automaton and the output is the set of states which are
+     unreachable from the initial state.
+
+   \item Apply this algorithm to the following DFA.
+   \[
+   \begin{array}{|c||cc|}
+   \hhline{~--}
+     \multicolumn{1}{c||}{}
+   & a 
+   & b\\
+   \hhline{=::==}
+   E & D & C\\
+   D  & & C\\
+   \#F & F &\\
+   \rightarrow{}C & D & F\\
+   \hhline{-||--}
+   \end{array}
+   \]
+
+  \end{enumerate}
+
+  \item Give a deterministic finite automaton which recognises the
+    same language as the following non-deterministic finite automaton.
+  \begin{center}
+  \includegraphics[bb=48 686 286 753]{automaton}
+  \end{center}
+
+\end{enumerate}
+
+\end{document}

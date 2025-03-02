@@ -1,0 +1,107 @@
+%%-*-latex-*-
+
+% -----------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Queues/Signature}
+
+There is another common and useful linear data structure call
+\textbf{queue}. 
+
+\bigskip
+
+As the stack, it is fairly intuitive, since we experience the concept
+when we are waiting at some place to get some goods or service.
+
+\bigskip
+
+Let us call \(\proc{Queue} (\type{item})\) the specification of a
+queue over elements of the \type{item} type.
+\begin{itemize}
+
+  \item \textbf{Parameter types}
+
+  \begin{itemize}
+
+    \item The type \type{item} of the elements in the queue.
+
+  \end{itemize}
+
+  \item \textbf{Defined types}
+
+   \begin{itemize}
+
+     \item The type of the queue is \type{t}.
+
+   \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% -----------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Queues/Constructors and other functions}
+
+\begin{itemize}
+
+  \item \textbf{Constructors}
+
+  \begin{itemize}
+
+    \item \(\proc{Empty} : \type{t}\)\\
+    Expression \proc{Empty} represents the empty queue.
+
+    \item \(\proc{Enqueue} : \type{item} \times \type{t}
+    \rightarrow \type{t}\)\\
+    Expression \(\proc{Enqueue} (\id{e}, \id{q})\) denotes the queue
+    \id{q} with element \id{e} added at the end.
+
+  \end{itemize}
+
+  \item \textbf{Other functions}
+
+  \begin{itemize}
+
+    \item \(\proc{Dequeue} : \type{t} \rightarrow 
+    \type{t} \times \type{item}\)\\
+    Expression \(\proc{Dequeue} (\id{q})\) denotes the pair made of
+    the \emph{first} element of \id{q} and the remaining queue. The
+    queue \id{q} must not be empty.
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Queues/Equations}
+
+\begin{align*}
+\proc{Dequeue} (\proc{Enqueue} (\id{e}, \proc{Empty}))
+&= (\proc{Empty}, \id{e})\\
+\proc{Dequeue} (\textbf{\proc{Enqueue} (\id{e}, \id{q})})
+&= (\proc{Enqueue} (\id{e}, \id{q_1}), \id{e'})\\
+\text{where} \quad (\id{q_1}, \id{e'}) &= \proc{Dequeue}
+  (\textbf{\id{q}})\\
+\text{and} \quad \id{q} & \neq \proc{Empty}
+\end{align*}
+They are easy to orient since \id{q} is a proper subterm of
+\(\proc{Enqueue} (\id{e}, \id{q})\):
+\begin{align*}
+  \proc{Dequeue} (\proc{Enqueue} (\id{e}, \proc{Empty}))
+&\rightarrow (\proc{Empty}, \id{e}) & \\
+  \proc{Dequeue} (\proc{Enqueue} (\id{e}, \id{q}))
+&\rightarrow (\proc{Enqueue} (\id{e}, \id{q_1}), \id{e'})
+\end{align*}
+where \(\id{q} \neq \proc{Empty}\) and where
+\(\proc{Dequeue} (\id{q}) \rightarrow (\id{q_1}, \id{e'})\).
+
+Note that we can remove the condition by replacing \id{q} by
+\(\proc{Enqueue} (\dots)\).
+
+\end{frame}

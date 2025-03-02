@@ -1,0 +1,4 @@
+#include "../../Syllabuses/.links"
+
+../../Syllabuses/configure.ac
+../../Syllabuses/Makefile.in

@@ -1,0 +1,14 @@
+\begin{multicols}{2}
+\paragraph{Question.} Define \texttt{mirror/2} such that
+\texttt{mirror(T1,T2)} means ``Binary tree \texttt{T1} is the mirror
+of binary tree \texttt{T2}.'' As an example, the following trees are
+mirrors of each other: \par\vfill\columnbreak
+\begin{center}
+\includegraphics{mirror_trees}
+\end{center}
+\end{multicols}
+\begin{verbatim}
+?- mirror(tree(1,tree(5,leaf(3),leaf(4)),leaf(2)), Mirror).
+Mirror = tree(1, leaf(2), tree(5, leaf(4), leaf(3))) ;
+No
+\end{verbatim}

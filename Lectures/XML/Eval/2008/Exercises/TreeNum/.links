@@ -1,0 +1,11 @@
+#include "../.common_links"
+
+../common.mk.in
+
+toc.xml num1.xml
+toc.xml num2.xml
+toc.xml num3.xml
+
+book.dtd num1.dtd
+book.dtd num2.dtd
+book.dtd num3.dtd

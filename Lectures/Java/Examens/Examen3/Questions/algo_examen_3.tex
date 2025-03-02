@@ -1,0 +1,128 @@
+%%-*-latex-*-
+
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{xspace}
+\usepackage{ae,aecompl}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\newcommand{\java}{\textsf{Java}\xspace}
+\newcommand{\bitem}{\item[$\bullet$]}
+
+\input{trace}
+
+\title{Examen 3 de Programmation en Java}
+\author{Christian Rinderknecht}
+%\date{Jeudi 2 septembre 2004}
+
+\begin{document}
+
+\maketitle
+
+\noindent
+\textbf{Durée: deux heures. Les documents et les calculatrices ne sont
+ pas autorisés.}
+
+
+\section{Tri à bulles}
+
+\noindent Le but de cet exercice de vous faire programmer un
+algorithme de tri simple, dit \emph{tri à bulles}. Pour comprendre le
+principe, supposons que nous voulions trier par ordre croissant une
+suite d'entiers.
+
+\medskip
+
+Le principe est de comparer deux à deux les éléments du tableaux, de
+la gauche vers la droite. Si les deux éléments sont ordonnés l'un par
+rapport à l'autre, on passe à la paire suivante, sinon on les échange
+avant de passer à la paire suivante. Au bout de cette étape, la
+dernière case du tableau (la plus à droite) contient donc le plus
+grand élément. Par exemple 3~5~7~2 devient 3~5~2~7. Il faut alors
+recommencer avec le sous-tableau allant de la gauche jusqu'avant le
+plus grand élément précédemment trouvé. Dans notre exemple, il faut
+recommencer avec le sous-tableau 3~5~2, puisque 7 est bien placé. Cela
+donne 3~2~5~7. Maintenant 5 et 7 sont bien placés et l'on recommence
+avec le sous-tableau 3~2, ce qui donne 2~3~5~7. On s'arrête là car le
+sous-tableau restant est réduit à 2, qui est forcément trié.
+
+\medskip
+
+Écrivez d'abord une classe publique \textsf{Bubble} qui contient une
+méthode publique et statique \textsf{print} qui prend un tableau
+d'entier et l'affiche de gauche à droite à l'écran. Dans la fonction
+\textsf{main}, lisez les arguments passés en ligne de commande par
+l'usager, stockez-les dans un tableau d'entiers et affichez-les tels
+qu'ils ont été lus. Par exemple, si l'usager tape {\small
+\begin{verbatim}
+$ java Bubble 3 5 7 2
+\end{verbatim}
+}
+\noindent alors l'affichage est
+{\small
+\begin{verbatim}
+3 5 7 2
+\end{verbatim}
+}
+
+\medskip
+
+Ensuite, ajoutez à la classe \textsf{Bubble} une méthode publique et
+statique \textsf{sort} qui prend en paramètre un tableau d'entiers et
+ne renvoie rien (c'est-à-dire le type \textsf{void}). 
+
+
+\section{Dictionnaire d'occurrences}
+
+Écrivez une classe \textsf{Dico} qui traitera un tableau \texttt{t}
+d'entiers et créera deux tableaux d'entiers \texttt{occ} et
+\texttt{elt} qui vérifient les propriétés suivantes:
+
+\begin{itemize}
+
+  \bitem chaque élément de \texttt{t} doit apparaître une fois et une
+  seule dans le tableau \texttt{elt};
+
+  \bitem pour chaque \texttt{i}, \texttt{occ[i]} contiendra le nombre
+  d'occurrences de \texttt{elt[i]} dans le tableau \texttt{t}.
+
+\end{itemize}
+
+En d'autres termes, \texttt{elt} fournira un dictionnaire des valeurs
+apparaissant dans le tableau et \texttt{occ} indiquera combien de fois
+elles apparaissent. Par exemple:
+{\small
+\begin{verbatim}
+$ java Dico 1 3 0 3 3 1 7 7
+elt = 1 3 0 7
+occ = 2 3 1 2
+\end{verbatim}
+}
+
+
+\section{Matrices}
+
+\noindent Écrivez une classe \textsf{Poly} contenant 
+
+\begin{itemize}
+
+  \bitem une méthode \textsf{somme} qui réalise le calcul de la somme
+  de deux vecteurs réels;
+
+  \bitem une méthode \textsf{prod\_scal} qui réalise le calcul du
+  produit scalaire de deux vecteurs;
+
+  \bitem une méthode \textsf{prod} qui réalise le calcul du produit
+  d'une matrice par une autre matrice.
+
+\end{itemize}
+
+Pour chacune des méthodes, quelles conditions devez-vous vérifier
+avant de procéder au calcul?
+
+
+\end{document}

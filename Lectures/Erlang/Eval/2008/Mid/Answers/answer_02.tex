@@ -1,0 +1,43 @@
+\paragraph{Answer.} In the one-stack implementation, every time
+we dequeue, we must traverse all the items in the stack. In the
+two-stack implementation, we only traverse the second stack, which is
+always shorter or equal than the stack in the first case.
+\begin{enumerate}
+
+  \item The best case for the one-stack implementation is when the
+    queue contains only one item, and the best case for the two-stack
+    implementation is when the second stack is not empty: any
+    dequeuing then has a constant cost (a pop).
+
+  \item All configurations of the one-stack implementation is the
+    worst case: the cost of dequeuing is always the size of the stack,
+    whilst the worst case for the two-stack implementation is when the
+    second stack is empty, in which case the first stack has to be
+    reversed, so the total cost is the number of items in the queue
+    (which are then all in the first stack).
+
+\end{enumerate}
+As a conclusion, the two-stack implementation is more efficient.
+
+\medskip
+
+\noindent For a more quantified answer, we can compute the number of
+steps for each dequeuing function in the worst case (if any):
+\begin{itemize}
+
+  \item \texttt{queue1:dequeue(L)} always takes \texttt{len(L)} steps. 
+
+  \item \texttt{queue1:dequeue1(L)} always takes \texttt{2*len(L)+3} steps.
+
+  \item \texttt{queue1:dequeue2(L)} always takes \texttt{2*len(L)+2} steps.
+
+  \item \texttt{queue2:dequeue(\{S,T\})} takes \texttt{len(S)+2} steps when
+    \texttt{T=[]}.
+
+  \item \texttt{queue2:dequeue1(\{S,T\})} takes \texttt{len(S)+1} steps when
+  \texttt{T=[]}.
+
+\end{itemize}
+Note that \texttt{queue1:dequeue(L)} is the fastest, but that is
+because the pushes \verb:[E|R]: are done on the stack, so they are not
+counted...

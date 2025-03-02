@@ -1,0 +1,2015 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT}
+
+Given one or several \XML documents, it may be useful
+\begin{itemize}
+
+  \item to search for information in the documents,
+
+  \item to output what is found in a format suitable for another
+    application or reader.
+
+\end{itemize}
+so one needs \XSLT (\textbf{eXtensible Stylesheet Language
+  Transformations}).
+
+\bigskip
+
+An \XSLT processor 
+\begin{itemize}
+
+  \item reads an \XML document,
+
+  \item an \XSLT file,
+
+\end{itemize}
+and applies the transformations to the \XML and the result is printed
+out.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Saxon}
+
+I recommend the open source, \Java-based, \XSLT processor available at
+\begin{verbatim}
+http://sourceforge.net/projects/saxon/files/Saxon-HE/9.3/
+saxonhe9-3-0-4j.zip/download
+\end{verbatim}
+Its name is \Saxon. You only need the archive \texttt{saxon9he.jar}.
+
+\bigskip
+
+The command-line syntax for using \Saxon is
+\begin{quote}
+\texttt{java -jar saxonhe9.jar -o \emph{output} \emph{doc}.xml
+  \emph{trans}.xsl}
+\end{quote}
+If no \texttt{\emph{output}} file is specified, the output is the
+terminal.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT}
+
+An \XSLT file is actually an \XML document, in the sense that \XML is
+both the infrastructure and its contents, which is interpreted by some
+other application.
+
+\bigskip
+
+For example, if we use an element \verb|<book>| in an \XML document,
+\XML itself does not imply that this element models a book: some
+application using the document perhaps will precisely do that.
+
+\bigskip
+
+One can think of \XML as syntactic rules (see
+page~\pageref{well_formedness}), but with no semantics attached to the
+constructs.
+
+\bigskip
+
+An \XSLT document is thus \XML with a special interpretation (which
+makes it \XSLT).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Empty transformation}
+\label{empty.xsl}
+
+For reason explained later, \XSLT documents require the usage of a
+namespace, usually \texttt{xsl}, defined at
+{\small \url{http://www.w3.org/1999/XSL/Transform}}
+\smallXSLTin{empty.xsl}
+Note the first line of this transformation, which says that this is an
+\XML document. The second line declares the namespace for \XSLT and
+makes use of an \XSLT tag name, \texttt{transform}, which means that
+the interpretation of this \XML is done according to \XSLT. The
+version of \XSLT is declared to be \texttt{2.0}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Empty transformation (cont)}
+\label{cookbook.xml}
+
+Assume the following \XML document to be transformed:
+\smallXMLin{cookbook.xml}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Empty transformation (cont)}
+
+The result of applying the empty transformation
+page~\pageref{empty.xsl} to this document yields
+\saxonCut{tmp.xml}{cookbook}{empty}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Empty transformation (cont)}
+
+Note that if the element \verb|<xsl:output method="text"/>| were
+missing, the output would be considered \XML and \verb|<?xml ...?>|
+would be outputted by default.
+
+\bigskip
+
+Then it prints the contents of the text nodes of the input \XML
+document \emph{in the same order}.
+
+\bigskip
+
+More precisely, the order corresponds to a prefix traversal: this is
+the implicit traversal supported by \XSLT processors, also called
+\textbf{document order}. The rationale is that since the aim is often
+to rewrite a document into another, this traversal corresponds to the
+order in which the input is read.
+
+\bigskip
+
+The attributes are not copied by default.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Matching}
+
+More precisely, the concepts underlying \XSLT transformations are
+\begin{itemize}
+
+  \item an implicit prefix traversal of the \XML tree,
+
+  \item each element is matched against a \textbf{template},
+
+  \item as a result, some output may be produced.
+
+\end{itemize}
+A template allows to identify an element by specifying a part of it,
+like its name, some of its attribute names etc.
+
+\bigskip
+
+When a template identifies an input element, one says it
+\textbf{matches} the element.
+
+\bigskip
+
+If no template matches the current node, the children nodes are
+visited and tried for matching. Text nodes implicitly match and their
+contents are printed (this is the default behaviour).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Matching (cont)}
+
+Consider the following \XSLT transformation
+\smallXSLTin{chapte.xsl}
+Note the \XSLT predefined element \texttt{template}, which defines a
+template, and its predefined attribute \texttt{match}, whose value is
+the element name one wishes to match in the input \XML document.
+
+The content of the template is output only if a \texttt{chapte}
+(\textbf{wrong spelling}) element is matched (i.e., found).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Matching (cont)}
+
+The result of applying the previous transformation to the document
+page~\pageref{cookbook.xml} is \saxonCut{tmp.xml}{cookbook}{chapte}
+because the template matched no node in the input tree, but
+\textbf{text nodes always implicitly match}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Matching (cont)}
+\label{chapters.xsl}
+
+Let us try to match also the root element and try the next
+transformation.
+\smallXSLTin{chapters.xsl}
+The result is now:
+\saxonCut{tmp.xml}{cookbook}{chapters}
+Why?
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Applying several templates}
+
+The reason is that when a template matches the current element, this
+element is transformed and the prefix traversal goes on \emph{without
+  visiting the children of the current element}.
+
+\bigskip
+
+Therefore, after the element \texttt{cookbook} is matched, the \XSLT
+processor ignores everything else since it is the root element
+(hence, no element \texttt{chapter} is matched).
+
+\bigskip
+
+In order to try to match the children elements of a matched element,
+one must tell so the processor by using the special empty element
+{\small
+\begin{verbatim}
+<xsl:apply-templates/>
+\end{verbatim}
+} 
+The meaning of all the \XSLT elements is implicitly relative to the
+last matched element, called the \textbf{context node}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Applying several templates (cont)}
+
+The following transformation
+\smallXSLTin{cookbook.xsl}
+instructs the \XSLT processor to match the root element
+\texttt{cookbook} and then try to apply any available template to the
+child elements, i.e., \texttt{chapter} elements.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Applying several templates (cont)}
+
+Since there is no template matching \texttt{chapter} elements, their
+child text nodes will be printed.
+
+\bigskip
+
+The result is now:
+\saxonCut{tmp.xml}{cookbook}{cookbook}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Applying several templates (cont)}
+
+What if we do not want to print the name of the book and the author's
+name?
+
+\bigskip
+
+The first solution consists in adding two templates matching the
+elements to be ignored and do nothing (empty \texttt{template}
+elements):
+{\small
+\begin{verbatim}
+<xsl:template match="cookbook">
+  <xsl:apply-templates/>
+</xsl:template>
+
+<xsl:template match="title"/>
+
+<xsl:template match="author"/>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Applying several templates (cont)}
+
+When several templates do the same thing (or do nothing), it is
+possible to write down only one \texttt{template} element with a
+\texttt{match} attribute containing all the element names to be
+matched.
+
+\bigskip
+
+For example, instead of
+{\small
+\begin{verbatim}
+<xsl:template match="title"/>
+<xsl:template match="author"/>
+\end{verbatim}
+}
+one can write
+{\small
+\begin{verbatim}
+<xsl:template match="title|author"/>
+\end{verbatim}
+}
+The symbol ``\verb#|#'' means ``or'' and this kind of \texttt{match}
+attribute is called a \textbf{disjunctive pattern}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Selecting children to be matched}
+
+The second solution consists in specifying that only some child
+elements of a given context node should be matched against the
+available templates.
+
+\bigskip
+
+This \textbf{selection} of the required children is done by means of
+the \texttt{select} attribute of the \texttt{apply-templates}
+element. 
+
+\bigskip
+
+The content of the attribute is the name of the children,
+relatively to the context node.
+
+\bigskip
+
+Therefore, the \texttt{select} attribute evaluates to a
+\textbf{sequence of nodes} (the children) to the matched in document
+order.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Selecting children to be matched (cont)}
+
+Consider the following \XSLT transformation
+\smallXSLTin{select_chapter.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Selecting children to be matched (cont)}
+
+The result is now
+\saxonCut{tmp.xml}{cookbook}{select_chapter}
+
+\bigskip
+
+Note that only the chapter titles have been printed, not the book
+title, nor the author's name. This is due to the selection of
+\texttt{chapter} elements only.
+
+\bigskip
+
+Note also that the text nodes of the selected chapters have been
+printed without spacing. This is due to having a sequence of nodes to
+apply templates to.
+
+\bigskip
+
+Let us improve the printing.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Selecting children to be matched (cont)}
+
+Since we want to handle explicitly how the children of
+\texttt{chapter} are printed, we need to have a dedicated template
+matching \texttt{chapter}:
+{\small
+\begin{verbatim}
+<xsl:template match="chapter">
+...
+</xsl:template>
+\end{verbatim}
+}
+Now, when the context node is \texttt{chapter}, we want to print its
+text node.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Selecting children to be matched (cont)}
+
+The \XSLT element that creates a text node is
+\begin{center}
+\verb|value-of|
+\end{center}
+This element, like \texttt{apply-templates} has a \texttt{select}
+attribute.
+
+\bigskip
+
+Since the text nodes which are children of \texttt{chapter} (there is
+only one by chapter, actually) are to be selected, we write {\small
+\begin{verbatim}
+<xsl:template match="chapter">
+  <xsl:value-of select="text()"/>
+</xsl:template>
+\end{verbatim}
+}
+The expression \texttt{text()} denotes \textbf{all} the text nodes
+which are children of the context node \texttt{chapter}, i.e., the
+current chapter. The effect of \texttt{value-of} here is thus to
+duplicate the selected text node.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Selecting children to be matched (cont)}
+
+Unfortunately, this changes nothing, because
+\texttt{apply-templates} serialises the results of the
+matchings as a sequence of strings with no inter-spaces.
+
+\bigskip
+
+The solution is thus to force a \textbf{new line} after getting the
+value of each text node.
+
+\bigskip
+
+This can be done by means of the element
+{\small
+\begin{verbatim}
+<xsl:text>&#10;</xsl:text>
+\end{verbatim}
+}
+The numbered entity \verb|&#10;| corresponds to the new line character
+in the \ASCII.
+
+\bigskip
+
+The \XSLT element \texttt{text} can be used to write text verbatim.
+
+\bigskip
+
+It is useful when the complex rules of \XML about space characters
+have to be bent.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/From \XML to \XHTML}
+
+One application of \XML, server-side, is to generate \XHTML or,
+in general, \HTML. 
+
+\bigskip
+
+Following a client's request for a web page, the web server retrieves
+ its content as \XML (stored in a database, for instance) and runs an
+ \XSLT transformation, depending perhaps on the client's
+ user-agent (e.g., the kind of browser) or display device (e.g.,
+ a mobile device with a small screen or limited number of colours) to
+ produce (perhaps dedicated) \HTML, which is then sent back to the
+ client.
+
+\bigskip
+
+This way, the content of the page (\XML specifies semi-structured
+data, without a specific interpretation) is stored independently of
+any presentation style (\HTML specifies both contents and style).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/From \XML to \XHTML (cont)}
+
+The first step when designing an \XSLT stylesheet (i.e.,
+transformation or transform) to produce \XHTML is to write an instance
+of expected output. 
+
+\bigskip
+
+Once the shape of the general output is clearly in mind, think
+backwards to the input and, by doing so, write the transformation.
+
+\bigskip
+
+Technically, the difficulty in the \XSLT comes from managing the
+namespaces: one for the \XSLT elements and one for the \XHTML
+elements.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/From \XML to \XHTML (cont)}
+
+First, the start of the \XSLT stylesheet must be
+{\small
+\begin{verbatim}
+<xsl:output
+  method="xhtml"
+  doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+  doctype-system=
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+  indent="yes"/>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/From \XML to \XHTML{}/Example}
+
+Let us try to transform the \XML page~\pageref{cookbook.xml} into some
+\XHTML displayed as
+
+\bigskip
+
+\textbf{XSLT Cookbook}\\
+\emph{by Salvatore Mangano}
+\begin{enumerate}
+
+  \item XPath
+
+  \item Selecting and Traversing
+
+  \item XML to Text
+
+  \item XML to XML
+
+  \item XML to HTML
+
+\end{enumerate}
+Also, the title of the browser window should be ``XSLT Cookbook''.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/From \XML to \XHTML{}/Example (cont)}
+
+First, we must decide that the \XHTML should look as follows.
+{\small
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en" lang="en">
+   <head>
+      <meta http-equiv="Content-Type" 
+            content="text/html; charset=UTF-8"/>
+      <title>XSLT Cookbook</title>
+   </head>
+   <body>
+      <h2>XSLT Cookbook</h2>
+      <p><em>by Salvatore Mangano</em></p>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/From \XML to \XHTML{}/Example (cont)}
+
+{\small
+\begin{verbatim}
+      <h3>Table of contents</h3>
+      <ol>
+         <li>XPath</li>
+         <li>Selecting and Traversing</li>
+         <li>XML to Text</li>
+         <li>XML to XML</li>
+         <li>XML to HTML</li>
+      </ol>
+   </body>
+</html>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/From \XML to \XHTML{}/Example (cont)}
+
+Therefore, it becomes clear that the infrastructure of the \XHTML,
+made of the \XML processing instruction, \XHTML elements
+\texttt{html}, \texttt{head} and \texttt{body}, should be output
+first.
+
+\bigskip
+
+Then, the title and author.
+
+\bigskip
+
+The last part being the ordered list of chapters.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/From \XML to \XHTML{}/Example (cont)}
+
+From this analysis, we deduce the following structure for the \XSLT
+stylesheet.
+\begin{itemize}
+
+  \item A template to match the root element, \texttt{cookbook}, is
+    needed to output the \XHTML elements \texttt{html}, \texttt{head},
+    \texttt{body} \textbf{and} the \texttt{title}, \texttt{author}
+    \textbf{and} an \emph{empty} \XHTML element \texttt{ol}.
+
+  \item Another template is needed to match the \texttt{chapter}
+    elements and fill the empty \XHTML element \texttt{ol} with the
+    list items corresponding to the chapters.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/From \XML to \XHTML{}/Example (cont)}
+
+{\small
+\begin{verbatim}
+<xsl:template match="cookbook">
+  <html xmlns="http://www.w3.org/1999/xhtml"
+        xml:lang="en" lang="en">
+    <head>
+      <title><xsl:value-of select="title/text()"/></title>
+    </head>
+    <body>
+      <h2><xsl:value-of select="title/text()"/></h2>
+      <p>
+        <em>by <xsl:value-of select="author/text()"/></em>
+      </p>
+      <h3>Table of contents</h3>
+      <ol>
+        <xsl:apply-templates select="chapter"/>
+      </ol>
+    </body>
+  </html>
+</xsl:template>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/From \XML to \XHTML{}/Example (cont)}
+
+Notice the \texttt{select} values ``\texttt{title/text()}'' and
+``\texttt{author/text()}.''
+
+\bigskip
+
+To understand the meaning of such expressions, one must decompose them
+step by step. Let us consider the first one as an example.
+
+\bigskip
+
+First, \texttt{title} as an expression means ``all the child elements
+of the context node.'' So, in general, this is a sequence of nodes,
+but here the sequence contains only one node.
+
+\bigskip
+
+Then \texttt{.../text()} means ``all the text nodes which are
+children of \textbf{every} element in the previous sequence.'' In this
+case, the \texttt{title} elements have only one text node as a child.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Selecting children to be matched (cont)}
+
+In this case, it is possible to write
+{\small
+\begin{verbatim}
+<xsl:value-of select="title"/>
+\end{verbatim}
+}
+instead of
+{\small
+\begin{verbatim}
+<xsl:value-of select="title/text()"/>
+\end{verbatim}
+}
+The former means ``\textbf{all} the text nodes descendant of the
+\texttt{title} element, which are the children of the context node.''
+But since there is only one text node below \texttt{title}, it means
+the same as the selection \texttt{title/text()}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/From \XML to \XHTML{}/Example (cont)}
+
+Let us resume our stylesheet. Another template is needed for the
+chapters:
+{\small
+\begin{verbatim}
+<xsl:template match="chapter">
+  <li xmlns="http://www.w3.org/1999/xhtml">
+    <xsl:value-of select="text()"/>
+  </li>
+</xsl:template>
+\end{verbatim}
+}
+Note here the obligation to specify the \XHTML namespace as default
+in the \XHTML \texttt{li} element. Otherwise it will be output without
+namespace, instead of having the \XHTML namespace implicitly. In other
+words, if one writes \verb|<li>| instead of
+\verb|<li xmlns="http://www.w3.org/1999/xhtml">|, the output will be
+\verb|<li xmlns="">|, because the \XHTML namespace is the default for
+the embedding \texttt{html} element.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/From \XML to \XHTML{}/Example (cont)}
+
+The last step consists in checking the conformity to \XHTML by means
+of the W3C validator available at
+\begin{center}
+\url{http://validator.w3.org/}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Variables}
+
+Sometimes it is handy to define \textbf{variables} to hold some
+intermediary result. Consider \smallXSLTin{var.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Variables (cont)}
+
+The \texttt{match} expression \verb|"/"| means: "the document
+root". 
+\begin{center}
+\textbf{The document root is not the root element}.
+\end{center}
+The latter is the unique element at the root of the \XML tree, e.g.,
+\texttt{cookbook} is the root element of the document
+page~\pageref{cookbook.xml}.
+
+\bigskip
+
+The former is the implicit node that contains all the elements in the
+\XSLT file. It is not written.
+
+\bigskip
+
+Therefore, the root element is always a child of the document root and
+\verb|"/"| matches any \XML document.
+
+\bigskip
+
+Also, \verb|"/*"| matches any root element.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Variables (cont)}
+
+The variable \texttt{v} is set to the selected value \texttt{0}. Note
+that it is possible to select basic types, like integers, not just
+nodes.
+
+\bigskip
+
+Also, as variable \texttt{w} demonstrates it, it is possible to select
+the contents of another variable by prefixing its name with the symbol
+\texttt{\$}, and then operate on it as an arithmetic expression, e.g.,
+\verb|"1 + $v"|.
+
+\bigskip
+
+\textbf{Important: Variables in \XSLT are immutable}. 
+
+\bigskip
+
+In other words, their value cannot be changed. That explains why there
+is no assignment on variables, like \verb|a = a + 1;| in \Clang.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Conditionals}
+
+It is possible to choose a sequence of nodes rather than another one,
+based on a given criterion. 
+
+\bigskip
+
+The pure \XSLT way to achieve this is by means of the \texttt{if},
+\texttt{choose}, \texttt{when} and \texttt{otherwise}
+elements. Consider first the input
+\smallXMLin{num_list.xml}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Conditionals (cont)}
+
+Let us output all the text nodes in order, \textbf{separated by a
+  comma}. But the last string must not be followed by a comma, i.e.,
+we expect
+\begin{center}\tt
+18, -1.3, 3, 5, 23
+\end{center}
+The solution is
+{\small
+\begin{verbatim}
+<xsl:template match="num">
+  <xsl:value-of select="text()"/>
+  <xsl:if test="position() ne last()">
+    <xsl:value-of select="', '"/>
+  </xsl:if>
+</xsl:template>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Conditionals (cont)}
+
+Notice the \XSLT element \texttt{if} and its \texttt{test}
+attribute. The value of this attribute is evaluated to either
+\texttt{true()} or \texttt{false()} --- or a dynamic error happens. If
+the value is true, then the children of \texttt{if} are computed and
+outputted (here, a comma).
+
+\bigskip
+
+The comma must be written in a \textbf{string}, i.e., enclosed in
+single quotes: \verb|', '|.
+
+\bigskip
+
+The conditional expression is \texttt{position() ne last()}. The
+comparison operator is \texttt{ne}, which means ``not equal''. The
+built-in function \texttt{position} returns the integer index of
+the context node in the sequence where it comes from (first node has
+index 1). Here, the context node corresponds to a \texttt{num} element
+in the sequence of all the children of the element root
+\texttt{numbers}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Conditionals (cont)}
+
+If one wants to see the explicit sequence of nodes \texttt{num},
+suffices to write
+{\small
+\begin{verbatim}
+<xsl:template match="numbers">
+  <xsl:apply-templates select="num"/>
+</xsl:template>
+\end{verbatim}
+}
+The other built-in function is \texttt{last}, which returns the
+last index of the context node in the original sequence it belongs
+to.
+
+\bigskip
+
+Thus, a comma is outputted if, and only if, the current number is not
+the last.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Conditionals (cont)}
+
+Imagine now that we want
+\begin{center}\tt
+18, -1.3, 3, 5, 23.
+\end{center}
+That is to say, we want to terminate the comma-separated list by
+a period. We would need a \texttt{else} element, but it does not exist
+and a more general construct is needed: we can no longer use
+\texttt{if}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Conditionals (cont)}
+
+The solution is now:
+{\small
+\begin{verbatim}
+<xsl:template match="num">
+  <xsl:value-of select="text()"/>
+  <xsl:choose>
+    <xsl:when test="position() ne last()">
+      <xsl:value-of select="', '"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="'.'"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Template parameters}
+
+Sometimes it is useful that templates be provided parameters.
+
+\bigskip
+
+Imagine that we have a document in \XML describing part of the table
+of contents of a book, with \texttt{chapter} and \texttt{section}
+elements. Each chapter and section contains a first child
+\texttt{title}.
+
+\bigskip
+
+We want to output an unordered \XHTML list of the chapter and section
+titles with a twist: the title should be annotated with the depth of
+the parent chapter or section. Chapters have depth 1, then child
+sections have depth 2 etc.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Template parameters (cont)}
+
+An excerpt of the input:
+{\small
+\begin{verbatim}
+<chapter>
+  <title>Instances and schemas</title>
+  <section>
+    <title>Using the instance attributes</title>
+  </section>
+  <section>
+    <title>Schema processing</title>
+    <section>
+      <title>Validation</title>
+    </section>
+    <section>
+      <title>Augmenting the instance</title>
+    </section>
+  </section>
+</chapter>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Template parameters (cont)}
+
+The corresponding expected result:
+\begin{itemize}
+
+  \item {[1]} Instances and schemas
+    \begin{itemize}
+
+      \item {[2]} Using the instance attributes
+
+      \item {[2]} Schema processing
+        \begin{itemize}
+
+          \item {[3]} Validation
+
+          \item {[3]} Augmenting the instance
+
+        \end{itemize}
+
+    \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Template parameters (cont)}
+
+We need to pass down the tree the depth, output the titles at this
+depth (which are all siblings) and apply further templates on the
+children:
+{\small
+\begin{verbatim}
+<xsl:template match="section|chapter">
+  <xsl:param name="depth"/>
+  <li xmlns="http://www.w3.org/1999/xhtml">
+    <xsl:value-of select="concat('[',$depth,'] ',title)"/>
+    <xsl:if test="not(empty(section))">
+      <ul><xsl:apply-templates select="section">
+            <xsl:with-param name="depth" select="$depth + 1"/>
+          </xsl:apply-templates></ul>
+    </xsl:if>
+  </li>
+</xsl:template>
+\end{verbatim}
+}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Template parameters (cont)}
+
+Note the new \XSLT element \texttt{param} and its attribute
+\texttt{name}. It defines a parameter to the template.
+
+\bigskip
+
+The function \texttt{concat} takes an arbitrary number of arguments,
+evaluate them, transform them into strings and join the strings
+together, in order.
+
+\bigskip
+
+Note that the element \texttt{apply-templates} is not empty
+anymore: it contains a new \XSLT element named
+\texttt{with-param}, which carries attributes
+\texttt{name} and \texttt{select}. This defines an argument, i.e., a
+sequence of nodes or basic types passed to the children. 
+
+\bigskip
+
+The value of the \texttt{name} attribute must be the same as the one
+defined by the attribute \texttt{name} in the called template (with
+element \texttt{param}).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Selecting nodes}
+\label{menu}
+
+\footXMLin{menu.xml}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Selecting nodes (cont)}
+
+\XSLT allows the selection of any node in a sequence by putting the
+index of the node, following document order, between square brackets
+or using the \texttt{position} function.
+
+\bigskip
+
+For example, to select the third dish in \texttt{entrees}:
+\verb|"/menu/entrees/dish[3]"| or
+\verb|/menu/entrees/dish[position() eq 3]|. Remember that the first
+node has always index \(1\).
+
+\bigskip
+
+This kind of notation is a special case of \textbf{predicate}, which
+we shall study more in detail later.
+
+\bigskip
+
+\textbf{Exercise.} Propose a transformation that prints
+\texttt{Today's menu} followed by the third \emph{entree}, the first
+main dish and the last dessert, on different lines and preceded by a
+dash.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Selecting attributes}
+\label{index}
+
+Let us say that the dessert of day is the second on the menu
+page~\pageref{menu} and that we want to know its price. This
+information is stored as an attribute node, not as a text node, so we
+need a special construct \verb|@| as in the transformation
+\smallXSLTin{03list12.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Selecting attributes (cont)}
+
+The result is
+\saxonCut{tmp.xml}{menu}{03list12}
+
+\bigskip
+
+Note that attributes of a given element must have different names, so
+selecting \verb|"@foo"| results either in one or no attribute.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Using wildcards}
+
+Wildcards can be used to select nodes whose names do not matter, e.g.,
+\smallXSLTin{03list16.xsl} gives the same result as the transform
+page~\pageref{index}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Location paths}
+
+A \textbf{location path} contains \textbf{test nodes} and, optionally,
+\textbf{predicates}. For example,
+\begin{verbatim}
+/menu/*[3]/dish[2]/@*[2]
+\end{verbatim}
+is a location path; \verb|menu|, \verb|*|, \verb|dish| and \verb|@*|
+are node tests and \verb|[3]| and \verb|[2]| are predicates.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/\(n\)-th node}
+ 
+Let us try to select the sixth dish in the document using 
+the transform \smallXSLTin{sixth_none.xsl}
+The output contains no dishes! Why? Because \texttt{value-of}
+select no element... Indeed, the location path \verb|*/dish[6]| does
+\textbf{not} yield the sixth dish node in the menu but, instead, the
+first dish in the menu which is the sixth child of any parent.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/\(n\)-th node (cont)}
+ 
+In other words, the expression \verb|*/dish[6]| actually means
+\verb|*/(dish[6])|, i.e. the sixth element in all parent
+contexts which are children of the \texttt{menu} element, thus there
+is no matched node. What we want is
+\verb|(*/dish)[6]|, as in the transform
+\smallXSLTin{sixth_dish.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Inserting elements (cont)}
+\label{cars}
+
+Consider two documents with the same content but different structure:
+\smallXMLin{cars1.xml}
+and
+\smallXMLin{cars2.xml}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Inserting elements (cont)}
+\label{05list07.xsl}
+
+Using the same technique, we can make a transform that converts the
+first car list, i.e. using attributes, into the second one, i.e. using
+elements. Consider
+{\small
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:transform version="2.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:output method="xml" indent="yes"/>
+
+  <xsl:template match="cars">
+    <cars>
+      <xsl:apply-templates/>
+    </cars>
+  </xsl:template>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Inserting elements (cont)}
+
+{\small
+\begin{verbatim}
+  <xsl:template match="car">
+    <car>
+      <xsl:apply-templates select="attribute()"/>
+    </car>
+  </xsl:template>
+
+  <xsl:template match="@model">
+    <model>
+      <xsl:value-of select="."/>
+    </model>
+  </xsl:template>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Inserting elements (cont)}
+
+{\small
+\begin{verbatim}
+  <xsl:template match="@manufacturer">
+    <manufacturer>
+      <xsl:value-of select="." />
+    </manufacturer>
+  </xsl:template>
+</xsl:transform>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Inserting elements (cont)}
+
+Notice the \XSLT element \texttt{value-of} when matching an
+attribute:
+{\small
+\begin{verbatim}
+<xsl:template match="@model">
+  ... <xsl:value-of select="."/> ...
+</xsl:template>
+\end{verbatim}
+} 
+Selecting \verb|"."| is the only way to get the attribute value, in
+particular \verb|text()| does not work because attributes are
+different from elements. 
+
+\bigskip
+
+For instance, the empty transformation does not print the attribute
+values because they are considered different from text nodes.
+ 
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Inserting elements (cont)}
+
+Applying it to the first car list page~\pageref{cars} yields
+\saxonCut{tmp.xml}{cars1}{05list07} which is exactly the second car
+list (same page).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Inserting elements (cont)}
+
+The name of the inserted elements was until now written in the
+transform, but it is possible to insert elements whose names are made
+at run-time. Consider
+\smallXSLTin{dyn_elm.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Inserting elements (cont)}
+
+Notice that element
+{\small\verb|<xsl:element name="td">Matiz</xsl:element>|} is
+equivalent to {\small\verb|<td>Matiz</td>|}. Also, remember the braces
+around \verb|@manufacturer| to select the attribute \textbf{value}:
+\verb|{@manufacturer}|.
+
+\bigskip
+
+Then, the result of applying it to the first car list
+page~\pageref{cars} yields \saxonCut{tmp.xml}{cars1}{dyn_elm}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Inserting elements (cont)}
+
+In the transform page~\pageref{05list07.xsl} we had a template for
+each attribute (\texttt{model} and \texttt{manufacturer}).
+
+\bigskip
+
+It would be better to have only one template for all the attributes,
+since we process them in the same way, i.e., insert in the output an
+element with the same name as the attribute and with a text node whose
+contents is the same as the attribute value.
+
+\bigskip
+
+We need a function named \texttt{name} which returns the name of the
+context node when called as \texttt{name()}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame} 
+\frametitle{XSLT/Inserting elements (cont)}
+
+Consider
+\smallXSLTin{05list14.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame} 
+\frametitle{XSLT/Inserting elements (cont)}
+
+Applying it to the first car list page~\pageref{cars} yields the
+second car list: \saxonCut{tmp.xml}{cars1}{05list14}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame} 
+\frametitle{XSLT/Inserting elements (cont)}
+
+We can even generalize the transform and make it work on any kind of
+document, by converting every attribute into an element of the same
+name. Consider 
+\footXSLTin{05list15.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame} 
+\frametitle{XSLT/Inserting elements (cont)}
+
+Apply it to the first car list page~\pageref{cars} yields the second
+car list again: \saxonCut{tmp.xml}{cars1}{05list15}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame} 
+\frametitle{XSLT/Inserting attributes}
+
+Inserting attributes is akin to inserting elements. Consider the
+straightforward
+\footXSLTin{05list16.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Inserting attributes (cont)}
+
+Instead of writing
+{\small
+\begin{verbatim}
+<xsl:template match="car">
+  <tr bgcolor="#dddddd">
+    <xsl:apply-templates select="attribute()"/>
+  </tr>
+</xsl:template>
+\end{verbatim}
+}
+one can write
+{\small
+\begin{verbatim}
+<xsl:template match="car">
+  <tr>
+    <xsl:attribute name="bgcolor">#dddddd</xsl:attribute>
+    <xsl:apply-templates select="attribute()"/>
+  </tr>
+</xsl:template>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame} 
+\frametitle{XSLT/Inserting attributes (cont)}
+
+Converting the second car list to the first one is thus achieved by 
+the transform
+\footXSLTin{05list19.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Inserting attributes (cont)}
+
+Note that the last template matches \verb|"element()"|, which means,
+in general, ``any element node.''
+
+\bigskip
+
+The \XSLT processor always select the first template matching the
+current node (element or attribute) most precisely, so templates must
+be ordered carefully.
+
+\bigskip
+
+Therefore, here, the template matching \verb|element()| will match any
+element node whose name is neither \texttt{car} nor \texttt{cars},
+because of the two first templates.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Copying elements}
+
+Sometimes one wants to copy an element from the source document to the
+output. 
+
+\bigskip
+
+One way is the so-called \textbf{shallow copy}, i.e. the
+\emph{context node and its text nodes} are copied but neither the
+children element nodes nor the attribute nodes:
+{\small
+\begin{verbatim}
+<xsl:copy> ... </xsl:copy>
+\end{verbatim}
+}
+or
+{\small
+\begin{verbatim}
+<xsl:copy/>
+\end{verbatim}
+}
+In the latter, the context node is copied without modification,
+whilst, in the former, attributes and children elements can be added.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Copying elements (cont)}
+
+Consider the simple template
+{\small
+\begin{verbatim}
+<xsl:template match="car">
+  <xsl:copy/>
+</xsl:template>
+\end{verbatim}
+}
+When matching
+{\small
+\begin{verbatim}
+<car>
+  <model>Matiz</model>
+  <manufacturer>Daewoo</manufacturer>
+</car>
+\end{verbatim}
+}
+produces
+{\small
+\begin{verbatim}
+<car/>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Copying elements (cont)}
+
+Consider the template
+{\small
+\begin{verbatim}
+<xsl:template match="car">
+  <xsl:copy>
+    <xsl:attribute name="model">Matiz</xsl:attribute>
+    <xsl:attribute name="manufacturer">Daewoo</xsl:attribute>
+  </xsl:copy>
+</xsl:template>
+\end{verbatim}
+}
+which, when matching the same element, now produces
+{\small
+\begin{verbatim}
+<car model="Matiz" manufacturer="Daewoo">
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame} 
+\frametitle{XSLT/Copying elements (cont)}
+
+There is a way to copy the node and the whole subtree below it by using
+the \XSLT element \texttt{copy-of}. Consider
+\smallXSLTin{verb.xsl}
+When applied to either the car lists page~\pageref{cars} yields the
+same document.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame} 
+\frametitle{XSLT/Copying elements (cont)}
+
+If the selection in the \texttt{copy-of} element is a node set,
+\emph{all the nodes and their subtrees will be copied verbatim to the
+  output}. For example, the transform
+\smallXSLTin{onetwo.xsl}
+will also entirely copy the car list to the output.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame} 
+\frametitle{XSLT/Copying elements (cont)}
+
+It is often useful to copy verbatim the source document \emph{except
+some parts}. To achieve this, we cannot use \texttt{copy-of}. So,
+first, we need to define an identity transform and then modify it to
+take into account some exceptions. First try
+\smallXSLTin{node_id.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Copying elements (cont)}
+
+Notice the function \texttt{node} whose call \verb|"node()"|, allows
+the selection of the child element \textbf{and} child text
+nodes. (\verb|"element()"| would select only the child element nodes,
+\verb|"text()"| only the child text nodes, and \verb|"."| the context
+node.)
+
+\bigskip
+
+When applied to the second car list page~\pageref{cars}, we get the
+same document, but when applied to the first car list (same page) it
+yields \saxonCut{tmp.xml}{cars1}{node_id} because \verb|"node()"| does
+not match/select attribute nodes.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame} 
+\frametitle{XSLT/Copying elements (cont)}
+
+The relationship between the different tests or types can be
+summarised in a tree:
+\begin{center}
+\includegraphics[scale=0.9]{tests}
+\end{center}
+This means, for example, that a node is either an element or a text
+node. The items are the most general data type in \XSLT.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame} 
+\frametitle{XSLT/Copying elements (cont)}
+
+Indeed, the previous transform is equivalent to the transform
+\smallXSLTin{node_id_bis.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame} 
+\frametitle{XSLT/Copying elements (cont)}
+
+The way to extend our identity transform to include attributes is to
+match any attribute and, after matching an element node, to select any
+of its attributes. The identity transform is therefore
+\smallXSLTin{identity.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Copying elements (cont)}
+
+Now it is easy to override the identity template by adding new
+templates which are more precise, like matching a specific element
+name:
+{\small
+\begin{verbatim}
+<xsl:template match="broken">
+   <fixed>
+     <xsl:apply-templates select="node()|attribute()"/>
+   </fixed>
+</xsl:template>
+\end{verbatim}
+}
+Now, all the elements will be copied verbatim, as well as the
+attributes, \emph{except} elements named \texttt{broken}, which will
+be changed into \texttt{fixed}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Copying elements/Importing stylesheets}
+
+The typical idiom for copying with modification is to import the
+identity stylesheet and then add new templates which override the
+corresponding templates in the imported stylesheet:
+{\small
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:transform version="2.0" 
+              xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:import href="identity.xsl"/>
+  <xsl:output method="xml" indent="yes"/>
+  <xsl:template match="broken">
+    <fixed>
+      <xsl:apply-templates select="node()|attribute()"/>
+    </fixed>
+  </xsl:template>
+</xsl:transform>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame} 
+\frametitle{XSLT/Copying elements (cont)}
+
+There is an alternative identity transform, using \texttt{copy-of} for
+the attributes only, thus allowing to be extended to handle special
+cases for element nodes: \smallXSLTin{identity_bis.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Functions}
+
+It is possible to define functions in \XSLT.
+
+As an example, consider the need to debug a transform. The usual
+technique consists in using an \XSLT element \texttt{message}, as in
+{\small
+\begin{verbatim}
+<xsl:message>This is a debug message.</xsl:message>
+\end{verbatim}
+}
+One may print the value of attributes or text nodes:
+{\small
+\begin{verbatim}
+<xsl:message>
+  Price: <xsl:value-of select="@price"/>
+</xsl:message>
+\end{verbatim}
+}
+What if the programmer wants to know the names of all the elements in
+a sequence? She needs a function!
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim] 
+\frametitle{XSLT/Functions/Namespace}
+
+The first thing to do, when defining or using functions is to declare
+the namespace to which they belong. For the purpose of this simple
+example, let us imagine that the namespace is named \texttt{my}, at a
+dummy URL:
+{\small
+\begin{verbatim}
+<xsl:transform version="2.0"
+               xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+               xmlns:my="file://functions.uri">
+\end{verbatim}
+}
+A name must be found. For instance, \texttt{my:names}. Note and
+remember that \textbf{the function name contains the namespace}. The
+definition is made in the \XSLT element \texttt{function}:
+{\small
+\begin{verbatim}
+<xsl:function name="my:names">
+...
+</xsl:function>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Functions/Parameters}
+
+The function here takes one argument, the sequence of nodes, so we
+need to declare a parameter. This is the purpose of the \XSLT element
+\texttt{param}:
+{\small
+\begin{verbatim}
+<xsl:function name="my:names">
+  <xsl:param name="nodes"/>
+...
+</xsl:function>
+\end{verbatim}
+}
+As usual in other programming languages, the parameter must be named. 
+
+If a function requires more parameters, other \texttt{param} elements
+are added. 
+
+\textbf{The order is significant.}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Functions/Recursivity}
+
+We need to write a recursive function, because it needs to access all
+the nodes in a sequence. The idea is to check first whether the
+sequence is empty or not. If empty, do nothing. Otherwise, print the
+name of the first node and call again the function on the remaining
+ones (maybe none, it does not matter at that moment):
+{\small
+\begin{verbatim}
+<xsl:function name="my:names">
+  <xsl:param name="nodes"/>
+  <xsl:if test="not(empty($nodes))">
+    <xsl:value-of select="(name($nodes[1]),
+                           my:names($nodes[position()>1]))"/>
+  </xsl:if>
+</xsl:function>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Sequences revisited}
+
+Remark the notation in the \texttt{select} attribute
+\verb|(... , ...)|. It means ``Create a sequence by appending the
+first sequence to the second sequence.'' This operation is called
+\textbf{concatenation}.
+
+\bigskip
+
+Here \verb|my:names($nodes[position()>1])| is a sequence of names,
+possibly empty. If empty, it disappear from the concatenation, e.g.,
+\verb|(1,(),2) eq (1,2)|. 
+
+\bigskip
+
+Here, also, \verb|name($nodes[1])| is a sequence of one element,
+because there is no difference, in \XSLT, between a sequence of one
+and the item itself.
+
+\bigskip
+
+The concatenation is flat, so \verb|((1,2,3),(4,5,(6,7),8,9,10))| is
+the same as \verb|(1,2,3,4,5,6,7,8,9,10)|. The built-in function
+\texttt{empty} tests if a sequence is empty, e.g., \verb|empty($seq)|.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Named templates}
+ 
+It is possible to call a template by name instead of it being applied
+when matching an element.
+Consider the transform
+\footXSLTin{by_name.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Named templates (cont)}
+  
+Named template and matching templates never interfere with each
+other. For example, the name can be the same as an element name, as
+in
+\footXSLTin{by_name_bis.xsl}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Modes}
+ 
+It is sometimes useful to traverse the same document several times and
+match the same elements in a different way each time. This can be done
+using templates with modes.
+
+\bigskip
+
+One needs to define a template element with a \texttt{match} attribute
+and a \texttt{mode} attribute. The value of the latter can be any
+string with the condition that two templates with the same
+\texttt{match} attribute value have a different \texttt{mode}
+attribute value.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Modes (cont)}
+
+{\small
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:transform version="2.0"
+              xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:output method="text"/>
+  <xsl:template match="/">
+    <xsl:text>INDEX</xsl:text>
+    <xsl:apply-templates mode="index"/>
+    <xsl:text>INFO</xsl:text>
+      <xsl:apply-templates mode="info"/>
+  </xsl:template>
+\end{verbatim}
+} 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XSLT/Modes (cont)}
+
+{\small
+\begin{verbatim}
+  <xsl:template match="car" mode="index">
+    <xsl:value-of select="@model" />
+  </xsl:template>
+  <xsl:template match="car" mode="info">
+    <xsl:text>Model: </xsl:text>
+    <xsl:value-of select="@model" />
+    <xsl:text>, Manufacturer: </xsl:text>
+    <xsl:value-of select="@manufacturer"/>
+  </xsl:template>
+</xsl:transform>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XSLT/Modes (cont)}
+ 
+The result of applying it to the first car list page~\pageref{cars} is
+\saxonCut{tmp.xml}{cars1}{modes} Notice the two different runs on the
+input, distinguished by two different outputs in sequence.
+
+\end{frame}

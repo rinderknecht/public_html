@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Arithmetics on binary 2-complement numbers</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Arithmetics on binary 2-complement numbers</h2>
+
+<p><strong>Question.</strong> The purpose of this exercise is to write
+  a C program which reads on the command-line a binary
+  operation <tt>add</tt> or <tt>mult</tt>, followed by two numbers in
+  binary 2-complement notation. The output is the result, in binary
+  2-complement representation, of the operation on the input numbers.
+</p>
+
+<p><strong>Constraints.</strong>
+<ul>
+  <li>The input must be checked in the <tt>main</tt> function, before
+    the computation takes place, in the <tt>add2c</tt>
+    and <tt>mult2c</tt> functions.</li>
+
+  <li>The signatures are <tt>int* add2c(int*,int*)</tt> and <tt>in*
+     mult2c(int*,int*)</tt>.</li>
+
+  <li>The data structure to encode a number in binary 2-complement is
+     an array of integers, where the first cell (at position 0) holds
+     the number of (following) bits and the remaining cells contain
+     the bits, the leftmost one being first.</li>
+</ul>
+</p>
+
+<p><strong>Hints.</strong>
+<ul>
+  <li>You will need to write first the addition and multiplication on
+  binary numbers.</li>
+
+  <li>You will need to write the negation of a binary 2-complement
+  number.</li>
+
+  <li>For debugging purposes, write a function converting from binary
+  2-complement numbers to decimal numbers (<tt>from2cTo10</tt>) and
+  a function from binary to decimal (<tt>from2To10</tt>).</li>
+</ul>
+</p>
+
+<!--
+<p><strong>Answer.</strong> 
+<a href="./op2c.c">This</a> is one solution.
+</p>
+-->
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

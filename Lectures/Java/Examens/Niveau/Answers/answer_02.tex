@@ -1,0 +1,46 @@
+\paragraph{Réponses.}
+
+\begin{enumerate}
+
+  \item Afin de comparer plusieurs algorithmes résolvant un même
+    problème, on introduit des mesures de ces algorithmes appelées
+    \emph{complexités}:
+    \begin{itemize}
+
+       \item la \emph{complexité temporelle} est le nombre
+         d'opérations, par définition élémentaires, effectuées par uen
+         machine qui exécute l'algorithme;
+ 
+       \item la \emph{complexité spatiale} est le nombre d'unités de
+         mémoire utilisées par une machine qui exécute l'algorithme
+         (l'unité est caractéristique du modèle de machine).
+ 
+    \end{itemize}
+    Ces deux complexités dépendent de la machine employée mais aussi
+    de la taille des données. Cette dernière doit donc être modélisée
+    explicitement.
+
+    \item Soient \(f\) et \(g\) deux fonctions de \(\mathbb{N}\) dans
+      \(\mathbb{R}^{+}\).
+      \begin{Def}[Majoration asymptotique]
+      \begin{math}
+         O(g) = \{f : \mathbb{N} \mapsto \mathbb{R}^{+} \mid
+         \exists c \in \mathbb{R}^{+*}, \exists n_0 \in \mathbb{N},
+         \forall n > n_0, f (n) \leqslant c \, g(n) \}
+      \end{math}
+      \end{Def}
+      Abusivement, on notera \(f = O(g)\) ou \(f(x) = O (g(x))\) au
+      lieu de \(f \in O(g)\). De même \(O(f) = O(g)\) au lieu de
+      \(O(f) \subset O(g)\).
+      \begin{Def}[Minoration asymptotique]
+        \begin{math}
+          f \in \Omega (g) \Leftrightarrow g \in O(f)
+        \end{math}
+      \end{Def}
+      \begin{Def}[Encadrement asymptotique]
+        \begin{math}
+          \Theta (g) = O(g) \cap \Omega (g)
+        \end{math}
+      \end{Def}
+
+\end{enumerate}

@@ -1,0 +1,143 @@
+\paragraph{Answer 2.} First let us consider the equations defining function
+  \proc{Nth}. The signature tells us that this function takes two
+  arguments: the first one is a stack and the second one is an integer
+  corresponding to the position in the stack.
+
+  We understand that the item at the top of the stack, if any, is the
+  first one. This means that \(\proc{Nth} (s, 0)\) has no
+  meaning, hence no equation about it (the equations define, that is
+  they are the meaning of a function).
+
+  The signature says also that the sought item must exist in the
+  stack, so \(\proc{Nth} (\proc{Empty}, n)\) for any \(n\),
+  where \proc{Empty} denotes the empty stack, has no meaning, thus no
+  equation.
+
+  What are the remaining cases? We still have to consider non empty
+  stacks, i.e. of the kind \(\proc{Push} (e, s)\), and
+  positions greater than 1, distinguishing the case 1:
+  \begin{align}
+     \proc{Nth} (\proc{Push} (e, s), 1)
+  &= \textbf{?} \label{Nth_1}\\
+     \proc{Nth} (\proc{Push} (e, s), n)
+  &= \textbf{?} & \text{where} \;n > 1 \label{Nth_2}
+  \end{align}
+  Equation~\ref{Nth_1} is already answered: the top item on the stack
+  is the fist one. So
+  \begin{align*}
+     \proc{Nth} (\proc{Push} (e, s), 1)
+  &= e\\
+     \proc{Nth} (\proc{Push} (e, s), n)
+  &= \textbf{?} & \text{where} \;n > 1
+  \end{align*}
+  In order to complete equation~\ref{Nth_2}, a good picture is very
+  useful. Since \(n > 1\), the item we look for is not \(e\). So
+  we must look in \(s\). But the top item of \(s\) is the
+  \emph{second} of \(\proc{Push} (e, s)\), not the first
+  one. So the item we look for is at position \(n-1\) in \(s\),
+  whilst being at position \(n\) in \(\proc{Push} (e,
+  s)\). Therefore
+  \begin{align*}
+     \proc{Nth} (\proc{Push} (e, s), 1)
+  &= e\\
+     \proc{Nth} (\proc{Push} (e, s), n)
+  &= \proc{Nth} (s, n-1) & \text{where} \;n > 1
+  \end{align*}
+
+  Let us consider the equations for equations defining function
+  \proc{Flatten}. Here again, a good picture is very helpful. The
+  signatures informs us that this function takes only one argument
+  which is a stack of stack of some items. It is convenient to imagine
+  a non empty stack as a stack of boxes. In this case, these boxes
+  themselves contain stacks of smaller boxes. The effect of
+  \proc{Flatten} is to take all these smaller stacks and to append all
+  of them in a single stack.
+
+  Since stacks can only be constructed using two constructors, let us
+  consider two equations, one about empty stacks and the other about
+  non-empty ones:
+  \begin{align}
+     \proc{Flatten} (\proc{Empty}) 
+  &= \textbf{?} \label{Flatten_1}\\
+     \proc{Flatten} (\proc{Push} (e, s))
+  &= \textbf{?} \label{Flatten_2}
+  \end{align}
+  Equation~\ref{Flatten_1} is simple: if there no stack then there are
+  no items at all.
+  \begin{align*}
+     \proc{Flatten} (\proc{Empty}) 
+  &= \proc{Empty}\\
+     \proc{Flatten} (\proc{Push} (e, s))
+  &= \textbf{?}
+  \end{align*}
+  In equation~\ref{Flatten_2}, item \(e\) is a stack also (the
+  smaller stacked boxes) and we have to put it on top of the
+  flattening of \(s\). This is achieved by use of \proc{Append}:
+  \begin{align*}
+     \proc{Flatten} (\proc{Empty}) 
+  &= \proc{Empty}\\
+     \proc{Flatten} (\proc{Push} (e, s))
+  &= \proc{Append} (e, \proc{Flatten} (s))
+  \end{align*}
+  
+  Finally let us consider the equations defining function
+  \proc{Exists}. The signature says that this function takes two
+  arguments: the first one is a predicate over the type \type{item}
+  (\(\type{item} \rightarrow \type{boolean}\))
+  and the second one is a stack containing items of type \type{item}
+  (\proc{Stack}(\type{item}).\type{t}).
+
+  The purpose of the function call \(\proc{Exists} (f, s)\)
+  is to tell if there exists an item in the stack \(s\) which
+  satisfy a given property \(f\), or not.
+
+  The first step is to deconstruct a general stack into two kinds:
+  empty and non-empty:
+  \begin{align}
+      \proc{Exists} (f, \proc{Empty})
+   &= \textbf{?} \label{Exists_1}\\
+      \proc{Exists} (f, \proc{Push} (e, s))
+   &= \textbf{?} \label{Exists_2}
+  \end{align}
+  Equation~\ref{Exists_1} is straightforward to complete: by
+  construction, there is no item in the empty stack:
+  \begin{align*}
+      \proc{Exists} (f, \proc{Empty})
+   &= \kw{false}\\
+      \proc{Exists} (f, \proc{Push} (e, s))
+   &= \textbf{?}
+  \end{align*}
+  Now, we have to consider two more cases: either \(f(e)\)
+  (is \kw{true}) or \(\neg{f (e)}\) (is
+  \kw{true})\footnote{Expression \(\neg{x}\) is the negation of
+    \(x\).}:
+  \begin{align*}
+      \proc{Exists} (f, \proc{Empty})
+   &= \kw{false}\\
+      \proc{Exists} (f, \proc{Push} (e, s))
+   &= \textbf{?} & \text{if} \;f(e)\\
+      \proc{Exists} (f, \proc{Push} (e, s))
+   &= \textbf{?} & \text{if} \;\neg{f(e)}
+  \end{align*}
+  If \(f(e)\) then we found the kind of item we were looking
+  for:
+  \begin{align*}
+      \proc{Exists} (f, \proc{Empty})
+   &= \kw{false}\\
+      \proc{Exists} (f, \proc{Push} (e, s))
+   &= \kw{true} & \text{if} \;f(e)\\
+      \proc{Exists} (f, \proc{Push} (e, s))
+   &= \textbf{?} & \text{if} \;\neg{f(e)}
+  \end{align*}
+  In the remaining equation, we know that \(e\) does not satisfy
+  \(f\), hence we have to check if there is another candidate further
+  down in \(s\):
+  \begin{align*}
+      \proc{Exists} (f, \proc{Empty})
+   &= \kw{false}\\
+      \proc{Exists} (f, \proc{Push} (e, s))
+   &= \kw{true} & \text{if} \;f(e)\\
+      \proc{Exists} (f, \proc{Push} (e, s))
+   &= \proc{Exists} (f, s) & \text{if} \;\neg{f(e)}
+  \end{align*}  
+

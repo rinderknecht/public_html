@@ -1,0 +1,139 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\input{trace}
+
+\input{title}
+\author{Christian Rinderknecht}
+\date{3 June 2005}
+
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{clrscode}
+
+\newcommand\type[1]{\textsf{#1}}
+\newcommand\oMem{\overline{\proc{Mem}}}
+
+\begin{document}
+
+\maketitle
+
+\section{Arrays}
+
+We want an algebraic specification of arrays. An array is a list whose
+size is fixed at the construction time and whose elements are items of
+the same type. There is a special item which is used as a default
+element when creating a new array (i.e. a freshly created array
+contains these default elements). Then the user can change an element
+to another value by specifying the integer index (i.e. position) in
+the array and the new value.
+
+\noindent Let us call \proc{Item} the specification of some items whose
+signature is as follows.
+\begin{itemize}
+
+   \item \textbf{Defined types}
+   The type of the items is noted \type{t}
+
+   \item \textbf{Constructors}\\
+   \proc{Default} : \type{t}\\
+   The term \proc{Default} is a distinguished item, whose
+   interpretation, i.e. meaning, is left to the user of this
+   specification.
+
+\end{itemize}
+
+\noindent Let us call now \(\proc{Array}(\proc{Item})\) the
+specification of the arrays over items of type
+\proc{Item}.\type{t}. The signature is as follows.
+\begin{itemize}
+
+  \item \textbf{Defined types}
+  The type of the arrays is noted \type{t}.
+
+  \item \textbf{Constructors}
+  \begin{itemize}
+
+    \item \(\proc{Empty} : \type{t}\)\\
+    The term \proc{Empty} represents the array which contains no
+    element.
+
+    \item \(\proc{Create} : \type{int} \times \type{int} \rightarrow
+    \type{t}\)\\ 
+    The term \(\proc{Create} (x, y)\) denotes an array whose
+    elements are indexed from \(x\) to \(y\), if \(x < y\),
+    or from \(y\) to \(x\) otherwise. The type \type{int} denotes
+    the set of positive integers. Integers \(x\) and \(y\) are
+    called \emph{bounds}. If \(x < y\) then \(x\) is the
+    \emph{lower bound} and \(y\) is the \emph{upper bound}.
+
+    For example, \(\proc{Create}(3, 5)\) is an array whose elements
+    are indexed by integers \(3\), \(4\) and \(5\). It contains three
+    elements. These elements are all equal to
+    \proc{Item}.\proc{Default}. Also \(\proc{Create} (5, 3)\) is the
+    same as \(\proc{Create} (3, 5)\).  Therefore, in both cases, the
+    lower bound is \(3\) and the upper bound is \(5\).
+
+    \item \(\proc{Set} : \type{t} \times \type{int} \times
+    \proc{Item}.\type{t} \rightarrow \type{t}\)\\
+    The term \(\proc{Set} (a, n, e)\) represents an
+    array equal to array \(a\) except that the element at index
+    \(n\) is \(e\). If \(n\) is out of bounds, i.e. if \(n\) is
+    not between the bounds of \(a\), the result of \proc{Set} is
+    unspecified. Same if \(a\) is empty.
+
+  \end{itemize}
+
+  \item \textbf{Functions}
+  \begin{itemize}
+  
+    \item \(\proc{Lower} : \type{t} \rightarrow \type{int}\)\\
+    The call \(\proc{Lower} (a)\) is the lower bound of array
+    \(a\), i.e. the smallest valid index. If \(a\) is empty, the
+    result is unspecified.
+
+    \item \(\proc{Upper} : \type{t} \rightarrow \type{int}\)\\
+    The call \(\proc{Upper} (a)\) is the upper bound of array
+    \(a\), i.e. the greatest valid index. If \(a\) is empty, the
+    result is unspecified.
+
+    \item \(\proc{Get} : \type{t} \times \type{int} \rightarrow
+    \proc{Item}.\type{t}\)\\
+    The call \(\proc{Get} (a, n)\) denotes the element in
+    array \(a\) at index \(n\). If \(n\) is out of bounds or if
+    \(a\) is empty, the result of \proc{Get} is unspecified.
+
+    \item \(\proc{Nth} : \type{t} \times \type{int} \rightarrow
+      \proc{Item}.\type{t}\)\\ The call \(\proc{Nth}(a,n)\) denotes
+      the \(n\)th element in array \(a\). If \(a\) is empty or \(n\)
+      is out of bounds, the call is unspecified.
+
+    \item \(\proc{Mem} : \type{t} \times \proc{Item}.\type{t} 
+    \rightarrow \type{bool}\)\\
+    The call \(\proc{Mem}(a,e)\) is \proc{true} if \(e\) is an element
+    of array \(a\) and \proc{false} otherwise.    
+
+    \item \(\proc{Inv} : \type{t} \rightarrow \type{t}\)\\ 
+    The call \(\proc{Inv} (a)\) denotes the array whose elements are
+    in the reverse order as find in \(a\). For example, let \(a\) be
+    the array graphically represented as
+    \begin{tabular}{|c|c|c|c|}\hline\(e_1\) & \(e_2\) & 
+    \(e_3\) & \(e_4\)\\\hline\end{tabular}\,, then \(\proc{Inv}(a)\) is
+    represented as \begin{tabular}{|c|c|c|c|}\hline\(e_4\) & \(e_3\)
+    & \(e_2\) & \(e_1\)\\\hline\end{tabular}.
+
+    \item \(\proc{Undo} : \type{t} \times \type{int} \rightarrow
+    \type{t}\)\\
+    The call \(\proc{Undo}(a,n)\) represents the array \(a\) without
+    the last modification (using \proc{Set}) at index \(n\). If \(a\)
+    is empty or has not been modified at index \(n\), the call equals
+    \(a\).
+
+  \end{itemize}
+
+\end{itemize}
+
+\input{question_01}
+
+\end{document}

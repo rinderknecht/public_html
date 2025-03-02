@@ -1,0 +1,3 @@
+$HOME/Makefiles/Tools/html2ps.mk
+$HOME/Makefiles/Tools/ps2pdf.mk
+$HOME/Makefiles/Tools/distclean.mk

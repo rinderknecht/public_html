@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Binary Search Trees</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Binary Search Trees</h2>
+
+<p>Binary trees can be thought as an extension of a stack where there
+two tails instead of one. The vocabulary is different, though. The
+nomenclature we use consists in calling <em>internal nodes</em> the
+nodes containing some information (equivalent to a non-empty stack),
+and <em>external nodes</em> those without (equivalent to an empty
+stack). The first node in a non-empty binary tree is called
+the <em>root</em>, and an internal node whose two subtrees are
+external nodes is called a <em>leaf</em>.</p>
+
+<p>Binary search trees are a special kind of binary trees, where the
+data stored in the internal nodes is totally ordered such that, for
+any internal node, all the data in its left subtree is smaller and all
+the data in its right subtree is larger. This constraint enables a
+faster search than an exhaustive search through all the nodes in the
+tree (equivalent to linear search in stacks). Indeed, if the sought
+key is smaller than the key at the current node, it can only be
+present in the left subtree, or absent from the tree. Similarly, if
+the key we are looking for is greater than the current key, it can
+only be present in the right subtree, or be absent. If we reach an
+external node, we know that the key we sought is not present in the
+binary search tree and, if we are lucky, we did not have to traverse
+the whole tree to figure this out. Of course, it may be that the tree
+is <em>degenerate</em>, that is, it is topologically equivalent to a
+stack, in which case we hit the worst case because the search degrades
+into a linear search. Fortunately, it can be shown that, for large
+collections of keys, the set of possible binary search trees have
+roughly balanced shaped (although not of logarithmic height), and
+pathological cases are rare.</p>
+
+<h3>Persistent Trees (<em>functional style</em>)</h3>
+
+<p>Following the same design pattern as for persistent stacks, we obtain the following Java classes:</p>
+<ol>
+  <li><a href="Persistent/BST.java">Abstract class for Binary Search Trees</a>;</li>
+  <li><a href="Persistent/Ext.java">Empty trees (external nodes)</a>;</li>
+  <li><a href="Persistent/Int.java">Non-empty trees (internal nodes)</a>;</li>
+  <li><a href="Persistent/Found.java">Exception when a key is
+  found</a>;</li>
+  <li><a href="Persistent/FunObj.java">Main class</a>.</li>
+</ol>
+<p>The method <tt>add</tt> does not allow for duplicates in the
+tree. Moreover, it is optimised so that sharing is maximum in case of
+an attempt at inserting a duplicate key (using an exception in the
+auxiliary method <tt>add_aux</tt>). Remember the pattern in designing
+this kind of code: <em>going down</em> refers to recursive calls, at
+least on one of the subtrees, and <em>going up</em> refers to what is
+done with the values of these completed recursive calls (for
+example, <tt>mem</tt> does nothing but passing "up" the boolean,
+whilst <tt>add</tt> reconstructs the path from the root to the leaf
+where the insertion is performed).</p>
+
+<p>We designed an alternative method for insertion in a binary search
+tree which consists in adding a new root, instead of a leaf. This type
+of insertion is useful when considering the <em>amortised</em> cost,
+that is, the worst case of a series of updates. Indeed, if recently
+added keys are searched, it is preferable that be located near the
+root. One solution is based on a <em>small-step design</em>, in fact,
+we simply consider how we can obtain a root with a key we have
+inserted as a leaf. This method is the one we used when designing the
+insertion at a leaf by considering the similarities and differences
+with a simple search. Here, the first phase consists in going down in
+the tree and creating a new leaf, but, instead of reconstructing the
+path to the root on the way up, we perform rotations to bring the
+inserted key at the root of the current subtree. If we inserted the
+key in the right subtree, a <em>rotation to the left</em> will do
+exactly this; conversely, if we inserted the key in the left subtree,
+a <em>rotation to the right</em> will suffice. Therefore, when the
+root of the tree is reached, we find that it is the inserted key. As
+far as the implementation is concerned, we do not need to write a
+method for each kind of rotations, because these are partial
+functions, and we create a node (see the calls to the constructor
+of <tt>Int&lt;Key></tt> in <tt>add</tt>) which is then discarded by
+the rotations. Instead, we inline them.</p>
+
+<p>Another functional approach to inserting a new root to a binary
+search tree consists in defining a partition function, <tt>cut</tt>,
+which, given a key <tt>k</tt>, returns two search trees such that the
+keys of the first are smaller than <tt>k</tt>, and the keys of the
+second are greater. Then, adding a root containing <tt>k</tt> and the
+two previous trees as immediate subtrees is easy. The technical
+difficulty is the use a generic <tt>Pair</tt> class which contains two
+objects, which can be extracted on demand (Java lacks native
+pairs):</p>
+<ol>
+  <li><a href="Persistent/Pair.java">Generic class for pairs</a>.</li>
+</ol>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

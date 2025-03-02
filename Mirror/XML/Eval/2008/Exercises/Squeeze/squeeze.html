@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Removing Consecutively Repeated Items</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Removing Consecutively Repeated Items</h2>
+
+<p><strong>Question.</strong> The purpose of this exercise is to write
+  an XSLT transform which takes as input a flat document tree, that
+  is, the document root has children but no grand-children. The
+  children contain an attribute and the output should be the same
+  document without those children being consecutively repeated.
+</p>
+
+<p><strong>Example.</strong>
+<a href="./numbers.xml">This</a> is an example of input document and
+<a href="./squeeze.xml">this</a> is the corresponding output. You need
+to download the <a href="./numbers.dtd">DTD</a> to run this example.
+</p>
+
+<strong>Hints.</strong> 
+<ul>
+  <li>The output is XML, so you need to set the
+  attribute <tt>method="xml"</tt>.</li>
+</ul>
+
+<p><strong>Answer.</strong> <a href="./squeeze.xsl">This</a> is a
+possible transform solving the problem. Notice how we do not try to
+cast the attribute value to <tt>xs:integer</tt>, because we want to
+allow any kind of value to be compared.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+
+</html>

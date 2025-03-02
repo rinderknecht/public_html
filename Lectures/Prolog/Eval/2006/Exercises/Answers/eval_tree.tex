@@ -1,0 +1,61 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{amssymb}
+\usepackage{pst-tree,pst-eps}
+
+\newcommand{\Item}[3]{\TR[name=#3]{\fbox{\parbox{#1}{#2}}}}
+
+\begin{document}
+ 
+\TeXtoEPS 
+\pstree[thislevelsep=18mm,nodesep=2pt,labelsep=1pt,arrows=->]
+  {\Item{89mm}{\texttt{diff(plus(times(var(x),var(x)),var(y)),var(x),D)}}%
+        {Root}}
+{
+  \pstree[thislevelsep=25mm]%
+    {\Item{67mm}{\texttt{diff(times(var(x),var(x)),var(x),DF)}\\
+                      \texttt{diff(var(y),var(x),DG)}}{One}%
+     \tlput{[\textbf{\textsf{5}}]}%
+     \trput{\texttt{D = plus(DF,DG)}}}%
+  {
+   \pstree[thislevelsep=22mm]%
+     {\Item{43mm}{\texttt{diff(var(x),var(x),DF')}\\
+                  \texttt{diff(var(x),var(x),DG')}\\
+                  \texttt{diff(var(y),var(x),DG)}}{Two}%
+      \tlput{[\textbf{\textsf{7}}; %
+              \texttt{DF = DF'}, \texttt{DG = DG'}]}%
+      \trput{\texttt{DF = plus(times(var(x),DG'),times(var(x),DF'))}}}%
+   {
+    \pstree[thislevelsep=17mm]%
+      {\Item{43mm}{\texttt{diff(var(x),var(x),DG')}\\
+                   \texttt{diff(var(y),var(x),DG)}}{Three}%
+       \tlput{[\textbf{\textsf{1}}]}%
+       \trput{\texttt{DF'= num(1)}}}%
+    {
+     \pstree[thislevelsep=15mm,thistreesep=40mm]%
+       {\Item{40mm}{\texttt{diff(var(y),var(x),DG)}}{Back}%
+        \tlput{[\textbf{\textsf{1}}]}%
+        \trput{\texttt{DG'= num(1)}}%
+       }%
+     {
+      \pstree[thislevelsep=10mm]%
+        {\TR[name=No]{\texttt{No}} \tlput{[\textbf{\textsf{1}}]}}%
+      {}
+      \pstree[thislevelsep=10mm]%
+        {\Item{13mm}{\texttt{\textbackslash{}+(y=x)}}{Last}%
+         \tlput{[\textbf{\textsf{3}}]}%
+         \trput{\texttt{DG = num(0)}}}%
+      {
+       \TR{\(\varnothing\)}
+      }
+     }
+    }
+   }
+  }
+}
+\ncarc[linestyle=dotted,arcangle=-30]{->}{No}{Back}
+\endTeXtoEPS
+
+\end{document}

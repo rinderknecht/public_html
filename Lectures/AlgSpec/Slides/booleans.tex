@@ -1,0 +1,187 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Booleans/Signature}
+
+Let us start this section about search algorithms by presenting how to
+specify data structures without relying on a specific programming
+language. The method we introduce here is usually called
+\textbf{algebraic specification}.
+
+\bigskip
+
+Consider one of the simplest data structure you can imagine: the
+booleans. Let us call the following specification \proc{Bool}. Here is
+its \textbf{signature}:
+
+\begin{itemize}
+
+  \item \textbf{Defined types}
+
+  \begin{itemize}
+
+    \item The type of the booleans is \type{t}.
+
+  \end{itemize}
+
+  \item \textbf{Constructors}
+
+  \begin{itemize}
+
+    \item \(\proc{True} : \type{t}\)
+
+    \item \(\proc{False} : \type{t}\)
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Booleans/Signature (continued)}
+
+\proc{True} and \proc{False} are called constructors because they
+allow the construction of \textbf{values} of type \type{t},
+i.e. booleans. This is why we write ``: \type{t}'' after these
+constructors.
+
+\bigskip
+
+For more excitement, let us add some usual \textbf{functions} whose
+arguments are booleans:
+\begin{itemize}
+
+  \item \(\proc{Not} : \type{t} \rightarrow \type{t}\)\\ Expression
+    \(\proc{Not} (\id{b})\) is the negation of \id{b};
+
+  \item \(\proc{And} : \type{t} \times \type{t} \rightarrow
+    \type{t}\)\\ Expression \(\proc{And} (\id{b_1}, \id{b_2})\) is
+    the conjunction of \id{b_1} and \id{b_2};
+
+  \item \(\proc{Or} : \type{t} \times \type{t} \rightarrow
+    \type{t}\)\\ Expression \(\proc{Or} (\id{b_1}, \id{b_2})\) is
+    the disjunction of \id{b_1} and \id{b_2}.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Booleans/Equations}
+
+We can give mode information about the previous functions by means of
+\textbf{equations} (or \textbf{axioms}). A possible set of equations
+matching the signature is
+\begin{align*}
+\proc{Not} (\proc{True}) &= \proc{False}\\
+\proc{Not} (\proc{False}) &= \proc{True}\\
+\proc{And} (\proc{True}, \proc{True}) &= \proc{True}\\
+\proc{And} (\proc{True}, \proc{False}) &= \proc{False}\\
+\proc{And} (\proc{False}, \proc{True}) &= \proc{False}\\
+\proc{And} (\proc{False}, \proc{False}) &= \proc{False}\\
+   \forall \id{b_1}, \id{b_2} \quad \proc{Or} (\id{b_1}, \id{b_2}) 
+&= \proc{Not} (\proc{And} (\proc{Not} (\id{b_1}), \proc{Not} (\id{b_2})))
+\end{align*}
+The signature and the equations make a \textbf{specification}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Booleans/Equations (cont)}
+
+We note something interesting in the last equation: it contains
+\textbf{variables}, here \id{b_1} and \id{b_2}. These variables must
+be of type \type{t} because they are arguments of function \proc{Or},
+whose type, as given by the signature, is \(\type{t} \times \type{t}
+\rightarrow \type{t}\).
+
+\bigskip
+
+It is very important to notice also that these variables are bound to
+a \textbf{universal quantifier}, \textbf{\(\forall\)}, at the
+beginning of the equation. This means, in particular, that we can
+rename these variables because they are just names which are local to
+the equation. For instance
+\[
+  \forall \id{u}, \id{v} \quad \proc{Or} (\id{u}, \id{v}) 
+= \proc{Not} (\proc{And} (\proc{Not} (\id{u}), \proc{Not} (\id{v})))
+\]
+would be equivalent.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Booleans/Simplifying the equations}
+
+We can simplify these equations before going on. 
+
+\bigskip
+
+First we can omit the quantifiers (but remember they are implicitly
+present).
+
+\bigskip
+
+Second we remark that it suffices that one argument of \proc{And} is
+\proc{False} to make the call equal to \proc{False}. In other words
+\begin{align*}
+\proc{Not} (\proc{True}) &= \proc{False}\\
+\proc{Not} (\proc{False}) &= \proc{True}\\
+\proc{And} (\proc{True}, \proc{True}) &= \proc{True}\\
+\proc{And} (\id{x}, \proc{False}) &= \proc{False}\\
+\proc{And} (\proc{False}, \id{x}) &= \proc{False}\\
+\proc{Or} (\id{b_1}, \id{b_2}) &= \proc{Not} (\proc{And} (\proc{Not}
+(\id{b_1}), \proc{Not} (\id{b_2})))
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Booleans/Simplifying the equations (cont)}
+
+In order to be 100\% confident, we must check whether the set of new
+equations is \textbf{equivalent} to the first set.
+\[\small
+\left\{
+\begin{aligned}
+\proc{And} (\proc{True}, \proc{False}) &= \proc{False}\\
+\proc{And} (\proc{False}, \proc{True}) &= \proc{False}\\
+\proc{And} (\proc{False}, \proc{False}) &= \proc{False}
+\end{aligned}
+\right.
+\stackrel{?}{\Longleftrightarrow}
+\left\{
+\begin{aligned}
+\forall \id{x} \quad \proc{And} (\id{x}, \proc{False}) &= \proc{False}\\
+\forall \id{x} \quad \proc{And} (\proc{False}, \id{x}) &= \proc{False}
+\end{aligned}
+\right.
+\]
+The new system is equivalent to
+\(\small
+\left\{
+\begin{aligned}
+\proc{And} (\proc{True}, \proc{False}) &= \proc{False}\\
+\proc{And} (\proc{False}, \proc{False}) &= \proc{False}\\
+\proc{And} (\proc{False}, \proc{True}) &= \proc{False}\\
+\proc{And} (\proc{False}, \proc{False}) &= \proc{False}
+\end{aligned}
+\right.
+\)
+
+So the answer is yes.
+
+\end{frame}

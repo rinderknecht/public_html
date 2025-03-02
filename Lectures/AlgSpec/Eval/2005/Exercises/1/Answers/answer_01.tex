@@ -1,0 +1,202 @@
+\paragraph{Answers.}
+
+\begin{itemize}
+
+  \item \(\proc{Lower} : \type{t} \rightarrow \type{int}\)\\
+  First, we know that we have to left unspecified the case when the
+  array is empty, i.e. there is no equation whose side is
+  \(\proc{Lower} (\proc{Empty})\).
+
+  We still have to consider the two other constructors, \proc{Create}
+  and \proc{Set}:
+  \begin{align}
+       \proc{Lower} (\proc{Create} (x, y)) 
+    &= \textbf{?} \label{Lower_1}\\
+       \proc{Lower} (\proc{Set} (a, n, e)) 
+    &= \textbf{?} \label{Lower_2}
+  \end{align}
+  In case of equation~\ref{Lower_1}, we must distinguish two cases: if
+  \(x < y\) or \(x \geqslant y\):
+  \begin{align*}
+       \proc{Lower} (\proc{Create} (x, y)) 
+    &= \textbf{?} 
+    &  \text{if} \;x < y\\
+       \proc{Lower} (\proc{Create} (x, y)) 
+    &= \textbf{?} 
+    &  \text{if} \;x \geqslant y\\
+       \proc{Lower} (\proc{Set} (a, n, e)) 
+    &= \textbf{?}
+  \end{align*}
+  These cases are easy to complete because we know explicitly the
+  lower bound:
+  \begin{align*}
+       \proc{Lower} (\proc{Create} (x, y)) 
+    &= x
+    &  \text{if} \;x < y\\
+       \proc{Lower} (\proc{Create} (x, y)) 
+    &= y
+    &  \text{if} \;x \geqslant y\\
+       \proc{Lower} (\proc{Set} (a, n, e)) 
+    &= \textbf{?}
+  \end{align*}
+  The last case (equation~\ref{Lower_2}) is also easy to solve because
+  the argument is simply the array \(a\) with one element modified:
+  the call to \proc{Set} does not change the lower bound. Therefore:
+  \begin{align*}
+       \proc{Lower} (\proc{Create} (x, y)) 
+    &= x
+    &  \text{if} \;x < y\\
+       \proc{Lower} (\proc{Create} (x, y)) 
+    &= y
+    &  \text{if} \;x \geqslant y\\
+       \proc{Lower} (\proc{Set} (a, n, e)) 
+    &= \proc{Lower} (a)
+  \end{align*}
+
+  \item \(\proc{Upper} : \type{t} \rightarrow \type{int}\)\\
+  This case is the dual of \proc{Lower}:
+  \begin{align}
+       \proc{Upper} (\proc{Create} (x, y)) 
+    &= y
+    &  \text{if} \;x < y \label{Upper_1}\\
+       \proc{Upper} (\proc{Create} (x, y)) 
+    &= x
+    &  \text{if} \;x \geqslant y \label{Upper_2}\\
+       \proc{Upper} (\proc{Set} (a, n, e)) 
+    &= \proc{Upper} (a) \label{Upper_3}
+  \end{align}
+
+  \item \(\proc{Get} : \type{t} \times \type{int} \rightarrow
+    \proc{Item}.\type{t}\)\\
+  First, we know that the case of the empty array is not specified for
+  \proc{Get} (there is no element to get), so there is no equation
+  whose side is \(\proc{Get} (\proc{Empty}, n)\).
+
+  The remaining constructors \proc{Create} and \proc{Set} have to be
+  considered:
+  \begin{align}
+     \proc{Get} (\proc{Create} (x, y), n) 
+  &= \textbf{?} \label{Get_1}\\
+     \proc{Get} (\proc{Set} (a, p, e), n)
+  &= \textbf{?} \label{Get_2}
+  \end{align}
+  We know from the signature that if the index \(n\) is out of
+  bounds, the value of the call to \proc{Get} is unspecified. 
+
+  This means that equation~\ref{Get_1} should be restricted to the
+  case
+  \[
+    \proc{Lower} (\proc{Create} (x, y)) \leqslant n 
+    \leqslant \proc{Upper} (\proc{Create} (x, y))
+  \]
+  which can be split into two cases, depending on \(x\) and \(y\):
+  \begin{align*}
+     \proc{Get} (\proc{Create} (x, y), n) 
+  &= \textbf{?}
+  & \text{if} \; x \leqslant n \leqslant y\\
+     \proc{Get} (\proc{Create} (x, y), n) 
+  &= \textbf{?} 
+  & \text{if} \; y \leqslant n \leqslant x\\
+     \proc{Get} (\proc{Set} (a, p, e), n)
+  &= \textbf{?}
+  \end{align*}
+  We have to restrict also equation~\ref{Get_2} to the case
+  \[
+    \proc{Lower} (\proc{Set} (a, p, e)) \leqslant n 
+    \leqslant \proc{Upper} (\proc{Set} (a, p, e))
+  \]
+  which, using the equations~\ref{Lower_2} and~\ref{Upper_3} of
+  \proc{Lower} and \proc{Upper}, is equivalent to
+  \(
+    \proc{Lower} (a) \leqslant n \leqslant \proc{Upper} (a)
+  \).
+  Therefore we have:
+  \begin{align*}
+     \proc{Get} (\proc{Create} (x, y), n) 
+  &= \textbf{?}
+  & \text{if} \; x \leqslant n \leqslant y\\
+     \proc{Get} (\proc{Create} (x, y), n) 
+  &= \textbf{?} 
+  & \text{if} \; y \leqslant n \leqslant x\\
+     \proc{Get} (\proc{Set} (a, p, e), n)
+  &= \textbf{?}
+  & \text{if} \;\proc{Lower} (a) \leqslant n \leqslant \proc{Upper} (a)
+  \end{align*}
+  Also \(p\) must be in-between bounds:
+  \(\proc{Lower} (a) \leqslant p \leqslant \proc{Upper} (a)\).
+  So:
+  \begin{align*}
+     \proc{Get} (\proc{Create} (x, y), n) 
+  &= \textbf{?}
+  & \text{if} \; x \leqslant n \leqslant y\\
+     \proc{Get} (\proc{Create} (x, y), n) 
+  &= \textbf{?} 
+  & \text{if} \; y \leqslant n \leqslant x\\
+     \proc{Get} (\proc{Set} (a, p, e), n)
+  &= \textbf{?}
+  & \text{if} \;\proc{Lower} (a) \leqslant p, n \leqslant \proc{Upper} (a)
+  \end{align*}
+
+  The signature tells us that a newly created array is filled with the
+  special element \proc{Item}.\proc{Default}. So if we pick any
+  element between the bounds, it is always equal to
+  \proc{Item}.\proc{Default}:
+  \begin{align*}
+     \proc{Get} (\proc{Create} (x, y), n) 
+  &= \proc{Default}
+  & \text{if} \; x \leqslant n \leqslant y\\
+     \proc{Get} (\proc{Create} (x, y), n) 
+  &= \proc{Default}
+  & \text{if} \; y \leqslant n \leqslant x\\
+     \proc{Get} (\proc{Set} (a, p, e), n)
+  &= \textbf{?}
+  & \text{if} \;\proc{Lower} (a) \leqslant p, n \leqslant \proc{Upper} (a)
+  \end{align*}
+  The last equation has to be split in two cases, because we can
+  express differently the result if \(p = n\) or not:
+  \begin{align*}
+     \proc{Get} (\proc{Create} (x, y), n) 
+  =& \;\proc{Default}
+  & \text{if} \; x \leqslant n \leqslant y\\
+     \proc{Get} (\proc{Create} (x, y), n) 
+  =& \;\proc{Default}
+  & \text{if} \; y \leqslant n \leqslant x\\
+     \proc{Get} (\proc{Set} (a, n, e), n)
+  =& \;\textbf{?}
+  & \text{if} \;\proc{Lower} (a) \leqslant n \leqslant \proc{Upper}
+     (a)\\
+     \proc{Get} (\proc{Set} (a, p, e), n)
+  =& \;\textbf{?} &  \text{if} \; p \neq n\\
+  && \text{and} \;\proc{Lower} (a) \leqslant p, n \leqslant \proc{Upper}
+     (a)
+  \end{align*}
+  If \(p = n\) the result is \(e\) because, by construction, it is the
+  element at position \(n\) in \(\proc{Set} (a, n, e)\). It \(p \neq
+  n\), the result cannot be \(e\), by construction. Hence we must look
+  for it in \(a\). As a conclusion:
+  \begin{align*}
+     \proc{Get} (\proc{Create} (x, y), n) 
+  =& \;\proc{Default}
+  & \text{if} \; x \leqslant n \leqslant y\\
+     \proc{Get} (\proc{Create} (x, y), n) 
+  =& \;\proc{Default}
+  & \text{if} \; y \leqslant n \leqslant x\\
+     \proc{Get} (\proc{Set} (a, n, e), n)
+  =& \;e
+  & \;\text{if} \;\proc{Lower} (a) \leqslant n \leqslant \proc{Upper}
+     (a)\\
+     \proc{Get} (\proc{Set} (a, p, e), n)
+  =& \;\proc{Get} (a, n)
+  &  \text{if} \; p \neq n\\
+  && \;\text{and} \;\proc{Lower} (a) \leqslant p \leqslant \proc{Upper}
+    (a)
+  \end{align*}
+Notice we removed the condition \(\proc{Lower} (a) \leqslant n
+\leqslant \proc{Upper} (a)\) from the last equation. This is a
+simplication, because, in this case, we can delay the condition check
+on \(n\) to the recursive call \(\proc{Get} (a, n)\). Then, if \(a\)
+is an unmodified array (\proc{Create}), \(n\) will be checked against
+the bounds (see the first two equations). Otherwise, \(n\) may equal
+an index in bounds (third equation), which settles the problem too.
+
+\end{itemize}

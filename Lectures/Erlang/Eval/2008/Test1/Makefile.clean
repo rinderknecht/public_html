@@ -1,0 +1,3 @@
+clean::
+	@rm -f *.beam
+	@symlinks.sh --set --quiet

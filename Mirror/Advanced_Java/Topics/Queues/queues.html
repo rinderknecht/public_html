@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Queues</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Queues</h2>
+
+<p>Queues are, with stacks, the other linear data structure commonly
+used by programmers. The difference between a queue and a stack is
+that keys are pushed on a queue at the opposite end where they are
+popped. Pushing in this case is called <em>enqueueing</em> and popping
+is called <em>dequeueing</em>. Consequently, as far as data fields are
+concerned, the class modelling queues contains two references: one on
+the last enqueued object (on <em>the rear</em>), and one on the first
+object to be dequeued (on <em>the front</em>). (Note that these
+references must either be both non-null or null.) Having two
+references instead of one, as with stacks, enables constant time
+enqueueing <em>and</em> dequeueing.</p>
+
+<h3>Persistent Queues (<em>functional style</em>)</h3>
+
+<p>We follow the same design pattern as with the persistent stacks,
+that is, we have an abstract class <tt>Queue</tt> from which two final
+classes are derived: one for the empty queues (<tt>EQueue</tt>) and
+one for the non-empty queues (<tt>NQueue</tt>). Note that we implement
+both <tt>enqueue</tt> and <tt>dequeue</tt>, and the latter being
+partial, throws the exception <tt>QEmpty</tt>.</p>
+
+<p>The technique to implement non-empty queues consists in have a pair
+of stacks, one to dequeue from, called the <em>front queue</em>, and
+one to enqueue to, called the <em>rear stack</em>. A description of
+this implementation and its amortised cost can be found in my
+article <a href="http://pnyf.inf.elte.hu/rinderkn/pub/ie2011.pdf">A
+Didactic Analysis of Functional Queues</a>. The Java classes are as
+follows.</p>
+<ol>
+  <li><a href="Persistent/Queue.java">Abstract class for
+  queues</a>;</li>
+  <li><a href="Persistent/EQueue.java">Empty queues</a>;</li>
+  <li><a href="Persistent/NQueue.java">Non-empty queues</a>;</li>
+  <li><a href="Persistent/QEmpty.java">Exception for dequeue</a>;</li>
+  <li><a href="Persistent/FunObj.java">Main class</a>.</li>
+</ol>
+Note that we need to redefine classes for persistent stacks as well, in order to support <em>dequeue</em>:
+<ol>
+  <li><a href="Persistent/Stack.java">Abstract class for
+  stacks</a>;</li>
+  <li><a href="Persistent/EStack.java">Empty stacks</a>;</li>
+  <li><a href="Persistent/NStack.java">Non-empty stacks</a>.</li>
+</ol>
+
+<h3>Ephemeral Queues (<em>imperative style</em>)</h3>
+
+<p>Here are the Java files containing the definition of a queue for
+imperative programming, and some basic methods, either using loops
+exclusively, or recursion only.
+</p>
+<ol>
+  <li><a href="Ephemeral/Queue.java">Class for queues</a>;</li>
+  <li><a href="Ephemeral/Cell.java">Container for a key</a>;</li>
+  <li><a href="Ephemeral/EphObj.java">Main class</a>.</li>
+</ol>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+Question 1: Representing Natural Numbers
+========================================
+
+In the first lesson we used functors to represent datastructures. Most
+of the time datastructures are build up using smaller components which
+are considered as a whole by the program. We use functors as some kind
+of glue to hold those components together. E.g., a date could be
+represented as date(26,november,1979). Note, a functor is NOT a predicate.
+
+1) Search for a way to represent natural numbers using functors.
+2) Write a predicate natural(X) that checks if X is a natural number
+   in your representation.
+3) Use your representation for natural numbers to write the following
+   predicates:
+   	smaller_or_equal(X,Y)
+	my_plus(X,Y,Som)
+	my_min(X,Y,Difference)
+	times(X,Y,Produkt)
+	exp(X,N,Macht)
+	minimum(X,Y,Min)
+   If one of the arguments does not satisfy your representation, the
+   predicate should return false.
+4) Do your predicates work in both directions? If not, modify them or
+   argue why it is not possible to do them work in both directions.
+
+Question 2: Built-in Aritmetic Predicates
+=========================================
+
+In the previous exercise we saw that we can easily write on our own aritmetic
+operators on natural numbers. Because these own written versions are
+not that efficient, almost every prolog implementation has built-in
+predicates for aritmetic operations, which use the underlying
+implementation language (e.g. C or C++) of the prolog interpreter.
+For this efficiency a price has to be paid, because this predicates
+cannot be used as general as their logical counterparts.
+
+In SWI-prolog we evaluate expressions by means of the predicate is,
+which is used as follows:
+	Number is expr
+
+  - expr cannot contain unbound variables
+  - if Number is a variable, expr is evaluated, if possible, and the
+    computed value is bounded to Number
+  - if Number is not a variable, expr is evaluated, if possible, and
+    the computed value is compared on equality with Number
+
+Some examples:
+	?- X is 3+5.
+	X = 8
+	Yes
+	?- 8 is 3+5.
+	Yes
+	?- 8 is X.
+	ERROR: Arguments are not sufficiently instantiated
+	?- 8 is 3+X.
+	ERROR: Arguments are not sufficiently instantiated
+	?- X is 3+Y.
+	ERROR: Arguments are not sufficiently instantiated
+	?- 3+5 is 3+5.
+	No
+	?- Y is 5, X is 3+Y.
+	Y=5
+	X=8
+	Yes
+	?- X is 8, X is 3+Y.
+	ERROR: Arguments are not sufficiently instantiated
+
+The last example shows that not every built-in predicate can be used
+in the opposite direction. The most common used built-in primitive
+operators in prolog are:
+	+	not reversable sum
+	-	not reversable subtraction
+	*	not reversable multiplication
+	/	not reversable division
+
+We also have some boolean primitives like:
+	<	less then for numbers
+	>	greater then for numbers
+	>=	greater then or equal for numbers
+	<=	less then or equal for numbers
+
+Solve the following questions:
+
+1) Consider the following implementation for the + predicate:
+	plusnew(X,Y,Z) :- Z is X+Y.
+   Predict the result of the following queries:
+   	my_plus(your_representation(2),your_representation(5),X)
+	plusnew(2,5,X)
+	my_plus(your_representation(5),your_representation(2),X)
+   where your_representation(X) represents the value X in your
+   representation of the previous exercise.
+
+   Which of these queries is the most efficient? Which is the less
+   efficient one? Use the tracer to verify your answer by counting
+   the number of recursive calls.
+2) Predict and explain the result of the following queries:
+	my_plus(your_representation(3),X,your_representation(5))
+	plusnew(3,X,8)
+3) Write a predicate power(X,N,Macht) which is analog to the built-in
+   exp(X,N,Macht) predicate. Use the infix built-in predicate * to
+   multiply. In which ways can you use power?
+4) Write a predicate to compute the biggest common divider of two
+   given numbers.
+
+Question 3: Math with Lists
+===========================
+
+Implement the following relations/predicates in prolog:
+	max(X,Y,Max)		compute the biggest number of X and Y
+	maxlist(List,Max)	compute the biggest number of a list of numbers
+	my_length(List,N)	compute the length of a list
+	ordered(List)		check if the list of numbers is ordered
+	my_between(N1,N2,X)	check if X is between N1 and N2
+
+Question 4: Caching
+===================
+
+Write a predicate maketable(X,Y) which produces a table of products of
+all pairs of numbers between X and Y, so that afterwards queries of
+the form product(A,B,C) can be posed. 
+
+Write a predicate to compute Fibonacci numbers. Try to get an
+implementation which is as efficient as possible. Hint: try to use
+caching.
+
+Question 5: Chess
+=================
+
+A position on a chess-board can be represented by a pair of the form
+X/Y, with X and Y between 1 and 8.
+
+1) Define the relation jump(Vak1,Vak2) as the horse carries it out.
+   The starting position is always given, e.g.
+   	?- jump(1/1,s).
+
+	s=3/2
+	s=2/3
+
+	no
+2) Define a relation horsepath(Path) where Path is a list of positions
+   representing a legal path for a horse on a chess-board.
+
+3) Define, by using horsepath(Path), a query to find out if there
+   exists a path for a horse, using four jumps such that:
+	- the horse starts at position 2/1,
+	- ends at the opposite side of the board, i.e. Y=8, and
+	- go through position 5/4 after the second jump

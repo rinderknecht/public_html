@@ -1,0 +1,71 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amssymb}
+
+\usepackage{array}
+\usepackage{multirow}
+
+\title{Test 1e of \textsf{Erlang}}
+\author{Christian Rinderknecht}
+\date{7 October 2011}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+
+\begin{enumerate}
+
+  \item This is about shuffling three stacks in the following way (the
+    top of the stacks is on the top of the figure):
+\begin{center}
+\begin{tabular}{>{$}c<{$}>{$}c<{$}>{$}c<{$}c>{$}c<{$}}
+a_1 & a_2 & a_3 & \multirow{4}{*}{\(\rightarrow\dots\rightarrow\)} 
+                  & a_3\\
+b_1 & b_2 & b_3 & & a_1\\
+c_1 & c_2 &     & & a_2\\
+    & d_2 &     & & b_3\\
+    &     &     & & b_1\\
+    &     &     & & b_2\\
+    &     &     & & c_1\\
+    &     &     & & c_2\\
+    &     &     & & d_2
+\end{tabular}
+\end{center}
+If the three stacks are empty, then the result is empty too. Write a
+function \fun{three/3} computing this kind of shuffle.
+
+  \item Write a function \fun{pre/2} (\emph{prefix}) such that, if
+    \[\fun{pref}(P,Q) \xrightarrow{+} R,\]
+    and list \(P\) is the beginning of list~\(Q\) then \(R\)~is
+    \fun{true}, otherwise \fun{false}. For example,
+    \begin{align*}
+      \fun{pre}([0,1,1,0,1],[0,1,1,0,1,1,1,0,0])
+      &\xrightarrow{+} \fun{true},\\
+      \fun{pre}([\fun{t},\fun{h},\fun{e}],[\fun{t},\fun{h},\fun{e},\fun{s},\fun{e}])
+      & \xrightarrow{+} \fun{true},\\
+      \fun{pre}([4,\fun{a},3],[4,\fun{a}])
+      &\xrightarrow{+} \fun{false},\\
+      \fun{pre}([\,],[1,2,3])
+      &\xrightarrow{+} \fun{true}.
+    \end{align*}
+    Note that the empty list is the prefix of \emph{any} list.
+
+\end{enumerate}
+
+\end{document}
+
+shuffle3([], [], [])      -> [].
+shuffle3(L1, L2, [H3|T3]) -> [H3|shuffle(L2, T3, L1)];
+shuffle3(L1, L2, [])      -> shuffle3(L2, [], L1);
+
+

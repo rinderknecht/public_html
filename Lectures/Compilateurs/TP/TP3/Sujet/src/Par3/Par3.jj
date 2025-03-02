@@ -1,0 +1,24 @@
+PARSER_BEGIN(Par3)
+public class Par3 {
+  public static void main(String args[]) throws ParseException {
+    Par3 parser = new Par3(System.in);
+    int count = parser.S();
+    System.out.println("Nesting level is " + count);
+  }
+}
+PARSER_END(Par3)
+
+SKIP : {" " | "\t" | "\n" | "\r"}
+TOKEN : { <LPAR: "("> | <RPAR: ")"> }
+
+int S() :
+{int nesting;}
+{
+  nesting=P() <EOF> { return nesting; }
+}
+
+int P() :
+{int nesting=0;}
+{
+  <LPAR> [nesting=P()] <RPAR>  {return ++nesting;}
+}

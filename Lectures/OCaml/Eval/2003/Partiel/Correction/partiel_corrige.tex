@@ -1,0 +1,343 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{xspace}
+\usepackage{amsmath}
+\usepackage{epsf}
+
+\input{trace}
+
+\def\ne{n{\oe}ud\xspace}
+\def\nes{n{\oe}uds\xspace}
+
+\title{Corrigé du partiel de programmation fonctionnelle en Objective
+       Caml}
+\author{Christian Rinderknecht}
+\date{1\ier{} avril 2003}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{enumerate}
+
+  \item \emph{Écrire une fonction qui, étant donné $n\geq 1$, calcule
+        $u_n$, où la suite $(u_n)_{n\geq 1}$ est définie par}
+        \begin{align*}
+        u_1 & = 1 \\
+        u_{n+1} & = \left\{ 
+                      \begin{array}{ll} 
+                        u_n/2 + 1 & \text{\ si $u_n$ est pair} \\ 
+                        u_n + 17 & \text{\ sinon} 
+                      \end{array} 
+                    \right.
+        \end{align*}
+
+        \emph{On prendra garde à ne pas faire un même calcul plusieurs
+        fois.} 
+
+        Réponse:
+
+        \begin{verbatim}
+ let rec u = function
+   1 -> 1
+ | n -> let x = u (n-1)
+        in if x mod 2 = 0 then x/2 + 1 else x + 17
+        \end{verbatim}
+
+
+  \item \emph{Donner le type des expressions suivantes:}
+
+        \begin{itemize}
+          \item \verb/fun x -> x +. 3.0/
+          \item \verb/fun (x,y) -> x or y/
+          \item \verb/fun x -> let f y = y + x in f x/
+          \item \verb/List.map (fun x -> not x)/
+          \item \verb/fun f g -> (fun x -> f (g x))/
+        \end{itemize}
+
+        Réponse:
+
+\begin{verbatim}
+# fun x -> x +. 3.0;;
+- : float -> float = <fun>
+# fun (x,y) -> x || y;;
+- : bool * bool -> bool = <fun>
+# fun x -> let f y = y + x in f x;;
+- : int -> int = <fun>
+# List.map (fun x -> not x);;
+- : bool list -> bool list = <fun>
+# fun f g -> (fun x -> f(g(x)));;
+- : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b = <fun>
+\end{verbatim}
+
+La troisième valeur est une fonction qui prend un \texttt{x} et le
+passe à la fonction \texttt{f}. Le type de \texttt{x} est donc le
+domaine de \texttt{f}. Soit $\alpha$ ce type. La fonction \texttt{f}
+prend un \texttt{y} (de type $\alpha$, donc) et l'ajoute à
+\texttt{x}. Or l'opérateur \texttt{( + )} a pour type $\texttt{int}
+\rightarrow \texttt{int} \rightarrow \texttt{int}$. Par conséquent
+\texttt{x} et \texttt{y} sont de type \texttt{int}, en particulier
+$\alpha = \texttt{int}$, et le type de \texttt{f} est $\texttt{int}
+\rightarrow \texttt{int}$. Donc \texttt{f(x)} a pour type
+\texttt{int}. Finalement, la fonction proposée a pour type
+$\texttt{int} \rightarrow \texttt{int}$.
+
+La quatrième expression repose sur \texttt{List.map} qui a pour type
+$(\alpha \rightarrow \beta) \rightarrow \alpha \, \texttt{list}
+\rightarrow \beta \, \texttt{list}$. Or on l'évalue partiellement en
+son premier argument avec une fonction dont le type est $\texttt{bool}
+\rightarrow \texttt{bool}$. Donc $\alpha = \beta = \texttt{bool}$. Il
+reste donc finalement le type $\texttt{bool list} \rightarrow
+\texttt{bool list}$.
+
+\item \emph{On désire manipuler symboliquement des expressions formées
+      à partir des éléments suivants:}
+
+      \begin{itemize}
+        \item \emph{la constante $\pi$;}
+        \item \emph{des variables $x$, $y$, etc.;}
+        \item \emph{un opérateur binaire $+$;}
+        \item \emph{un ensemble fixe de fonctions: sin, cos, et tan.}
+      \end{itemize}
+
+      \emph{Questions:}
+
+      \begin{itemize}
+        \item \emph{Définir un type {\tt expression} pour représenter
+              ces expressions (les noms de variable peuvent être
+              représentés par des chaînes de caractères);}
+
+              \medskip
+
+              Une expression est soit la constante $\pi$, soit une
+              variable, soit $+$, soit une fonction
+              trigonométrique. Il faut donc définir un type somme
+              (suite de «~ou~»). On définit donc un constructeur pour
+              chaque type d'expression, par exemple: \texttt{Pi},
+              \texttt{Var}, \texttt{Plus}, \texttt{Sin}, \texttt{Cos}
+              et \texttt{Tan}. Ensuite il faut déterminer quelle
+              information supplémentaire chaque constructeur doit
+              porter pour modéliser complètement le concept
+              correspondant. En ce qui concerne \texttt{Pi}, tout est
+              dit: un constructeur constant (c-à-d. sans arguments)
+              modélise bien une constante mathématique. Une variable
+              cependant a un nom, et l'énoncé du sujet proposait le
+              type \texttt{string} pour capturer cela, donc il faudra
+              définir \texttt{Var of string}. Le constructeur
+              \texttt{Plus} modélise une fonction mathématique qui
+              opère sur deux arguments. Puisqu'on souhaite être le
+              plus général possible et ne pas créer de types
+              supplémentaires, le type qui s'impose pour les arguments
+              est bien entendu \texttt{expression} lui-même (ce type
+              est donc récursif): \texttt{Plus of expression *
+              expression}. Les fonction trigonométriques n'opè\-rent que
+              sur un seul argument, donc on définira au final:
+
+              \smallskip
+
+              \begin{verbatim}
+type expression = 
+  Pi
+| Var of string
+| Plus of expression * expression
+| Sin of expression
+| Cos of expression
+| Tan of expression
+              \end{verbatim}
+
+
+        \item \emph{Donner la valeur Caml correspondant à l'expression
+              $\cos x + \tan y$.}
+
+              \medskip
+
+              Réponse:
+
+              \begin{verbatim}
+Plus ((Cos (Var "x")), (Tan (Var "y")))
+              \end{verbatim}
+
+        \item \emph{Écrire une fonction {\tt eval} qui calcule la valeur
+              flottante d'une expression dans un environnement
+              donné. On rappelle qu'un environnement est une liste de
+              paires (nom de variable, valeur) qui à chaque variable
+              associe une valeur. La fonction prédéfinie {\tt
+              List.assoc} sera utile pour accéder aisément aux contenu
+              de l'environnement. (On précise que les fonctions {\tt
+              sin}, {\tt cos} et {\tt tan} sont prédéfinies en Caml
+              mais la constante $\pi$ ne l'est pas: on utilisera la
+              fonction arc-cosinus {\tt acos}.)}
+
+              \medskip
+
+              Réponse:
+
+              {\small
+              \begin{verbatim}
+# let rec eval env = function
+    Pi            -> acos (-1.0)
+  | Var (x)       -> List.assoc x env
+  | Plus (e1, e2) -> eval env e1 +. eval env e2
+  | Sin (e)       -> sin (eval env e)
+  | Cos (e)       -> cos (eval env e)
+  | Tan (e)       -> tan (eval env e)
+  ;;
+val eval : (string * float) list -> expression -> float = <fun>
+              \end{verbatim}
+              }
+
+      \end{itemize}
+
+  \item \emph{On désire manipuler des polynômes à une variable et à
+        coefficients entiers. On représentera un polynôme par une
+        liste de couples (coefficient, degré), triée par ordre
+        décroissant de degré; chaque couple représente un monôme. Par
+        exemple, $X^3-X+1$ sera représenté par la liste
+        \texttt{[(1,3); (-1,1); (1,0)]}. Écrire une fonction qui
+        effectue la somme de deux polynômes. On prendra garde à
+        respecter l'ordre des monômes et à ne pas créer plusieurs
+        monômes de même degré dans le résultat.}
+
+        \smallskip
+
+        Réponse:
+
+        \begin{verbatim}
+let rec ajout p1 p2 =
+  match (p1, p2) with
+    ([], _) -> p2
+  | (_, []) -> p1
+  | ((c1,d1)::r1, (c2,d2)::r2) ->
+      if d1 = d2
+      then (c1+c2,d1)::(ajout r1 r2)
+      else if d1 > d2
+           then (c1,d1)::(ajout r1 p2)
+           else (c2,d2)::(ajout p1 r2)
+        \end{verbatim}
+
+On remarque qu'on destructure les monômes (sous forme de paires) dans
+le motif pour ensuite parfois reconstruire les mêmes monômes (à droite
+des flèches) si \texttt{d1 > d2} ou \texttt{d1 < d2}. On peut alors
+légèrement améliorer les performances en liant \emph{dans le filtre}
+la paire à un nom, et réutiliser ce nom à droite des flèches
+(c-à-d. dans le calcul):
+
+        \begin{verbatim}
+let rec ajout p1 p2 =
+  match (p1, p2) with
+    ([], _) -> p2
+  | (_, []) -> p1
+  | (((c1,d1) as m1)::r1, ((c2,d2) as m2)::r2) ->
+      if d1 = d2
+      then (c1+c2,d1)::(ajout r1 r2)
+      else if d1 > d2
+           then m1::(ajout r1 p2)
+           else m2::(ajout p1 r2)
+        \end{verbatim}
+
+Ainsi les monômes \texttt{m1} et \texttt{m2} ne sont jamais
+reconstruits.
+
+Pour éviter de construire des monômes dont le coefficient est nul (par
+\texttt{c1+c2}) on ajoute une conditionnelle:
+
+        \begin{verbatim}
+let rec ajout p1 p2 =
+  match (p1, p2) with
+    ([], _) -> p2
+  | (_, []) -> p1
+  | (((c1,d1) as m1)::r1, ((c2,d2) as m2)::r2) ->
+      if d1 = d2
+      then if c1 + c2 = 0
+           then ajout r1 r2
+           else (c1+c2,d1)::(ajout r1 r2)
+      else if d1 > d2
+           then m1::(ajout r1 p2)
+           else m2::(ajout p1 r2)
+        \end{verbatim}
+
+
+  \item \emph{Un arbre binaire est un arbre où chaque \ne a au plus
+        deux fils, un fils gauche et un fils droit. De plus, chaque
+        \ne est annoté par une étiquette, qui est une valeur \emph{a
+        priori} quelconque. Voici un exemple d'arbre annoté par des
+        étiquettes de type entier:}
+     
+        $$\epsfbox{arbre_bin.eps}$$
+
+        \emph{Le type des arbres binaires est défini par:}
+\begin{verbatim}
+  type 'a arbre =
+    Rien
+  | Noeud of 'a * ('a arbre) * ('a arbre)
+\end{verbatim}
+
+       \emph{Ce type est \emph{paramétré} par la variable de type
+       \texttt{'a}, ce qui permet de définir le type des arbres
+       indépendamment du type des étiquettes. On pourra ensuite
+       utiliser le type {\tt int arbre} lorsque l'on veut annoter
+       chaque \ne par un entier, etc.}
+
+       \begin{itemize}
+
+         \item \emph{Écrire une fonction qui calcule la hauteur d'un
+               arbre.}
+
+               \smallskip
+
+               \begin{verbatim}
+let rec hauteur = function
+  Rien -> 0
+| Noeud (_, gauche, droit) ->
+    1 + max (hauteur gauche) (hauteur droit)
+               \end{verbatim}
+
+               La fonction \texttt{max} est polymorphe et prédéfinie,
+               mais dans le cas précis (elle s'applique à des entiers
+               naturels) elle pourrait être simplement définie par
+
+\begin{verbatim}
+let max a b = if a < b then b else a
+\end{verbatim}
+
+               \smallskip
+
+         \item \emph{Écrire une fonction qui calcule la taille d'un
+               arbre (c'est-à-dire le nom\-bre de \nes).}
+
+               \smallskip
+
+               \begin{verbatim}
+let rec taille = function
+  Rien -> 0
+| Noeud (_, gauche, droit) ->
+    1 + taille (gauche) + taille (droit)
+               \end{verbatim}
+
+               \smallskip
+
+         \item \emph{Écrire une fonction {\tt recherche}, qui prend en
+               argument une étiquette {\tt x} et un arbre {\tt a}, et
+               indique si cette étiquette apparaît sur l'un des \nes
+               de {\tt a}.}
+
+               \smallskip
+
+               \begin{verbatim}
+let rec recherche x = function
+  Rien -> false
+| Noeud (elm, gauche, droit) ->
+    elm = x || recherche x gauche || recherche x droit
+               \end{verbatim}
+       \end{itemize}
+
+\end{enumerate}
+
+
+\end{document}

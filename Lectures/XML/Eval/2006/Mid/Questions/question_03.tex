@@ -1,0 +1,14 @@
+\noindent There is a direct way to make queues (that is, without using
+stacks). We need here an empty queue, noted \(\proc{Q}_0\), but
+\textbf{no} \proc{Queue}.
+
+\paragraph{Example.} The queue containing only item \(e\) is
+\(\proc{Enqueue}(e, \proc{Q}_0)\). The queue containing item \(e\) and
+then \(f\) is \(\proc{Enqueue}(f, \proc{Enqueue}(e, \proc{Q}_0))\). We
+have
+\[
+\proc{Dequeue}(\proc{Enqueue}(f, \proc{Enqueue}(e, \proc{Q}_0)))
+\rightarrow \dots \rightarrow (\proc{Enqueue}(f,\proc{Q}_0), e)
+\]
+
+\paragraph{Question.} Give the rewrite rules defining \proc{Dequeue}.

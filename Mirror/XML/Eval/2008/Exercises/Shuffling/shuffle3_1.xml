@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persons>
+   <name>Alan Turing</name>
+   <note>Defined a simple theoretical model of computers</note>
+   <name>Kurt Gödel</name>
+   <name>Donald Knuth</name>
+   <name>Robin Milner</name>
+</persons>

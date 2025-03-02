@@ -1,0 +1,483 @@
+\paragraph{Answer.} 
+
+\begin{itemize}
+
+  \item \proc{Nth} can be expressed in terms of \proc{Get} as follows:
+    \begin{align*}
+         \proc{Nth} (a, n) 
+      &= \proc{Get} (a,\proc{Lower}(a)+n-1),
+      &\text{if} \,\; a \neq \proc{Empty}.
+    \end{align*}
+
+  \item \(\proc{Mem} : \type{t} \times \proc{Item}.\type{t} 
+    \rightarrow \type{bool}\)\\
+    The first argument of \proc{Mem} is an array, so we can start by
+    envisaging the three constructors of arrays:
+    \begin{align*}
+        \proc{Mem} (\proc{Empty}, e)
+     &= \textbf{?}\\
+        \proc{Mem} (\proc{Create} (x, y), e)
+     &= \textbf{?}\\
+        \proc{Mem} (\proc{Set} (a, n, e_1), e_2)
+     &= \textbf{?}
+     & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+     \proc{Upper} (a)
+    \end{align*}
+    The first equation refers to an empty array into which we look for
+    some element, so this element, as well as any element, is not
+    present, for sure, so:
+    \begin{align*}
+        \proc{Mem} (\proc{Empty}, e)
+     &= \proc{False}\\
+        \proc{Mem} (\proc{Create} (x, y), e)
+     &= \textbf{?}\\
+        \proc{Mem} (\proc{Set} (a, n, e_1), e_2)
+     &= \textbf{?}
+     & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+     \proc{Upper} (a)
+    \end{align*}
+    As far as the second equation is concerned, we know that an
+    unmodified array contains, by construction, only
+    \proc{Item}.\proc{Default} elements. So we must consider two
+    cases: \(e = \proc{Default}\) or not:
+    \begin{align*}
+        \proc{Mem} (\proc{Empty}, e)
+     &= \proc{False}\\
+        \proc{Mem} (\proc{Create} (x, y), e)
+     &= \textbf{?}
+     & \text{if} \; e = \proc{Default}\\
+        \proc{Mem} (\proc{Create} (x, y), e)
+     &= \textbf{?}
+     & \text{if} \; e \neq \proc{Default}\\
+        \proc{Mem} (\proc{Set} (a, n, e_1), e_2)
+     &= \textbf{?}
+     & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+     \proc{Upper} (a)
+    \end{align*}
+    Or, simply
+    \begin{align*}
+        \proc{Mem} (\proc{Empty}, e)
+     &= \proc{False}\\
+        \proc{Mem} (\proc{Create} (x, y), \proc{Default})
+     &= \textbf{?}\\
+        \proc{Mem} (\proc{Create} (x, y), e)
+     &= \textbf{?}
+     & \text{if} \; e \neq \proc{Default}\\
+        \proc{Mem} (\proc{Set} (a, n, e_1), e_2)
+     &= \textbf{?}
+     & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+     \proc{Upper} (a)
+    \end{align*}
+    Now, the first case is simple:
+    \begin{align*}
+        \proc{Mem} (\proc{Empty}, e)
+     &= \proc{False}\\
+        \proc{Mem} (\proc{Create} (x, y), \proc{Default})
+     &= \proc{True}\\
+        \proc{Mem} (\proc{Create} (x, y), e)
+     &= \textbf{?}
+     & \text{if} \; e \neq \proc{Default}\\
+        \proc{Mem} (\proc{Set} (a, n, e_1), e_2)
+     &= \textbf{?}
+     & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+     \proc{Upper} (a)
+    \end{align*}
+    The second one also:
+    \begin{align*}
+        \proc{Mem} (\proc{Empty}, e)
+     &= \proc{False}\\
+        \proc{Mem} (\proc{Create} (x, y), \proc{Default})
+     &= \proc{True}\\
+        \proc{Mem} (\proc{Create} (x, y), e)
+     &= \proc{False}
+     & \text{if} \; e \neq \proc{Default}\\
+        \proc{Mem} (\proc{Set} (a, n, e_1), e_2)
+     &= \textbf{?}
+     & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+     \proc{Upper} (a)
+    \end{align*}
+    The last equation refers to the case of an array modified at index
+    \(n\), in which we search for element \(e_2\). The first idea that
+    should occur is to check whether the new element at index \(n\),
+    namely \(e_1\), is \(e_2\) or not. Indeed, if they are equal, the
+    result should be \proc{True}. So
+    \begin{align*}
+        \proc{Mem} (\proc{Empty}, e)
+     &= \proc{False}\\
+        \proc{Mem} (\proc{Create} (x, y), \proc{Default})
+     &= \proc{True}\\
+        \proc{Mem} (\proc{Create} (x, y), e)
+     &= \proc{False}
+     & \text{if} \; e \neq \proc{Default}\\
+        \proc{Mem} (\proc{Set} (a, n, e_1), e_2)
+     &= \textbf{?}
+     & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+       \proc{Upper} (a)\\
+     && \text{and} \; e_1 = e_2\\
+        \proc{Mem} (\proc{Set} (a, n, e_1), e_2)
+     &= \textbf{?}
+     & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+     \proc{Upper} (a)\\
+     && \text{and} \; e_1 \neq e_2
+    \end{align*}
+    Or, simply
+    \begin{align*}
+        \proc{Mem} (\proc{Empty}, e)
+     &= \proc{False}\\
+        \proc{Mem} (\proc{Create} (x, y), \proc{Default})
+     &= \proc{True}\\
+        \proc{Mem} (\proc{Create} (x, y), e)
+     &= \proc{False}
+     & \text{if} \; e \neq \proc{Default}\\
+        \proc{Mem} (\proc{Set} (a, n, e), e)
+     &= \textbf{?}
+     & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+     \proc{Upper} (a)\\
+        \proc{Mem} (\proc{Set} (a, n, e_1), e_2)
+     &= \textbf{?}
+     & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+     \proc{Upper} (a)\\
+     && \text{if} \; e_1 \neq e_2
+    \end{align*}
+    Then
+    \begin{align*}
+        \proc{Mem} (\proc{Empty}, e)
+     &= \proc{False}\\
+        \proc{Mem} (\proc{Create} (x, y), \proc{Default})
+     &= \proc{True}\\
+        \proc{Mem} (\proc{Create} (x, y), e)
+     &= \proc{False}
+     & \text{if} \; e \neq \proc{Default}\\
+        \proc{Mem} (\proc{Set} (a, n, e), e)
+     &= \proc{True}
+     & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+     \proc{Upper} (a)\\
+        \proc{Mem} (\proc{Set} (a, n, e_1), e_2)
+     &= \textbf{?}
+     & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+     \proc{Upper} (a)\\
+     && \text{and} \; e_1 \neq e_2\\
+    \end{align*}
+    The last case refers to a modified array whose new element is
+    different from which the one we look for. What happen if we simply
+    ignore  (i.e. undo) the last modification and search again? This
+    means the right-hand side of the last equation would be
+    \(\proc{Mem} (a, e_2)\).
+
+    This would be a problem if \(a\) contains \(e_2\) at the same
+    index \(n\), i.e. contains a subterm like \(\proc{Set} 
+    (b, n, e_2)\). This is possible because our arrays remember all
+    the modifications done since their creation. So, searching \(a\)
+    instead of \(\proc{Set} (a, n, e_1)\) means searching in the
+    previous modifications of the array \(\proc{Set} (a, n,
+    e_1)\). But if \(e_2\) was present at index \(n\) in \(a\), the
+    value of \(\proc{Mem} (a, e_2)\) will be \proc{True},
+    \emph{despite we know that in the given array, there is no
+      \(e_2\) at index \(n\)}. 
+
+    So we must find a way to ignore index \(n\) in the subsequent
+    searches. The simplest way is to use an auxiliary function
+    \(\oMem: \type{t} \times \proc{Item}.\type{t} \times
+    \proc{Stack}(\type{int}).\type{t} \rightarrow \type{bool}\). The
+    difference with \proc{Mem} is that \(\oMem\) takes a supplementary
+    argument which is a stack of indexes. These indexes are the
+    already visited indexes, so they must be ignored in previous
+    versions of the array, in order to avoid the problem we mentioned
+    in the previous paragraph. 
+
+    Therefore the definition of \proc{Mem} is now done in terms of
+    \(\oMem\):
+    \[
+      \proc{Mem} (a, e) = \oMem (a, e, \proc{Stack}(\type{int}).\proc{Empty})
+    \]
+    In order to save some space, let us write
+    \begin{itemize}
+      \item \(n \in s\) instead of
+      \(\proc{Stack}(\type{int}).\proc{Mem} (s, n)\) (we do not define
+      this membership function on stack here, but is is easy to do);
+
+      \item \(n :: s\) instead of
+      \(\proc{Stack}(\type{int}).\proc{Push} (n, s)\)
+    \end{itemize}
+    Now we can rewrite our equations with \(\oMem\) instead of
+    \proc{Mem}:
+    \begin{align*}
+        \oMem (\proc{Empty}, e, \mathbf{s})
+     &= \proc{False}\\
+        \oMem (\proc{Create} (x, y), \proc{Default}, \mathbf{s})
+     &= \proc{True}\\
+        \oMem (\proc{Create} (x, y), e, \mathbf{s})
+     &= \proc{False}
+        \qquad\qquad\quad \text{if} \; e \neq \proc{Default}\\
+        \oMem (\proc{Set} (a, n, e), e, \mathbf{s})
+     &= \proc{True}
+       \qquad\qquad\qquad\qquad\quad \textbf{if} \; \mathbf{n \not\in s}\\
+     & \qquad \text{and} \; \proc{Lower} (a)
+        \leqslant n \leqslant \proc{Upper} (a)\\
+        \oMem (\proc{Set} (a, n, e_1), e_2, \mathbf{s})
+     &= \textbf{?}
+      \qquad\qquad\qquad\qquad\qquad \text{if} \; e_1 \neq e_2\\
+     & \qquad\quad \text{if} \; \proc{Lower}
+     (a) \leqslant n \leqslant \proc{Upper} (a)
+    \end{align*}
+    We notice that we add a condition \(n \not\in s\) which means that
+    the index \(n\) is visited here for the first time, so we can take
+    the corresponding contents, \(e\), into account (here the result
+    is \proc{True}).
+   
+    What if \(n \in s\)? Actually, this situation encompasses whether
+    \(e_1 = e_2\) or not: in both cases, we must ignore the current
+    index \(n\) and recursively explore the other indexes. This is
+    achieved by the recursive call \(\oMem (a, e_2, s)\). Technically,
+    we just removed the \proc{Set} call of the left-hand side \(\oMem
+    (\underline{\proc{Set} (}a\underline{, n, e_1)}, e_2, s)\). We
+    must add another equation:
+    \begin{align*}
+        \oMem (\proc{Empty}, e, s)
+     &= \proc{False}\\
+        \oMem (\proc{Create} (x, y), \proc{Default}, s)
+     &= \proc{True}\\
+        \oMem (\proc{Create} (x, y), e, s)
+     &= \proc{False}
+        \qquad\qquad\quad \text{if} \; e \neq \proc{Default}\\
+        \oMem (\proc{Set} (a, n, e), e, s)
+     &= \proc{True}
+       \qquad\qquad\qquad\qquad\quad \textbf{if} \; \mathbf{n \not\in s}\\
+     & \qquad \text{and} \; \proc{Lower} (a)
+        \leqslant n \leqslant \proc{Upper} (a)\\
+        \oMem (\proc{Set} (a, n, e_1), e_2, s)
+     &= \oMem (a, e_2, s)
+        \qquad\qquad\quad \;\; \textbf{if} \; \mathbf{n \in s}\\
+        \oMem (\proc{Set} (a, n, e_1), e_2, s)
+     &= \textbf{?}
+      \qquad\qquad\quad \;\; \text{if} \; e_1 \neq e_2 \; \textbf{and}
+      \; \mathbf{n \not\in s}\\
+     & \qquad\quad \text{if} \; \proc{Lower}
+     (a) \leqslant n \leqslant \proc{Upper} (a)
+    \end{align*}
+    Notice that the condition \(\text{if} \; \proc{Lower} (a)
+    \leqslant n \leqslant \proc{Upper} (a)\) has been removed because
+    it is a recursive call, so we just can let the non-recursive calls
+    check the bounds (see the fourth equation). Note also that we had
+    the condition \(n \not\in s\) to the last equation, because we
+    just added the case \(n \in s\) in the fourth equation.
+
+    The remaining case is also a recursive call because we know that
+    \(e_1 \neq e_2\), i.e. the element at index \(n\) is not the one
+    we look for, and it is the first time we visit this index \(n\),
+    so we must record it in the stack \(s\) of indexes, so we will not
+    consider it again (in the subsequent recursive calls):
+    \begin{align*}
+        \oMem (\proc{Empty}, e, s)
+     &= \proc{False}\\
+        \oMem (\proc{Create} (x, y), \proc{Default}, s)
+     &= \proc{True}\\
+        \oMem (\proc{Create} (x, y), e, s)
+     &= \proc{False}
+        \qquad\qquad\quad \text{if} \; e \neq \proc{Default}\\
+        \oMem (\proc{Set} (a, n, e), e, s)
+     &= \proc{True}
+       \qquad\qquad\qquad\qquad\quad \text{if} \; n \not\in s\\
+     & \qquad \text{and} \; \proc{Lower} (a)
+        \leqslant n \leqslant \proc{Upper} (a)\\
+        \oMem (\proc{Set} (a, n, e_1), e_2, s)
+     &= \oMem (a, e_2, s)
+        \qquad\qquad\quad \;\; \text{if} \; n \in s\\
+        \oMem (\proc{Set} (a, n, e_1), e_2, s)
+     &= \oMem (a, e_2, n :: s) \qquad\quad \text{if} \; e_1 \neq e_2\\
+     &  \qquad\qquad\qquad\qquad\qquad\qquad  \text{and} \; n \not\in s
+    \end{align*}
+  
+    \item \(\proc{Inv} : \type{t} \rightarrow \type{t}\)\\ 
+    The sole argument of \proc{Inv} is an array, so we can simply
+    start by enumerating all the array constructors:
+    \begin{align*}
+       \proc{Inv} (\proc{Empty}) 
+    &= \textbf{?}\\
+       \proc{Inv} (\proc{Create} (x, y))
+    &= \textbf{?}\\
+       \proc{Inv} (\proc{Set} (a, n, e))
+    &= \textbf{?}
+    & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+      \proc{Upper} (a)
+    \end{align*}
+    The first equation corresponds to the inversion of an empty
+    array: it is pretty clear that it must be the empty array too:
+    \begin{align*}
+       \proc{Inv} (\proc{Empty}) 
+    &= \proc{Empty}\\
+       \proc{Inv} (\proc{Create} (x, y))
+    &= \textbf{?}\\
+       \proc{Inv} (\proc{Set} (a, n, e))
+    &= \textbf{?}
+    & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+      \proc{Upper} (a)
+    \end{align*}
+    The second equation refers to the case of an unmodified array to
+    be inverted. Since, by construction, all elements of an unmodified
+    array are \proc{Item}.\proc{Default}, the inverted array is the
+    same as the original one, just as for the empty array. So
+    \begin{align*}
+       \proc{Inv} (\proc{Empty}) 
+    &= \proc{Empty}\\
+       \proc{Inv} (\proc{Create} (x, y))
+    &= \proc{Create} (x, y)\\
+       \proc{Inv} (\proc{Set} (a, n, e))
+    &= \textbf{?}
+    & \text{if} \; \proc{Lower} (a) \leqslant n \leqslant
+      \proc{Upper} (a)
+    \end{align*}
+    The last equation refers to the case of an array modified at index
+    \(n\). The inverted array has thus to be modified symmetrically,
+    i.e. it must have the same modification but on the symmetric index
+    (starting from the end of the array instead of the beginning). The
+    symmetric index of \(n\) in array \(a\) is 
+    \[\proc{Upper} (a) - n + \proc{Lower} (a)\]
+    (Note that modifiying an element does not change the bounds.) So
+    we have to do the modification
+    \[\proc{Set} (\textbf{?}, \proc{Upper} (a) - n + \proc{Lower} (a), e)\]
+    But what array do we must modify? It cannot be \(a\) because we
+    have to invert the other elements in \(a\) before applying the
+    last symmetric modification. So it must be \(\proc{Inv} (a)\). As
+    a conclustion, we get
+    \begin{align*}
+       \proc{Inv} (\proc{Empty}) 
+    &= \proc{Empty}\\
+       \proc{Inv} (\proc{Create} (x, y))
+    &= \proc{Create} (x, y)\\
+       \proc{Inv} (\proc{Set} (a, n, e))
+    &= \proc{Set} (\proc{Inv} (a), \proc{Upper} (a) - n + \proc{Lower}
+       (a), e)\\
+    & \qquad \qquad \qquad \qquad \text{if} \; \proc{Lower} (a)
+      \leqslant n \leqslant \proc{Upper} (a) &
+      \end{align*}
+    Actually, we could simplify a little bit these equations by
+    noting that if the array is not modified, then the inverted array
+    is invariant. Formally:
+    \begin{align*}
+       \proc{Inv} (a) 
+    &= a \qquad\qquad\qquad\qquad\qquad\qquad\quad\;\;
+         \text{if} \; a \neq \proc{Set} (b, n, e)\\
+       \proc{Inv} (\proc{Set} (a, n, e))
+    &= \proc{Set} (\proc{Inv} (a), \proc{Upper} (a) - n + \proc{Lower}
+       (a), e)\\
+    & \qquad \qquad \qquad \qquad\qquad \text{if} \; \proc{Lower} (a)
+      \leqslant n \leqslant \proc{Upper} (a) &
+    \end{align*}
+
+    \item \(\proc{Undo} : \type{t} \times \type{int} \rightarrow
+    \type{t}\)\\
+    Since the first argument of \proc{Undo} is an array and since
+    there are three array constructors, we start by enumerating these
+    cases:
+    \begin{align*}
+       \proc{Undo} (\proc{Empty}, n)
+    &= \textbf{?}\\
+       \proc{Undo} (\proc{Create} (x, y), n)
+    &= \textbf{?}\\
+       \proc{Undo} (\proc{Set} (a, p, e), n)
+    &= \textbf{?}
+    & \text{if} \; \proc{Lower} (a) \leqslant p \leqslant \proc{Upper} (a)
+    \end{align*}
+    The text says that if the array is empty or unmodified, the result
+    of undoing the last modification is simply the original array:
+    \begin{align*}
+       \proc{Undo} (\proc{Empty}, n)
+    &= \proc{Empty}\\
+       \proc{Undo} (\proc{Create} (x, y), n)
+    &= \proc{Create} (x, y)\\
+       \proc{Undo} (\proc{Set} (a, p, e), n)
+    &= \textbf{?}
+    & \text{if} \; \proc{Lower} (a) \leqslant p \leqslant \proc{Upper} (a)
+    \end{align*}
+    The remaining equation refers to the case of an array whose last
+    modification has been made at index \(p\). Since we want to undo
+    the last modification at index \(n\), we must check whether \(p =
+    n\) or not:
+    \begin{align*}
+       \proc{Undo} (\proc{Empty}, n)
+    &= \proc{Empty}\\
+       \proc{Undo} (\proc{Create} (x, y), n)
+    &= \proc{Create} (x, y)\\
+       \proc{Undo} (\proc{Set} (a, p, e), n)
+    &= \textbf{?}
+    & \text{if} \; p = n\\
+    && \text{and} \; \proc{Lower} (a) \leqslant p
+      \leqslant \proc{Upper} (a)\\
+       \proc{Undo} (\proc{Set} (a, p, e), n)
+    &= \textbf{?}
+    & \text{if} \; p \neq n\\
+    && \text{and} \; \proc{Lower} (a) \leqslant p
+      \leqslant \proc{Upper} (a)
+    \end{align*}
+    Or, simply
+    \begin{align*}
+       \proc{Undo} (\proc{Empty}, n)
+    &= \proc{Empty}\\
+       \proc{Undo} (\proc{Create} (x, y), n)
+    &= \proc{Create} (x, y)\\
+       \proc{Undo} (\proc{Set} (a, n, e), n)
+    &= \textbf{?}
+    & \text{if} \; \proc{Lower} (a) \leqslant n
+      \leqslant \proc{Upper} (a)\\
+       \proc{Undo} (\proc{Set} (a, p, e), n)
+    &= \textbf{?}
+    & \text{if} \; p \neq n\\
+    && \text{and} \; \proc{Lower} (a) \leqslant p
+      \leqslant \proc{Upper} (a)
+    \end{align*}
+    If the last modification was done at the index we want to undo,
+    the result is the array without the call to \proc{Set}:
+    \begin{align*}
+       \proc{Undo} (\proc{Empty}, n)
+    &= \proc{Empty}\\
+       \proc{Undo} (\proc{Create} (x, y), n)
+    &= \proc{Create} (x, y)\\
+       \proc{Undo} (\proc{Set} (a, n, e), n)
+    &= a
+    & \text{if} \; \proc{Lower} (a) \leqslant n
+      \leqslant \proc{Upper} (a)\\
+       \proc{Undo} (\proc{Set} (a, p, e), n)
+    &= \textbf{?}
+    & \text{if} \; p \neq n\\
+    && \text{and} \; \proc{Lower} (a) \leqslant p
+      \leqslant \proc{Upper} (a)
+    \end{align*}
+    Now, the last equation refers to the case where the last
+    modification was done on a different index than the one we want to
+    undo. Therefore, we must keep this modification and undo on the
+    array \emph{without} this modification:
+    \begin{align*}
+       \proc{Undo} (\proc{Empty}, n)
+    &= \proc{Empty}\\
+       \proc{Undo} (\proc{Create} (x, y), n)
+    &= \proc{Create} (x, y)\\
+       \proc{Undo} (\proc{Set} (a, n, e), n)
+    &= a
+     \qquad\qquad\quad \text{if} \; \proc{Lower} (a) \leqslant n
+      \leqslant \proc{Upper} (a)\\
+       \proc{Undo} (\proc{Set} (a, p, e), n)
+    &= \proc{Set} (\proc{Undo} (a, n), p, e)
+     \qquad\qquad\qquad \text{if} \; p \neq n\\
+    & \qquad \qquad \qquad \text{and} \; \proc{Lower} (a)
+      \leqslant p \leqslant \proc{Upper} (a)
+    \end{align*}
+    As a final note, we can simplify a little bit more the equations
+    by grouping the two first ones:
+    \begin{align*}
+       \proc{Undo} (a, n)
+    &= a
+    \qquad\qquad\qquad\qquad\qquad\qquad\quad \text{if} \; a
+    \neq \proc{Set} (b, p, e)\\ 
+       \proc{Undo} (\proc{Set} (a, n, e), n)
+    &= a
+      \qquad\qquad\qquad\quad \text{if} \; \proc{Lower} (a) \leqslant n
+      \leqslant \proc{Upper} (a)\\
+       \proc{Undo} (\proc{Set} (a, p, e), n)
+    &= \proc{Set} (\proc{Undo} (a, n), p, e)
+    \qquad \qquad \qquad \qquad \text{if} \; p \neq n\\
+    & \qquad \qquad \qquad \qquad \text{and} \; \proc{Lower} (a)
+      \leqslant p \leqslant \proc{Upper} (a)
+    \end{align*}
+
+\end{itemize}

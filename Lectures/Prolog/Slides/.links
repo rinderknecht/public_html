@@ -1,0 +1,10 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/LaTeX/Packages/mathpartir/mathpartir.sty
+$HOME/LaTeX/TeX/prolog.tex
+
+$HOME/LaTeX/TeX/beamer_cfg.tex
+$HOME/LaTeX/TeX/trace.tex
+
+../../article_mode.tex article.ai.tex
+../../slide_mode.tex ai.tex

@@ -1,0 +1,158 @@
+\paragraph{Réponses.}
+
+\begin{enumerate}
+
+  \item Une \emph{relation de comparaison} sur un ensemble \(E\) est
+    une relation binaire \(\leqslant\) sur \(E\) réflexive, transitive
+    et telle que pour deux éléments quelconques \(a\) et \(b\) de
+    \(E\) l'une au moins des relations \(a \leqslant b\) ou \(b
+    \leqslant a\) est vraie. On dit que \(a\) et \(b\) sont
+    \emph{équivalents} (ou égaux), ce qui est noté \(a = b\), si on a
+    \(a \leqslant b\) et \(b \leqslant a\). Une relation d'ordre total
+    est une relation de comparaison pour laquelle chaque élément n'est
+    égal qu'à lui-même.
+
+  \item Une liste \(\textrm{L} = (a_1, \ldots, a_n)\) d'éléments de
+    \(E\) est dite \emph{triée} selon \(\leqslant\) si \(\forall i \in
+    [1, n-1], a_i \leqslant a_{i+1}\).
+
+  \item Un algorithme de tri par comparaisons est un algorithme de tri
+    dans lequel il n'est effectué que des comparaisons entre éléments
+    pour décider quelle permutation de la liste doit être réalisée.
+
+  \item Un tri interne est un tri qui n'autorise qu'une mémoire
+    auxiliaire indépendante de la taille de la liste à trier.
+
+  \item Un tri stable est un tri qui conserve la position relative des
+    éléments équivalents.
+
+  \item \textbf{Le tri par sélection.}       
+    \begin{itemize} 
+
+        \item \textbf{Principe.} Il consiste à trouver l'emplacement
+          de l'élément le plus petit du tableau \((a_1, \ldots,
+          a_n)\), c'est-à-dire l'entier \(m\) tel que \(a_i \geqslant
+          a_m\) pour tout \(i\). Ensuite on échange \(a_1\) et
+          \(a_m\), puis on recommence avec le sous-tableau \((a_2,
+          \ldots, a_n)\):
+
+        \item \textbf{Algorithme.}
+\begin{verbatim}
+tri_selection (a) {
+  for i <- 1 to n-1 {
+    m <- i
+    for j <- i+1 to n {
+      if a[j] < a[m] then m <- j
+    }
+    a[i] <-> a[m]
+  }
+}
+\end{verbatim}                  
+
+        \item \textbf{Terminaison.} L'algorithme termine car il n'est
+          constitué que d'itérations bornées (boucles \verb+for+).
+
+        \item \textbf{Correction.} L'invariant de boucle à établir est
+          qu'avant chaque itération les éléments \(a_1, \ldots,
+          a_{i-1}\) sont bien placés. En supposant que \(a_0 =
+          -\infty\), cette propriété est vraie pour \(i=1\)
+          (i.e. avant la première itération). Supposons que la
+          propriété est vraie avant une itération quelconque. Alors
+          \(a_m\) est l'élément minimal du sous-tableau restant
+          \((a_i, \ldots, a_n)\). Par conséquent, après la permutation
+          de \(a_i\) et \(a_m\), le nouvel \(a_i\) est bien
+          placé. Donc les éléments \(a_1, \ldots, a_i\) sont bien
+          placés avant l'itération suivante. Finalement, la boucle
+          s'achève avec \(i = n\) (i.e. dépassement de 1 de la borne
+          supérieure). Donc les éléments \(a_1, \ldots, a_{n-1}\) sont
+          bien placés. Cela implique que \(a_n\) est bien placé, donc
+          que le tableau \((a_1, \ldots, a_n)\) est trié.
+
+        \item \textbf{Complexité temporelle.} Le nombre de
+          comparaisons est toujours:
+          \[
+            \sum_{i=1}^{n-1}{\sum_{j=i+1}^{n}{1}} = \frac{n (n-1)}{2}
+            = \Theta (n^2)
+           \]
+           La complexité temporelle du tri par sélection est
+           quadratique par rapport à la taille du tableau.
+
+        \item \textbf{Complexité spatiale}. Le tri par sélection sur
+          un tableau est un tri interne. La complexité spatiale est
+          donc proportionnelle à la taille du tableau: \(\Theta (n)\).
+
+        \item \textbf{Stabilité.} S'il existe plusieurs éléments
+          équivalents minimaux dans le sous-tableau \(a_{i+1,n}\),
+          c'est le premier qui sera sélectionné (\(a_m\)), et
+          positionné. L'ordre relatif de deux éléments équivalents
+          n'est donc pas modifié: le tri par sélection est stable.
+ 
+      \end{itemize} \textbf{Le tri par insertion.}
+    \begin{itemize}
+
+       \item \textbf{Principe.} Il consiste à insérer un élément dans
+         un sous-tableau déjà trié à gauche (c'est le tri du joueur de
+         cartes):
+
+       \item \textbf{Algorithme.}
+\begin{verbatim}
+tri_insertion (a) {
+  for j <- 2 to n {
+    key <- a[j]
+    i <- j - 1
+    while i > 0 and a[i] > key {
+      a[i+1] <- a[i]
+      i <- i - 1
+    }
+    a[i+1] <- key
+  }
+}
+\end{verbatim}
+
+       \item \textbf{Terminaison.} La terminaison de l'algorithme se
+         ramène à celle de l'itération \verb+while+. La fin de la
+         boucle est assurée si \(i = 0\) (dans le pire des cas). Or la
+         variable $i$ est positive et est décrémentée à chaque
+         itération. Donc, l'algorithme termine.
+                   
+       \item \textbf{Correction.} L'invariant de boucle à établir est
+         qu'avant chaque itération (\verb+for+), le sous-tableau
+         \(a_{1,j-1}\) est constitué des éléments originellement dans
+         \(a_{1,j-1}\) mais triés. Avant la première itération,
+         \(j=2\), donc le sous-tableau en question est réduit à
+         \(a[1]\), qui est le \(a[1]\) initial trivialement
+         trié. Supposons la propriété vraie avant une itération
+         quelconque. Avant l'itération suivante, on a \(a_1 \leqslant
+         \ldots \leqslant a_i \leqslant a_j \leqslant a_{i+1}
+         \leqslant \ldots \leqslant a_{j-1}\). Donc, le nouveau
+         sous-tableau \(a_{1,j}\) est constitué des éléments initiaux
+         mais triés. À la fin de la boucle, on a \(j = n+1\), donc le
+         tableau \(a_{1,n}\) est trié.
+
+       \item \textbf{Complexité temporelle.} Lorsque le tableau est
+         trié par ordre décroissant, nous sommes dans le pire des
+         cas. Le nombre de comparaisons est alors:
+         \[
+          \sum_{j=2}^{n}{\sum_{i=1}^{j-1}{1}} = \frac{n (n-1)}{2} =
+          O(n^2)
+         \]
+         Lorsque le tableau est déjà trié, nous sommes dans le
+         meilleur des cas. Le nombre de comparaisons est alors:
+         \[\sum_{j=2}^{n}{1} = n-1\]
+ 
+        \item \textbf{Complexité spatiale}. Le tri par insertion sur
+          un tableau est un tri interne. La complexité spatiale est
+          donc proportionnelle à la taille du tableau: \(\Theta (n)\).
+
+       \item \textbf{Stabilité.} Un élément \(a_i\) n'est déplacé que
+         si \(a_i > \textit{key}\) et \(i < j\). Donc si
+         \(\textit{key} = a_i\), alors \(a_i\) n'est pas déplacé, et
+         \(\textit{key}\) est inséré juste après \(a_i\), conservant
+         ainsi l'ordre relatif initial de ces deux éléments. Le tri
+         par insertion est donc stable.
+
+     \end{itemize}
+
+  \item \textbf{Polynômes creux.} \textbf{À FAIRE.}
+
+\end{enumerate}

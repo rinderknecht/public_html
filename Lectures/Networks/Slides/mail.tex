@@ -1,0 +1,895 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{itemize}
+
+  \item Application layer
+
+  \begin{itemize}
+
+    \item Principles of application layer protocols
+
+    \item The Web and \textsc{http}
+
+    \item File transfer: \textsc{ftp}
+
+    \item \textbf{Electronic mail in the Internet}
+
+    \item DNS --- The Internet's directory service
+
+    \item Socket programming with TCP and UDP
+
+    \item Content distribution
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Electronic mail in the Internet}
+
+Electronic mail (or \textbf{e-mail}) is one of the first application
+of the Internet, and the most successful.
+
+It is an \textbf{asynchronous} communication means, i.e. the two
+correspondent do not need to be using the e-mail application at the
+same moment.
+
+The next figure provides a high-level view of the e-mail system. The
+three major components are 
+\begin{itemize}
+
+  \item \textbf{user agents} (also called in this context
+  \textbf{mail readers}),
+
+  \item \textbf{mail servers},
+
+  \item \textbf{Simple Mail Transfer Protocol} (\textbf{\textsc{smtp}}).
+
+\end{itemize}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Electronic mail in the Internet (cont)}
+
+\begin{center}
+\includegraphics[scale=0.28]{02-12.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Electronic mail in the Internet (cont)}
+
+We will illustrate how the e-mail system works through the example of
+a user Alice which sends an e-mail to its recipient Bob.
+
+\begin{enumerate}
+
+  \item When Alice is finished composing her message, her user agent
+    sends it to its mail server, where it is put in the outgoing
+    \textbf{message queue}.
+
+
+  \item In turn, Alice's mail server will send it to Bob's mail
+    server, where it will be stored in Bob's incoming message queue
+    (also called \textbf{mailbox}).
+
+  \item When Bob will check his e-mails, his user agent will download
+    Alice's message from his mailbox in his mail server and display
+    it.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Electronic mail in the Internet (cont)}
+
+\noindent \textbf{Mailboxes}
+
+Each recipient, such as Bob, has a mailbox located in one of the mail
+servers. Bob's mailbox manages the messages that have been sent to
+him.
+
+When Bob wants to read his new messages, he has to connect to his
+mailbox and the hosting mail server will authenticate him, by
+requesting a user name and a password.
+
+\noindent \textbf{Delivery failures}
+
+In case Alice's mail server fails to deliver her e-mail to Bob's mail
+server, the message is kept in Alice's mail server outgoing queue and
+the server will try to re-send it every 30~minutes or so. If there is
+no success after several days (often 5 days), the server removes the
+messages and informs Alice of the situation.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{smtp}}
+
+The Simple Mail Transfer Protocol (\textsc{smtp}) is the main
+application-layer protocol for Internet e-mail. It relies on
+\textsc{tcp} to transfer the e-mails.
+
+\textsc{smtp} is divided into a \textbf{client} and a \textbf{server}
+entity: the client executes on the sender's mail server and the server
+runs on the recipient's mail server. Both client and server run on
+every mail server. A mail server becomes an \textsc{smtp} client when
+he sends some e-mail, and when it receives some e-mail it behaves as
+an \textsc{smtp} server.
+
+Contrary to \textsc{http}, \textsc{smtp} does require the mail content
+to be encoded in \textsc{ascii}. This implies that multimedia content
+must be encoded by the sender's agent and decoded by the recipient's
+agent.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{smtp} (cont)}
+
+Let us illustrate a mail exchange between Alice and Bob in a more
+detailed way.
+
+\begin{itemize}
+
+  \item Alice invokes her mail agent, provides Bob's \textbf{e-mail
+    address}, composes a message and order the agent to send the
+    message.
+
+  \item Alice's agent sends the message to her mail server, where it
+    is placed in a queue.
+
+  \item The client side of \textsc{smtp}, running on Alice's mail
+    server, detects the message in the queue. It opens a \textsc{tcp}
+    connection to an \textsc{smtp} server running on Bob's mail
+    server, on port 25.
+
+  \item After some \textsc{smtp} handshaking, the \textsc{smtp} client
+    sends Alice's message into the \textsc{tcp} connection.
+
+  \item At Bob's mail server, the server side of \textsc{smtp}
+    receives Alice's message and places it in Bob's mailbox.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{\textsc{smtp} (cont)}
+
+\begin{itemize}
+
+  \item When Bob decides to read his messages he runs his mail agent,
+    which connects to his mail server.
+
+    Bob's mail server authenticates him and delivers to his mail
+    agent Alice's message.
+
+\end{itemize}
+This situation is summarized in the following picture:
+\begin{center}
+\includegraphics[scale=0.4]{02-13.eps}
+\end{center}
+Note that there is a direct \textsc{tcp} connection between the two
+mail servers.
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{\textsc{smtp} (cont)}
+
+Let us detail the \textsc{smtp} session between Alice's client and
+Bob's server.
+
+In the following transcript, lines prefixed by \textbf{C:} are sent
+verbatim by the client agent to its \textsc{tcp} socket, and lines
+starting with \textbf{S:} are exactly the lines send to the
+\textsc{tcp} connection by the server. Client hostname is
+\url{crepes.fr} and server hostname \url{hamburger.edu}.
+{\small
+\begin{tabular}{rl}
+\textbf{S:} & \verb+220 hamburger.edu+\\
+\textbf{C:} & \verb+HELO crepes.fr+\\
+\textbf{S:} & \verb+250 Hello crepes.fr, pleased to meet you+\\
+\textbf{C:} & \verb+MAIL FROM: <alice@crepes.fr>+\\
+\textbf{S:} & \verb+250 alice@crepes.fr ... Sender ok+\\
+\textbf{C:} & \verb+RCPT TO: <bob@hamburger.edu>+\\
+\textbf{S:} & \verb+250 bob@hamburger.edu ... Recipient ok+
+\end{tabular}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{\textsc{smtp} (cont)}
+
+{\small
+\begin{tabular}{rl}
+\textbf{C:} & \verb+DATA+\\
+\textbf{S:} & \verb+354 Enter mail, end with "." on a line by itself+\\
+\textbf{C:} & \verb+Do you like ketchup?+\\
+\textbf{C:} & \verb+How about pickles?+\\
+\textbf{C:} & \verb+.+\\
+\textbf{S:} & \verb+250 Message accepted for delivery+\\
+\textbf{C:} & \verb+QUIT+\\
+\textbf{S:} & \verb+221 hamburger.edu closing connection+
+\end{tabular}
+}
+
+Note that \textsc{smtp} uses persistent \textsc{tcp} connections,
+therefore if the sending mail server has several messages to send to
+the same receiving mail server, it can send all the messages over the
+same \textsc{tcp} connection.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{\textsc{smtp} (cont)}
+
+It is recommended to use \textsf{Telnet} to send some e-mail:
+\begin{verbatim}
+$ telnet mail.konkuk.ac.kr 25
+\end{verbatim}
+where \url{mail.konkuk.ac.kr} is the name of the \emph{remote}
+server. This command establishes a \textsc{tcp} connection between the
+local host and the remote mail server.
+
+After invoking \textsf{Telnet} at the prompt, the client receives:
+{\small
+\begin{verbatim}
+Trying 202.30.38.143...
+Connected to mail.konkuk.ac.kr.
+Escape character is '^]'.
+220 konkuk.ac.kr ESMTP Postfix
+\end{verbatim}
+}
+and can type now \textsc{smtp} commands.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Comparison with \textsc{http}}
+
+Both \textsc{smtp} and \textsc{http} transfer files (objects
+vs. mails) from one host to another use persistent \textsc{tcp}
+connections (mandatory for \textsc{smtp}). The differences are:
+\begin{enumerate}
+
+  \item an \textsc{http} client pulls files (objects) from a server,
+    whereas an \textsc{smtp} pushes them (mails) to a server: we say
+    that \textsc{http} is a \textbf{pull protocol} whereas
+    \textsc{smtp} is a \textbf{push protocol};
+
+  \item \textsc{smtp} requires the body of each message to be encoded
+    in \textsc{ascii}, contrary to \textsc{http}, thus accentuated
+    characters or binary data must be encoded and decoded;
+
+  \item when a file consists of several parts (like text and images),
+    \textsc{smtp} places all of them in the same message, contrary to
+    \textsc{http} which puts them in separate messages.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Mail message formats and MIME}
+
+The body of an e-mail can be preceded by a blank line and a
+\textbf{header} made of header lines. Each of these lines is made of a
+keyword followed by a value.
+
+Header lines starting with keywords \verb+From:+ and \verb+To:+ are
+mandatory. The header line starting with \verb+Subject:+ is
+optional. For instance:
+{\small
+\begin{verbatim}
+From: Alice
+To: bob@hamburger.edu
+Subject: Some topics
+\end{verbatim}
+}
+A blank line follows the header and then the contents.
+
+\textbf{Warning!} The header lines are \textbf{not} \textsc{smtp}
+commands, but are part of the mail body. The header is interpreted by
+the \emph{receiving mail agent} (not the \textsc{smtp} server), which
+then displays it.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The MIME extension for non-\textsc{ascii} data}
+
+The header can be used to tell the receiving mail agent how to handle
+multimedia (i.e. non-\textsc{ascii}) and multi-part (i.e. attached
+files) e-mails. These extra header lines and their interpretation
+constitute the \textbf{Multipurpose Internet Mail Extensions}
+(\textbf{MIME}).
+
+The two header keywords enabling MIME are 
+\begin{itemize}
+
+  \item {\small \verb+Content-Transfer-Encoding:+}
+
+  \item {\small \verb+Content-Type:+}
+
+\end{itemize}
+The first field instructs the receiving mail agent what kind of
+encoding to \textsc{ascii} has been used, so it can reverse the
+process. Then, the second field enables the receiving mail agent to
+take an appropriate action on the message, as launching an image
+viewer if the content is JPEG.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The MIME extension for non-\textsc{ascii} data (cont)}
+
+Let us take an example. Imagine Alice wants to send a JPEG image to
+Bob. Her mail agent generates a MIME message, which might look like
+this:
+{\small
+\begin{verbatim}
+From: Alice
+To: bob@hamburger.edu
+Subject: Picture
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Type: image/jpeg
+
+... base64 encoded data ...
+\end{verbatim}
+}
+Alice's mail agent encoded the JPEG file using base64, which is one
+possible technique to produce \textsc{ascii} from binary.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The MIME extension for non-\textsc{ascii} data (cont)}
+
+When Bob's mail agent reads this message, it reads the 
+{\small 
+\begin{verbatim}
+Content-Transfer-Encoding: base64
+\end{verbatim}
+} 
+header, so it proceeds to decode the message body with a
+base64-decoder.
+
+The header line 
+{\small 
+\begin{verbatim}
+Content-Type: image/jpeg
+\end{verbatim}
+} 
+tells Bob's mail agent that the message should be interpreted
+(\emph{after decoding}) as a JPEG image. Thus, it may propose to Bob
+to launch a JPEG viewer if he would like to.
+
+The following header line tells the version of MIME used by Alice's
+mail agent: {\small
+\begin{verbatim}
+MIME-Version: 1.0
+\end{verbatim}
+} 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The MIME extension for non-\textsc{ascii} data (cont)}
+
+There are two formats of MIME types:
+{\small
+\begin{semiverbatim}
+Content-Type: \emph{type}/\emph{subtype}
+Content-Type: \emph{type}/\emph{subtype}; \emph{parameters}
+\end{semiverbatim}
+}
+In the previous example, the type was \verb+image+ and the subtype was
+\verb+jpeg+. The subtype restricts the meaning of the type, thus
+allowing a more precise interpretation of the content. 
+
+Most parameters are associated with a specific subtype and are similar
+to a variable definition.
+
+The set of types and subtypes, as well as parameter, is open and
+increasing. New types should be registered at the Internet Assigned
+Numbers Authority (IANA)\footnote{\url{http://www.iana.org/}}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The MIME extension for non-\textsc{ascii} data (cont)}
+
+Currently there are seven types defined. The following are common.
+\begin{itemize}
+
+  \item \textbf{text} tells the receiving mail agent that the body
+  contains text. If the subtype is \verb+plain+, the mail agent does
+  not need any extra software to display the body, except font
+  support. The character set can be specified using a parameter, like
+  \verb+charset=euc-kr+.
+
+  Another popular pair is \verb+text/html+, which informs the
+  receiving agent that it can display the content as a web page.
+
+  \item \textbf{image} tells the receiving mail agent that the body
+  is an image. Two pairs of type and subtype are popular:
+  \verb+image/jpeg+ and \verb+image/gif+.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The MIME extension for non-\textsc{ascii} data (cont)}
+
+\begin{itemize}
+
+  \item \textbf{application} is used when the content does not fit
+  any other type. It is often used for data that must be processed by
+  an application before it can be viewed. For instance,
+  \verb+application/msword+ instructs the receiving mail agent to
+  launch Microsoft Word or OpenOffice to read the mail.
+
+  \item \textbf{multipart} is used when the mail contains several
+  parts because the sender wanted to send some other files together
+  with his main message. If the attached files are not text, the pair
+  \verb+multipart/mixed+ is often used.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The MIME extension for non-\textsc{ascii} data (cont)}
+
+Let us say a little more about multi-part e-mails.
+
+The mail agent needs to determine where each part starts and ends
+inside the body, how each non-\textsc{ascii} part was encoded and what
+kind of content is it. 
+
+This is simply achieved by 
+\begin{itemize}
+  \item placing \emph{boundary characters} between each part,
+
+  \item repeating \verb+Content-Transfer-Type:+ and 
+   \verb+Content-Type:+ header line at the beginning of each part.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{The MIME extension for non-\textsc{ascii} data (cont)}
+
+Assume Alice wants to send a message to Bob consisting of some
+\textsc{ascii} text and a JPEG image. After she types the text and
+attach the image, the agent produces
+{\small
+\begin{verbatim}
+From: alice@crepes.fr
+To: bob@hamburger.edu
+Subject: My picture
+MIME-Version: 1.0
+Content-Type: multipart/mixed; Boundary=StartOfNextPart
+
+--StartOfNextPart
+Dear Bob, look at my picture:
+--StartOfNextPart
+Content-Transfer-Encoding: base64
+Content-Type: image/jpeg
+... base64 encoded data ...
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Received Message header}
+
+The \emph{receiving} \textsc{smtp} server can also insert a specific
+line at the top of an e-mail: the \verb+Received:+ header line. This
+line specifies the originating \textsc{smtp} server, the receiving
+\textsc{smtp} server and the reception time. Like:
+{\small
+\begin{verbatim}
+Received: from crepes.fr by hamburger.edu;
+          12 Oct 98 15:27:39 GMT
+From: alice@crepes.fr
+To: bob@hamburger.edu
+Subject: My picture
+.....
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Received Message header (cont)}
+
+A user can instruct his mail server to forward his e-mail to another
+mail server. In this case each receiving mail server, i.e. the
+forwarding one and the final one, will add a \verb+Received:+ line to
+the original mail.
+
+For instance, if Bob forwards his e-mails to the mail server
+\verb+kimchi.kr+, the final messages will look like
+{\small
+\begin{verbatim}
+Received: from hamburger.edu by kimchi.kr;
+          3 Jul 01 15:30:01 GMT
+Received: from crepes.fr by hamburger.edu;
+          3 Jul 01 15:17:39 GMT
+From: alice@crepes.fr
+To: bob@hamburger.edu
+Subject: My picture
+.....
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Mail Access Protocols}
+
+We implicitly assumed until now that Bob reads his e-mails by directly
+logging in his mail server.
+
+For a long time, this was the only way but since the mid 90's users
+have a mail agent that connects to the user's mail server, downloads
+the e-mails on the local disk and displays their contents to the user.
+
+Using a mail agent allows to store locally the e-mails but also to
+easily visualise their possible multimedia attachments (images,
+videos, music etc.) --- the purpose of a mail server is to serve
+mails, not to provide fancy features for display.
+
+Note: the idea to run the recipient's mail server on the same machine
+as the mail agent is not good. Indeed, the user may want to turn his
+machine off and so the mail server would be, leading to the delivery
+failure of subsequent incoming mails.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Mail Access Protocols (cont)}
+
+Remember that a mail server is always on, it is usually shared by
+several users and is maintained by the ISP.
+
+So
+\begin{itemize}
+
+  \item Alice's mail agent has \emph{to push} her e-mail to her mail
+  server,
+
+  \item Bob's user agent has \emph{to pull} his e-mails to his local
+  disk.
+
+\end{itemize}
+
+The first task can be done using \textsc{smtp} because it is a push
+protocol by design. Why a two-step procedure (from Alice's mail agent
+to her mail server, then from her mail server to Bob's mail server)?
+Because otherwise, if Bob's mail server is down, Alice's mail agent
+should keep trying again to send the e-mails for days, impeding Alice
+to log out meanwhile.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Mail Access Protocols (cont)}
+
+The second tasks cannot be achieved by \textsc{smtp}: we need a pull
+protocol, or \textbf{Mail Access Protocol}.
+
+There are several possibilities: \textbf{\textsc{pop3}} (\textbf{Post
+  Office Protocol} version 3), \textbf{\textsc{imap}}
+(\textbf{Internet Mail Access Protocol}) and \textsc{http}:
+\begin{center}
+\includegraphics[scale=0.4]{02-14.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Mail Access Protocols/POP3}
+
+\textsc{pop3} is an extremely simple mail access protocol. 
+
+The session starts with the recipient's mail agent opens a
+\textsc{tcp} connection to its mail server on port number 110.
+
+Then three phases occur in turn:
+\begin{enumerate}
+
+  \item \textbf{Authorisation}: the user agent sends the user's name
+  and password to the mail server, which authenticates him;
+
+  \item \textbf{Transaction}: the user agent retrieves the messages
+  and the user can: mark the mails to be deleted on the server,
+  unmark them and get statistics about them;
+
+  \item \textbf{Update}: the mails marked for deletion on the server
+  are actually deleted.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Mail Access Protocols/POP3
+  (cont)}
+
+In a \textsc{pop3} transaction, the user agent issue textual commands
+and the server responds to each command with a textual reply.
+
+There are two possible replies:
+\begin{itemize}
+
+  \item \texttt{+OK} (sometimes followed by server-to-client data)
+  meaning the last client command was fine;
+
+  \item \texttt{-ERR} meaning that something was wrong with the last
+  command.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Mail Access Protocols/POP3 (cont)}
+
+\textbf{Authorisation}
+
+There are two principal commands: \texttt{user \emph{name}} and
+\texttt{pass \emph{password}}.
+
+Use \textsf{telnet} to try these commands:
+
+{\small
+\begin{verbatim}
+$ telnet mail.konkuk.ac.kr 110
+Trying 202.30.38.143...
+Connected to mail.konkuk.ac.kr.
+Escape character is '^]'.
++OK <11115.1117125523@konkuk.ac.kr>
+user rinderkn
++OK 
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Mail Access Protocols/POP3 (cont)}
+
+Example of failed authentication:
+{\small 
+\begin{verbatim}
+$ telnet mail.konkuk.ac.kr 110
+Trying 202.30.38.143...
+Connected to mail.konkuk.ac.kr.
+Escape character is '^]'.
++OK <15247.1117126049@konkuk.ac.kr>
+user foo 
++OK 
+pass bar
+-ERR authorization failed
+Connection closed by foreign host.
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Mail Access Protocols/POP3 (cont)}
+
+\textbf{Transaction}
+
+The users can configure his mail agent to \textbf{download and delete}
+or \textbf{download and keep}, depending whether they wish to keep a
+copy of their mails on the server or not.
+
+According to this configuration, the user agent sends different
+commands to the mail server, e.g. in the ``download and delete'' mode,
+the user agent will issue the \texttt{list}, \texttt{retr} and
+\texttt{dele} commands.
+
+Imagine a user has two messages in his mailbox. In the following
+transcript, lines prefixed by \textbf{C:} are sent verbatim by the
+client agent to its \textsc{tcp} socket, and lines starting with
+\textbf{S:} are exactly the lines sent to the \textsc{tcp} connection
+by the server. 
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Mail Access Protocols/POP3 (cont)}
+
+{\small
+\renewcommand\arraystretch{0.8}
+\begin{tabular}{rl}
+\textbf{C:} & \verb+list+\\
+\textbf{S:} & \verb+1 498+\\
+\textbf{S:} & \verb+2 912+\\
+\textbf{S:} & \verb+.+\\
+\textbf{C:} & \verb+retr 1+\\
+\textbf{S:} & \verb+... blah blah ...+\\
+\textbf{S:} & \verb+.+\\
+\textbf{C:} & \verb+dele 1+\\
+\textbf{C:} & \verb+retr 2+\\
+\textbf{S:} & \verb+... blah blah ...+\\
+\textbf{S:} & \verb+.+\\
+\textbf{C:} & \verb+dele 2+\\
+\textbf{C:} & \verb+quit+\\
+\textbf{S:} & \verb+OK POP3 server signing off+
+\end{tabular}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Mail Access Protocols/POP3 (cont)}
+
+A problem with this ``download and delete'' approach is that the
+recipient, Bob, may be nomadic and want to access his mail messages
+from multiple machines, e.g. his office computer, his home computer
+and his portable computer.
+
+If Bob reads his messages from his office machine, he will not be able
+to reread them from his home machine. 
+
+In the ``download and keep'' mode, the user agent leaves the messages
+on the server after downloading (a copy of) them.
+
+During a \textsc{pop3} session, the server keeps a client state, but
+not across sessions --- which greatly simplifies the server
+implementation.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Mail Access Protocols/IMAP}
+
+With \textsc{pop3}, once the recipient has downloaded his messages, he
+can store them in a hierarchy of folders and later search information
+in it (e.g. by sender's name or subject).
+
+But a nomadic user would get a hierarchy with different messages \emph{for
+each machine} from where he downloads the mails. One centralised
+hierarchy would be preferable in this case. This is not possible with
+\textsc{pop3}.
+
+To solve this problem, \textbf{\textsc{imap}} (\textbf{Internet Mail
+  Access Protocol}) provides more features than \textsc{pop3}, at the
+cost of more complex implementations.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Mail Access Protocols/IMAP (cont)}
+
+An \textsc{imap} server will associate each message with a folder
+(initially, it is the ``Inbox'' folder).
+
+The user can create and change folders on the server, as well as
+searching the messages they contain according to specific criteria.
+
+This means that \textsc{imap}, contrary to \textsc{pop3}, maintain
+user state information \emph{across sessions}.
+
+Another useful \textsc{imap} feature is the possibility for the client
+to obtain only some components of a message. For instance, a user
+agent can request just the body of a message or one part of a
+multi-part MIME message. This is very useful in case of a
+low-bandwidth connection.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Mail Access Protocols/Web mail}
+
+A lot of users today access their e-mails through their Web
+browsers. This technique was introduced in the mid-1990's by the
+company Hotmail.
+
+In this case, Alice's mail agent sends her messages using
+\textsc{http} requests (like forms) to her web server which, in turn,
+uses \textsc{smtp} to push the mail to the recipient's mail server.
+
+Symmetrically, Bob retrieves his messages using \textsc{http} requests
+to his web server which, in turn uses \textsc{imap} to get the messages
+from the sender's mail server.
+
+This web-based e-mail system is very useful for mobile users since it
+only requires a web browser and an internet connection.
+
+\end{frame}
+

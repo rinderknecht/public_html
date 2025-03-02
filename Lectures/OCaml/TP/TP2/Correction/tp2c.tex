@@ -1,0 +1,154 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amssymb}
+
+\input{trace}
+
+\title{Corrigé du TP 2 de programmation fonctionnelle en Objective Caml}
+\author{Christian Rinderknecht}
+
+\begin{document}
+
+\maketitle
+
+\section{Curryfication}
+
+\begin{verbatim}
+let curry f = fun x y -> f (x, y);;
+let uncurry f = fun (x, y) -> f x y;;
+\end{verbatim}
+
+
+\section{Paramètres fonctionnels}
+
+\begin{verbatim}
+let fun_prod f g = fun (x, y) -> (f x, g y);;
+
+let rec iter n f x =
+  if n = 0 then x else f (iter (n-1) f x)
+;;
+\end{verbatim}
+
+\noindent On aurait pu écrire la dernière ligne:
+\verb|iter (n-1) f (f x)|
+
+\medskip
+
+\noindent La version naïve de Fibonnacci est
+\begin{verbatim}
+let rec fib n = if n < 2 then 1 else fib (n-1) + fib (n-2);;
+\end{verbatim}
+
+\noindent Soit $A_n$ le nombre d'appels récursifs pour calculer
+\texttt{fib(n)}. Alors nous avons
+$$A_0 = A_1 = 1 \ \textnormal{et} \ \forall n > 1, A_n = 1 + A_{n-1} +
+A_{n-2}$$
+Posons $B_n = A_n + 1$ et il vient:
+$$ B_0 = B_1 = 2 \ \textnormal{et} \ \forall n > 1, B_n = B_{n-1} +
+B_{n-2} $$
+On prouve par récurrence sur $n$ que $\forall n \in \mathbb{N}, B_n =
+2 F_n$. Par conséquent $A_n = 2 F_n - 1$. Le temps d'exécution de
+\texttt{fib(n)} est donc asymptotiquement une exponentielle de $n$.
+
+\medskip
+
+\noindent
+Si l'on pose $f : (x,y) \mapsto (x+y,x)$, alors $(F_{n+2},F_{n+1}) = f
+(F_{n+1},F_{n})$.
+
+\medskip
+
+\noindent 
+La suite $(F_{n+1},F_{n})$ pour tout $n \in \mathbb{N}$ vaut donc
+$(F_{n+1},F_{n}) = f^{n}(F_1,F_0)$, soit $(F_{n+1},F_{n}) =
+f^{n}(1,1)$. Nous pouvons alors la programmer directement et
+efficacement (le nombre d'appels est linéaire en $n$ maintenant):
+
+\begin{verbatim}
+let fib n = fst (iter n (fun (x,y) -> (x+y,x)) (1,1));;
+\end{verbatim}
+
+\noindent La fonction \texttt{fst} est prédéfinie mais peut se définir
+trivialement par:
+\begin{verbatim}
+let fst (x,y) = x;;
+\end{verbatim}
+\begin{verbatim}
+let power m n = iter n (fun x -> m * x) 1;;
+
+let fib n = fst (iter n (fun (x,y) -> (x+y,x)) (1,0));;
+
+let iter_prod f g n = iter n (fun_prod f g);;
+
+let iter_prod_bis f g n = fun_prod (iter n f) (iter n g);;
+
+let rec loop f p z = if (p z) then z else loop f p (f z);;
+
+let rec modulo x y = loop (fun v -> v - y) (fun v -> v < y) x;;
+\end{verbatim}
+\begin{verbatim}
+let iter_bis n f x =
+  fst (loop (fun_prod f pred) 
+            (fun (_, k) -> k = 0) 
+            (x, n))
+\end{verbatim}
+Dans la fonction {\tt iter\_bis}, on utilise {\tt loop} pour calculer
+la suite $(f^k(x), n-k)_{k \geq 0}$ et on s'arrête lorsque la deuxième
+composante s'annule. On obtient donc la paire $(f^n(x), 0)$, dont on
+extrait la première composante grâce à {\tt fst}. Cette fonction est
+prédéfinie mais peut se définir trivialement, ainsi que \texttt{pred}
+qui calcule le prédécesseur d'un entier par:
+\begin{verbatim}
+let fst (x,y) = x
+let pred x = x - 1
+\end{verbatim}
+
+\section{Filtrage}
+
+\noindent Factorielle:
+\begin{verbatim}
+let rec fact n = match n with
+  0 -> 1
+| _ -> n * fact(n-1)
+;;
+\end{verbatim}
+
+\noindent ou bien
+\begin{verbatim}
+let rec fact n = 
+  match n with
+    0 -> 1
+  | _ -> n * fact(n-1)
+;;
+\end{verbatim}
+
+\noindent Opérations sur les matrices:
+\begin{verbatim}
+let transpose = fun ((x, y), (z, t)) -> ((x, z), (y, t));;
+
+let prod ((x, y), (z, t)) ((x', y'), (z', t')) =
+  ((x *. x' +. y *. z', x *. y' +. y *. t'),
+   (z *. x' +. t *. z', z *. y' +. t *. t'))
+;;
+
+let is_const ((x, y), (z, t)) = (x = y) & (y = z) & (z = t)
+;;
+\end{verbatim}
+
+\noindent On ne peut pas utiliser un simple filtrage pour déterminer
+si les quatre éléments sont égaux (cf. énoncé).
+\begin{verbatim}
+let trig_sup m = 
+  match m with
+    (_, (0.0, _)) -> true
+  | _ -> false
+;;
+\end{verbatim}
+
+
+\end{document}

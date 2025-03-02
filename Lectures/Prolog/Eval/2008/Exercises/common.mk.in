@@ -1,0 +1,28 @@
+#-*-makefile-*-
+
+ECHO    := @ECHO@
+PRINTF  := @PRINTF@
+RM      := @RM@
+
+A2PS    := @A2PS@
+PS2PDF  := @PS2PDF@
+SWIPL   := @SWIPL@
+GS      := @GS@
+
+MODULES := hw bt gt
+PROLOG  := ${MODULES:%=%.P}
+TARGETS := ${MODULES:%=%.out}
+
+PDF     := ${PROLOG:%=%.pdf} Makefile.pdf
+
+include precom.mk
+
+sinclude swipl.mk
+sinclude prolog2ps.mk Makefile2ps.mk a2ps.mk # a2ps.mk last
+sinclude ps2pdf.mk gs.mk
+
+${TARGETS}: %.out: %.pl
+	@${call swipl,$@,$^}
+
+distclean::
+	@\rm -f common.mk

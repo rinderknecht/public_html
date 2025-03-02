@@ -1,0 +1,13 @@
+#include "../.common_links"
+
+../common.mk.in
+
+toc.xml count1.xml
+toc.xml count2.xml
+toc.xml count3.xml
+toc.xml count4.xml
+
+book.dtd count1.dtd
+book.dtd count2.dtd
+book.dtd count3.dtd
+book.dtd count4.dtd

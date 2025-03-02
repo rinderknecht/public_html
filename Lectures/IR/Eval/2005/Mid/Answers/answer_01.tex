@@ -1,0 +1,14 @@
+\begin{codebox}
+\Procname{\(\proc{Right-Left-Naive} (x, t)\)}
+\li \(i \gets m\); \(j \gets n\)
+\li \While \(1 \leqslant i\) \LogAnd \(1 \leqslant j\)
+\li \Do \If \(t[j] = x[i]\)
+\li	  \Then \(j \gets j - 1\); \(i \gets i - 1\)
+\li	  \Else \(j \gets j + m - i - 1\); \(i \gets m\)
+          \End 
+    \End
+\li \If \(i = 0\) 
+\li \Then \(\ldots\)\>\>\>\Comment Occurrence of \(x\) in \(t\) at position \(j + 1\).
+\li \Else \(\ldots\)\>\>\>\Comment No occurrences. 
+    \End
+\end{codebox}

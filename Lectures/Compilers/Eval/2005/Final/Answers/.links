@@ -1,0 +1,13 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/LaTeX/TeX/trace.tex
+
+$HOME/Lectures/Compilers/Slides/grammar.tex
+$HOME/Lectures/Compilers/Slides/token.tex
+
+../Questions/dfa_num_ext.tex
+../Questions/dfa_id_ext.tex
+../Questions/dfa_ws_opt.tex
+
+../Questions/question_01.tex
+../Questions/compilers-final.tex compilers-final-QA.tex

@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Binary search</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Binary search</h2>
+
+<p>Binary search is a basic technique to search for a key in a sorted
+ array. With respect to linear search, the implementation in Java of
+ this algorithm allows us to review more advanced concepts and
+ techniques: control flow with exceptions and arithmetic
+ overflows.</p>
+
+<p>Coding styles to detect and prevent arithmetic overflows in Java
+ can be found at
+ the <a href="https://www.securecoding.cert.org/confluence/display/java/NUM00-J.+Detect+or+prevent+integer+overflow">CERT
+ secure coding site</a>. The
+ whole <a href="https://www.securecoding.cert.org/confluence/display/java/The+CERT+Oracle+Secure+Coding+Standard+for+Java">Secure
+ Coding Standard for Java</a> is worth reading of course. Also refer
+ to
+ my <a href="http://pnyf.inf.elte.hu/rinderkn/Mirror/Circuits/Slides/article.circuit.pdf">lecture
+ notes on 2-complement arithmetic.</a></p>
+
+<p>The delayed exit when finding the key is an interesting
+ variant. The cost analysis of binary search is also interesting as it
+ yields a logarithm.</p>
+
+<p>A couple of techniques are illustrated in the simple
+program <a href="BinSearch.java">BinSearch.java</a>.</p>
+
+<p>For further reading, please consult the following papers.
+  <ul>
+    <li><a href="size_matters__Lessons_from_a_broken_binary_search--2009.pdf">Size
+          matters: Lessons from a broken binary search (2009)</a>
+          analyses the common error in most implementations of binary
+          search which consists in the possible arithmetic overflow
+          when computing the middle index.
+    </li>
+    <li><a href="analytic_derivation_of_comparisons_in_binary_search--1997.pdf">Analytic
+    derivation of comparisons in binary search (1997)</a> builds the
+    case in favour of a delayed exit upon finding the key.
+    </li>
+    <li><a href="the_binary_search_revisited--1996.pdf">The
+    binary search revisited (1996)</a> generalises binary search by
+    weakening the monotonicity of the keys.
+    </li>
+  </ul>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

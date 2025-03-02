@@ -1,0 +1,128 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amssymb}
+
+\input{trace}
+
+\newcommand{\T}{\textrm{T}}
+\newtheorem{Def}{Definition}[section]
+
+\title{Test de niveau en algorithmique}
+\author{Christian Rinderknecht}
+\date{Mardi 4 mars 2003}
+
+\begin{document}
+
+\maketitle
+
+\section{Binôme de Pascal}
+
+\noindent Soit la fonction \verb+binome+ spécifiée ainsi:
+
+\begin{verbatim}
+binome (n,p) {
+  if p = 0 or p = n then return 1
+  else return binome (n-1,p) + binome (n-1,p-1);
+}
+\end{verbatim}
+\input{question_01}
+
+\section{Complexité et notations de Landau}
+
+\input{question_02}
+
+\section{Tris}
+
+\input{question_03}
+
+\section{Arbres}
+
+  \subsection{Arbres binaires}
+
+  \input{question_04}
+        
+  \subsection{Arbres binaires de recherche}
+
+  \input{question_05}
+
+\section{Tables de hachage}
+
+\input{question_06}
+
+\section{Indexation}
+
+On désire écrire un programme qui, à la lecture d'un programme, repère
+pour chaque identificateur les lignes où il apparaît. Un
+identificateur commence par une lettre et n'est composé que de lettres
+et de chiffres. Certains mots, dits réservés, ne peuvent pas être
+utilisés comme identificateurs.
+
+Après la lecture, on demande d'imprimer le programme, puis la liste
+(triée par ordre alphabétique) des identificateurs suivis chacun de la
+liste des numéros de ligne où il apparaît, ces numéros de ligne étant
+rangés en ordre croissant.
+
+  \begin{enumerate}
+
+    \item Faites une analyse comparée des différentes structures de
+          données possibles;
+
+    \item programmez une méthode utilisant des arbres binaires de
+          recherche, et une méthode utilisant un tableau de hachage;
+          analysez les résultats.
+
+  \end{enumerate}
+
+
+\section{Graphes}
+
+  \begin{enumerate}
+
+    \item Qu'est-ce qu'un graphe non-orienté? Orienté?
+
+    \item Qu'est-ce qu'un graphe connexe? Fortement connexe?
+
+    \item Qu'est-ce qu'un parcours en profondeur d'abord? En largeur
+          d'abord?
+
+    \item Donnez un algorithme de calcul des composantes fortement
+          connexes, et sa complexité temporelle et spatiale dans le
+          pire des cas.
+
+    \item Citez des cas où les graphes sont la structure de donnée
+          idoine.
+
+  \end{enumerate}
+
+
+\section{Automates et langages réguliers}
+
+  \begin{enumerate}
+
+    \item Qu'est-ce qu'un automate fini?
+
+    \item Qu'est-ce qu'un automate fini déterministe et
+          non-déterministe? Quels sont les liens entre ces deux types
+          d'automates?
+
+    \item Qu'est-ce qu'un automate minimal? Y a-t-il unicité? Donnez
+          un algorithme de minimisation et discutez sa complexité.
+
+    \item Qu'est-ce qu'un langage régulier? Une expression régulière?
+ 
+    \item Quels liens y a-t-il entre les langages réguliers et les
+          automates finis?
+
+    \item Citez des applications intéressantes des automates finis et
+          des expressions régulières.
+
+  \end{enumerate}
+
+
+
+\end{document}

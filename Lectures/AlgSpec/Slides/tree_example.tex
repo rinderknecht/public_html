@@ -1,0 +1,21 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-tree,pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=1cm]{\TC}{
+  \pstree{\TC}{ 
+    \TC \TC
+  }
+  \TC
+  \pstree{\TC}{
+    \TC \Tn
+  }
+}
+\endTeXtoEPS
+
+\end{document}

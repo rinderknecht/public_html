@@ -1,0 +1,292 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{url}
+\usepackage{ae,aecompl}
+\usepackage{amsfonts}
+\usepackage{amssymb,amsmath,stmaryrd}
+
+\newcommand{\pgcd}[2]{\textnormal{pgcd(#1, #2)}}
+\newcommand{\fact}[1]{\textnormal{fact(#1)}}
+\newcommand{\bitem}{\item[$\bullet$]}
+
+\input{trace}
+
+\title{TP de programmation en Java}
+\author{Christian Rinderknecht}
+
+\begin{document}
+
+\maketitle
+
+\section{Conversion en binaire}
+
+Écrivez un programme \texttt{Binary.java} qui saisit sur la ligne de
+commande Unix un nombre entier positif en base dix et imprime sa
+représentation binaire.
+
+\noindent La méthode (on parle d'\emph{algorithme}) à suivre est la
+suivante:
+
+\begin{enumerate}
+
+  \item saisissez l'entier sur la ligne de commande;
+
+  \item convertissez l'entier en un tableau de booléens tel que
+  l'élément d'index $i$ vaille \textsf{true} si le $i$-ème bit vaut
+  1 et \textsf{false} sinon;
+
+  \item imprimez ce tableau de telle sorte que si l'élément d'index
+  $i$ vaut \textsf{true} alors on affiche \texttt{1} et \texttt{0}
+  sinon.
+
+\end{enumerate}
+
+Réalisez la première étape dans la méthode \textsf{main} de votre
+classe publique \textsf{Binary} (voyez la classe statique
+\textsf{Integer} pour convertir une chaîne de caractère en
+entier). Pour la seconde étape, écrivez une méthode publique et
+statique (dans \textsf{Binary}) nommée \textsf{convert}. Pour la
+dernière étape, définissez une méthode publique et statique
+\textsf{print}.
+
+Avant d'entamer la dernière étape écrivez complètement \textsf{main}
+et n'écrivez que des méthodes \textsf{convert} et \textsf{print} qui
+ne font rien. Si vous et le compilateur êtes satisfait des types de
+ces méthodes, passez à la rédaction de leur contenu (appelé
+\emph{corps}).
+
+Dans le corps des méthodes, servez-vous uniquement des boucles, de la
+conditionnelle et des tableaux. La classe statique
+\texttt{java.lang.Math} fournit des méthodes correspondant aux
+opérations mathématiques usuelles. Le catalogue de la bibliothèque
+Java de Sun est consultable en ligne à l'adresse
+\url{http://java.sun.com/j2se/1.4.2/docs/api/}.
+
+
+\section{Factorielle}
+
+\noindent On rappelle que la fonction factorielle en mathématique se
+définit ainsi:
+\begin{align*}
+  0! &= 1 \\
+  n! &= n \times (n-1)!
+\end{align*}
+\noindent En d'autres termes, si l'on renomme la factorielle en
+\emph{fact}, on écrit de façon équivalente:
+\begin{align*}
+  \fact{0} &= 1 \\
+  \fact{n} &= n \times \fact{n-1}
+\end{align*}
+\noindent Ce type de définition de fonctions (ici c'est une suite
+entière) est dite \emph{récursive} (ou \emph{récurrente} pour les
+suites). En général, vous connaissez déjà depuis le lycée les suites
+de la forme $u_n = f(u_{n-1})$. Cela ne pose aucun problème à
+\textsf{Java}, la seule contrainte étant que vous devez vous assurer
+vous-même que l'appel de méthode récursif se fait avec des arguments
+plus petits pour garantir la terminaison du programme. Dans l'exemple
+de la suite, la méthode serait $u$ et les arguments $n$ et $n-1$.
+
+\medskip
+
+\noindent Le programme correspondant à la factorielle s'écrit
+simplement
+
+{\small
+\begin{verbatim}
+public static int fact (int n) {
+  if (n == 0)
+    return 1;
+  else return n * fact (n-1);
+}
+\end{verbatim}
+}
+
+
+\section{Sommes}
+
+\noindent Le but est de programmer $\Sigma_{i=0}^{n}{i^2}$. Écrivez un
+programme \texttt{Sommes.java} contenant une classe \textsf{Sommes}
+qui contient une méthode publique et statique nommée \textsf{carres}
+qui prend l'entier correspondant à $n$ et retourne l'entier
+\textsf{Java} correspondant à $\Sigma_{i=1}^{n}{i^2}$.
+
+\medskip
+
+\begin{itemize}
+
+  \bitem Il faut que \textsf{carres} utilise une boucle pour calculer
+  son résultat.
+
+  \bitem Ensuite écrivez une méthode \textsf{rec\_carres} qui calcule
+  la même chose que \textsf{carres} mais de façon récursive (donc sans
+  boucle). Pour y parvenir, cherchez uen fonction $f$ telle que $u_n =
+  f (u_{n-1})$ et $u_n=\Sigma_{i=0}^{n}{i^2}$.
+
+\end{itemize}
+
+
+\section{Suite de Fibonacci}
+
+\noindent Programmez dans un fichier \texttt{Fibonacco.java} la suite
+de Fibonacci en suivant de près la définition mathématique usuelle
+\begin{align*}
+  F_0 &= F_1 = 1 \\
+  F_{n+2} & = F_{n+1} + F_{n}
+\end{align*}
+
+
+\section{Binôme de Newton}
+
+\noindent Programmer dans un fichier \texttt{Newton.java} le calcul
+du binôme de Newton:
+\begin{align*}
+  C_{n}^{0} &= C_{n}^{n} = 1\\
+  C_{n}^{p} &= C_{n-1}^{p} + C_{n-1}^{p-1}
+\end{align*}
+
+\section{Algorithme d'Euclide}
+
+Le mathématicien grec Euclide a proposé une méthode pour déterminer le
+plus grand diviseur commun (PGCD) de deux entiers. Soient $a$ et $b$
+ces entiers et $q$ et $r$ le quotient de $a/b$ et le reste de $a/b$,
+respectivement. Autrement dit:
+$$a = b \times q + r \; \textnormal{où} \; r < b $$
+
+Tout diviseur commun de $a$ et $b$ divise donc aussi $r$, car $r=a - b
+\, q$, et tout diviseur de $b$ et $r$ divise aussi $a$, car $a=b \, q+
+r $. Par conséquent, le PGCD de $a$ et $b$ égale le PGCD de $b$ et
+$r$. Le reste étant strictement inférieur au diviseur, la répétition
+du procédé se terminera (la suite des restes est strictement
+décroissante). Le dernier reste non nul (ou le dernier diviseur) est
+alors le PGCD recherché. Par exemple, si $a=96$ et $b=81$, nous avons
+la suite de divisions
+\begin{align*}
+96 &= 1 \times 81 + 15\\
+81 &= 5 \times 15 + 6\\
+15 &= 2 \times 6 + 3\\
+6 &= 2 \times 3 + 0
+\end{align*}
+\noindent Donc le PGCD de 96 et 81 vaut 3.
+
+\medskip
+
+\noindent Il faut prendre garde que $a \geqslant b$. Si ce n'est pas
+le cas, il faut intervertir $a$ et $b$. De plus, par définition, si $b
+= 0$ alors le PGCD est $a$.
+
+\medskip
+
+\noindent Écrivez un programme \texttt{Euclide.java} qui contient une
+classe publique \textsf{Euclide} dont la méthode \textsf{main} saisit
+deux nombres entiers (le premier est considéré comme $a$ et le second
+comme $b$), ainsi qu'une méthode publique et statique \textsf{pgcd}
+qui calcule le PGCD de deux entiers.
+
+\begin{enumerate}
+
+  \item Dans un premier temps, utilisez une boucle pour calculer le
+  PGCD.
+
+  \item Dans un second temps, définissez une méthode publique et
+  statique nommée \textsf{rec\_pgcd} qui calcule \emph {récursivement}
+  le PGCD (c'est-à-dire sans bou\-cle). Pour cela elle suivra la
+  définition mathématique du PGCD:
+
+  \begin{itemize}
+
+    \bitem Si $b >a$ alors $\pgcd{a}{b} = \pgcd{b}{a}$
+  
+    \bitem sinon si $b = 0$ alors $\pgcd{a}{b} = a$
+
+    \bitem sinon $\pgcd{a}{b} = \pgcd{b}{a \textnormal{mod} b}$, où
+    \emph{mod} est le reste de la division entière.
+
+  \end{itemize}
+
+   Affichez le PGCD calculé par \textsf{pgcd} (avec une boucle) et par
+   \textsf{rec\_pgcd} (sans boucle).
+
+\end{enumerate}
+
+
+\section{Tri à bulles}
+
+\noindent Le but de cet exercice de vous faire programmer un
+algorithme de tri simple, dit \emph{tri à bulles}. Pour comprendre le
+principe, supposons que nous voulions trier par ordre croissant une
+suite d'entiers.
+
+\medskip
+
+Le principe est de comparer deux à deux les éléments du tableaux, de
+la gauche vers la droite. Si les deux éléments sont ordonnés l'un par
+rapport à l'autre, on passe à la paire suivante, sinon on les échange
+avant de passer à la paire suivante. Au bout de cette étape, la
+dernière case du tableau (la plus à droite) contient donc le plus
+grand élément. Par exemple 3~5~7~2 devient 3~5~2~7. Il faut alors
+recommencer avec le sous-tableau allant de la gauche jusqu'avant le
+plus grand élément précédemment trouvé. Dans notre exemple, il faut
+recommencer avec le sous-tableau 3~5~2, puisque 7 est bien placé. Cela
+donne 3~2~5~7. Maintenant 5 et 7 sont bien placés et l'on recommence
+avec le sous-tableau 3~2, ce qui donne 2~3~5~7. On s'arrête là car le
+sous-tableau restant est réduit à 2, qui est forcément trié.
+
+\medskip
+
+Écrivez d'abord un fichier \texttt{Bubble.java} contenant une classe
+publique \textsf{Bubble} qui contient une méthode publique et statique
+\textsf{print} qui prend un tableau d'entier et l'affiche de gauche à
+droite à l'écran. Dans la fonction \textsf{main}, lisez les arguments
+passés en ligne de commande par l'usager, stockez-les dans un tableau
+d'entiers et affichez-les tels qu'ils ont été lus. Par exemple, si
+l'usager tape {\small
+\begin{verbatim}
+java Bubble 3 5 7 2
+\end{verbatim}
+}
+\noindent alors l'affichage est
+{\small
+\begin{verbatim}
+3 5 7 2
+\end{verbatim}
+}
+
+\medskip
+
+Ensuite, ajoutez à la classe \textsf{Bubble} une méthode publique et
+statique \textsf{sort} qui prend en paramètre un tableau d'entiers et
+ne renvoie rien (c'est-à-dire le type \textsf{void}). En effet,
+contrairement aux types primitifs de \textsf{Java} (tels \textsf{int},
+\textsf{boolean} etc.), lorsque l'on modifie un paramètre de type
+tableau dans une méthode, la modification sera observable par
+l'appelant (de la méthode). Par exemple,
+{\small
+\begin{verbatim}
+public class Toto {
+  public static void sept_en_tete (int[] t) {
+    if (t.length >= 1) t[0] = 7;
+  }
+  public static void main (String[] args) {
+    int[] t = {1, 2, 3};
+    sept_en_tete (t);
+    System.out.println (t[0]); // Affiche 7 et non 1.
+  }
+}
+\end{verbatim}
+}
+Il n'est donc pas nécessaire que le type de retour de \textsf{sort}
+soit \texttt{int[]}, et \textsf{void} fait l'affaire.
+
+\medskip
+
+Pour programmer ce tri il faut donc dans la méthode \textsf{sort} deux
+boucles imbriquées (c'est-à-dire l'une dans l'autre) portant sur deux
+indices (usuellement \textsf{i} et \textsf{j}).
+
+\end{document}
+

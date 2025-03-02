@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Length of a Sequence</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Length of a Sequence</h2>
+
+<p><strong>Question 1.</strong> The purpose of this exercise is to
+  write an XSLT transform which takes as input a table of contents
+  with chapters without sections (i.e., it is a list of chapters with
+  titles), and output the number of chapters. <em>Do not use an
+  accumulator.</em>
+</p>
+
+<p><strong>Example.</strong>
+<a href="./toc0.xml">This</a> is an example of input document
+and
+<a href="./toc0.txt">this</a> is the corresponding output. You need to
+download the <a href="./book.dtd">DTD</a> to run this example.
+</p>
+
+<strong>Hints.</strong> 
+<ul>
+  <li>The output is text, so you need to set the
+  attribute <tt>method="text"</tt>.</li>
+
+  <li>You need to declare the type of your parameters, therefore, you
+  need to define the <tt>xs</tt> (XML Schema) namespace as
+  <tt>&lt;xsl:transform
+   ... xmlns:xs="http://www.w3.org/2001/XMLSchema"></tt>.</li>
+
+  <li>The <tt>&lt;xsl:sequence select="$x"/></tt> element is a
+  reference to the parameter or variable named <tt>x</tt>. This avoids
+  copying <tt>$x</tt>, which could be big. Here, the parameter is the
+  length, i.e., an integer, but the XSLT processor will automatically
+  convert it to a string before outputting it.</li>
+</ul>
+
+<strong>Notes.</strong>
+<ul>
+  <li>It is more legible if a newline is added at the end of the
+  input. This is achieved by the element
+  <tt>&lt;xsl:text>&amp;#10;&lt;/xsl:text></tt>. (This entity refers
+  to the newline character, whose ASCII code is 10.)</li>
+</ul>
+
+<p><strong>Answer 1.</strong>
+<a href="./length0.xsl">This</a> is a possible transform solving the
+problem. <a href="./length1.xsl">This</a> is another transform solving
+the same problem with an accumulator. Note that the
+namespace <tt>xs</tt> stands
+for <a href="http://www.w3.org/XML/Schema">XML Schema</a>.</p>
+
+<hr/>
+
+<p><strong>Question 2.</strong> Same as the previous exercise but this
+time counting all the children of the root element, not just
+chapters. <em>Use an accumulator.</em>
+</p>
+
+<p><strong>Example.</strong>
+<a href="./toc2.xml">This</a> is an example of input document
+and
+<a href="./toc2.txt">this</a> is the corresponding output. You need to
+download the <a href="./book.dtd">DTD</a> to run this example.
+</p>
+
+<p><strong>Answer 2.</strong>
+<a href="./length2.xsl">This</a> is a possible transform solving the
+problem.</p>
+
+<hr/>
+
+<strong>Question 3.</strong> Same as the previous exercise but this
+time
+<ul>
+
+  <li>use a default value for the accumulator,</li>
+
+  <li>the chapter titles are specified as attribute values,</li>
+
+  <li>the <tt>chapter</tt> elements are grouped under
+  a <tt>contents</tt> element, which must <em>not</em> be counted
+  in.</li>
+
+</ul>
+
+<p><strong>Example.</strong>
+<a href="./toc3.xml">This</a> is an example of input document
+and
+<a href="./toc3.txt">this</a> is the corresponding output. You need to
+download the <a href="./book_att.dtd">DTD</a> to run this example.
+</p>
+
+<p><strong>Answer 3.</strong>
+<a href="./length3.xsl">This</a> is an answer.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+
+</html>

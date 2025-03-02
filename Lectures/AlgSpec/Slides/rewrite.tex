@@ -1,0 +1,291 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From specifications to algorithms}
+
+Now, how do we go from a specification to an \textbf{algorithm}? 
+
+\bigskip
+
+By algorithm, we mean an \textbf{operational description} of the
+specification, i.e., a series of explicit computations that respect the
+equations and yield the expected result.
+
+\bigskip
+
+A specification describes abstract properties (using notations like
+\(\forall\), \((x,y)\), \(\varnothing\), \(\sum\) etc. and leaving out
+explicit data structure definitions) and the algorithm is a calculus
+schema (this introduces an abstract computer model, including time).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From specifications to algorithms (cont)}
+
+One says that an algorithm is \textbf{correct with respect to its
+specification} when all the results of the algorithm satisfy the
+specification, i.e., there is no contradiction when the results are
+substituted into the equations of the specification.
+
+\bigskip
+
+Correctness is always a relative concept (a property of the algorithm
+in regard to its specification).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From specifications to algorithms (cont)}
+
+So, an algorithm is more detailed than a specification. But how much
+more?
+
+\bigskip
+
+Contrary to algorithms, \textbf{programs} depend on programming
+languages, as we mentioned before. Thus algorithms can be considered
+as a useful step from specification to programs, as a refinement
+step.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From specifications to algorithms (cont)}
+
+Algorithms can be implemented using different programming languages
+(featuring objects, or pointers, or exceptions etc.). The more we want
+to be free of using our favorite programming language, the more the
+language for expressing algorithms should be abstract.
+
+\bigskip
+
+However, this language may assume an abstract model of the computer
+which can be quite different from the one assumed by the chosen
+programming language. On the contrary, sometimes they are the same
+(this is the case of \Prolog).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From specifications to algorithms (cont)}
+
+Coming back to our question: how do we go from an algebraic
+specification (which, by definition, describes formally a concept) to
+an algorithm (which describes formally a computation)?
+
+\bigskip
+
+One way is to rely on the two kinds of equations we have, recursive
+and non-recursive. In mathematics, the integer sequence we give
+page~\pageref{sequence} can be transformed into a functional
+definition, i.e., \(U_{n}\) is expressed only in terms of \(n\), \(a\)
+and \(b\), by forming \(U_{n+1} - U_{n} = b\) and summing both sides:
+\(\sum_{n=0}^{p}{(U_{n+1} - U_{n})} = \sum_{n=0}^{p}{b}
+\Leftrightarrow U_{p+1} - U_{0} = (p+1) b\)\\ \(\Leftrightarrow
+U_{p+1} - a = (p+1) b \Leftrightarrow U_{p} = a + pb \Leftrightarrow
+U_{n} = a + nb\).
+
+\bigskip
+
+But this is an \emph{ad hoc} technique (e.g., we rely on properties of
+the integer numbers, as addition), which cannot be applied to our
+algebraic specifications.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From specifications to algorithms (cont)}
+
+The general approach consists in finding a \textbf{computation scheme}
+instead of relying on a \textbf{reasoning}, as we did for the
+sequence. 
+
+\bigskip
+
+This is achieved by looking at the equations in the specification and
+\textbf{orienting them}. 
+
+\bigskip
+
+This means that an equation is then considered as a \textbf{rewriting
+step}, from the left side to the right side, or the reverse way.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From specifications to algorithms (cont)}
+
+Assume we have an equation \(A = B\), where \(A\) and \(B\) are
+expressions. 
+
+\bigskip
+
+The way to pass from this equality to a computation is to orient the
+sides as a rewriting step, i.e., wherever we find an occurrence of the
+left side, we replace it by the right side.
+
+\bigskip
+
+For instance, if we set \(A \rightarrow B\), then it means that
+wherever we find a \(A\), we can write instead a \(B\).
+
+\bigskip
+
+But, in theory, \(A = B\) is equivalent to \(A \rightarrow B\) and \(B
+\rightarrow A\). But if we keep both (symmetric) rewriting steps, we
+get a \textbf{non-terminating rewriting system}, as demonstrated by
+the following infinite chain: \(A \rightarrow B \rightarrow A
+\rightarrow B \rightarrow \dots\)
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From specifications to algorithms (cont)}
+
+\emph{A rewriting system terminates if it stops on a value.}
+
+\bigskip
+
+If we have a chain \(X_1 \rightarrow X_2 \rightarrow \dots \rightarrow
+X_n\) and there is no way to rewrite \(X_n\), i.e., \(X_n\) does not
+appear in any part of a left-hand side, then if \(X_n\) is a value,
+the chain is terminating.
+
+\bigskip
+
+We want a rewriting system that terminates on a \textbf{value}.
+
+\bigskip
+
+A value is made of constructors only, whilst an \textbf{expression} is
+made of constructors and other functions. For example,
+
+\begin{itemize}
+ 
+  \item \(\proc{True}\) is a value;
+
+  \item \(\proc{Or} (\proc{True}, \proc{Not} (\proc{False}))\) is an
+  expression.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{From specifications to algorithms (cont)}
+
+Now, how can we be sure we do not lose some property by just allowing
+one orientation for each equality, as just keeping \(A \leftarrow
+B\) when \(A = B\)?
+
+\bigskip
+
+This problem is a \textbf{completeness problem} and is very difficult
+to tackle,\footnote{Refer to the Knuth-Bendix completion
+  semi-algorithm.} therefore we will not discuss it here.
+
+\bigskip
+
+So, how should we orient our equations?
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Booleans/Orienting the equations}
+
+Since we want to use an equation to compute the function it
+characterises, if one side of an equation contains an occurrence of
+the function call and the other not, we orient from the former side to
+the latter:
+\begin{align*}
+\proc{Not} (\proc{True}) &\rightarrow_1 \proc{False}\\
+\proc{Not} (\proc{False}) &\rightarrow_2 \proc{True}\\
+\proc{And} (\proc{True}, \proc{True}) &\rightarrow_3 \proc{True}\\
+\proc{And} (\id{x}, \proc{False}) &\rightarrow_4 \proc{False}\\
+\proc{And} (\proc{False}, \id{x}) &\rightarrow_5 \proc{False}\\
+\proc{Or} (\id{b_1}, \id{b_2}) &\rightarrow_6 \proc{Not} (\proc{And}
+(\proc{Not} (\id{b_1}), \proc{Not} (\id{b_2})))
+\end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Booleans/Orienting the equations (cont)}
+
+\noindent For example, here is a terminating chain for the expression
+\(\proc{Or} (\proc{True}, \proc{True})\): {\footnotesize
+\begin{align*}
+\proc{Or} (\proc{True}, \underline{\proc{And} (\proc{True}, \proc{False})})
+&\rightarrow_4 \proc{Or} (\proc{True}, \underline{\proc{False}})\\
+  \underline{\proc{Or} (\proc{True}, \proc{False})}
+&\rightarrow_6 \underline{\proc{Not} (\proc{And} (\proc{Not}
+  (\proc{True}), \proc{Not} (\proc{False})))}\\
+  \proc{Not} (\proc{And} (\underline{\proc{Not} (\proc{True})},
+  \proc{Not} (\proc{False})))
+&\rightarrow_1 \proc{Not} (\proc{And} (\underline{\proc{False}},
+  \proc{Not} (\proc{False})))\\
+  \proc{Not} (\proc{And} (\proc{False}, \underline{\proc{Not}
+  (\proc{False})}))
+&\rightarrow_2 \proc{Not} (\proc{And} (\proc{False},
+  \underline{\proc{True}}))\\
+  \proc{Not} (\underline{\proc{And} (\proc{False}, \proc{True})})
+&\rightarrow_5 \proc{Not} (\underline{\proc{False}})\\
+  \underline{\proc{Not} (\proc{False})}
+&\rightarrow_2 \underline{\proc{True}}
+\end{align*}
+}
+An important property of our system is that it allows different chains
+starting from the same expression but they all end on the same value,
+e.g., we could have applied \(\rightarrow_2\) before \(\rightarrow_1\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Booleans/Orienting the equations (cont)}
+
+Here, we will always use a \textbf{strategy} which rewrites the
+arguments before the function calls.
+
+\bigskip
+
+For instance, given
+\[
+\proc{Or} (\proc{And} (\proc{True}, \proc{True}), \proc{False})
+\]
+we will rewrite first
+\[
+\proc{And} (\proc{True}, \proc{True}) \rightarrow_3 \proc{True}
+\]
+and then
+\[
+\proc{Or} (\proc{True}, \proc{False}) \rightarrow_6 \proc{True}
+\]
+This strategy is named \textbf{call-by-value} because we rewrite the
+arguments into their values first before rewriting the function call.
+
+\end{frame}

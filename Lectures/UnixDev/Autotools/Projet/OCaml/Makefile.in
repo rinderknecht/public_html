@@ -1,0 +1,125 @@
+# -*-makefile-*-
+
+# Makefile for an Objective Caml project
+
+# ------------------------------------------------------------------------
+# General settings
+#
+VPATH := src
+.PHONY: clean
+
+SRCDIR := @srcdir@
+
+# ------------------------------------------------------------------------
+# Generated source files
+#
+.PRECIOUS: %.mli %.ml
+
+LEXERS := lexer.ml
+PARSERS := parser.mli parser.ml
+GEN_SRC := ${LEXERS} ${PARSERS}
+
+# ------------------------------------------------------------------------
+# Default rule
+#
+BIN := calc
+
+.PHONY: all
+all: ${BIN} ${BIN}.opt
+
+# ------------------------------------------------------------------------
+# Source file generation
+#
+.PHONY: sources
+sources: ${GEN_SRC}
+
+# ------------------------------------------------------------------------
+# Dependences generation
+#
+OCAMLDEP := @OCAMLDEP@
+
+.PHONY: depend
+depend:
+	${MAKE} sources
+	${OCAMLDEP} -I ${SRCDIR} ${SRCDIR}/*.ml{,i} >| ${SRCDIR}/.depend
+
+sinclude ${SRCDIR}/.depend
+
+clean::
+	\rm -f ${SRCDIR}/.depend
+
+# ------------------------------------------------------------------------
+# Lexer generation
+#
+OCAMLLEX := @OCAMLLEX@
+
+lexer.ml ${SRCDIR}/lexer.ml: %.ml: %.mll
+	${OCAMLLEX} $<
+clean::
+	\rm -f ${SRCDIR}/lexer.ml
+
+# ------------------------------------------------------------------------
+# Parser generation
+#
+OCAMLYACC := @OCAMLYACC@
+
+parser.mli ${SRCDIR}/parser.mli: %.mli: %.mly
+	${OCAMLYACC} $<
+parser.ml ${SRCDIR}/parser.ml: %.ml: %.mly
+	${OCAMLYACC} $<
+clean::
+	\rm -f ${SRCDIR}/parser.mli ${SRCDIR}/parser.ml
+
+# ------------------------------------------------------------------------
+# Compilation
+#
+OCAMLC := @OCAMLC@
+OCAMLOPT := @OCAMLOPT@
+STDLIB := # -thread
+ML_FLAGS := -principal -warn-error A -I ${SRCDIR} ${STDLIB}
+
+.PRECIOUS: %.cmi ${SRCDIR}/%.cmi %.cmo ${SRCDIR}/%.cmo 
+.PRECIOUS: %.cmx ${SRCDIR}/%.cmx *.o ${SRCDIR}/*.o
+
+%.cmi ${SRCDIR}/%.cmi: %.mli
+	${strip ${OCAMLC} ${ML_FLAGS} -c $<}
+%.cmo ${SRCDIR}/%.cmo: %.ml
+	${strip ${OCAMLC} ${ML_FLAGS} -c $<}
+%.cmx ${SRCDIR}/%.cmx: %.ml
+	${strip ${OCAMLOPT} ${ML_FLAGS} -c $<}
+clean::
+	\rm -f ${SRCDIR}/*.cmi ${SRCDIR}/*.cmo 
+	\rm -f ${SRCDIR}/*.cmx ${SRCDIR}/*.o
+
+# ------------------------------------------------------------------------
+# Linkage
+#
+IMPL := ast eval parser lexer main
+CMO := ${IMPL:%=%.cmo}
+CMX := ${IMPL:%=%.cmx}
+LIB := 
+
+ifeq (${DEP},)
+${BIN}: depend
+	${MAKE} $@ DEP=yes
+else
+${BIN}: ${CMO}
+	${strip ${OCAMLC} -I ${SRCDIR} ${STDLIB} -o $@ ${LIB:%=%.cma} ${CMO}}
+endif
+
+ifeq (${DEP},)
+${BIN}.opt: depend
+	${MAKE} $@ DEP=yes
+else
+${BIN}.opt: ${CMX}
+	${strip ${OCAMLOPT} -I ${SRCDIR} ${STDLIB} -o $@ ${LIB:%=%.cmxa} ${CMX}}
+endif
+
+clean::
+	\rm -f ${BIN} ${BIN}.opt
+
+distclean: clean
+	\rm -fr configure config.log config.status \
+                     autom4te.cache autom4te-*.cache
+	\rm -f ${SRCDIR}/*~ ${SRCDIR}/.*~ ${SRCDIR}/\#*\# ${SRCDIR}/.\#*
+	\rm -f Makefile

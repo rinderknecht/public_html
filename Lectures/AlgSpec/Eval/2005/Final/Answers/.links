@@ -1,0 +1,11 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/Lectures/AlgSpec/Slides/non-empty_tree.tex
+../int_tree_example.tex
+../mirrors.tex
+
+$HOME/LaTeX/TeX/trace.tex
+
+../Questions/question_01.tex
+../Questions/question_02.tex
+../Questions/algspec_final.tex algspec_final-QA.tex

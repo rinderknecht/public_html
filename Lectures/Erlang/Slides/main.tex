@@ -1,0 +1,59 @@
+%%-*-latex-*-
+
+% Language
+%
+\usepackage[english]{babel}
+
+% Maths
+%
+\usepackage{amssymb,amsmath}
+
+% Miscellanea
+%
+\usepackage{url,xspace}
+\usepackage{graphicx}
+
+% Input files
+%
+\input{beamer_cfg}
+\input{cpp}
+\input{erlc}
+\input{trace}
+
+% New commands
+%
+\renewcommand{\refname}{}
+\newcommand{\Prolog}{\textsf{Prolog}\xspace}
+\newcommand{\Java}{\textsf{Java}\xspace}
+\newcommand\Erlang{\textsf{Erlang}\xspace}
+\newcommand\XSLT{\textsf{XSLT}\xspace}
+\newcommand\XML{\textsf{XML}\xspace}
+\newcommand\SQL{\textsf{SQL}\xspace}
+\newcommand\Perl{\textsf{Perl}\xspace}
+\newcommand\Python{\textsf{Python}\xspace}
+\newcommand\Ruby{\textsf{Ruby}\xspace}
+\newcommand\Bash{\textsf{Bash}\xspace}
+\newcommand\DOS{\textsf{DOS}\xspace}
+\newcommand\Unix{\textsf{Unix}\xspace}
+\newcommand\Windows{\textsf{Windows}\xspace}
+\newcommand\BEAM{\textsf{BEAM}\xspace}
+\newcommand\ASCII{\textsf{ASCII}\xspace}
+
+% ------------------------------------------------------------------------
+% Document
+%
+\title{Functional Programming in Erlang}
+\author{Christian Rinderknecht}
+\date{31 October 2008}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\xinclude{rationale}{Rationale}
+\xinclude{introduction}{Introduction}
+\xinclude{lexis}{Lexicon}
+\xinclude{matching}{Matching terms}
+\xinclude{functions}{Functions}
+
+\end{document}

@@ -1,0 +1,338 @@
+%%-*-latex-*-
+
+%--------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Objectifs didactiques}
+
+Découverte d'un nouveau paradigme de programmation: après les langages
+de script, la programmation structurée et à objets, présenter la
+programmation fonctionnelle illustrée par le langage OCaml.
+
+\bigskip
+
+Le temps imparti étant très court, on n'abordera que les traits
+fonctionnels et distinctifs d'OCaml.
+
+\bigskip
+
+L'approche sera très différente, voire déroutante, par rapport à
+celles que vous avez déjà pratiquées.
+
+\bigskip
+
+À cause de la nouveauté et du peu de temps, il sera donc essentiel de
+travailler en dehors des heures de classe.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Domaines d'usage de OCaml}
+
+\textcolor{blue}{Usage général}
+
+\bigskip
+
+\textcolor{blue}{Domaines de prédilection}
+
+\begin{itemize}
+
+  \item calcul symbolique: preuves mathématiques, compilation,
+        interprétation, analyses de programmes;
+
+  \item prototypage rapide et langages dédiés (\emph{Domain Specific
+        Languages}).
+
+\end{itemize}
+
+\textcolor{blue}{Enseignement et recherche} 
+
+Classes préparatoires, grandes universités (Europe, USA, Japon).
+
+\bigskip
+
+\textcolor{blue}{Industrie} CEA, EDF, France Télécom, Simulog.
+
+\bigskip
+
+\textcolor{blue}{Gros logiciels} Coq, Ensemble, Unison.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Quelques mots-clés}
+
+Le langage OCaml est dit:
+\begin{itemize}
+
+  \item \emph{fonctionnel}: les fonctions peuvent être directement
+  passées à d'autre fonctions et être retournées;
+
+  \item \emph{à gestion de mémoire automatique} (comme \textsf{Java});
+
+  \item \emph{fortement typé}: le système de types garanti l'absence
+  d'erreurs à l'exécution dues à des incohérences sur les données;
+
+  \item \emph{avec inférence de types statique}: les annotations de
+  types sont facultatives car inférées par le compilateur;
+
+  \item \emph{compilé} ou \emph{interactif} (interactif comme une
+  calculette);
+
+  \item \emph{à objets} et \emph{à modules}.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Mini-ML}
+
+\noindent Commençons pas présenter un sous-ensemble du noyau
+fonctionnel de OCaml: mini-ML.
+
+\bigskip
+
+Une \emph{phrase} est définie par les cas suivants, où $e$ dénote une
+expression, $x$ et $f$ sont des variables et \Xlet et \Xrec sont des
+mots-clés:
+
+\medskip
+
+\begin{tabular}{rll}
+    $\bullet$ 
+  & \textcolor{blue}{définition globale}
+  & \phrase{$e$}\\
+  &
+  & \phrase{$\Xlet \,\, x = e$}\\
+    $\bullet$
+  & \textcolor{blue}{définition globale récursive}
+  & \phrase{$\Xlet \,\, \Xrec \,\, f = e$}
+\end{tabular}
+
+Les phrases sont terminées par «~\textsf{;;}~» et un \emph{programme}
+est une suite de phrases.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Méta-variables et variables}
+
+Lorsque l'on écrit que $e$ est une expression, on veut dire que $e$
+désigne une portion de phrase OCaml qu'on classe syntaxiquement
+(c.-à-d. d'après leur forme) dans les expressions.
+
+\bigskip
+
+On dit que $e$ est une \emph{méta-variable} car, étant un nom c'est
+une variable, mais cette variable n'existe pas dans le langage décrit
+(OCaml): elle existe dans le langage de \emph{description}. Autrement
+dit, ce n'est pas du OCaml mais une notation pour décrire des
+fragments de OCaml (éventuellement une infinité).
+
+\bigskip
+
+Ainsi la méta-variable $x$ désigne un ensemble (peut-être infini) de
+variables OCaml, et il ne faut pas la confondre avec la variable
+OCaml~\ident{x}. De même, la méta-variable $e_1$ désigne une infinité
+d'expressions.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Les expressions}
+
+Une expression $e$ est définie \emph{récursivement} par les cas
+suivants:
+
+\medskip
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{variable}
+  & $f, g, h$ (fonctions); $x, y, z$ (autres). \\
+    $\bullet$
+  & \textcolor{blue}{fonction} (ou \textcolor{blue}{abstraction})
+  & $\Xfun \,\, x \rightarrow e$\\
+    $\bullet$ 
+  & \textcolor{blue}{appel} (ou \textcolor{blue}{application})
+  & $e_1 \,\, e_2$ \\ 
+    $\bullet$
+  & \textcolor{blue}{opérateur arithmétique}
+  & \lpar\texttt{+}\rpar \ \lpar\texttt{-}\rpar \ \lpar\texttt{/}\rpar
+    \ \lpar\texttt{*}\rpar\\
+    $\bullet$
+  & \textcolor{blue}{opération arithmétique}
+  & $e_1$ \texttt{+} $e_2$ ou $e_1$ \texttt{-} $e_2$\\
+ && ou $e_1$ \texttt{/} $e_2$ ou $e_1$ \texttt{*} $e_2$\\
+    $\bullet$
+  & \textcolor{blue}{unité ou constante entière}
+  & \unit \ ou \textsf{0} ou \textsf{1} ou \textsf{2} etc.\\
+    $\bullet$
+  & \textcolor{blue}{parenthèse}
+  & $\lpar{e}\rpar$\\
+    $\bullet$
+  & \textcolor{blue}{définition locale}
+  & $\Xlet \,\, x = e_1 \,\, \Xin \,\, e_2$
+\end{tabular}
+
+\bigskip
+
+\remarques \ Ce que nous écrivons joliment $\rightarrow$ s'écrit
+\verb+->+ en \textsc{ascii}.
+
+%% Le symbole = a deux sens: définition et comparaison (égalité
+%% structurelle).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Un programme correct}
+
+{\small
+\phrase{let x = 0}
+
+\phrase{let id = fun x -> x}
+
+\phrase{let y = 2 in id (y)}
+
+\phrase{let x = (fun x -> fun y -> x + y) 1 2}
+
+\phrase{x+1}
+}
+
+\bigskip
+
+\remarques
+
+\begin{itemize}
+
+  \item Les variables doivent débuter par une minuscule.
+
+  \item La flèche est associative à \emph{droite}: l'expression\\
+  $\Xfun \,\, x_1 \rightarrow \Xfun \,\, x_2 \rightarrow \ldots
+  \rightarrow \Xfun \,\, x_n \rightarrow e$ \ \ \ est équivalente à\\
+  $\Xfun \,\, x_1 \rightarrow \textcolor{blue}{(}\Xfun \,\, x_2 \rightarrow
+  \textcolor{blue}{(}\ldots \rightarrow \textcolor{blue}{(}\Xfun \,\, x_n \rightarrow
+  e\textcolor{blue}{)) \ldots)}$
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Un programme correct (suite)}
+
+\begin{itemize}
+
+  \item L'appel de fonction est associatif à \emph{gauche}:
+  l'expression\\ $e_1 \, e_2 \, e_3 \, \ldots \, e_n$ est équivalente
+  à $\textcolor{blue}{((\ldots (}e_1 \, e_2\textcolor{blue}{)} \, e_3\textcolor{blue}{)} \ldots
+  \textcolor{blue}{)} \, e_n\textcolor{blue}{)}$
+
+  \item L'application des fonctions est prioritaire par rapport à
+  celle des opérateurs:
+  \begin{center}
+    \texttt{f 3 + 4} \ équivaut à \ \texttt{\textcolor{blue}{(}f 3\textcolor{blue}{)} +
+    4}
+  \end{center}
+
+  \item L'application des opérateurs est prioritaire par rapport à
+  l'abstraction:
+  \begin{center} 
+    \texttt{fun x -> x + y} \ équivaut à \ \texttt{fun x ->
+    \textcolor{blue}{(}x + y\textcolor{blue}{)}}
+  \end{center}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Phrase unique}
+
+Un programme, c.-à-d. une suite de définitions globales, peut toujours
+se réécrire en une seule phrase à l'aide de définitions locales
+imbriquées. 
+
+\bigskip
+
+L'exemple précédent est équivalent à
+\begin{semiverbatim}
+let x = 0 \textcolor{blue}{in}
+  let id = fun x -> x \textcolor{blue}{in}
+  \textcolor{blue}{let _ =} let y = 2 in id (y) \textcolor{blue}{in}
+  let x = (fun x -> fun y -> x + y) 1 2 
+\textcolor{blue}{in} x+1;;
+\end{semiverbatim}
+Le symbole \verb|_| désigne une variable dont le nom est unique et
+différent de toutes les autres. Sans perte de généralité, nous
+étudierons donc les programmes réduits à une seule expression. Le
+résultat du programme est l'\emph{évaluation} de \verb|x+1|.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Un autre programme correct}
+\label{un_autre_programme}
+
+OCaml est dit fonctionnel car ses programmes sont bâtis sur des
+fonctions qui modélisent les fonctions mathématiques calculables.
+
+\bigskip
+
+Par exemple:
+{\small
+\begin{verbatim}
+let compose = fun f -> fun g -> fun x -> f (g x) in
+  let square = fun f -> compose f f in
+  let double = fun x -> x + x in
+  let quad = square double 
+in square quad;;
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Interprétation mathématique}
+\label{maths}
+
+{\small
+\begin{alignat*}{1}
+  \texttt{compose} &\equiv f \mapsto (g \mapsto (x \mapsto f(g(x))))
+  \equiv f \mapsto (g \mapsto (x \mapsto f \circ g (x)))\\ 
+&\equiv f \mapsto (g \mapsto f \circ g) \ \ \textnormal{car} \ \
+  \forall h.(x \mapsto h(x) \equiv h)\\
+  \texttt{square} &\equiv f \mapsto f \circ f \equiv f \mapsto f^2\\
+  \texttt{double} &\equiv x \mapsto x + x \equiv x \mapsto 2x\\
+  \texttt{quad}   &\equiv (f \mapsto f^2)(x \mapsto 2x) \equiv (x
+  \mapsto 2x)^2 \equiv x \mapsto 4x\\
+  \texttt{square} \, (\texttt{quad}) &\equiv (f \mapsto f^2)(x \mapsto
+  4x) \equiv (x \mapsto 4x)^2 \equiv x \mapsto 16x
+  \end{alignat*}
+}
+Donc le résultat du programme (\verb+square quad+) est une fonction.
+
+\end{frame}
+

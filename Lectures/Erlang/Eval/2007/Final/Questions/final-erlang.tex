@@ -1,0 +1,48 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{hyphenat}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{xspace}
+
+\input{trace}
+\input{erlc}
+
+\input{title}
+\author{Christian Rinderknecht}
+\date{14 June 2007}
+
+\newcommand\Erlang{\textsf{Erlang}\xspace}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\section{Merging sorted lists}
+
+\input{question_01}
+
+\section{Fun with binary trees}
+
+The atom \texttt{nil} denotes the empty binary tree and the triple
+\texttt{\{Left, Root, Right\}} is a non\hyp{}empty whose root is
+\texttt{Root}, left subtree is \texttt{Left} and right subtree is
+\texttt{Right}.
+
+\subsection{Mirroring binary trees}
+
+\input{question_02}
+
+\subsection{Summing}
+
+\input{question_03}
+
+\end{document}

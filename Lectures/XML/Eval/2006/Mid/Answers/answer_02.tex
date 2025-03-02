@@ -1,0 +1,17 @@
+\paragraph{Answer.}
+\begin{align*}
+\proc{Bottom}(S) &\rightarrow \proc{Bottom}'(\proc{Rev}(S))\\
+\proc{Bottom}'(\proc{Push}(e,T)) &\rightarrow (e, \proc{Rev}(T))
+\end{align*}
+
+\paragraph{Note.} The two questions are related. Indeed,
+\proc{Bottom} provides a means to use a stack as a queue:
+\proc{Enqueue} is simply \proc{Push} and \proc{Dequeue} is
+\proc{Bottom}! But \proc{Bottom} is expensive: in order to get the
+element at the bottom, i.e. dequeue, we have to reverse the whole
+stack two times (see \(\proc{S}\) and \(\proc{T}\)), except one
+element. But in the first question, \proc{Dequeue} is cheap: if the
+second stack is not empty, it is simply equivalent to a \proc{Pop}
+(one rewrite). If it is empty, then the cost is to reverse the first
+stack, i.e. to traverse \emph{only once} all the elements --- instead
+of two times, every time, with \proc{Bottom}.

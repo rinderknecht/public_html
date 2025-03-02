@@ -1,0 +1,6 @@
+compute_result.o: compute_result.c tools.h compute_result.h \
+  compute_struct.h
+main.o: main.c parse_num.h compute_result.h compute_struct.h \
+  print_result.h
+parse_num.o: parse_num.c parse_num.h tools.h
+print_result.o: print_result.c print_result.h compute_struct.h

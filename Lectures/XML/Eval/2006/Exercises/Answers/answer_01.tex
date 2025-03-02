@@ -1,0 +1,9 @@
+\paragraph{Answer.} 
+\begin{align}
+\proc{TSS}(\proc{Empty}, \proc{Empty}, \proc{Empty}) &\rightarrow
+\proc{Empty}\\
+\proc{TSS}(A, B, \proc{Push}(c,C)) &\rightarrow \proc{Push}(c,
+\proc{TSS}(B, C, A))\\
+\proc{TSS}(A, B, \proc{Empty}) &\rightarrow \proc{TSS} (B,
+\proc{Empty}, A)
+\end{align}

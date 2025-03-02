@@ -1,0 +1,324 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+
+\input{trace}
+
+\title{TP 1 de programmation fonctionnelle en Objective Caml}
+\author{Christian Rinderknecht}
+
+\begin{document}
+
+\maketitle
+
+L'objectif est de présenter les notions élémentaires propres aux
+langages fonctionnels (calcul d'expressions, expressions
+fonctionnelles, d\'efinition de fonctions, r\'ecursivit\'e).
+
+\section{Nombres}
+
+Le langage Objective Caml conna\^{\i}t les nombres entiers
+([$-2^{30},2^{30}-1$]) de type {\bf int} et les nombres flottants ($m
+\times 10^{n}$) de type {\bf float}.  Les op\'erations usuelles sur
+les nombres sont les suivantes:
+
+\begin{center}
+\begin{tabular}{| l || l | } \hline
+{nombres entiers} & nombres flottants \\ \hline
+\begin{minipage}{2.2in}
+\begin{tabular}{ll}
+\verb|+|   & \hspace*{-4mm} addition \\
+\verb|-|   & \hspace*{-4mm} soustraction et moins unaire \\
+\verb|*|   & \hspace*{-4mm} multiplication \\
+\verb|/|   & \hspace*{-4mm} division enti\`ere\\
+\verb|mod| & \hspace*{-4mm} reste de la division enti\`ere\\
+\end{tabular}
+\end{minipage}
+&
+\begin{minipage}{2.2in}
+\begin{tabular}{ll}
+\verb|+.| & \hspace*{-4mm} addition \\
+\verb|-.| & \hspace*{-4mm} soustraction et moins unaire \\
+\verb|*.| & \hspace*{-4mm} multiplication\\
+\verb|/.| & \hspace*{-4mm} division \\
+\end{tabular}
+\end{minipage} \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item \'{E}crire une fonction qui calcule $2x^2+3x-2$ sur les entiers.
+\item \'{E}crire une fonction qui calcule $2x^2+3x-2$ sur les flottants.
+\end{itemize}
+
+\section{Expressions conditionnelles}
+
+{\bf Syntaxe}
+\begin{quote}
+\verb+if+ $e_1$ \verb+then+ $e_2$ \verb+else+ $e_3$
+\end{quote}
+L'expression $e_1$ doit être de type {\em bool}. Ce type contient
+uniquement deux valeurs, {\tt true} et {\tt false}, appelés {\em
+booléens}. Les expressions $e_2$ et $e_3$ doivent être du m\^eme type.
+
+Contrairement au langage Pascal, la clause {\tt else} est ici
+obligatoire\footnote{Il existe une forme sans {\tt else}, mais nous
+déconseillerons pour l'instant son usage.}, de façon à ce que la
+valeur de l'expression soit définie, que la condition soit vraie ou
+fausse.
+
+\begin{itemize}
+\item Que retourne l'expression: \verb|if -3 < 0 then 3 else 3|?
+\item \'{E}crire une fonction qui calcule la valeur absolue d'un entier.
+\end{itemize}
+
+\section{Évaluation d'une expression}
+
+Pour calculer la valeur d'une expression, on la tape directement dans
+la boucle interactive (ou {\em top-level}), suivie de deux
+point-virgules. Ainsi l'interprète Caml l'évalue, c'est-à-dire qu'il
+calcule sa valeur et son type, puis affiche les deux. L'autre approche
+consiste à utiliser directement le compilateur:
+\begin{verbatim}
+ocamlc -c toto.ml
+\end{verbatim}
+compile le fichier \texttt{toto.ml} en le fichier objet
+\texttt{toto.cmo}, l'édition de lien est faite par
+\verb|ocamlc -o toto toto.cmo| si on souhaite nommer \texttt{toto}
+l'exécutable.
+
+\section{Liaisons}
+
+\subsection{Liaisons globales (phrases)}
+
+{\bf Syntaxe}
+\begin{quote}
+  \verb+let+ $p$ \verb+=+ e\verb+;;+
+
+  \verb+let+ $p_1$ \verb+=+ $e_1$
+  \verb+and+ $p_2$ \verb+=+ $e_2$\verb+;;+
+\end{quote}
+
+Après une déclaration de variable globale, l'interprète Caml affiche
+le type de chaque variable déclarée, ainsi que sa valeur.
+
+Il est important, lors d'une déclaration de variable globale, de ne
+pas oublier le mot-clé {\tt let} en début d'instruction. En effet $p
+\verb+=+ e$ est une expression booléenne, qui représente la
+comparaison de $p$ et de $e$. La variable $p$ n'étant pas encore
+définie, cette expression est rejetée par le compilateur.
+
+\medskip
+
+\noindent
+Quel est l'effet des d\'eclarations globales suivantes: 
+
+\begin{verbatim}
+let an = "2003";;
+let x = int_of_string(an);;
+let nouvel_an = string_of_int(x+1);;
+\end{verbatim}
+
+
+\subsection{Liaisons locales (expressions)}
+
+{\bf Syntaxe}
+\begin{quote}
+  \verb+let+ $p$ \verb+=+ $e_1$ \verb+in+ $e_2$
+
+  \verb+let+ $p_1$ \verb+=+ $e_1$
+  \verb+and+ $p_2$ \verb+=+ $e_2$
+  \verb+in+ $e_3$
+\end{quote}
+
+\begin{itemize}
+\item Que valent les expressions suivantes: 
+\begin{verbatim}
+let x = 3 in let b = x < 10 in if b then 0 else 10
+let a = 3.0 and b = 4.0 in sqrt(a*.a+.b*.b)
+\end{verbatim}
+o\`u \verb+sqrt+ est la racine carr\'ee sur les flottants?
+
+\item \'{E}crire une fonction qui calcule les racines d'un polyn\^ome 
+du second degr\'e qui poss\`ede deux racines.
+\end{itemize}
+
+\section{Produit cartésien}
+
+{\bf Syntaxe} 
+
+On construit un $n$-uplet par
+\begin{quote}
+($e_1$, $e_2$, $\ldots\,\,$, $e_n$)
+\end{quote}
+
+Si les expressions $e_1 \ldots e_n$ ont respectivement les types $t_1
+\ldots t_n$, alors ce $n$-uplet a le type $t_1 \times \ldots \times
+t_n$. Notons que les $t_i$ ne sont pas forcément identiques.
+
+Exemple:
+\begin{quote}
+\begin{verbatim}
+# (3, (if 1 < 2 then 1.0 else 0.1), true);;
+- : int * float * bool = (3, 1.0, true)
+\end{verbatim}
+\end{quote}
+
+On peut <<~dé-structurer~>> un $n$-uplet $e$ par une construction
+{\tt let} ou {\tt let in} comme ceci:
+\begin{quote}
+\verb+let+ ($x_1$, $x_2$, $\ldots\,\,$, $x_n$) \verb+=+ $e$\verb+;;+
+
+\verb+let+ ($x_1$, $x_2$, $\ldots\,\,$, $x_n$) \verb+=+ $e$ \verb+in+ $e'$
+\end{quote}
+
+Exemples:
+\begin{quote}
+\begin{verbatim}
+# let paire z = (z + z, z - z);;
+val paire : int -> int * int = <fun>
+# let (x, y) = paire 3;;
+val x : int = 6
+val y : int = 0
+\end{verbatim}
+\end{quote}
+
+On peut aussi écrire directement une fonction dont l'argument est un
+$n$-uplet, comme ceci:
+\begin{quote}
+\verb+let+ {\em f} ($x_1$, $x_2$, $\ldots\,\,$, $x_n$) \verb+=+
+$e$\verb+;;+
+\end{quote}
+
+Exemple:
+\begin{quote}
+\begin{verbatim}
+# let ajoute (x, y) = x + y;;
+val ajoute : int * int -> int = <fun>
+# ajoute (paire 4);;
+- : int = 8
+\end{verbatim}
+\end{quote}
+
+\section{R\'ecursivit\'e}
+
+Toutes les variables d'une expression doivent \^etre d\'efinies pour
+l'\'evaluation de celle-ci. Cela est vrai pour les d\'efinitions de la
+forme \verb+let+ $p$ \verb+=+ $e$, toutes les variables de \verb+e+
+doivent \^etre connues.
+
+\begin{quote}
+\begin{verbatim}
+# x+2;;
+  ^
+Unbound value x
+# let z x = if x = 0 then 0 else x + z (x-1);;
+                                     ^
+Unbound value z
+# let p = p+1;;
+          ^
+Unbound value p
+\end{verbatim}
+\end{quote}
+
+Pour les d\'efinitions r\'ecursives de fonctions, il est n\'ecessaire
+de pouvoir faire appel \`a la fonction dans sa propre
+d\'efinition. Dans ce cas, la d\'eclaration d'une fonction r\'ecursive
+utilisera la construction \verb+let rec+.
+
+\begin{quote}
+\begin{verbatim}
+# let rec sigma x = if x = 0 then 0 else sigma (x-1) + x;;
+val sigma : int -> int = <fun>
+# sigma 10;;
+- : int = 55
+\end{verbatim}
+\end{quote}
+
+\section{Expressions fonctionnelles}
+
+Jusqu'ici, nous avons utilisé {\tt let} pour définir des fonctions
+nommées. On peut également définir des fonctions sans leur donner de
+nom, en utilisant la construction {\tt fun}.
+
+{\bf Syntaxe}
+\begin{quote}
+\verb+fun + x \verb+ -> + e
+\end{quote}
+
+Ceci représente la fonction qui à $x$ associe l'expression $e$. La
+variable $x$ peut bien sûr apparaître dans $e$.
+
+Exemple:
+\begin{quote}
+\begin{verbatim}
+# fun x -> x + 3;;
+- : int -> int = <fun>
+# (fun x -> x + 3) 7;;
+- : int = 10
+\end{verbatim}
+\end{quote}
+
+Les expressions fonctionnelles sont des valeurs du
+langage. D'ailleurs, la notation
+$$\mbox{\tt let\ } f \, x = e\verb+;;+$$
+n'est qu'une abréviation pour
+$$\mbox{\tt let\ } f = \mbox{\tt fun\ } x \mbox{\tt\ ->\ } e\verb+;;+$$
+
+\noindent Une fonction peut être le résultat d'une fonction. Par
+exemple\\
+\centerline{\texttt{(fun x -> fun y -> x + y) 3}}
+est une fonction à un argument, qui attend un entier et lui ajoute
+$3$. Cette expression est équivalente à\\
+\centerline{\texttt{fun y -> 3 + y}}
+que l'on obtient en remplaçant $x$ par sa valeur dans l'expression de
+départ.
+
+Une fonction peut \^etre pass\'ee en tant que param\`etre à une autre
+fonction. On peut ainsi d\'efinir la composition de deux fonctions de
+la mani\`ere suivante:
+
+\begin{verbatim}
+let compose = fun f -> fun g -> fun x -> f (g x)
+\end{verbatim}
+
+\noindent Exemple:
+\begin{quote}
+\begin{verbatim}
+let add1 = fun x -> x + 1
+let mult5 = fun x -> 5 * x
+\end{verbatim}
+\end{quote}
+
+\begin{itemize}
+\item Donner les valeurs des expressions suivantes: \\
+\verb|compose add1 mult5 3|\\
+\verb|compose mult5 add1|
+\item \'{E}crire une fonction \verb|deuxfois| qui applique deux fois une fonction \verb|f| \`a un argument \verb|x|,
+d'abord sans utiliser \verb|compose|, puis en utilisant
+\verb|compose|.
+\end{itemize}
+
+\section{Portée statique des variables}
+
+\begin{verbatim}
+# let p = 10;;
+p : int = 10
+# let k x = x + p;;
+k : int -> int = <fun>
+# let p = p+1;;
+p : int = 11
+# p;;
+- : int = 11
+# k 0;;
+- : int = 10
+\end{verbatim}
+
+Comment expliquer les résultats fournis par les commandes ci-dessus?
+
+\end{document}
+

@@ -1,0 +1,150 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{enumerate}
+
+  \item Computer Networks and the Internet
+
+    \begin{itemize}
+
+      \item What is the Internet?
+
+      \item \textbf{The network edge}
+
+      \item The network core
+
+      \item Network access and physical media
+
+      \item ISPs and Internet backbones
+
+      \item Delay and loss in packet-switched networks
+ 
+      \item Protocol layers and their service models
+
+    \end{itemize}
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The network edge}
+
+End users may interact directly with the host (e.g., a Mac) or
+indirectly (e.g., a web server).
+
+\bigskip
+
+A \textbf{client program} runs on a host that requests and receives
+a service from a \textbf{server program} running on another
+host. This is the \textbf{client/server model}.
+
+\bigskip
+
+In the \textbf{peer-to-peer model}, there is little or no use of
+servers.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The network edge (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.27]{01-03.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The network edge/Connection-oriented service}
+
+The goal is to transfer data between two end systems in the following
+manner:
+
+\begin{itemize}
+ 
+  \item First, \textbf{handshaking} takes place: the two systems
+  agree on the forthcoming exchange. This is like the `Hi/Hi (back)'
+  in human protocols. Both hosts set their internal state in
+  accordance, i.e., they record the fact that they are communicating
+  with a known peer. Then data is transmitted.
+
+  \item This is summarized in figure page~\pageref{protocols}: the
+  two first messages consist in the handshaking and the two following
+  (\texttt{GET} and the response containing the file) are the data
+  communication itself.
+
+  \item In the Internet the connection-oriented service is the
+  \textbf{Transmission Control Protocol} (\textbf{TCP}), used by most
+  of the applications (like telnet, SMTP, ftp, http).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The network edge/TCP added-services}
+
+The TCP has been designed to carry \emph{more} than
+connection-oriented service, but also
+\begin{itemize}
+
+  \item \textbf{reliability}: the (byte stream) data delivery, in
+  order and in its entirety is guaranteed. As a coarse approximation,
+  reliability is achieved by way of \textbf{acknowledgment} and
+  \textbf{retransmission}: each time a packet is received, a special
+  packet is sent back to acknowledge the receipt; when such
+  acknowledgment is missing, the sender assumes the packet got lost
+  and retransmits it.
+
+  \item \textbf{flow control}: the sender slows down and avoids
+  overwhelming the receiver by sending too many packets too fast;
+
+
+  \item \textbf{congestion control}: the sender slows down when the
+  routers start loosing packets because they are congested by a too
+  heavy traffic.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The network edge/Connectionless service}
+
+In connectionless services, the goal is still data transfer between
+hosts but there is no handshaking.
+
+In the Internet, the \textbf{User Datagram Protocol} (\textbf{UDP})
+provides a connectionless service to the applications. This means:
+
+\begin{itemize}
+
+  \item no reliable transfer (the data can arrive too soon, i.e., when
+  the receiver is not expecting it),
+
+  \item no flow control,
+
+  \item no congestion control.
+
+\end{itemize}
+
+The applications must handle themselves these aspects. 
+
+Internet phone and video conferencing, streaming, DNS rely on UDP.
+
+\end{frame}

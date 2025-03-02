@@ -1,0 +1,50 @@
+\paragraph{Réponses.}
+
+\begin{enumerate}
+
+  \item Dans les méthodes arborescentes (par exemple les arbres
+    binaires de recherche), il y a un ordre sur les clés, et la place
+    d'un élément dépend du rang de sa clé par rapport aux clés des
+    autres éléments. Dans les méthodes de hachage, par contre, la
+    place d'un élément est calculée uniquement à partir de sa clé; ce
+    calcul est réalisé grâce à une fonction, dite fonction de hachage,
+    qui transforme directement la clé en un indice de tableau. Ces
+    méthodes ont la particularité de permettre les opérations de
+    recherche, d'adjonction et de suppression en un nombre de
+    comparaisons qui est en moyenne constant, c'est-à-dire qui ne
+    dépend pas du nombre d'éléments de la collection.
+
+    Les tables de hachages sont très adaptées pour la modélisation de
+    dictionnaires, où les suppressions sont rares (les suppressions
+    dans les tables de hachage sont plus coûteuses que les
+    insertions), comme par exemple les tables de symboles dans les
+    compilateurs.
+
+  \item On prend d'habitude \(B=128\) ou \(B=256\) et \(N\) un nombre
+    premier. En effet, le choix d'une puissance de 2 pour la valeur de
+    \(B\) est guidé par le fait que la représentation en machine des
+    entiers se fait en base 2, et que les opérations sur eux se font
+    de façon très efficaces. Prendre \(N\) premier évite tout
+    interférence entre la mutiplication par \(B\) et la division par
+    \(N\). Par exemple, si \(B=N=128\), alors \(h(x)=x[n]\), et la
+    fonction \(h\) ne dépendrait alors que du dernier caractère de
+    \(x\).
+
+  \item \textbf{À FAIRE.}
+
+  \item
+    \begin{enumerate}
+ 
+    \item Les méthodes de résolution des collisions par chaînage: les
+      éléments dont la clé a la même valeur par la fonction de hachage
+      sont chaînés entre eux, à l'intérieur ou à l'extérieur du
+      tableau. On parle alors de hachage indirect.
+
+    \item Les méthodes de résolution des collisions par calcul:
+      lorsqu'il y a collision, on calcule un nouvel indice dans le
+      tableau à partir de la clé de l'élément considéré. On parle
+      alors de hachage direct.
+
+    \end{enumerate}
+
+\end{enumerate}

@@ -1,0 +1,11 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/LaTeX/TeX/trace.tex
+$HOME/LaTeX/TeX/prolog.tex
+
+../Questions/question_01.tex
+../Questions/question_02.tex
+../Questions/question_03.tex
+../Questions/question_04.tex
+../Questions/delete.pl
+../Questions/final-ai.tex final-ai-QA.tex

@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Summing Integers in a Sequence</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Summing Integers in a Sequence</h2>
+
+<p><strong>Question.</strong> The purpose of this exercise is to
+write an XSLT transform which takes as input a sequence of integers
+and outputs their sum.</p>
+
+<p><strong>Example.</strong>
+<a href="./sum.xml">This</a> is an example of input document
+and
+<a href="./sum.txt">this</a> is the corresponding output. You need to
+download the <a href="./sum.dtd">DTD</a> to run this example.
+</p>
+
+<strong>Hints.</strong> 
+<ul>
+  <li>The output is text, so you need to set the
+    attribute <tt>method="text"</tt>.</li>
+
+  <li>You need to declare the type of your parameters, therefore,
+    you need to define the <tt>xs</tt> (XML Schema) namespace as
+    <tt>&lt;xsl:transform
+    ... xmlns:xs="http://www.w3.org/2001/XMLSchema"></tt>.</li>
+
+  <li>In order to select all the children text nodes of an element
+  node <tt>num</tt>, use <tt>num/text()</tt>.</li>
+
+  <li>Given a sequence <tt>$s</tt>, its first item, if any,
+  is <tt>$s[1]</tt>. If <tt>$t</tt> is empty, so is <tt>$s[1]</tt> (it
+  is a sequence as well).</li>
+
+  <li>In order to cast variable <tt>$s</tt> to the integer type, use
+    <tt>xs:integer($s)</tt>.</li>
+</ul>
+
+<p><strong>Answer.</strong> <a href="./sum.xsl">This</a> is a possible
+transform solving the problem.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

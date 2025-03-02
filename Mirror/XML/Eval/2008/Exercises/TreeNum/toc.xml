@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!DOCTYPE book SYSTEM "book.dtd">
+
+<book title="Definitive XML Schema">
+<author>
+  <first>Priscilla</first>
+  <last>Walmsley</last>
+</author>
+
+<chapter title="A quick tour of XML Schema">
+  <section title="An example schema"/>
+  <section title="The components of XML Schema">
+    <section title="Declarations vs. definitions"/>
+	<section title="Global vs. local components"/>
+  </section>
+  <section title="Elements and attributes">
+	<section title="The tag/type distinction"/>
+  </section>
+</chapter>
+
+<chapter title="Instances and schemas">
+  <section title="Using the instance attributes"/>
+  <section title="Schema processing">
+	<section title="Validation"/>
+	<section title="Augmenting the instance"/>
+  </section>
+</chapter>
+
+<chapter title="Conclusion"/>
+
+</book>

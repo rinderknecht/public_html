@@ -1,0 +1,42 @@
+%% -*-latex-*-
+
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{ae,aecompl}
+\usepackage{xspace}
+
+\usepackage{mathpartir}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\usepackage[noweb]{ocamlweb}
+%%\pagestyle{ocamlweb}
+
+\input{commands}
+\input{ocaml_syntax}
+\input{ocw-redef}
+\input{trace}
+
+\newcommand{\ibullet}{\item[$\bullet$]}
+\newcommand{\inferlabel}[1]{\inferrule*[right=\textsc{#1}]}
+
+\title{Correction du TP 1 d'Interprétation et compilation}
+\author{Christian Rinderknecht}
+\date{23 et 24 septembre 2003}
+
+\begin{document}
+
+\maketitle
+
+\section{Questions}
+
+\input{tp1-questions}
+
+\section{Réponses}
+
+\input{main}
+
+\end{document}

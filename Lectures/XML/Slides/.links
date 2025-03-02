@@ -1,0 +1,10 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/LaTeX/TeX/beamer_cfg.tex
+$HOME/LaTeX/TeX/trace.tex
+
+$HOME/LaTeX/TeX/saxon.tex
+$HOME/LaTeX/TeX/xmllint.tex
+
+../../article_mode.tex article.xml.tex
+../../slide_mode.tex xml.tex

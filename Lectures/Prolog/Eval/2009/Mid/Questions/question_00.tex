@@ -1,0 +1,21 @@
+\noindent A \emph{queue} is a like stack where items are pushed on one
+end and popped on the other end. Adding an item in a queue is called
+\emph{enqueuing}, whereas removing one is called
+\emph{dequeuing}. Compare the following figures:
+\[
+\begin{array}{rr@{\;}cc|c|c|c|c|c|cc@{\;}l}
+\cline{4-10}
+\text{Queue}: & \textsc{Enqueue} & \rightarrow & & a & b & c & d & e &
+& \rightarrow & \textsc{Dequeue}\\
+\cline{4-10}\\
+\cline{4-9}
+\text{Stack}: & \textsc{Push}, \textsc{Pop} & \leftrightarrow & & a &
+b & c & d & e &&&\\
+\cline{4-9}
+\end{array}
+\]
+\noindent If \texttt{enqueue(I,In,Out)} is proved, then \texttt{Out}
+is the queue \texttt{In} in which item \texttt{I} has been enqueued;
+if \texttt{dequeue(In,Out,I)} is proved, then \texttt{Out} is the
+queue \texttt{In} from which item \texttt{I} has been dequeued.
+

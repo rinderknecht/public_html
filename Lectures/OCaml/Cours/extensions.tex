@@ -1,0 +1,363 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Extension de mini-ML}
+
+Ajoutons les expressions suivantes à mini-ML:
+
+\begin{tabular}{rll} 
+    $\bullet$
+  & \textcolor{blue}{constante booléenne}
+  & \Xtrue{} ou \Xfalse\\
+    $\bullet$
+  & \textcolor{blue}{opérateurs booléens}
+  & \texttt{\&\&} ou \texttt{||} ou \textsf{not}\\
+    $\bullet$
+  & \textcolor{blue}{$n$-uplet}
+  & $e_1, \ldots, e_n$\\
+    $\bullet$
+  & \textcolor{blue}{conditionnelle}
+  & \Xif{} $e_0$ \Xthen{} $e_1$ \Xelse{} $e_2$\\
+    $\bullet$
+  & \textcolor{blue}{liaison locale récursive}
+  & \Xlet{} \Xrec{} $f$ = $e_1$ \Xin{} $e_2$
+\end{tabular}
+
+%\bigskip
+%
+%\remarque \ \ Les parenthèses sont recommandées autour des $n$-uplets.
+
+\bigskip
+
+De plus, généralisons la méta-variable $x$ après \Xlet{} et \Xfun{}
+pour en faire des \emph{motifs irréfutables}, que nous notons
+$\ipat{p}$:
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{fonction}
+  & $\Xfun \,\, \ipat{p} \rightarrow e$\\
+    $\bullet$
+  & \textcolor{blue}{définition locale}
+  & $\Xlet \,\, \textrm{[}\Xrec\textrm{]} \,\, \ipat{p} = e_1 \,\,
+    \Xin \,\, e_2$
+\end{tabular}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Les motifs irréfutables}
+
+Un \emph{motif irréfutable} $\ipat{p}$ est défini \emph{récursivement}
+par les cas suivants:
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{variable}
+  & $f, g, h$ (fonctions) et $x, y, z$ (autres). \\
+    $\bullet$
+  & \textcolor{blue}{unité}
+  & \unit\\
+    $\bullet$
+  & \textcolor{blue}{$n$-uplet}
+  & $\ipat{p}_1, \ldots, \ipat{p}_n$\\
+    $\bullet$
+  & \textcolor{blue}{parenthèse}
+  & $\lpar\ipat{p}\rpar$\\
+    $\bullet$
+  & \textcolor{blue}{joker}
+  & {\Large \_}
+\end{tabular}
+
+\bigskip
+
+\remarques
+
+\begin{itemize}
+
+%  \item Les parenthèses sont recommandées autour des $n$-uplets.
+
+  \item Du point de vue syntaxique, les motifs irréfutables sont des
+  cas particuliers d'expressions --- hormis le joker.
+
+   \item Un joker est un cas spécial pour que la phrase ne crée pas
+   de liaison.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Exemples de phrases correctes (suite)}
+
+\phrase{let x, y = 5, ('a',())}
+
+\phrase{let y = f x}
+
+\phrase{let z = f x y}
+
+\phrase{let \_ = 5}
+
+\phrase{let \_, (\_,\_) = x, (y,z)}
+
+\phrase{let \_ = (x,(y,z))}
+
+\phrase{let () = print\_string \str{Hello world!}}
+
+\phrase{let rec fact = fun n -> if n = 1 then 1 else n * fact(n-1)}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Règles syntaxiques supplémentaires sur les expressions}
+
+\begin{itemize}
+
+  \item La virgule est prioritaire sur la flèche:\\
+        $\Xfun \,\, x \rightarrow x, y$ \ \ équivaut à \ \ 
+        $\Xfun \,\, x \rightarrow \textcolor{blue}{(}x,y\textcolor{blue}{)}$
+
+  \item Pour alléger la notation $\Xfun \,\, \ipat{p}_1 \rightarrow
+  \Xfun \,\, \ipat{p}_2 \rightarrow \ldots \rightarrow \Xfun \,\,
+  \ipat{p}_n \rightarrow e$\\
+  on définit les constructions équivalentes
+
+        \begin{tabular}{rll}
+            $\bullet$
+          & \phrase{$\Xlet \,\,
+            \textrm{[}\Xrec\textrm{]} \,\, f 
+            = \Xfun \,\, \ipat{p}_1 \, \ipat{p}_2 \, \textcolor{blue}{\ldots
+            \, \ipat{p}_n} \rightarrow e$}
+          & (nouvelle expression)\\
+            $\bullet$
+          & \phrase{$\Xlet \,\,
+            \textrm{[}\Xrec\textrm{]} \,\, f 
+            \,\, \ipat{p}_1 \, \ipat{p}_2 \, \textcolor{blue}{\ldots \,
+            \ipat{p}_n} = e$}
+          & (nouvelle phrase)
+        \end{tabular}
+
+  \item Exemple:
+  {\small
+   \begin{verbatim}
+let f = fun x y -> x + y in
+  let g x y = x + y in
+  let rec fact n = if n = 1 then 1 else n * fact(n-1)
+in f 1 2 - g 3 4;;
+  \end{verbatim}
+  }
+  
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Extensions de mini-ML (suite)}
+
+Nous étendons la syntaxe pour alléger certaines expressions.
+
+\bigskip
+
+Ainsi, par définition
+
+\begin{tabular}{rl}
+    $\bullet$
+  & \phrase{$\Xlet \,\, \ipat{p}_1 = e_1 \,\,
+    \textcolor{blue}{\Xand \,\, \ipat{p}_2 = e_2 \, \ldots \,\,
+    \Xand \,\, \ipat{p}_n = e_n} \,\, \Xin \,\, e$}\\
+  & équivaut à\\
+    $\bullet$
+  & \phrase{$\Xlet \,\, \ipat{p}_1, \ldots, \ipat{p}_n =
+    e_1, \ldots, e_n \,\, \Xin \,\, e$}
+\end{tabular}
+
+\bigskip
+
+De même nous introduisons les définitions mutuellement récursives:
+\begin{itemize}
+
+  \item \phrase{$\Xlet \,\, \Xrec \,\, \ipat{p}_1 = e_1 \,\,
+    \textcolor{blue}{\Xand \,\, \ipat{p}_2 = e_2 \, \ldots \,\, \Xand
+      \,\, \ipat{p}_n = e_n} \,\, \Xin \,\, e$}
+
+\end{itemize}
+De plus, la phrase \ \ \phrase{\textcolor{blue}{$e$}} \ \, équivaut à
+\ \ \phrase{$\Xlet \,\, \_ = e$}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+%
+\begin{frame}
+\frametitle{Les expressions parallèles}
+\label{expressions_paralleles}
+
+Considérons le cas où les motifs irréfutables sont des variables
+
+\centerline{\Xlet{} $x$ \equal{} $e_1$ \Xand{} $y$ \equal{}
+$e_2$ \Xin{} $e$ \ où $x \neq y$}
+Si $x \in {\cal L} (e_2)$, nous la définissons comme étant équivalente à
+
+\begin{center}
+\begin{minipage}{0.3\linewidth}
+\begin{tabbing}
+\textcolor{blue}{\Xlet} \= \textcolor{blue}{$z$ \equal{} $x$ \Xin}\\
+\> \Xlet{} $x$ \equal{} $e_1$ \Xin\\
+\> \Xlet{} $y$ \equal{} \textcolor{blue}{\Xlet{} $x$ \equal{} $z$ \Xin} $e_2$\\
+\Xin $e$
+\end{tabbing}
+\end{minipage}
+\end{center}
+où $z \not\in {\cal L} (e_1) \cup {\cal L} (e_2) \cup {\cal L} (e)$,
+pour n'être capturé ni par $e_1$, ni par $e_2$, ni par $e$.
+
+\bigskip
+
+Ce n'est donc pas une construction élémentaire.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+%
+\begin{frame}
+\frametitle{Les expressions mutuellement récursives}
+\label{expressions_mutuellement_recursives}
+
+Le \Xlet{} \Xrec{} multiple (avec \Xand) peut toujours se ramener à un
+\Xlet{} \Xrec{} simple (avec \Xin) en paramétrant l'une des
+définitions par rapport à l'autre. Posons que
+\begin{equation*}
+\Xlet \; \Xrec \; x \; \equal \; e_1 \; \Xand \; y \; \equal \; e_2 \;
+\Xin \; e
+\end{equation*}
+où $x \neq y$, est équivalent à
+\begin{center}
+\begin{minipage}{0.3\linewidth}
+\begin{tabbing}
+\Xlet{} \= \Xrec{} $x$ \equal{} \textcolor{blue}{\Xfun{} $y$
+  $\rightarrow$} $e_1$ \Xin\\
+\> \Xlet{} \Xrec{} $y$ \equal{} \textcolor{blue}{\Xlet{} $x$ \equal{} $x \, y$ \Xin} $e_2$ \Xin\\
+\> \textcolor{blue}{\Xlet{} $x$ \equal{} $x \, y$}\\
+\textcolor{blue}{\Xin} $e$
+\end{tabbing}
+\end{minipage}
+\end{center}
+Ce n'est donc pas une construction élémentaire.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{D'autres exemples de phrases correctes}
+
+\phrase{let x = 5 and y = ()}
+
+\phrase{let id x = x}
+
+\phrase{let rec even n = (n=0) || odd (n-1)}
+
+\phrase{and odd n = if n = 0 then false else even(n-1)}
+
+\phrase{let x = 5 and y = 'a' and z = ()}
+%\phrase{let rec fact (n) = if n = 0 then 1 else n * fact (n-1)}\\
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Extensions de la syntaxe des valeurs}
+
+L'ajout de nouvelles expressions au langage nous oblige à étendre les
+valeurs qui sont maintenant définies par
+
+\bigskip
+
+\begin{tabular}{rll}
+    $\bullet$
+  & \textcolor{blue}{unité ou constantes}
+  & \unit \ ou \textsf{0} ou \Xtrue{} etc.\\
+    $\bullet$
+  & \textcolor{blue}{fermeture}
+  & $\langle\Xfun \,\, x \rightarrow e, \rho\rangle$ où $\rho$ est un
+    environnement.\\
+  & 
+  & Pour les opérateurs: $\langle\lpar{\texttt{+}}\rpar, \rho\rangle$
+    etc.\\
+    $\bullet$
+  & \textcolor{blue}{$n$-uplet}
+  & $v_1, \ldots, v_n$
+\end{tabular}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Fonctions curryfiées}
+
+Une fonction est dite \emph{curryfiée} (du nom du logicien Curry) si
+elle retourne une fonction. Cela permet d'effectuer des applications
+partielles (cf. page~\pageref{application_partielle}).
+
+\bigskip
+
+En passant, n'oublions pas qu'une fonction OCaml prend toujours un
+seul argument.
+
+\bigskip
+
+Si l'on souhaite le passage simultané de plusieurs valeurs il faut
+alors employer une structure de donnée, par exemple un
+$n$-uplet. Ainsi
+
+\topin{let add x y = x + y}
+
+\topout{val add~:~int $\rightarrow$ int $\rightarrow$ int}
+
+\topin{let add' (x,y) = x + y}
+
+\topout{val add'~:~int $\times$ int $\rightarrow$ int}
+
+\bigskip
+
+La fonction \texttt{\small add} est curryfiée et \texttt{\small add'}
+ne l'est pas.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Les termes ouverts revus}
+
+Nous avons présenté une analyse statique qui nous donne les variables
+libres d'une expression. Nous avons vu qu'une expression close ne peut
+échouer par absence de liaison. Tous les compilateurs (comme OCaml)
+rejettent les programmes ouverts (c.-à-d. non-clos), mais, du coup,
+rejettent d'innocents programmes, comme \Xif{} \Xtrue{} \Xthen{}
+\num{1} \Xelse{} \ident{x}.
+
+\bigskip
+
+Pour accepter ce type d'exemple (ouvert), il faudrait pouvoir prédire
+le flot de contrôle (ici, quelle branche de la conditionnelle est
+empruntée pour toutes les exécutions). Dans le cas ci-dessus cela est
+trivial, mais en général le problème est indécidable, et ce ne peut
+donc être une analyse statique (car la compilation doit toujours
+terminer).
+
+\end{frame}

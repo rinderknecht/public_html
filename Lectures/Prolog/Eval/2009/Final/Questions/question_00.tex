@@ -1,0 +1,50 @@
+A \emph{binary search tree} (BST) is a binary tree whose nodes contain
+items who can be totally ordered and dispersed such that all node, the
+values of the left subtree are smaller than the value of the node,
+which is, in turn, smaller than the values of the right subtree. See
+figure~\ref{fig:bst} for an example.
+A node is added to BST as a leaf. For instance, adding 10 leads to the
+BST shown in figure~\ref{fig:bst_10}.
+\begin{figure}[!h]
+\centering
+\subfloat[A BST\label{fig:bst}]{%
+\pstree[nodesep=2pt,levelsep=20pt,treesep=14pt]{\erlnode{5}}{
+  \pstree{\erlnode{1}}{
+    \erlnode{0}
+    \pstree{\erlnode{3}}{
+      \erlnode{2}
+      \erlnode{4}
+    }
+  }
+  \pstree{\erlnode{7}}{
+    \erlnode{6}
+    \pstree{\erlnode{9}}{
+      \erlnode{8}
+      \Tn
+    }
+  }
+}
+}
+\qquad
+\subfloat[Addition of 10.\label{fig:bst_10}]{
+\pstree[nodesep=2pt,levelsep=20pt,treesep=14pt]{\erlnode{5}}{
+  \pstree{\erlnode{1}}{
+    \erlnode{0}
+    \pstree{\erlnode{3}}{
+      \erlnode{2}
+      \erlnode{4}
+    }
+  }
+  \pstree{\erlnode{7}}{
+    \erlnode{6}
+    \pstree{\erlnode{9}}{
+      \erlnode{8}
+      \erlnode{10}
+    }
+  }
+}
+}
+\end{figure}
+Write a function \erlcode{add/2}, such that the call
+\erlcode{add(\(N\),\(T\))} evaluates into a BST containing the nodes
+of BST \(T\) plus \(N\), by adding \(N\) as a leaf.

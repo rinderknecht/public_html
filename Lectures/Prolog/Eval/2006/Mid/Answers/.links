@@ -1,0 +1,11 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/LaTeX/TeX/trace.tex
+$HOME/LaTeX/TeX/prolog.tex
+
+../Questions/example.tex
+../Questions/mirror_trees.tex
+../Questions/question_01.tex
+../Questions/question_02.tex
+../Questions/ai_mid.tex ai_mid-QA.tex
+

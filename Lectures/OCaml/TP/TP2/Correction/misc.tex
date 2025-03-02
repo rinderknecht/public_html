@@ -1,0 +1,98 @@
+%%-*-latex-*-
+
+\section{Calcul approché de la dérivée d'une fonction}
+
+\noindent
+On utilise comme formule approchée
+$\frac{f(x+\epsilon)-f(x-\epsilon)}{2\epsilon}$, mais d'autres
+possibilités existent.
+
+\begin{verbatim}
+let dérivée epsilon f x =
+  (f(x+.epsilon) -. f(x-.epsilon)) /. (2.0 *. epsilon)
+\end{verbatim}
+
+\section{Calcul approché d'une intégrale}
+
+\begin{verbatim}
+let intégrale n (a, b) f =
+  let nf = float_of_int n in
+  let pas = (b -. a) /. nf in
+  let rec somme k x =
+    if k = 0 
+    then 0.0
+    else f(x) +. (somme (k-1) (x+.pas))
+in (somme n (a +. pas/.2.0)) *. pas
+\end{verbatim}
+
+Quelques commentaires:
+\begin{itemize}
+\item {\tt n} est un entier; on est forcé de le convertir en un
+      flottant {\tt nf} pour pouvoir diviser un flottant par $n$.
+\item On calcule le pas dès le début, par une définition de variable
+      locale, car il apparaît ensuite plusieurs fois.
+\item On utilise une fonction auxiliaire {\tt somme}, que l'on définit
+      également de façon locale. L'application {\tt somme k x} calcule
+      la somme des valeurs de {\tt f} en {\tt k} points, en commençant
+      à {\tt x} et en avançant {\tt pas} à {\tt pas}.
+\item On a choisi de mesurer au milieu de chaque sous-intervalle (en
+      commençant à {\tt (a +. pas/.2.0)}); d'autres choix sont
+      possibles.
+\end{itemize}
+
+\section{Calcul du zéro d'une fonction par la méthode de Newton}
+
+\begin{verbatim}
+let rec newton epsilon f x =
+  let delta = f(x) /. (dérivée 1e-10 f x) 
+in if abs_float delta < epsilon 
+   then x
+   else newton epsilon f (x -. delta)
+\end{verbatim}
+
+(On a choisi ici une valeur arbitraire pour la précision du calcul de
+la dérivée.)\\
+
+Pour calculer une approximation de $\sqrt{a}$, on cherche un zéro de
+la fonction $x\mapsto x^2-a$.  On commence la recherche en $1$, par
+exemple (en fait, toute valeur initiale strictement positive nous
+amène à $\sqrt{a}$ et toute valeur initiale strictement négative nous
+amène à $-\sqrt{a}$). On choisit ici une précision arbitraire.
+
+\begin{verbatim}
+let approx_sqrt a = newton 1e-6 (fun x -> x *. x -. a) 1.0
+\end{verbatim}
+Exemple:
+\begin{verbatim}
+# approx_sqrt 2.0;;
+- : float = 1.41421356238
+# sqrt 2.0;;
+- : float = 1.41421356237
+\end{verbatim}
+
+On cherche ensuite un zéro de la fonction $x\mapsto 1 - \int_0^x \sin
+t.dt$.
+\begin{verbatim}
+# newton 1e-6 (fun x->1. -. intégrale 1000 (0., x) sin) 1.;;
+- : float = 1.57079622646
+# asin 1.;;
+- : float = 1.57079632679
+\end{verbatim}
+On compare notre résultat à $\pi/2 = \mbox{\rm arcsin\ } 1$.
+
+
+\begin{verbatim}
+let newton2 epsilon f x =
+  loop (fun x ->
+            let delta = f(x) /. (dérivée 1e-10 f x) 
+            in x -. delta)
+         (fun x ->
+            let delta = f(x) /. (dérivée 1e-10 f x) 
+            in abs_float delta < epsilon)
+         x
+\end{verbatim}
+
+Cette fonction est en fait moins rapide que {\tt newton}, puisque {\tt
+delta} est calculé deux fois à chaque itération (une fois pour
+calculer la prochaine valeur de {\tt x}, une fois pour déterminer si
+on s'arrête).

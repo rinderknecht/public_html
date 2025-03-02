@@ -1,0 +1,754 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Plan}
+
+\begin{enumerate}
+
+  \item Computer Networks and the Internet
+
+    \begin{itemize}
+
+      \item What is the Internet?
+
+      \item The network edge
+
+      \item \textbf{The network core}
+
+      \item Network access and physical media
+
+      \item ISPs and Internet backbones
+
+      \item Delay and loss in packet-switched networks
+ 
+      \item Protocol layers and their service models
+
+    \end{itemize}
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The network core}
+
+The network core is a mesh of interconnected routers. 
+
+\bigskip
+
+They are of two kinds:
+\begin{itemize}
+
+  \item \textbf{Circuit-switching} networks: the resources (buffers,
+    link bandwidth) needed along a path (or \textbf{circuit}) to
+    provide a communication between hosts are \emph{reserved} for the
+    duration of the \textbf{session}.
+
+  \item \textbf{Packet-switching} networks: the resources are
+    \emph{not reserved} and thus the data may have to wait and are cut
+    into packets.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{The network core (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.3]{01-04.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Circuit-switched networks}
+
+The \textbf{telephone network} is of this kind: even if no one talks
+on the phone, the resources are still reserved until one hangs up.
+
+\bigskip
+
+Since bandwidth has been reserved, the data (voice) rate is
+guaranteed.
+
+\bigskip
+
+Circuits are not shared and must be setup first: the routers (called
+here \textbf{circuit switches}) along the path ``know'' that they are
+part of a given circuit (i.e., keep a state in memory).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Circuit-switched networks (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.32]{01-05.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Circuit-switched networks/Multiplexing}
+\label{fdm_tdm}
+
+Each link divides its data rate equally between all the active
+circuits it supports. This is called \textbf{multiplexing}. There are
+two kinds of multiplexing.
+\begin{itemize}
+
+  \item \textbf{Frequency-division multiplexing (FDM)} divides and
+  \emph{shares the frequency spectrum of the link} among all the
+  connections established across it. In telephony, the bandwidth
+  allocated to a circuit is 4~kHz. FM radio also use FDM.
+
+  \item \textbf{Time-division multiplexing (TDM)} defines a period of
+  time, called \textbf{frame}, divides it into equal \textbf{slots}
+  which are reserved to a given circuit. In other words, each time
+  slot is periodically repeated and, \emph{during each slot, the full
+  bandwidth is available to the current circuit only.} Modern trend in
+  telephony is to replace FDM with TDM.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Circuit-switched networks/Multiplexing/Figures}
+
+\begin{center}
+\includegraphics[scale=0.35]{01-06.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Circuit-switched networks/Multiplexing/TDM examples}
+
+For example, if a TDM link transmits 8,000 frames per second and each
+slot allows sending 8~bits, then the transmission rate of a circuit on
+this link is 64~kb/s (also noted 64~\textbf{Kbps}).
+
+\bigskip
+
+Now, suppose
+
+\begin{itemize}
+
+  \item we want to send a file of size 640,000 bits;
+
+  \item all links in the network use TDM with 24 slots/frame and have
+  a bit rate of 1.536 Mbps (mega-bits per second);
+
+  \item it takes 500 ms (milliseconds, also noted \textbf{msec}) to
+  establish an end-to-end circuit.
+
+\end{itemize}
+
+How long does it take to send the file?
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Circuit-switched networks/Multiplexing/Solution}
+
+\begin{enumerate}
+
+  \item 24 slots means there are 24 circuits along each link.
+
+  \item TDM implies that each circuit has the full bandwidth in
+  turn. Therefore, each circuit has the full bandwidth 1/24 of the
+  time.
+
+  \item Thus the rate for each circuit is the link rate by its time
+  using it: 
+  
+  1.536/24 = 64 kb/s = 64,000 b/s
+
+  \item The file is transfered in 640,000/64,000 = 10 seconds.
+
+  \item But we have to add the time to setup the circuit, so the total
+  transfer time is 
+
+  10 + 0.5 = 10.5 seconds.
+
+\end{enumerate}
+
+Note that \textbf{the transfer time is independent of the number of
+links.}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Packet-switched networks}
+
+The source breaks the messages into smaller pieces known as
+\textbf{packets}. The packets are directed towards their destination
+by \textbf{routers}, also called \textbf{packet switches}.
+
+\bigskip
+
+Packets are transmitted over each link at the \emph{full} transmission
+rate: \emph{only one packet travels a link at a time}.
+
+\bigskip
+
+Most packet-switches use \textbf{store-and-forward transmission}: the
+switch must receive the entire packet before it starts to retransmit
+the first bit of it.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Packet-switched networks/Queuing}
+
+Each router has multiple links attached to it. For each link, the
+router has an \textbf{output buffer} (also called \textbf{output
+queue}), which stores packets that are about to be transmitted.
+
+\bigskip
+
+If an incoming packet finds the next link busy, it is stored (queued)
+in the corresponding output buffer until the link is available: this
+delay is called \textbf{queuing delay}.
+
+\bigskip
+
+If the queue is already full (because of network congestion), the
+incoming packet is discarded (dropped): this is a \textbf{packet
+loss}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Packet-switched networks/Statistical multiplexing}
+
+The packets are retransmitted whenever they are available and the
+output link is free. This leads to a random ordering, called
+\textbf{statistical multiplexing}.
+
+\bigskip
+
+This very different from TDM in circuit switching, where each host
+gets the same time slot in a revolving frame.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Packet-switched networks/Statistical multiplexing (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.35]{01-07.eps}
+\end{center}
+
+\textbf{Warning!} In this figure, several packets for the same
+connection are drawn on the same link, but, in fact, there is only one
+at a time.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Packet-switched networks/Delay}
+
+Let us consider on a very simple case how long it takes to send a
+message of \(L\) bits on a series of \(Q\) links whose rate is \(R\)
+bits/sec. 
+
+\bigskip
+
+Assume that there is no queuing delay and no connection establishment.
+
+\bigskip
+
+The packet must be transmitted on the first link: this takes \(L/R\)
+seconds.
+
+\bigskip
+
+Then it must be retransmitted on the following \(Q-1\) links, that is
+to say \(Q-1\) times.
+
+\bigskip
+
+Thus the total delay is simply \(QL/R\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Packet switching versus circuit switching}
+
+Let us compare packet switching and circuit switching.
+
+\begin{itemize}
+
+  \item Opponents to packet switching say that packet switching is
+  not suitable for \textbf{real-time services} (e.g., telephone calls
+  and video-conference) because of its variable and unpredictable
+  delays (mainly queuing delays).
+
+  \item Proponents of packet switching argue that
+  
+  \begin{itemize}
+
+    \item it offers better sharing of the bandwidth than circuit
+    switching,
+
+    \item it is simpler, less costly to implement and more efficient.
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Packet switching versus circuit switching (cont)}
+
+Why is packet switching more efficient?
+
+\bigskip
+
+Let us consider a simple example. Suppose
+\begin{itemize}
+
+  \item users share a 1 Mbps link;
+
+  \item each user alternates periods of activity and of inactivity:
+  
+   \begin{itemize}
+
+     \item when he is active, he generates data at the constant rate
+     of 100~Kbps;
+
+     \item when he is idle, he produces no data.
+
+   \end{itemize}
+
+  \item each user is active during 10\% of the time.
+
+\end{itemize}
+With circuit switching, 100~Kbps must be reserved for \emph{each}
+user. Thus the link can only support 10 (1~Mbps/100~Kbps) users
+simultaneously.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Packet switching versus circuit switching (cont)}
+
+If there are 35 users, the probability that there are 11 or more
+simultaneously active users is around 0.0004 (we don't show the
+computation).
+\begin{itemize}
+
+  \item When there are 10 or less active users at the same time, the
+  total used bandwidth is less or equal to 1 Mbps. This is similar to
+  the circuit switching situation discussed before.
+
+  \item When there are 11 or more active users, the output queue of
+  the routers will start to grow (this is congestion).
+
+\end{itemize}
+
+Because the probability of having more than 11 active users is very
+low, packet switching is almost as good as circuit switching,
+\emph{while allowing more than three times the number of users} (35
+users versus 10).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Message segmenting}
+
+We have seen some advantages of packet-switched networks. Now, what
+about the size of the packets?
+
+\bigskip
+
+If an application message is not cut into smaller pieces (packets),
+i.e., the message itself if a big packet, this is called
+\textbf{message switching}. Contrast this with small packets in the
+following figures:
+\begin{center}
+\includegraphics[scale=0.35]{01-08.eps}\\
+\includegraphics[scale=0.35]{01-09.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Message segmenting (cont)}
+
+When a message is segmented, the packet-switched network
+\textbf{pipelines} the transmission, i.e., portions of the message are
+transmitted in parallel by the source and the two packet switches.
+
+\bigskip
+
+The advantage of message segmentation with packet switching is that
+the end-to-end delay is lower than with message switching. Let us see
+why.
+
+\bigskip
+
+Consider a message of size \(7.5 \cdot 10^6\) bits, three links of
+rate 1.5~Mbps connecting two hosts and assume that there is no
+congestion.
+
+\bigskip
+
+How much time is required to send and receive the message with message
+switching?
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Message segmenting (cont)}
+
+This is what happens:
+\begin{center}
+\includegraphics[scale=0.3]{01-10.eps}
+\end{center}
+It takes 15 seconds (\(3 \text{ links} \times 7.5 \cdot 10^6 \text{
+bits}/1.5 \text{ Mbps}\)). Even a bit more, in fact, due to
+store-and-forward delays.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Message segmenting (cont)}
+
+Now suppose that the source breaks the message into 5,000 packets.
+
+\bigskip
+
+Then each packet is 1,500 (\(7.5 \cdot 10^6/5,000\)) bits long.
+
+\bigskip
+
+Assume that there is no congestion.
+
+\bigskip
+
+How long does it takes to move the 5,000 packets to destination?
+
+\bigskip
+
+The next figure shows what happens.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Message segmenting (cont)}
+
+\begin{center}
+\includegraphics[scale=0.35]{01-11.eps}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Message segmenting (cont)}
+
+As shown in the previous figure, the first packet reached the first
+switch after 1~ms. The second packet reaches it after 2~ms etc.
+
+\bigskip
+
+But, while the first packet is moving from the first switch to the
+second, the second packet is \emph{at the same time} traveling from
+the source to the first switch.
+
+\bigskip
+
+The last packet reaches then the first switch after 5,000 ms = 5
+seconds. But it still has to cross two more links, therefore the
+total delay is 5,002 ms (in fact, a little bit more due to
+store-and-forward delays).
+
+\bigskip
+
+This is much less than with message switching! 
+
+\bigskip
+
+The reason is pipelining: once the first packet reaches the
+destination, the source and the two switches are transmitting
+simultaneously. 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Message segmenting (cont)}
+
+There is another interest in message segmentation.
+
+\bigskip
+
+\textbf{Bit errors} can be introduced into the packets, when moving
+along the networks.
+
+\bigskip
+
+When a switch detects a bit error, it discards the whole packet.
+\begin{itemize}
+
+  \item If the entire message is a packet (i.e., we do message
+  segmenting), then the entire message is discarded.
+
+  \item If the packets are small, only a small part of the message,
+  corresponding to the erroneous packets, has to be retransmitted.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Message segmenting (cont)}
+
+One drawback of segmentation is that the packets do not contain only
+the application data but also some control information, called
+\textbf{header}, that helps routing.
+
+\bigskip
+
+This situation is comparable to sending mail: the envelope contains
+(written on itself) the control information for routing and the letter
+contains the application data.
+
+\bigskip
+
+If we cut our message into pieces much smaller than the envelopes,
+then the postal service has to carry a heavier load of envelopes than
+of messages! 
+
+\bigskip
+
+Consequently, the price would not be the same.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Packet forwarding in computer networks}
+
+Packet-switched networks can be divided in two kinds:
+\begin{itemize}
+
+  \item \textbf{Datagram networks} routers forward packets according
+  to host destination \textbf{address}. Similar to a home address, a
+  network address is a unique number on the network. The Internet is a
+  datagram network.
+
+  \item \textbf{Virtual circuit networks} routers forward packets
+  according to virtual circuit numbers. X.25 and ATM (Asynchronous
+  Transfer Mode) use such numbers.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Virtual circuit networks}
+
+A \textbf{virtual circuit} (\textbf{VC}) consists of
+\begin{itemize}
+
+  \item a path, i.e., a series of links and switches;
+
+  \item virtual circuit numbers (VC numbers, in short), one for each
+  link along the path;
+
+  \item a VC number translation table in each switch along the path.
+
+\end{itemize}
+Once a VC is established, the source can send packets into the VC with
+the appropriate VC number.
+
+\bigskip
+
+Because a VC has a different number on each link, the switches must
+replace the VC number of each incoming packet with a new one.
+
+\bigskip
+
+This new number is in the translation table of the switches.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Virtual circuit networks (cont)}
+
+\textbf{Example.} The numbers in the figure at the next slide are
+\textbf{interface numbers}.
+
+\bigskip
+
+They are local to each switch.
+
+\bigskip
+
+Assume a packet starts from host A and must arrive to B: it has to
+cross three links. 
+
+\bigskip
+
+It begins with the VC number of the first link, say
+12, and enters PS1 at the interface 1. 
+
+\bigskip
+
+There, its VC number has to be replaced by another one, say 22, and
+the packet must go out through interface 2 (towards PS2).
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Virtual circuit networks (cont)}
+
+\begin{center}
+  \includegraphics[scale=0.30]{01-12.eps}
+\end{center}
+ 
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Virtual circuit networks (cont)}
+
+The VC number translation table at switch PS1 looks like
+
+\bigskip
+
+\begin{tabular}{cccc}
+  In interface
+& In VC\#
+& Out interface
+& Out VC\#\\
+\hline
+1 & 12 & 2 & 22\\
+\ldots & \ldots & \ldots & \ldots
+\end{tabular}
+
+\bigskip
+
+The network (actually, the switches) must maintain a \textbf{state
+information} about the VC.
+
+\bigskip
+
+Even if the VC numbers are all the same, the switches still must
+associate interfaces and VC numbers.
+
+\bigskip
+
+Each time a new circuit is created, a new entry must be added to the
+table of the switches along the path. Dually, each time a connection
+is released, the entries must be removed.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Datagram networks}
+
+Datagram networks are similar to postal services.
+
+\bigskip
+
+Each host has a unique address in the network.
+
+\bigskip
+
+Elements in the address are hierarchical, in order to simplify the
+routing. This is like putting on an envelope country, city, town,
+district, street name, building number, apartment number.
+
+\bigskip
+
+We shall discuss later the packet structure.
+
+\bigskip
+
+For now on, remember that a datagram network do not maintain
+connection-related information in the routers: these do not know which
+connection they support.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Network taxonomy}
+
+Here is the taxonomy of the networking concepts we reviewed:
+\begin{center}
+\includegraphics[scale=0.35]{01-13.eps}
+\end{center}
+\textbf{Warning!} \emph{This picture does not include the service view
+of the networks.} A datagram network is neither a connectionless nor a
+connection-oriented network. It can provide both services to different
+applications, through TCP or UDP.
+
+\end{frame}

@@ -1,0 +1,53 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\input{trace}
+
+\title{Exercise of introduction to networking} 
+\author{Christian Rinderknecht} 
+\date{Spring 2006}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{enumerate}
+
+  \item Consider sending a file of \(M \times L\) bits over a path of
+    \(Q\) links. Each link transmits at \(R\) bits per second. The
+    network is lightly loaded so that there are no queuing
+    delays. When a form of packet switching is used, the \(M \times
+    L\) bits are broken up into \(M\) packets, each packet with \(L\)
+    bits. Propagation delay is negligible.
+    \begin{enumerate}
+
+      \item Suppose the network is a packet-switched virtual circuit
+        network. Denote the VC set-up time by \(t_s\) seconds. Suppose
+        the sending layers add a total of \(h\) bits of header to each
+        packet. How long does it take to send the file from source to
+        destination?
+
+      \item \label{datagram} Suppose the network is a packet-switched
+        datagram network and a connectionless service is used. Now
+        suppose each packet has \(2h\) bits of header. How long does
+        it take to send the file?
+
+      \item Repeat case~\ref{datagram} but assume message switching is
+        used (that is, \(2h\) bits are added to the message, and the
+        message is not segmented).
+
+      \item Finally, suppose that the network is a circuit-switched
+        network. Further suppose that the transmission rate of the
+        circuit between source and destination is \(R\)
+        bit/s. Assuming \(t_s\) seconds of set-up and \(h\) bits of
+        header appended to the entire file, how long does it take to
+        send the file?
+
+    \end{enumerate}
+
+
+\end{enumerate}
+
+\end{document}

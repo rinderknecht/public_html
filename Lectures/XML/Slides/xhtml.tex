@@ -1,0 +1,419 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XHTML}
+
+The \textbf{eXtensible Hyper-Text Markup Language}
+(\textbf{\textsf{XHTML}}) is a subset of \XML so that it becomes very
+close to \textbf{\textsf{HTML 4.01}}, the language for specifying web
+pages.
+
+\bigskip
+
+The user-agents, e.g., web browsers, are encouraged to accept
+\XHTML. If this policy becomes widespread, it will enable the
+following step of using full \XML.
+
+\bigskip
+
+See the W3C Recommendations for \XHTML and \HTML at
+\begin{center}
+\url{http://www.w3.org/TR/xhtml1/}\\
+\url{http://www.w3.org/TR/html401/}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XHTML/Global Structure}
+
+All \XHTML file containing English should have the following pattern:
+{\small
+\begin{semiverbatim}
+<?xml version="1.0" encoding="\emph{encoding}"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en" lang="en">
+  <head>
+    <title>\textit{the title of the window}</title>
+  </head>
+  <body>
+     \emph{...contents and markup...}
+  </body>
+</html>
+\end{semiverbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XHTML/Headings}
+
+Elements \texttt{h1}, \texttt{h2}, ..., \texttt{h6} allow six kinds of
+headers, of decreasing font size. Consider the following document:
+\smallXMLin{h.html}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XHTML/Text}
+
+\begin{itemize}
+
+  \item The empty element \texttt{<br/>} is interpreted by
+    user-agents as a \textbf{line break};
+
+  \item element \texttt{em} marks text to be \textbf{emphasized}
+    (e.g., by using an italic font);
+
+  \item element \texttt{strong} marks text to be emphasized stronger
+    than with \texttt{em} (e.g., by using a bold font);
+
+  \item element \texttt{p} delimits a \textbf{paragraph}.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XHTML/Lists}
+
+There are three kinds of lists:
+\begin{enumerate}
+ 
+  \item unordered lists;
+
+  \item ordered lists;
+
+  \item lists of definitions.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XHTML/Unordered lists}
+
+Unordered lists are the well-known ``bullet lists'', where each
+line is displayed after an indentation followed by a bullet, like the
+following.
+\begin{itemize}
+
+  \item element \texttt{ul} contains an unordered list;
+
+  \item element \texttt{li} (``list item'') contains an item in the
+    list.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XHTML/Unordered lists/Example}
+
+Try
+\begin{verbatim}
+<h3>The ingredients:</h3>
+<ul>
+  <li>100 g. flour,</li>
+  <li>10 g. sugar,</li>
+  <li>1 cup of water,</li>
+  <li>2 eggs,</li>
+  <li>salt and pepper.</li>
+</ul>
+\end{verbatim}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XHTML/Ordered lists}
+
+Ordered lists are lists whose items are introduced by an indentation
+followed by a number, in increasing order, like the following.
+\begin{enumerate}
+
+  \item element \texttt{ol} contains the ordered list,
+
+  \item element \texttt{li} is the same as in unordered lists.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XHTML/Ordered lists/Example}
+
+Try
+\begin{verbatim}
+<h3>Procedure:</h3>
+<ol>
+  <li>Mix dry ingredients thoroughly;</li>
+  <li>Pour in wet ingredients;</li>
+  <li>Mix for 10 minutes;</li>
+  <li>Bake for one hour at 300 degrees.</li>
+</ol>
+\end{verbatim}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XHTML/Lists of definitions}
+
+A list of definition is a list whose items are introduced by a few
+words in a bold font followed by the contents of the item
+itself. Consider
+\begin{description}
+
+  \item[hacker]\ \\
+    A clever programmer.
+
+  \item[nerd]
+
+  \item[geek]\ \\
+    A technically bright but socially misfit person.
+
+\end{description}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XHTML/Lists of definitions (cont)}
+
+The elements involved are
+\begin{itemize}
+
+  \item \texttt{dl} (``definition list''), which contains the whole
+    list of definitions;
+
+  \item \texttt{dt} (``definition term''), which contains every term
+    to be defined;
+
+  \item \texttt{dd} (``definition description''), which contains every
+    definitition of a term.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XHTML/Lists of definitions (cont)}
+
+The example before corresponds to
+{\small
+\begin{verbatim}
+<h3>Excerpt:</h3>
+<dl>
+  <dt><strong>hacker</strong></dt>
+    <dd>A clever programmer.</dd>
+  <dt><strong>nerd</strong></dt>
+  <dt><strong>geek</strong></dt>
+    <dd>A technically bright but socially misfit person.</dd>
+</dl>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XHTML/Tables}
+
+A \textbf{table} is a rectangle divided into smaller rectangles,
+called \textbf{cells}, which contain atomic pieces of data.
+
+\bigskip
+
+When read vertically, cells are said to belong to \textbf{columns},
+whilst horizontally, they belong to \textbf{rows}.
+
+\bigskip
+
+A row or a column can have a \textbf{header}, i.e., a cell at their
+beginning containing a name in bold face.
+
+\bigskip
+
+A table can have a \textbf{caption}, which is a short text describing
+the contents of the table and displayed just above it, like a title.
+
+\bigskip
+
+Columns can be divided themselves into sub-columns, when needed.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XHTML/Tables (cont)}
+
+\begin{center}
+\emph{A test table with merged cells}\\
+
+\begin{tabular}{|c|c|c|c|}
+\hline
+                 & \multicolumn{2}{|c|}{\textbf{Average}} & \textbf{Red}\\
+\cline{2-3}
+                 & \textbf{height}    &   \textbf{weight} & \textbf{eyes}\\
+\hline
+\textbf{Males}   & 1.9                & 0.003             & 40\%\\
+\hline
+\textbf{Females} & 1.7                & 0.002             & 43\%\\
+\hline
+\end{tabular}
+\end{center}
+\textbf{Males} and \textbf{Females} are row headers. The column headers
+are \textbf{Average}, \textbf{Red eyes}, \textbf{height} and
+\textbf{weight}. The column \textbf{Average} spans two columns; in
+other words, it contains two sub-columns, \textbf{height} and
+\textbf{weight}. 
+
+The caption reads ``\emph{A test table with merged cells}''.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XHTML/Tables (cont)}
+
+\begin{itemize}
+
+  \item Element \texttt{table} contains the table; its attribute
+    \texttt{border} specifies the width of the table borders, i.e., of
+    the lines separating the cells from the rest.
+
+  \item Element \texttt{caption} contains the caption.
+
+  \item Element \texttt{th} (``table header'') contains a row or
+    column header, i.e., the title of the row of column in bold type.
+
+  \item Element \texttt{td} (``table data'') contains the data of a
+    cell (if not a header).
+
+  \item Element \texttt{tr} (``table row'') contains a row, i.e., a
+    series of \texttt{td} elements, perhaps starting with a
+    \texttt{th} element.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XHTML/Tables (cont)}
+
+The corresponding \HTML code is
+{\small
+\begin{verbatim}
+<table border="1">
+  <caption><em>A test table with merged cells</em></caption>
+  <tr><th rowspan="2"/>
+      <th colspan="2">Average</th>
+      <th rowspan="2">Red<br/>eyes</th>
+  </tr>
+  <tr><th>height</th><th>weight</th></tr>
+  <tr><th>Males</th><td>1.9</td><td>0.003</td><td>40%</td></tr>
+  <tr><th>Females</th>
+      <td>1.7</td>
+      <td>0.002</td>
+      <td>43%</td>
+  </tr>
+</table>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XHTML/Tables (cont)}
+
+Notice the attributes \texttt{\textbf{rowspan}} and
+\textbf{\texttt{colspan}} of the \texttt{th} element.
+
+\bigskip
+
+Attribute \texttt{rowspan} allows to specify how many rows the current
+cell spans. For example, the first row, i.e., the one on the
+top-left corner, is empty and covers two rows because
+\verb|<th rowspan="2"/>|.
+
+\bigskip
+
+Attribute \texttt{colspan} allows to specify how many columns the
+current cell spans. For example, the second cell (right next to the
+first one) contains the text ``\textbf{Average}'' and covers two
+columns because \verb|<th colspan="2">Average</th>|.
+
+\bigskip
+
+Notice the line break \verb|<br/>| in the third cell (first row, last
+column) and how \textbf{height} and \textbf{weight} are automatically
+at the right place.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{XHTML/Hyperlinks}
+
+Hyperlinks in \XHTML are specificied by the element ``\texttt{a}''
+with its mandatory attribute \texttt{href}. 
+
+\bigskip
+
+For example, consider the following hyperlink to the author's web
+page:
+{\small
+\begin{verbatim}
+<a href="http://konkuk.ac.kr/~rinderkn/">See my web page.</a>
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{XHTML/Validation}
+
+Just like \XML documents, \XHTML documents can be and should be
+validated before being published on the web or distributed.
+
+\bigskip
+
+The page \url{http://validator.w3.org/} allows you to do that.
+
+\end{frame}

@@ -1,0 +1,116 @@
+%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Exceptions}
+
+Les exceptions de ML ont servi de modèle pour celles du langage \cpp. 
+{\small
+\begin{verbatim}
+exception Perdu
+
+let rec cherche_la_clé k = function
+  (h,v)::t -> if h = k then v else cherche_la_clé k t
+| [] -> raise Perdu
+  
+let k = 
+  try 
+    cherche_la_clé "Louis" [("Georges",14); ("Louis",5)]
+  with Perdu -> 10
+\end{verbatim}
+}
+
+\bigskip
+
+\textbf{Exercice~5} \ Réécrire le programme sans user d'exceptions.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Exceptions (suite)}
+
+\textcolor{blue}{Syntaxe}
+\begin{center}
+\begin{tabular}{ll}
+  Définition (phrase) & \phrase{exception $C$ [of $t$]}\\
+  \hline
+  Lancement (expression) & \phrase{raise $e$}\\
+  Filtrage (expression) & \phrase{try $e$ with $p_1 \rightarrow e_1
+  \mid \ldots \mid p_n \rightarrow e_n$}
+\end{tabular}
+\end{center}
+
+\bigskip
+
+Remarquez l'analogie avec le filtrage des valeurs.
+
+\bigskip
+
+\textcolor{blue}{Typage}
+
+Les exceptions sont toutes de type \textsf{exn}, qui peut être
+considéré comme un type somme ouvert (de nouveaux constructeurs
+peuvent être ajoutés avec des déclarations \texttt{exception}).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Exceptions prédéfinies}
+
+\textcolor{blue}{\emph{The Core Library}}
+\begin{center}
+\small
+\begin{tabular}{l|l}
+Constructeur & Usage\\
+\hline
+\excerpt{Invalid\_argument of string} & Argument hors bornes\\
+\excerpt{Failure of string} & Fonction indéfinie pour un argument\\
+\excerpt{Not\_found} & Échec de fonctions de recherche\\
+\excerpt{Match\_failure of ...} & Échec de filtrage\\
+\excerpt{End\_of\_file} & Fin de fichier
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Sémantique des exceptions}
+
+\begin{itemize}
+
+  \item Le type \textsf{exn} est le seul type somme \emph{extensible}.
+
+  \item Le lancement d'une exception arrête l'évaluation et retourne
+        une valeur exceptionnelle (c-à-d. de type \textsf{exn}).
+
+  \item Une exception ne peut être éventuellement filtrée que si
+        l'expression a été encadrée par un bloc \textsf{try $e$ with
+        $m$}:
+        \begin{itemize}
+ 
+          \item Si l'évaluation de $e$ retourne une valeur normale,
+                celle-ci est retournée sans passer par le filtre $m$.
+
+          \item Sinon, l'exception est passée au filtre $m$. Si un des
+                motifs $p_i$ filtre l'exception, alors $e_i$ est
+                évaluée, sinon l'exception est propagée (\textbf{Les
+                filtres d'exceptions ne sont pas forcément
+                complets.}).
+
+        \end{itemize}
+
+   \item On peut observer une exception (c-à-d. la filtrer puis la
+         relancer):\\
+         \excerpt{try f x with Failure s as x -> prerr\_string s; raise x}
+
+\end{itemize}
+
+\end{frame}
+

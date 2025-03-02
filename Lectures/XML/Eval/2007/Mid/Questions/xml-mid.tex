@@ -1,0 +1,51 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\input{trace}
+
+\input{title}
+\author{Christian Rinderknecht}
+\date{16 October 2007}
+
+% Packages
+%
+\usepackage{verbatim}
+\usepackage{url,xspace}
+
+% xmllint
+%
+\input{xmllint}
+
+\newcommand\XML{\textsf{XML}\xspace}
+\newcommand\XSLT{\textsf{XSLT}\xspace}
+\newcommand\XHTML{\textsf{XHTML}\xspace}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\section{Reversing a list}
+
+Given the following \XML document \smallXMLin{toc.xml} containing a
+flat list of the same element with the same attribute like
+\smallXMLin{toc.xml}
+\noindent output an \XHTML where the list is reversed:
+\begin{itemize}
+
+  \item Instances and schemas
+
+  \item Schema composition
+
+  \item Namespaces
+
+  \item A quick tour of XML Schema
+
+  \item Schema: An Introduction
+
+\end{itemize}
+
+\end{document}
+

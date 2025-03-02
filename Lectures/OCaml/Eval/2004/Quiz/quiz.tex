@@ -1,0 +1,83 @@
+%%-*-latex-*-
+
+\documentclass[a4paper]{article}
+
+\usepackage[francais]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsfonts}
+\usepackage{xspace}
+\usepackage{alltt}
+\usepackage{amssymb,amsmath,stmaryrd}
+
+\input{trace}
+\input{commands}
+\input{ocaml_syntax}
+
+\title{Quiz de programmation fonctionnelle en Objective Caml}
+\author{Christian Rinderknecht}
+\date{Lundi 8 mars 2004}
+
+\begin{document}
+
+\maketitle
+
+
+\noindent Pour chacun des programmes suivants,
+
+\begin{itemize}
+
+  \item construisez l'arbre correspondant,
+ 
+  \item reliez les variables dans les expressions à leur lieur,
+
+  \item identifiez les variables libres,
+
+  \item si le programme est clos, décrivez précisément son exécution.
+
+\end{itemize}
+
+\bigskip
+
+\noindent \textbf{Programme 1}
+
+\begin{verbatim}
+let x = 1 in ((let x = 2 in x) + x);;
+\end{verbatim}
+
+\noindent \textbf{Programme 2}
+
+\begin{verbatim}
+fun y -> x + (fun x -> x) y;;
+\end{verbatim}
+
+\noindent \textbf{Programme 3}
+
+\begin{verbatim}
+let x = 1 in
+  let f = fun y -> x + y in
+  let x = 2
+in f(x);;
+\end{verbatim}
+
+\noindent \textbf{Programme 4}
+
+\begin{verbatim}
+let x = 0;;
+let id = fun x -> x;;
+let y = 2 in id (y);;
+let x = (fun x -> fun y -> x + y) 1 2;;
+x+1;;
+\end{verbatim}
+
+\noindent \textbf{Programme 5}
+
+\begin{verbatim}
+let compose = fun f -> fun g -> fun x -> f (g x) in
+  let square = fun f -> compose f f in
+  let double = fun x -> x + x in
+  let quad = square double 
+in square quad;;
+\end{verbatim}
+
+\end{document}

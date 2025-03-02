@@ -1,0 +1,101 @@
+\documentclass[a4paper,11pt]{article}
+
+\input{trace}
+
+% Language
+%
+\usepackage[english]{babel}
+
+% Alternate font encoding
+%
+\usepackage{times}
+\usepackage{mathptmx}
+\renewcommand{\ttdefault}{cmtt}
+\renewcommand{\sfdefault}{cmss}
+
+% Miscellanea
+%
+\usepackage{xspace,url}
+
+% New environments and commands
+%
+\newcommand{\Lex}{\textsf{Lex}\xspace}
+\newcommand{\Pascal}{\textsf{Pascal}\xspace}
+\newcommand{\Clang}{\textsf{C}\xspace}
+
+%
+
+\author{Christian Rinderknecht}
+\date{25 October 2005}
+\title{Homework on Lex}
+
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\begin{center}
+\textbf{Due date: 15 November 2005}
+\end{center}
+
+Write an integer postfix calculator in \Lex. 
+
+For example, expressions such as \verb|1 2 +| and \verb|1 2 3 4 /*-|
+should be evaluated respectively to \verb+3+, i.e. \(1 + 2\), and
+\verb|-0.5|, i.e. \(1 - (2 \times 3/4)\). The rule is that once
+an operator is found, its arguments must have been entered
+before. Another correct expression is \verb|1 2 + 3 *|, which means,
+in infix notation: \((1 + 2) \times 3\).
+
+As a shorthand, it is possible to write \verb|1-| instead of
+\verb|0 1 -|.
+
+White spaces only serve to separate numbers, but are otherwise
+optional. The end of line denotes the end of an expression.
+
+The input file may have several lines (each of one must be a postfix
+arithmetic expression), therefore the calculation for each line must
+be printed in the same order as the input lines. For example, if the
+input file contains
+\begin{verbatim}
+1  2+
+1 2 3 4 / *-
+1 2 + 3 *
+\end{verbatim}
+the calculator should print
+\begin{verbatim}
+3
+-.5
+9
+\end{verbatim}
+
+%% Comments in the style of the \Pascal language are allowed\footnote{A
+%%   \Pascal comment is placed between \verb+(*+ and \verb+*)+, and
+%%   anything }. Thus
+%% \begin{verbatim}
+%% (* Some calculations
+%%    for my project *)
+%% 1  2+         (* Note the spacing here *)
+%% 1 2 3 4 /* -
+%% \end{verbatim}
+%% is a valid input.
+
+\noindent \textbf{Notes}
+\begin{itemize}
+
+  \item You probably need the \Clang function
+    \verb+double atof(char*)+, which converts character strings to
+    double precision floating-point numbers.
+
+  \item Error messages must be printed and the position in the input
+    file must be given (line number and column number) to help fixing
+    the problem.
+
+  \item Modern implementations of \Lex are called \textsf{Flex}. You
+    can find its source code or binary versions for Windows and Linux
+    on the Web, as well as documentation (manuals or tutorials).
+
+\end{itemize}
+
+\end{document}

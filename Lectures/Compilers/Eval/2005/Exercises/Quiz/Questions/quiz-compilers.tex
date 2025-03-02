@@ -1,0 +1,55 @@
+%%-*-latex-*-
+
+\documentclass[a4paper,11pt]{article}
+
+% Language
+%
+\usepackage[english]{babel}
+
+% Maths
+%
+\usepackage{amssymb,amsmath,stmaryrd,txfonts}
+
+% Graphics
+%
+\usepackage{graphicx}
+
+% Inclusion of code
+%
+\usepackage{verbatim}
+
+% Miscellanea
+%
+\usepackage{xspace}
+\usepackage{alltt}
+
+% New environments and commands
+%
+\newcommand\Lex{\textsf{Lex}\xspace}
+
+% Input files
+%
+\input{token}
+\input{grammar}
+\input{trace}
+
+% ------------------------------------------------------------------------
+% Document
+%
+\author{Christian Rinderknecht}
+\date{29 November 2005}
+\input{title}
+
+\begin{document}
+
+\maketitle
+
+\input{question_00}
+\vspace*{7cm}
+\input{question_01}
+\pagebreak
+\input{question_02}
+\pagebreak
+\input{question_03}
+
+\end{document}

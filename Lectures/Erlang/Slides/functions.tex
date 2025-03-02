@@ -1,0 +1,107 @@
+%% -*- latex -*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Function calls}
+
+The order in which arguments of function calls are evaluated is
+undefined (as in \cpp{} but contrary to \Java). For instance, in
+\begin{verbatim}
+f(g(),h())
+\end{verbatim}
+the order of evaluation of \texttt{g()} and \texttt{h()} is undefined,
+i.e.,, the programmer has no guarantee whether \texttt{g()} will be
+evaluated before or after \texttt{h()}.
+
+\bigskip
+
+The order of evaluation of elements in a list is also undefined. For
+instance
+\begin{verbatim}
+[g(), h()]
+\end{verbatim}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Functions/Modules}
+
+Modules in \Erlang are a database of functions.
+
+\bigskip
+
+The module name must be the basename of the file containing it, and
+the extension of the file must be \texttt{erl}. So, file
+\texttt{foo.erl} contains the \Erlang module \texttt{foo}, which is
+specified by the first line
+\begin{verbatim}
+-module(foo).
+\end{verbatim}
+The purpose of \Erlang modules is to restrict the visibility of the
+function definitions, since many functions have a merely technical,
+internal, purpose and are not directly related to the higher-level of
+module functionalities or services. Exported functions need to be
+listed, together with their arity. For example
+\begin{verbatim}
+-module(foo).
+-export([fact/1]).
+\end{verbatim}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Functions/Qualified calls}
+
+Functions can be called in two ways, either by qualifying their name
+or not. Qualification means writing the name of the module the called
+function belongs to. For instance 
+\begin{verbatim}
+math:fact(4)
+\end{verbatim}
+is a qualified call, whereas
+\begin{verbatim}
+fact(N-1)
+\end{verbatim}
+is a non-qualified call.
+
+\bigskip
+
+When the caller and the called function are in different modules, the
+qualified form is mandatory. When calling a function which is in the
+same module as the caller, the two forms are allowed. There is
+actually a difference we shall discuss later, but which is, at this
+point, irrelevant.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Functions/Recursivity}
+
+\textbf{Recursivity} consists in a function calling itself, just like
+the factorial function did at page~\pageref{fact}. The function call
+in the body of the second case is a recursive call.
+
+\bigskip
+
+This technique is the only way in \Erlang to implement the equivalent
+of loops in other imperative programming languages, i.e., in
+non-functional programming languages. 
+
+\bigskip
+
+Indeed, since there are no mutable variables in \Erlang,
+i.e., variables whose value can be changed, a loop would be pointless.
+
+\bigskip
+
+The combination of matching and recursivity is the heart of \Erlang
+programming.
+
+\end{frame}

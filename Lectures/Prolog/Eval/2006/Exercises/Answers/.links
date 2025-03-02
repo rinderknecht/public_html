@@ -1,0 +1,8 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/LaTeX/TeX/trace.tex
+$HOME/LaTeX/TeX/prolog.tex
+
+../Questions/question_01.tex
+../Questions/question_02.tex
+../Questions/prolog_ex1.tex prolog_ex1-QA.tex

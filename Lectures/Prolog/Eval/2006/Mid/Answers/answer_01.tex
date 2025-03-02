@@ -1,0 +1,117 @@
+\paragraph{Answers.} When trying to matching two terms, the procedure
+is:
+\begin{itemize}
+
+  \item if the two terms are constants, they match if they are
+    verbatim the same;
+
+  \item if one of the terms is a variable, then they match;
+
+  \item if the two terms are functors, they match if and only if 
+  \begin{itemize}
+
+    \item they are the same (name),
+ 
+    \item they have the same number of arguments (subterms),
+
+    \item if they have arguments, the \(n\)-th argument of one term
+      matches the \(n\)-th argument of the other.
+
+  \end{itemize}
+    
+\end{itemize}
+\noindent It is often a good idea to represent the terms to be matched
+by trees.
+
+\begin{enumerate}
+
+  \item The figure of the query
+    \verb|?- f(g(X,X), h(Y,Y)) = f(g(Z), Z).| is
+  \begin{center}
+    \includegraphics{tree-1-1}
+  \end{center}
+  So the answer is \texttt{No}, because the subterm \texttt{g(X,X)}
+  does not match \texttt{g(Z)}: the number of arguments of \texttt{g}
+  is different;
+
+  \item The figure of query
+  \verb|?- f(g(X,X),h(Y,Y)) = f(g(h(W,a),Z),Z).| is
+  \begin{center}
+    \includegraphics{tree-1-2}
+  \end{center}
+  The steps are
+\begin{align*}
+X &= h(W,a) & X &= h(W,a) & h(W,a) &= h(Y,Y) & W &= Y\\
+X &= Z      & X &= h(Y,Y) & X      &= h(Y,Y) & Y &= a\\
+Z &= h(Y,Y) & Z &= X      & Z      &= X      & X &= h(Y,Y)\\
+  &         &   &         &        &         & Z &= X
+\end{align*}
+  \noindent Finally
+\begin{verbatim}
+X = h(a,a)
+Y = a
+W = a
+Z = h(a,a)
+Yes
+\end{verbatim}
+  \noindent This answer means that if we take the two trees of the
+  query and replace the variables according to the substitution, we
+  get the exact same tree. Indeed, we get
+  \begin{center}
+    \includegraphics{tree-1-2u}
+  \end{center}
+
+
+  \item The figure of 
+  \verb|?- f(g(X,X), h(_,_)) = f(g(h(W,a),Z), Z).| is
+  \begin{center}
+    \includegraphics{tree-1-3}
+   \end{center}
+  \noindent Note that each underscore has been replaced with a unique
+  variable, i.e. different from all the other variables. The steps are
+  now
+  \begin{align*}
+                   X &= h(W,a) &                X &= h(W,a) & X &= h(W,a) & X &= h(\alpha,a)\\
+                   X &= Z      &                X &=Z       & Z &= X      & Z &= h(\alpha,a)\\
+    h(\alpha, \beta) &= Z      & h(\alpha, \beta) &= h(W,a) & W &= \alpha & W &= \alpha\\
+                     &         &                  &         &   &         & \beta &= a
+  \end{align*}
+  \noindent Finally
+\begin{alltt}
+X = h(\(\alpha\),a)
+W = \(\alpha\)
+Z = h(\(\alpha\),a) 
+Yes
+\end{alltt}
+  \noindent This means that if we replace the variables in the two
+  initial trees, we get the same. Indeed, we get
+  \begin{center}
+    \includegraphics{tree-1-3u}
+  \end{center}
+
+  \item The figure of \verb|?- f(x(A,B), C) = f(C, x(B,A)).| is
+  \begin{center}
+    \includegraphics{tree-1-4}
+  \end{center}
+  \noindent The steps are
+  \begin{align*}
+    x(A,B) &= C      & x(A,B) &= x(B,A) & A &= B\\
+    C      &= x(B,A) & C      &= x(B,A) & C &= x(B,A)
+  \end{align*}
+  \begin{multicols}{2}
+  \noindent Finally
+\begin{alltt}
+A = \(\alpha\)
+B = \(\alpha\)
+C = x(\(\alpha\),\(\alpha\)) 
+Yes
+\end{alltt}
+  \par\vfill\columnbreak
+  \noindent This means that if we replace these variables by their
+  value in the original trees, we get the same tree. Indeed, we get
+  \begin{center}
+    \includegraphics{tree-1-4u}
+  \end{center}
+  \end{multicols}
+
+\end{enumerate}

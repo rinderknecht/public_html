@@ -1,0 +1,15 @@
+\begin{codebox}
+\Procname{\(\proc{MP} (x, t)\)}
+\li \(s \gets \proc{MP-Supply} (x)\)
+\li \(i \gets 1\); \(j \gets 1\)
+\li \While \(i \leqslant m\) \LogAnd \(j \leqslant n\)
+\li \Do \If \(i = 0\) \LogOr \(t[j] = x[i]\)
+\li	  \Then \(i \gets i + 1\); \(j \gets j + 1\)
+\li	  \Else \(i \gets s[i]\)
+          \End 
+    \End
+\li \If \(i > m\) 
+\li \Then \(\ldots\)\>\>\>\Comment Occurrence of \(x\) in \(t\) at position \(j - m\).
+\li \Else \(\ldots\)\>\>\>\Comment No occurrences. 
+    \End
+\end{codebox}

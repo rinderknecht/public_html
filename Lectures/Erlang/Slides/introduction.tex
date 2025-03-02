@@ -1,0 +1,462 @@
+%%-*-latex-*-
+
+%---------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Introduction}
+
+\Erlang was developed at Ericsson. Since 1998, it is distributed
+independently with an open source license.
+
+\bigskip
+
+The main web site distributing \Erlang is
+\begin{center}
+\url{http://www.erlang.org}
+\end{center}
+The implementation is called \textbf{Erlang/OTP} (Open
+Telecommunication Platform).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Introduction (cont)}
+
+\textbf{Sequential programming} in \Erlang consists in not using the
+concurrence features. This allows to focus on the kernel of \Erlang,
+which consists in basic functional features.
+
+\bigskip
+
+\Erlang is \textbf{dynamically typed}, that is, there is no need for
+the programmer to annotate the code with type informations. 
+
+\bigskip
+
+The difference with scripting languages, like \Bash, \Perl, \Python or
+\Ruby, is that in these languages, in case of a type error in an
+operation, there is always a default value which can be implicitly the
+result.
+
+\bigskip
+
+In \Erlang, a type error at run-time ends the execution of the
+programs, if not handled.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Introduction/Modules}
+
+Following a top-down approach, an \Erlang program is first
+structured in \textbf{modules}.
+
+\bigskip
+
+At first glance, a module is a file containing \Erlang functions. 
+
+\bigskip
+
+The name of the module is given in the file by a special directive
+(i.e., it is not part of the language itself, strictly speaking) and
+must be the same as the file name on the underlying operating system.
+
+\bigskip
+
+For example, a file \texttt{my\_prog.erl} must include, as a first
+statement, the directive
+\begin{verbatim}
+-module(my_prog).
+\end{verbatim}
+Note the starting dash and the final period.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Introduction/Shell and virtual machine}
+
+Since \Erlang modules only contain functions, they serve as a
+\emph{database of functions} and something else is needed to use them,
+just like in a relational database one needs a query language.
+
+\bigskip
+
+This role is devoted to the \textbf{\Erlang shell}, similar to the
+command line shells on \Unix and \Windows operating systems, like,
+respectively, \Bash and \DOS.
+
+\bigskip
+
+From this shell, the user can open modules and call functions exported
+by them. 
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Introduction/Shell and virtual machine (cont)}
+
+In order to run the functions, these must be compiled first
+to \textbf{byte-code}, just like \Java for instance. 
+
+\bigskip
+
+Second, this byte-code is loaded into the \textbf{\Erlang virtual
+  machine} (called \textbf{\BEAM}), a task which is hidden from the
+user and taken care of by the \Erlang shell.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Introduction/First module}
+
+Consider the file \texttt{math2.erl}:
+\ErlangIn{math2}
+This module exports a list of functions consisting of the lone
+\texttt{double} function, which takes only one argument. This function
+is defined in the body of the module, together with \texttt{mult},
+which is not visible from the other modules or the \Erlang shell. 
+
+\bigskip
+
+Note that the order of definition is not meaningful.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Introduction/First compilation}
+
+There are two ways of compiling \Erlang modules: from the OS shell or
+from the \Erlang shell.
+
+
+From the OS shell (whose prompt is here represented by the symbol
+\texttt{\$}), type
+{\scriptsize
+\begin{verbatim}
+$ erl
+Erlang (BEAM) emulator version 5.5.2 [source] [async-threads:0] [hipe]
+
+Eshell V5.5.2  (abort with ^G)
+1> _
+\end{verbatim}
+}
+The \Erlang shell prompt is here ``\texttt{1>}'', where ``\texttt{1}''
+is the command line number (i.e., the first command is expected).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Introduction/From the Erlang shell}
+\label{arity}
+
+Then, the compilation function \texttt{c/1} takes the name of the
+file to compile, e.g. \texttt{math2.erl}, launches the compiler and,
+if no error is found, the resulting byte-code is output in a file
+\texttt{math2.beam}:
+\begin{verbatim}
+1> c(math2).
+{ok,math2}
+2> _
+\end{verbatim}
+This means that the compilation was successful (\texttt{ok}) and the
+result is the file \texttt{math2.beam}. The \texttt{/1} in
+\texttt{c/1} is the number of arguments (called \textbf{arity}).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Introduction/From the OS shell}
+
+The other way is just to call the \Erlang compiler from the OS
+command-line shell:
+\begin{verbatim}
+$ erlc math2.erl 
+$ _
+\end{verbatim}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Introduction/Running the program}
+
+After the module has been compiled to byte-code, we need an \Erlang
+shell to use it.
+
+\bigskip
+
+From the \Erlang shell, a function is called by giving the name of the
+module first, then typing in a colon, the function name and finally
+its arguments, between parentheses and separated by commas.
+
+\bigskip
+
+For instance
+\begin{verbatim}
+1> math2:double(5).
+10
+2> _
+\end{verbatim}
+If there are no arguments, just type the opening and closing
+parentheses.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Introduction/A classic}
+
+\label{fact}
+
+\begin{columns}
+  \column{0.5\textwidth} By default, all functions can be
+  recursive. Take a look at the classic factorial mathematical
+  function in \Erlang:
+  \ErlangIn{math1}
+
+  \column{0.5\textwidth} Notice how a function can be defined in a
+  manner similar to the mathematical notation:
+  \begin{align*}
+    0! &= 1\\
+    n! &= n \times (n-1)!
+  \end{align*}
+  Note that the function names in \Erlang (e.g. \texttt{fact}) must
+  start in lowercase and the variables (e.g. \texttt{N}) in uppercase.
+
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Introduction/A classic (cont)}
+
+The factorial function is defined by two cases, called
+\textbf{clauses} in \Erlang. Clauses of the same function are
+separated by semicolons and the last one is terminated by a period:
+\begin{verbatim}
+...
+fact(0) -> ... ; % First clause
+fact(N) -> ... . % Second clause
+\end{verbatim}
+The part before the arrow is called the \textbf{head} and the part
+after it until the semicolon or the period is called the \textbf{body}
+of the function:
+\[
+\underbrace{\texttt{fact(N)}}_{\textrm{\normalsize head}} \;
+\texttt{->} \; \underbrace{\texttt{N *
+    fact(N-1)}}_{\textrm{\normalsize body}}\texttt{.}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Introduction/Clause selection}
+
+The order of the clauses matters. 
+
+\bigskip
+
+Given a function call and the clauses of the corresponding function,
+the \Erlang run-time
+\begin{enumerate}
+
+  \item computes the arguments in the call;
+
+  \item examines the heads of the clauses, in the order of the
+    module, until the head of a clause \textbf{matches} the function
+    call;
+
+  \item that matching may bind variables to values in the call (in
+    other words: ``the parameters are bound to the arguments'') and
+    these variables are replaced by their value in the body of the
+    selected clause;
+
+  \item the body is evaluated.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Introduction/Clause selection (cont)}
+
+For example, consider the function call \texttt{math1:fact(0)}.
+
+\bigskip
+
+We do not need here to evaluate the arguments, since \texttt{0} is
+already a value.
+
+\bigskip
+
+The first clause in module \texttt{math1} is
+\begin{verbatim}
+fact(0) -> 1
+\end{verbatim}
+Its head is exactly the function call: it is a trivial case of
+matching. There are no variable in the head, so there is no binding as
+the result of the matching. 
+
+\bigskip
+
+Hence we do not need to replace any variable in the body. Finally, the
+body, \texttt{1}, is the result --- there is no need to evaluate it,
+since it is already a value.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Introduction/Clause selection (cont)}
+
+Consider now the function call \texttt{math1:fact(1)}.
+\begin{center}
+\textbf{Matching rule \#1}: \emph{Two values match if and only if they
+  are equal.}
+\end{center}
+The head of the first clause is \texttt{fact(0)} and \texttt{0} does
+not match \texttt{1}, so the first clause is skipped.
+
+\bigskip
+
+The head of the second clause is \texttt{fact(N)}. 
+\begin{center}
+\textbf{Matching rule \#2}: \emph{A variable matches any value.}
+\end{center}
+Therefore \texttt{N} matches \texttt{1} and the body of the second
+clause, \texttt{N * fact(N-1)}, is selected. The matching leads to
+bind \texttt{N} to \texttt{1}.
+
+\bigskip
+
+Finally, \texttt{N} is replaced by \texttt{1} in the body, which
+becomes \texttt{1 * fact(1-1)}, and is further evaluated as the
+result (i.e., the value of the function call).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Introduction/Tracing computations}
+
+It is possible to summarise the evaluation of a function call by a
+series of rewrite steps. For instance
+\begin{align*}
+\texttt{fact(2)}
+  & \stackrel{2}{\longrightarrow} \texttt{2 * fact(2-1)}\\
+  & \longrightarrow \texttt{2 * fact(1)}\\
+  & \stackrel{2}{\longrightarrow} \texttt{2 * (1 * fact(1-1))}\\
+  & \longrightarrow \texttt{2 * (1 * fact(0))}\\
+  & \stackrel{1}{\longrightarrow} \texttt{2 * (1 * (1))}\\
+  & \longrightarrow \texttt{2 * (1)}\\
+  & \longrightarrow \texttt{2}
+\end{align*}
+Note: The number on the arrow is the clause number. An arrow with no
+number is an elementary arithmetic computation.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Introduction/Why order matters}
+
+Let us try the following mistake:
+\ErlangInUnchecked{math1bis}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Introduction/Why order matters (cont)}
+
+Then let us evaluate
+\begin{align*}
+\texttt{fact(2)}
+  & \stackrel{1}{\longrightarrow} \texttt{2 * fact(2-1)}\\
+  & \longrightarrow \texttt{2 * fact(1)}\\
+  & \stackrel{1}{\longrightarrow} \texttt{2 * (1 * fact(1-1))}\\
+  & \longrightarrow \texttt{2 * (1 * fact(0))}\\
+  & \stackrel{1}{\longrightarrow} \texttt{2 * (1 * (0 * fact(0-1)))}\\
+  & \longrightarrow \texttt{2 * (1 * (0 * fact(-1)))}\\
+  & \stackrel{1}{\longrightarrow} \texttt{2 * (1 * (0 * (-1 *
+  fact(-1-1))))}\\
+  & \longrightarrow \ldots
+\end{align*}
+This results in an infinite loop because the head of the second clause
+can never match ---~and thus terminate the computation.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Introduction/Classic mistakes}
+
+Let us try to call an undefined function:
+{\small
+\begin{verbatim}
+1> math:double(5).
+** exited: {undef,[{math,double,[5]},
+                   {erl_eval,do_apply,5},
+                   {shell,exprs,6},
+                   {shell,eval_loop,3}]} **
+
+=ERROR REPORT==== 12-Jan-2007::01:46:49 ===
+Error in process <0.29.0> with exit value:
+{undef,[{math,double,[5]},
+{erl_eval,do_apply,5},{shell,exprs,6},{shell,eval_loop,3}]}
+\end{verbatim}
+}
+
+Similar problem with the call \texttt{math2:triple(5)} and
+\texttt{math2:double()} and \texttt{math2:mult(5,5)}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Introduction/Function composition and stop}
+
+As in mathematics, function calls can be composed (i.e., nested), as in
+\begin{verbatim}
+1> math2:double(math2:double(5)).
+20
+2> _
+\end{verbatim}
+To stop the \Erlang shell, type
+\begin{verbatim}
+2> init:stop().
+ok
+3> $ _
+\end{verbatim}
+
+\end{frame}

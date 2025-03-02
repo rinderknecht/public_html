@@ -1,0 +1,152 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+% Basic definitions
+%
+\begin{frame}
+\frametitle{Basic definitions}
+
+An \textbf{alphabet} is a finite set whose elements are called
+\textbf{letters}.
+
+\bigskip
+
+A \textbf{string} is a sequence of letters of an alphabet. A
+\textbf{text} and a \textbf{word} are other names for strings,
+depending on the context. The empty string is noted \(\epsilon\).
+
+\bigskip
+
+The \textbf{length} of a string \(x\) is the length of the associated
+sequence and is noted \(\len{x}\).
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% Basic definitions
+%
+\begin{frame}
+\frametitle{Basic definitions (cont)}
+
+The sequence of letters is written simply by enumerating in order the
+letters, like \texttt{abraca}.
+
+\bigskip
+
+For \(i = 1, 2, \ldots, \len{x}\), we note \(x[i]\) the letter at
+\textbf{index} (or position) \(i\) in \(x\). For example, if \(x =
+\texttt{abba}\) then \(x[1] = x[4] = \texttt{a}\).
+
+\bigskip
+
+From the previous definitions, we have \(x = x[1] x[2] \ldots
+x[\len{x}]\) for all non-empty string \(x\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% Basic definitions
+%
+\begin{frame}
+\frametitle{Basic definitions (cont)}
+
+We can define the equality of two strings using the equality of two
+letters: by definition \(x = y\) if \(x = y = \epsilon\) or \(\len{x}
+= \len{y}\) and then for all \(i\) such that \(1 \leqslant i \leqslant
+\len{x}\), we have \(x[i] = y[i]\).
+
+\bigskip
+
+The \textbf{product} or \textbf{concatenation} of two strings \(x\)
+and \(y\) is the string composed of the letters of \(x\) followed by
+the letters of \(y\). It is noted \(xy\) or \(x \cdot y\).
+
+\bigskip
+
+Property \(x \cdot \epsilon = \epsilon \cdot x = x\) holds for all
+strings \(x\).
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% Basic definitions
+%
+\begin{frame}
+\frametitle{Basic definitions (cont)}
+
+A word \(x\) is a \textbf{factor} of a word \(y\) if there exists two
+words \(u\) and \(v\) such that \(y = uxv\). 
+
+\bigskip
+
+Then there exists a position \(i\) such that \(x = y[i] y[i+1] \dots
+y[i + \len{x} - 1]\), noted more simply as \(x = y[i \dots i + \len{x}
+  - 1]\). One says that \(x\) \textbf{occurs} in \(y\).
+
+\bigskip
+
+Also, when \(y = xv\), then \(x\) is a \textbf{prefix} of \(y\), noted
+\(x \preccurlyeq y\). 
+
+\bigskip
+
+When \(y = ux\), then \(x\) is a \textbf{suffix} of \(y\). A factor
+\(x\) of \(y\) such that \(x \neq y\) is a \textbf{proper factor}. We
+note \(x \prec y\) if \(x\) is a proper prefix of \(y\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% Basic definitions
+%
+\begin{frame}
+\frametitle{Basic definitions (cont)}
+
+The \textbf{\(n\)-th power} of word \(x\) is defined as \(x^0 =
+\epsilon\) and \(x^{n+1} = x^{n} x\), for all \(n \geqslant 0\). This
+notation denotes the repetition of a word. So, for example, if \(x =
+\texttt{abb}\), then
+\begin{align*}
+x^0 &= \epsilon\\
+x^1 &= x^0 x = \varepsilon x = x = \texttt{abb}\\
+x^2 &= x^1 x = (x^0 x) x = xx = (\texttt{abb})(\texttt{abb}) =
+\texttt{abbabb}\\
+x^3 &= x^2 x = (x^1 x) x = ((x^0 x) x) x = xxx\\
+    &= (\texttt{abb})(\texttt{abb})(\texttt{abb}) = \texttt{abbabbabb}
+\end{align*}
+It is good to remember a similar concept (power) and notation for
+functions. If \(f\) is a function from a set onto itself, then, for
+all \(n \geqslant 0\)
+\[
+f^0(x) = x \qquad f^{n+1}(x) = f^{n}(f(x))
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% Basic definitions
+%
+\begin{frame}
+\frametitle{Basic definitions (cont)}
+
+So, for example, if \(f(x) = x + 1\), then
+\begin{align*}
+f^0(x) &= x\\
+f^1(x) &= f^0(f(x)) = f(x) = x + 1\\
+f^2(x) &= f^1(f(x)) = f^0(f(f(x))) = f(f(x)) = f(x+1) = (x + 1) + 1\\
+       &= x + 2
+\end{align*}
+Note that it was possible to define the power of a function \(f\) as
+\[
+f^0(x) = x \qquad f^{n+1}(x) = f(f^{n}(x))
+\]
+It is possible to compose two different functions too. If \(f\) and
+\(g\) are two composable functions, then we define the composed
+function \(f \circ g\) as
+\[
+(f \circ g)(x) = f(g(x))
+\]
+
+\end{frame}

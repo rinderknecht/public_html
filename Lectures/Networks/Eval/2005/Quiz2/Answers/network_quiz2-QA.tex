@@ -1,0 +1,218 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\input{trace}
+
+\title{Answers to the quiz \#2 of introduction to networking} 
+\author{Christian Rinderknecht} 
+\date{\today}
+
+\usepackage{nath}
+
+\begin{document}
+
+\maketitle
+
+\section{Review questions}
+
+\begin{enumerate}
+
+  \item \emph{Why is it that \textsc{ftp} sends control information
+    out-of-band?}
+
+  \textsc{ftp} uses two parallel \textsc{tcp} connections: one for
+  sending control information (such as a request to transfer a file or
+  change the current remote directory) and another connection for
+  actually transferring the file. Because the control information is
+  not sent over the same connection that the file is sent over,
+  \textsc{ftp} sends control information out of band.
+
+  \item \emph{Why \textsc{ftp} is said to be a stateful protocol?}
+
+  Throughout a session, the \textsc{ftp} server must maintain a state
+  about the user:
+  \begin{itemize}
+
+    \item the control connection must be associated with a specific
+      user account;
+
+    \item the server must keep track of a given user's current
+      directory on its file system.
+
+  \end{itemize}
+
+  \item \emph{Are the objectives of flow control and congestion
+    control the same?}
+
+  No, their objectives are different. Flow control is about a host not
+  overflowing the other host's receiving buffer, whilst congestion
+  control is about not overflowing the router's queues.
+
+  \item \emph{Give a very short description of how the
+    connection-oriented service of the Internet provides reliable
+    transport.}
+
+  This service is TCP. It ensures reliable transport by means of
+  acknowledgement and retransmission. If the sender does not receive
+  the acknowledgement from the destination about a given packet, then
+  this packet is transmitted again.
+
+  \item \emph{Describe briefly Web caching at proxies and
+    browsers. Why are they useful?}
+
+  Proxies are special nodes in the internet which, among other
+  features, allows several users (hosts), usually on the same Local
+  Area Network (LAN), to share a same cache. This way, for instance,
+  if several users retrieve the same Web objects, only the first one
+  will be actually downloaded from the \textsc{http} server, the
+  following being retrieved from the proxy cache (assuming they are
+  up-to-date or no \texttt{GET} request is issued). 
+
+  Browsers also have caches, implemented as files on the local file
+  system. If the user requests the same object twice of more, the
+  object is taken from the cache, not from the network.
+
+  Web caching is useful because it reduces the traffic on the internet.
+
+  \item \emph{Compare the common and different features of
+    \textsc{smtp} and \textsc{http}.}
+
+  The common feature is that both protocols can use persistent
+  \textsc{tcp} connection (actually, this is mandatory in case of
+  \textsc{smtp}).
+
+  The differences are as follows:
+  \begin{enumerate}
+
+    \item An \textsc{http} client pulls files (objects) from a server,
+    whereas an \textsc{smtp} pushes them (mails) to a server: we say
+    that \textsc{http} is a \emph{pull protocol} whereas
+    \textsc{smtp} is a \emph{push protocol}.
+
+    \item \textsc{smtp} requires the body of each message to be encoded
+    in \textsc{ascii}, contrary to \textsc{http}, thus accentuated
+    characters or binary data must be encoded and decoded.
+
+    \item When a file consists of several parts (like text and images),
+    \textsc{smtp} places all of them in the same message, contrary to
+    \textsc{http} which puts them in separate messages.
+
+  \end{enumerate}
+
+  \item \emph{What are the components needed to make (use of) cookies?}
+
+  Cookies contain the following components:
+  \begin{itemize}
+
+    \item a cookie header line in the \textsc{http} response;
+
+    \item a cookie header line in the \textsc{http} request;
+
+    \item a cookie file kept on the user's system and managed by the
+    browser;
+
+    \item a database at the server site.
+
+  \end{itemize}
+
+  \item \emph{What is the conditional \texttt{GET} \textsc{http}
+    request useful for?}
+
+  Web caching can create a new problem: the cached objects can be
+  \emph{stale}, i.e. the original object (at the server side) may have
+  changed since the last request.
+
+  The mechanism in \textsc{http} which ensures that all retrieved
+  objects are up-to-date despite caching is called conditional
+  \texttt{GET}.
+
+  \item \emph{List five tasks that a protocol layer can perform. Is it
+    possible that one (or more) of these tasks could be performed by
+    two (or more) layers?}
+
+  Five generic tasks are error control, flow control, segmentation and
+  reassembly, multiplexing and connections set-up. These tasks can be
+  duplicated at different levels. For example, error control is often
+  provided at more than one layer.
+
+  \item \emph{What information is used by a process running on one
+    host to identify a process running on another host?}
+
+  The IP address of the destination host and the port number of the
+  destination socket.
+
+\end{enumerate}
+
+\section{Problems}
+
+\begin{enumerate}
+
+  \item \emph{Consider sending a file of \(M \times L\) bits over a
+    path of \(Q\) links. Each link transmits at \(R\) bits per
+    second. The network is lightly loaded so that there are no queuing
+    delays. When a form of packet switching is used, the \(M \times
+    L\) bits are broken up into \(M\) packets, each packet with \(L\)
+    bits. Propagation delay is negligible.}
+    \begin{enumerate}
+
+      \item \emph{Suppose the network is a packet-switched virtual
+        circuit network. Denote the VC set-up time by \(t_s\)
+        seconds. Suppose the sending layers add a total of \(h\) bits
+        of header to each packet. How long does it take to send the
+        file from source to destination?}
+
+        The time to transmit one packet onto a link is \(\frac{L +
+          h}{R}\). The time to deliver the first of the \(M\) packets
+        to the destination is \(Q{\frac{L+h}{R}}\). Every
+        \(\frac{L+h}{R}\) seconds a new packet from the \(M-1\)
+        remaining packets arrives at destination (this is due to
+        pipelining). We must also add the initial setup time, because
+        we use a VC network. Thus the total delay is
+        \[
+          t_{s} + (Q + M - 1){\frac{L+h}{R}}
+        \]
+
+      \item \label{datagram} \emph{Suppose the network is a
+        packet-switched datagram network and a connectionless service
+        is used. Now suppose each packet has \(2h\) bits of
+        header. How long does it take to send the file?}
+
+        Using a datagram network with a connectionless service implies
+        there is no setup needed. Another difference with the previous
+        situation is the header size. Therefore the total delay is
+        simply
+        \[
+          (Q + M - 1){\frac{L + 2h}{R}}
+        \]
+
+      \item \emph{Repeat case~\ref{datagram} but assume message
+        switching is used (that is, \(2h\) bits are added to the
+        message, and the message is not segmented).}
+
+        The time to transmit the entire message over one link is
+        \(\frac{L M + 2h}{R}\). The time to transmit the entire
+        message over \(Q\) links (i.e. to destination) is thus
+        \[
+          Q{\frac{L M + 2h}{R}}
+        \]
+ 
+      \item \emph{Finally, suppose that the network is a
+        circuit-switched network. Further suppose that the
+        transmission rate of the circuit between source and
+        destination is \(R\) bit/s. Assuming \(t_s\) seconds of set-up
+        and \(h\) bits of header appended to the entire file, how long
+        does it take to send the file?}
+
+        Because there is no store-and-forward delay at the switches,
+        the total delay does not depend on the number of links. Also
+        we must add the setup time. Therefore the end-to-end delay is
+        \[
+          t_{s} + \frac{M L + h}{R}
+        \]
+
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

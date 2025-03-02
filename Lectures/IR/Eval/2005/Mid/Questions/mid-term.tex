@@ -1,0 +1,62 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\input{trace}
+
+% Language
+%
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{hyphenat}
+
+% Pseudo-code
+%
+\usepackage{clrscode}
+\newcommand{\LogAnd}{\textbf{and} }
+\newcommand{\LogOr}{\textbf{or} }
+
+% AMS Maths and St Mary's Road nice symbols
+%
+\usepackage{amssymb,amsmath,stmaryrd}
+
+% Color in tables
+%
+\usepackage{colortbl}
+\definecolor{mygrey}{gray}{0.5}
+
+% New environments and commands
+%
+\newcommand\Border[2]{\textsc{Border}^{#1}(#2)}
+
+% Title
+%
+\input{title}
+\author{Christian Rinderknecht}
+\date{27 October 2005}
+
+\begin{document}
+
+\maketitle
+
+\begin{enumerate}
+
+  \item
+    \input{question_01}
+
+  \item 
+    \input{question_02}
+
+  \item 
+    \input{question_03}
+
+  \item 
+    \input{question_04}
+
+  \item 
+    \input{question_05}
+
+\end{enumerate}
+
+\end{document}

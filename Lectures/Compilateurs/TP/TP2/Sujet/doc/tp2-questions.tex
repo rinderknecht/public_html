@@ -1,0 +1,94 @@
+%%-*-latex-*-
+
+\begin{enumerate}
+
+  \item \label{q1} Reconsidérez la sémantique opérationnelle
+  de la division (sans spécification des erreurs). L'ordre
+  d'évaluation des opérandes n'y est pas spécifié. Réécrivez la 
+  règle pour qu'elle force l'évaluation de son second opérande
+  avant le premier. Pour cela, inspirez-vous de la règle
+  de la liaison locale.
+
+  L'implantation fidèle de cette nouvelle sémantique est
+  maladroite. Proposez une variation simple du code pour la division
+  qui répond au problème.
+
+  \item \label{q2} Ajoutez les fonctions et les
+  applications. Notez bien que le type des valeurs doit maintenant
+  changer. Introduisez les modifications nécessaires. N'oubliez pas
+  d'enrichir le traitement d'erreurs dans les cas où on attend un
+  entier et on obtient en fait une fonction, ainsi que le cas
+  contraire. Testez. (\emph{Gardez une trace de vos cas de test.}) Par
+  exemple:
+  {\small
+  \begin{center}
+  \texttt{1+2*(if true then let f = fun y -> y+1 in f(3+4) else 5)}
+  \end{center}
+  }
+
+  \item \label{q3} Implantez les fonctions récursives
+  natives. Testez par exemple
+  {\small
+   \begin{verbatim}
+let rec f = fun n -> ifz n then 1 else n*f(n-1) in f 7
+let rec x = x in x
+   \end{verbatim}
+  }
+ 
+  \vspace*{-10pt}
+
+  \item \label{q4} Soit $e$ l'arbre de syntaxe abstraite
+  correspondant au programme \num{1}~\num{2}. Existe-t-il un
+  environnement $\rho$ et une valeur $v$ tels que $\eval{\rho}{e}{v}$?
+  Quelle différence voyez-vous entre cet exemple et \lpar\kwd{fun}
+  \ident{f} $\rightarrow$ \ident{f} \ident{f}\rpar{} \lpar\kwd{fun} \ident{f}
+  $\rightarrow$ \ident{f} \ident{f}\rpar, donné dans le cour?  Vérifiez
+  votre raisonnement en soumettant ces expressions à votre calculette.
+
+  \item \label{q5} Vérifiez que les constructions \kwd{let}
+  \ident{x} \equal{} \ident{e}$_1$ \kwd{in} \ident{e}$_2$ et \lpar\kwd{fun}
+  \ident{x} $\rightarrow$ \ident{e}$_2$\rpar{} \ident{e}$_1$ sont équivalentes
+  du point de vue de l'évaluation --- c'est-à-dire que l'une produit
+  une valeur $v$ si et seulement si l'autre produit également $v$.
+
+  \item \label{q6} Ajoutez au langage des liaisons globales de
+  la forme $\kwd{let} \, x = e$.
+
+  \item \label{q7} Implantez la sémantique avec références.
+
+  \item \label{q8} Vérifiez que les constructions \kwd{let}
+  \ident{x} \equal{} \ident{e}$_1$ \kwd{in} \ident{e}$_2$ et \lpar\kwd{fun}
+  \ident{x} $\rightarrow$ \ident{e}$_2$\rpar{} \ident{e}$_1$ sont équivalentes
+  du point de vue du typage monomorphe, c'est-à-dire que l'une admet
+  le type $\tau$ sous l'environnement $\Gamma$ si et seulement si
+  l'autre admet aussi $\tau$ sous $\Gamma$.
+
+  \item \label{q9} Peut-on typer les expressions ci-dessous de
+  façon monomorphe et, si oui, avec quels types?
+
+  \begin{center}
+  \begin{tabular}{l}
+    \Xlet \, \ident{f} \equal \, \Xfun \, \ident{x} $\rightarrow$ \ident{x}
+    \, \Xin \, \ident{f} \ident{f}\\
+    \Xfun \, \ident{f} $\rightarrow$ \ident{f} \ident{f}\\
+    \num{1} \, \num{2}\\
+    \Xlet \, \ident{f} \equal \, \Xfun \, \ident{x} $\rightarrow$ \ident{x}
+    \Xin \, \Xlet \, \ident{x} \equal \, \ident{f} \num{1} \Xin \,
+    \ident{f} \lpar\Xfun \, \ident{x} $\rightarrow$ \ident{x} \texttt{+}
+    \num{1}\rpar 
+  \end{tabular}
+  \end{center}
+
+  \item \label{q10} Implantez l'axiome \textsc{fun-opt} qui
+  restreint l'environnement dans les fermetures aux variables libres
+  de la fonction:
+  \begin{mathpar}
+  \inferrule*[right=\quad \textsc{fun-opt}]
+    {\eval{\rho}
+          {\cst{Fun} \, (x,e) \, \kwd{as} \, f}
+          {\clos{x}{e}{\rho\arrowvert{\cal L} (f)}}}
+    {}
+   \end{mathpar}
+
+ 
+\end{enumerate}

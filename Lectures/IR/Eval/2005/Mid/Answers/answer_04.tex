@@ -1,0 +1,97 @@
+\[
+\begin{aligned}
+   \Border{}{a} 
+&= \epsilon\\
+   \Border{}{a \cdot c} 
+&= \Border{}{\Border{}{a} \cdot c}
+\end{aligned}
+\]
+because \(\Border{}{a} \cdot c = \epsilon \cdot c = c
+\not\preccurlyeq a\). Thus
+\[
+  \Border{}{ac} = \Border{}{c} = \epsilon
+\]
+Now:
+\[
+ \Border{}{ac \cdot a} = \Border{}{ac} \cdot a
+\]
+since \(\Border{}{ac} \cdot a = \epsilon \cdot a = a
+\preccurlyeq ac\). Hence
+\[
+  \Border{}{aca} = a
+\]
+Now:
+\[
+  \Border{}{aca \cdot b} = \Border{}{\Border{}{aca} \cdot b}
+\]
+because \(\Border{}{aca} \cdot b = ab \not\preccurlyeq
+aca\). Therefore
+\[
+  \Border{}{acab} = \Border{}{ab}
+\]
+We have to compute \(\Border{}{ab}\):
+\[
+  \Border{}{a \cdot b} = \Border{}{\Border{}{a} \cdot b}
+\]
+since \(\Border{}{a} \cdot b = \epsilon \cdot b = b
+\not\preccurlyeq a\). Thus
+\begin{align*}
+   \Border{}{acab}
+&= \Border{}{ab}\\
+&= \Border{}{b}\\ 
+&= \epsilon
+\end{align*}
+Now
+\[
+  \Border{}{acab \cdot b} = \Border{}{\Border{}{acab} \cdot b}
+\]
+because \(\Border{}{acab} \cdot b = \epsilon \cdot b = b
+\not\preccurlyeq acab\). Then
+\[
+  \Border{}{acabb} = \Border{}{b} = \epsilon
+\]
+Now
+\[
+  \Border{}{acabb \cdot a} = \Border{}{acabb} \cdot a
+\]
+since \(\Border{}{acabb} \cdot a = \epsilon \cdot a = a
+\preccurlyeq acabb\). Therefore
+\[
+  \Border{}{acabba} = a
+\]
+Now
+\[
+  \Border{}{acabba \cdot c} = \Border{}{acabba} \cdot c
+\]
+because \(\Border{}{acabba} \cdot c = a \cdot c = ac
+\preccurlyeq acabba\). Thus
+\[
+  \Border{}{acabbac} = ac
+\]
+Now
+\[
+  \Border{}{acabbac \cdot a} = \Border{}{acabbac} \cdot a
+\]
+since \(\Border{}{acabbac} \cdot a = ac \cdot a = aca
+\preccurlyeq acabbac\). Hence
+\[
+  \Border{}{acabbaca} = aca
+\]
+Now
+\[
+  \Border{}{acabbaca \cdot b} = \Border{}{acabbaca} \cdot b
+\]
+because \(\Border{}{acabbaca} \cdot b = aca \cdot b = acab
+\preccurlyeq acabbaca\). Then
+\[
+  \Border{}{acabbacab} = acab
+\]
+Finally
+\[
+  \Border{}{acabbacab \cdot b} = 
+\]
+since \(\Border{}{acabbacab} \cdot b = acab \cdot b = acabb
+\preccurlyeq acabbacab\). Thus
+\[
+  \Border{}{acabbacabb} = acabb
+\]

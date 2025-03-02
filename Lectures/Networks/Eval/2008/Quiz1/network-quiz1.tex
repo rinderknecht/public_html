@@ -1,0 +1,59 @@
+%%-*-latex-*-
+
+\documentclass[11pt,a4paper]{article}
+
+\input{trace}
+
+\title{Exercises \#1 of Computer Networks}
+\author{Christian Rinderknecht}
+\date{11 April 2008}
+
+\usepackage[english]{babel}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\begin{enumerate}
+
+  \item Suppose that we have a circuit-switched network where
+    \begin{itemize}
+
+      \item users share a 1 Mbps link;
+
+      \item each user alternates periods of activity and of inactivity:
+        \begin{itemize}
+
+          \item when he is active, he generates data at the constant
+            rate of 100~Kbps;
+
+          \item when he is idle, he produces no data.
+
+        \end{itemize}
+
+      \item each user is active during 10\% of the time.
+
+    \end{itemize}
+    \textbf{Question:} How many users can the link support?
+
+  \item \label{message_switching} Consider a message of size \(7.5
+    \cdot 10^6\) bits, three links of rate 1.5 Mbps connecting two
+    hosts (i.e., there are two switches in-between them) and assume
+    that there is no congestion and no delay at the switches.
+
+    \textbf{Question:} How much time is required to send and receive
+    the message?
+
+  \item The situation is as in case~\ref{message_switching} but now
+    the message is broken into two packets of equal size. 
+
+    \textbf{Question:} Assuming that only one packet can travel a link
+    at a time, how much time is required to send and receive the
+    message?
+
+
+\end{enumerate}
+
+\end{document}

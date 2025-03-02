@@ -1,0 +1,90 @@
+%% -*-latex-*-
+
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{ae,aecompl}
+
+\input{commands}
+\input{ocaml_syntax}
+\input{trace}
+
+\title{TP 1 d'Interprétation et compilation}
+\author{Christian Rinderknecht}
+\date{23 et 24 septembre 2003}
+
+\begin{document}
+
+\maketitle
+
+Le but de ce TP est de réaliser la calculette fonctionnelle présentée
+lors du premier cours et de l'étendre. Un certain nombre d'éléments
+vous sont fournis sous la forme de fichiers (analyseur lexical et
+syntaxique, un début de programme principal et un
+\texttt{Makefile}). À vous de construire l'évaluateur.
+
+\bigskip
+
+Ouvrez l'archive \texttt{tp1.tgz}, et construisez la calculette
+initiale avec \texttt{make calc}. L'exécutable produit s'appelle
+\texttt{calc}, et les fichiers à modifier et compléter sont
+\texttt{eval.ml} et \texttt{main.ml}. Les autres fichiers fournis sont
+les suivants (vous n'avez pas besoin de les modifier):
+
+\begin{itemize}
+
+  \item \texttt{ast.ml}: le type des arbres de syntaxe abstraite;
+
+  \item \texttt{lexer.mll}: la spécification de l'analyseur
+  lexical. Sa compilation par \textsf{ocamllex} produit
+  \texttt{lexer.ml} (l'analyseur lexical).
+
+  \item \texttt{parser.mly}: le spécification de la syntaxe concrète
+  (la grammaire). Sa compilation par \textsf{ocamlyacc} produit
+  \texttt{parser.mli} (interface spécifiant le type des lexèmes et le
+  type de l'analyseur syntaxique) et \texttt{parser.ml}, contenant
+  l'analyseur syntaxique proprement dit.
+
+\end{itemize}
+
+\medskip
+
+\noindent Le fonctionnement global de la calculette est le suivant:
+
+\begin{enumerate}
+
+  \item L'analyseur lexical \textsf{Lexer} exporte une fonction
+  \textsf{token} qui renvoie le premier lexème reconnaissable à
+  partir de l'entrée standard (par défaut il s'agit du clavier);
+
+  \item l'analyseur syntaxique \textsf{Parser} exporte une fonction
+  \textsf{expression} qui prend en argument \textsf{Lexer.token} et
+  l'entrée standard, et renvoie l'arbre de syntaxe abstraite qui doit
+  être évalué;
+
+  \item l'évaluateur \textsf{Eval} exporte une fonction \textsf{eval}
+  qui prend en argument un environnement et l'arbre de syntaxe
+  abstraite correspondant à l'expression, et renvoie la valeur
+  associée ou déclenche une exception en cas d'erreur;
+
+  \item le pilote \textsf{Main} invite l'usager à saisir une
+  expression, lance l'analyse lexico-syntaxique puis l'évaluation
+  (dans un environnement vide); il affiche ensuite le résultat. En cas
+  d'erreur, il affiche l'erreur dont le message est associé aux
+  exceptions provenant de l'évaluateur.
+
+\end{enumerate}
+
+\noindent Pour l'instant, l'évaluateur ne fait que renvoyer la chaîne
+\texttt{"ok"} quelque soit l'expression (attention, le rôle de
+l'évaluateur n'est pas de faire des affichages: c'est un des rôles du
+pilote), et le pilote passe effectivement l'AST à l'évaluateur, mais
+il ne gère aucune erreur provenant de celui-ci.
+
+\noindent Le travail à faire est le suivant:
+
+\input{tp1-questions}
+
+\end{document}

@@ -1,0 +1,11 @@
+<?xml version='1.0'?>
+<!DOCTYPE map [
+  <!ATTLIST country code   ID    #REQUIRED>
+  <!ATTLIST country name   CDATA #REQUIRED>
+  <!ATTLIST country border IDREF #IMPLIED>
+]>
+<map>
+  <country code="uk" name="United Kingdom" border="ie"/>
+  <country code="ie" name="Ireland" border="uk"/>
+</map>
+

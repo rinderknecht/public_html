@@ -1,0 +1,6 @@
+$HOME/Makefiles/LaTeX/alt/Makefile
+
+$HOME/LaTeX/TeX/trace.tex
+
+../Questions/question_01.tex
+../Questions/final-circuits.tex final-circuits-QA.tex

@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Converting from binary to hexadecimal</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Converting from binary to hexadecimal</h2>
+
+<p><strong>Question.</strong> The purpose of this exercise is to write
+  a C program which reads on the command-line a string representing a
+  positive integer in binary form and outputs its corresponding
+  hexadecimal representation.
+</p>
+
+<strong>Hints and constraints.</strong>
+<ul>
+
+  <li>The input must be checked in the <tt>main</tt> function, before
+  the computation takes place, in the <tt>from2to16</tt> function. In
+  particular, be aware of invalid characters. (The empty string is not
+  possible since the input is given on the command line.) Also, in
+  order to find the number of significant bits, the leftmost zeros
+  must be discarded.</li>
+
+  <li>The signature of <tt>from2to16</tt> must be <tt>char*
+  from2to16(const char bin[], unsigned int b_len)</tt>, where
+  <tt>bin</tt> is the binary string and <tt>b_len</tt> is the length
+  of <tt>bin</tt>. The length is computed in <tt>main</tt>, when
+  checking the input string, and it is useful in
+  <tt>from2to16</tt> to know the number of hexadecimal digits, thus
+  how to allocate the output string.</li>
+
+  <li>Write a function whose signature is <tt>char mk_digit(const char
+  bin[], unsigned int len)</tt>, where <tt>bin</tt> is a binary string
+  and <tt>len</tt> is the number of leftmost bits to be converted to
+  an hexadecimal digit. Clearly, <tt>len</tt> ranges from 0 to 4, both
+  included. For example, if <tt>bin</tt> is the
+  string <tt>"11010011111"</tt>, then <tt>mk_digit(bin,3) == '6'</tt>,
+  which is the decimal form of <tt>110</tt> (the three leftmost
+  bits). Also, <tt>mk_digit(bin+6,4) == 'F'</tt>.</li>
+
+  <li>The difficulty lies in handling the case where the number of
+  bits are not a multiple of four. The remaining leftmost bits need
+  special attention. In function <tt>main</tt>, the difficulty is to
+  ignore the leftmost zeros before passing the binary string to
+  <tt>from2to16</tt>.</li>
+
+</ul>
+
+<p><strong>Answer.</strong> A solution can be
+found <a href="./from2to16.c">here</a>.
+</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Removing the Penultimate Item</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <style type="text/css">img {border-width: 0}</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Removing the Penultimate Item</h2>
+
+<p><strong>Question.</strong> The purpose of this exercise is to write
+  an XSLT transform which takes as input a table of contents and
+  outputs the same table of contents in XML where the penultimate
+  chapter has been removed. If there is no chapter or only one,
+  nothing is to be done.
+</p>
+
+<p><strong>Example.</strong>
+<a href="./toc.xml">This</a> is an example of input document
+and
+<a href="./penult.xml">this</a> is the corresponding output. You need
+to download the <a href="./book.dtd">DTD</a> to run this example.
+</p>
+
+<strong>Hints.</strong>
+<ul>
+  <li>The value of attribute <tt>test="empty($items[2])"</tt> is
+  <tt>true()</tt> if there is no second item in the sequence
+  <tt>$items</tt>.</li>
+
+  <li>Appending (i.e., catenating) two sequences is achieved by
+  separating them by a comma, e.g., the sequence <tt>$seq1</tt>
+  followed by sequence <tt>$seq2</tt> is the sequence
+  <tt>select="$seq1,$seq2"</tt> or
+  <tt>select="($seq1,$seq2)"</tt>.</li>
+</ul>
+
+<p><strong>Answer.</strong> A <a href="./penult.xsl">solution</a> to
+the problem, where four cases are made: exactly zero items, exactly
+one, exactly two and at least three items. Notice how the case
+<tt>&lt;xsl:when test="empty($items)"/></tt> is actually missing
+because it is unnecessary: if <tt>$items</tt> is empty, then
+<tt>$tail</tt> is empty as well, and the result is thus
+<tt>$items[1]</tt>, which is the empty sequence.</p>
+
+<hr/>
+
+<p>
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Transitional" height="31" width="88"/>
+  </a>
+</p>
+
+</body>
+</html>
