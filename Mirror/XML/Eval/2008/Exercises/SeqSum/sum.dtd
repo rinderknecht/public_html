@@ -1,2 +1,0 @@
-<!ELEMENT numbers (num+)>
-<!ELEMENT num (#PCDATA)>

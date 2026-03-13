@@ -1,2 +1,0 @@
-<!ELEMENT numbers (hexa+)>
-<!ELEMENT hexa (#PCDATA)>
