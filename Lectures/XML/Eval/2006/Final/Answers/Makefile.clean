@@ -1,3 +1,0 @@
-clean::
-	@rm -f tmp.xml tmp.xsl tmp.html xml.out
-	@symlinks.sh --set --quiet

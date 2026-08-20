@@ -1,4 +1,0 @@
-<!ELEMENT lists (list,list)>
-<!ELEMENT list (item*)>
-<!ELEMENT item EMPTY>
-<!ATTLIST item val CDATA #REQUIRED>

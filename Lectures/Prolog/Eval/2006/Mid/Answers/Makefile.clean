@@ -1,3 +1,0 @@
-clean::
-	@rm -f *.out *.err
-	@symlinks.sh --set --quiet

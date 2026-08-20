@@ -1,5 +1,0 @@
-$HOME/Makefiles/OCaml/Makefile
-../../TP1/Sujet/ast.ml
-../../TP1/Sujet/parser.mly
-../../TP2/Correction/lexer.mll
-../../TP2/Correction/eval.ml

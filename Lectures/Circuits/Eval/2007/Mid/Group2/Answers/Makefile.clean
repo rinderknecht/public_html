@@ -1,3 +1,0 @@
-clean::
-	@\rm -f *.o *.out from10to3b from3bto3
-	@symlinks.sh --set --quiet
